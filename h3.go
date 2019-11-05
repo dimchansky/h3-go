@@ -28,7 +28,7 @@ type GeoPolygon struct {
 
 // FromGeo finds the H3 index of the resolution `res` cell containing the lat/lon `g`.
 // Implements `geoToH3`.
-func FromGeo(gGeoCoord, res int) Index {
+func FromGeo(g GeoCoord, res int) Index {
 	panic("not implemented")
 }
 
