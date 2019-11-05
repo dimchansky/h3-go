@@ -25,3 +25,15 @@ type GeoPolygon struct {
 	// Holes is a slice of interior boundary (holes) in the polygon
 	Holes [][]GeoCoord
 }
+
+// FromGeo finds the H3 index of the resolution `res` cell containing the lat/lon `g`.
+// Implements `geoToH3`.
+func FromGeo(gGeoCoord, res int) Index {
+	panic("not implemented")
+}
+
+// ToGeo finds the lat/lon center point of the cell `h`.
+// Implements `h3ToGeo`.
+func ToGeo(h Index) GeoCoord {
+	panic("not implemented")
+}
