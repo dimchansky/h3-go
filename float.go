@@ -1,5 +1,7 @@
 package h3
 
+//lint:file-ignore U1000 Ignore all unused code
+
 import (
 	"math"
 )

@@ -1,5 +1,6 @@
 package h3
 
+//lint:file-ignore U1000 Ignore all unused code
 // 2D floating point vector functions.
 
 import (

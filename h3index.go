@@ -12,7 +12,7 @@ const InvalidIndex = Index(0)
 // `res` is the desired H3 resolution for the encoding.
 // Returns the encoded H3 index (or 0 on failure).
 func FromGeo(g *GeoCoord, res int) Index {
-	if res < 0 || res > MaxH3Res {
+	if res < 0 || res > MAX_H3_RES {
 		return InvalidIndex
 	}
 

@@ -1,12 +1,13 @@
 package h3
 
+//lint:file-ignore U1000 Ignore all unused code
 // 3D floating point vector functions.
 
 import (
 	"math"
 )
 
-// Ve3d holds 3D floating point structure
+// Vec3d holds 3D floating point structure
 type Vec3d struct {
 	X float64 // X component
 	Y float64 // Y component
