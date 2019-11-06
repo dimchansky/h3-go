@@ -1,5 +1,7 @@
 package h3
 
+//lint:file-ignore U1000 Ignore all unused code
+
 // Index fits within a 64-bit unsigned integer.
 type Index = uint64
 
@@ -11,8 +13,8 @@ const (
 
 // GeoCoord is a struct for geographic coordinates, holds latitude/longitude in radians.
 type GeoCoord struct {
-	Lat float64 // latitude in radians
-	Lon float64 // longitude in radians
+	lat float64 // latitude in radians
+	lon float64 // longitude in radians
 }
 
 // GeoBoundary is a slice of `GeoCoord`.  Note, `len(GeoBoundary)` will never
@@ -21,9 +23,9 @@ type GeoBoundary []GeoCoord
 
 // GeoPolygon is a geofence with 0 or more geofence holes
 type GeoPolygon struct {
-	// GeoFence is the exterior boundary of the polygon
-	GeoFence []GeoCoord
+	// geofence is the exterior boundary of the polygon
+	geofence []GeoCoord
 
-	// Holes is a slice of interior boundary (holes) in the polygon
-	Holes [][]GeoCoord
+	// holes is a slice of interior boundary (holes) in the polygon
+	holes [][]GeoCoord
 }

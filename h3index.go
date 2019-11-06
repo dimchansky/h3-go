@@ -16,7 +16,7 @@ func FromGeo(g *GeoCoord, res int) Index {
 		return InvalidIndex
 	}
 
-	if !isFinite(g.Lat) || !isFinite(g.Lon) {
+	if !isFinite(g.lat) || !isFinite(g.lon) {
 		return InvalidIndex
 	}
 

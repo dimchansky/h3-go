@@ -9,9 +9,9 @@ import (
 
 // Vec3d holds 3D floating point structure
 type Vec3d struct {
-	X float64 // X component
-	Y float64 // Y component
-	Z float64 // Z component
+	x float64 // x component
+	y float64 // y component
+	z float64 // z component
 }
 
 // pointSquareDist calculates the square of the distance between two 3D coordinates.
@@ -19,7 +19,7 @@ type Vec3d struct {
 // `v2` is the second 3D coordinate.
 // Returns the square of the distance between the given points.
 func pointSquareDist(v1 *Vec3d, v2 *Vec3d) float64 {
-	return square(v1.X-v2.X) + square(v1.Y-v2.Y) + square(v1.Z-v2.Z)
+	return square(v1.x-v2.x) + square(v1.y-v2.y) + square(v1.z-v2.z)
 }
 
 // geoToVec3d calculates the 3D coordinate on unit sphere from the latitude and longitude.
@@ -27,9 +27,9 @@ func pointSquareDist(v1 *Vec3d, v2 *Vec3d) float64 {
 // `geo` is the latitude and longitude of the point.
 // `v` is the 3D coordinate of the point.
 func geoToVec3d(geo GeoCoord, v *Vec3d) {
-	r := math.Cos(geo.Lat)
+	r := math.Cos(geo.lat)
 
-	v.Z = math.Sin(geo.Lat)
-	v.X = math.Cos(geo.Lon) * r
-	v.Y = math.Sin(geo.Lon) * r
+	v.z = math.Sin(geo.lat)
+	v.x = math.Cos(geo.lon) * r
+	v.y = math.Sin(geo.lon) * r
 }

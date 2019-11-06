@@ -1,9 +1,11 @@
 package h3
 
+//lint:file-ignore U1000 Ignore all unused code
+
 // FaceIJK holds face number and ijk coordinates on that face-centered coordinate system
 type FaceIJK struct {
-	Face  int      // face number
-	Coord CoordIJK // ijk coordinates on that face
+	face  int      // face number
+	coord CoordIJK // ijk coordinates on that face
 }
 
 // geoToFaceIjk encodes a coordinate on the sphere to the FaceIJK address of the containing

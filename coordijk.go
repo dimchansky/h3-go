@@ -1,9 +1,11 @@
 package h3
 
+//lint:file-ignore U1000 Ignore all unused code
+
 // CoordIJK holds IJK hexagon coordinates.
 // Each axis is spaced 120 degrees apart.
 type CoordIJK struct {
-	I int // i component
-	J int // j component
-	K int // k component
+	i int // i component
+	j int // j component
+	k int // k component
 }
