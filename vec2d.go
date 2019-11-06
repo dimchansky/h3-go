@@ -1,10 +1,10 @@
 package h3
 
+// 2D floating point vector functions.
+
 import (
 	"math"
 )
-
-// 2D floating point vector functions.
 
 // Vec2d is 2D floating-point vector
 type Vec2d struct {
@@ -15,7 +15,7 @@ type Vec2d struct {
 // v2dMag calculates the magnitude of a 2D cartesian vector.
 // `v` is the 2D cartesian vector.
 // Returns the magnitude of the vector.
-func v2dMag(v *Vec2d) float64 { return math.Sqrt(v.X*v.X + v.Y*v.Y) }
+func v2dMag(v *Vec2d) float64 { return math.Sqrt(square(v.X) + square(v.Y)) }
 
 // v2dIntersect finds the intersection between two lines. Assumes that the lines intersect
 // and that the intersection is not at an endpoint of either line.

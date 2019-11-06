@@ -5,3 +5,4 @@ Hexagonal hierarchical geospatial indexing system in pure Go. Port all functiona
 ## Implementation progress
 
 - [X] vec2d
+- [X] vec3d

@@ -1,7 +1,5 @@
 package h3
 
-import "math"
-
 // InvalidIndex used to indicate an error from `FromGeo` and related functions.
 const InvalidIndex = Index(0)
 
@@ -129,9 +127,4 @@ func faceIjkToH3(fijk *FaceIJK, res int) Index {
 	*/
 
 	panic("not implemented")
-}
-
-// isFinite reports whether f is neither NaN nor an infinity.
-func isFinite(f float64) bool {
-	return !math.IsNaN(f) && !math.IsInf(f, 0)
 }
