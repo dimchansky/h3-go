@@ -13,19 +13,19 @@ type Vec2d struct {
 	y float64 // y component
 }
 
-// v2dMag calculates the magnitude of a 2D cartesian vector.
+// _v2dMag calculates the magnitude of a 2D cartesian vector.
 // `v` is the 2D cartesian vector.
 // Returns the magnitude of the vector.
-func v2dMag(v *Vec2d) float64 { return math.Sqrt(square(v.x) + square(v.y)) }
+func _v2dMag(v *Vec2d) float64 { return math.Sqrt(square(v.x) + square(v.y)) }
 
-// v2dIntersect finds the intersection between two lines. Assumes that the lines intersect
+// _v2dIntersect finds the intersection between two lines. Assumes that the lines intersect
 // and that the intersection is not at an endpoint of either line.
 // `p0` is the first endpoint of the first line.
 // `p1` is the second endpoint of the first line.
 // `p2` is the first endpoint of the second line.
 // `p3` is the second endpoint of the second line.
 // `inter` is the intersection point.
-func v2dIntersect(p0 *Vec2d, p1 *Vec2d, p2 *Vec2d, p3 *Vec2d, inter *Vec2d) {
+func _v2dIntersect(p0 *Vec2d, p1 *Vec2d, p2 *Vec2d, p3 *Vec2d, inter *Vec2d) {
 	var s1, s2 Vec2d
 	s1.x = p1.x - p0.x
 	s1.y = p1.y - p0.y
@@ -39,11 +39,11 @@ func v2dIntersect(p0 *Vec2d, p1 *Vec2d, p2 *Vec2d, p3 *Vec2d, inter *Vec2d) {
 	inter.y = p0.y + (t * s1.y)
 }
 
-// v2dEquals checks Whether two 2D vectors are equal. Does not consider possible false
+// _v2dEquals checks Whether two 2D vectors are equal. Does not consider possible false
 // negatives due to floating-point errors.
 // `v1` is the first vector to compare
 // `v2` is the second vector to compare
 // Returns whether the vectors are equal
-func v2dEquals(v1 *Vec2d, v2 *Vec2d) bool {
+func _v2dEquals(v1 *Vec2d, v2 *Vec2d) bool {
 	return v1.x == v2.x && v1.y == v2.y
 }
