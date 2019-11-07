@@ -8,6 +8,6 @@ Hexagonal hierarchical geospatial indexing system in pure Go. Porting all functi
 - [X] mathExtensions
 - [X] vec2d
 - [X] vec3d
-- [ ] geoCoord
+- [X] geoCoord
 - [ ] coordijk
 - [ ] faceijk

@@ -8,8 +8,8 @@ const InvalidIndex = Index(0)
 //
 // Returns 0 on invalid input.
 //
-// `g` is the spherical coordinates to encode.
-// `res` is the desired H3 resolution for the encoding.
+// `g`: The spherical coordinates to encode.
+// `res`: The desired H3 resolution for the encoding.
 // Returns the encoded H3 index (or 0 on failure).
 func FromGeo(g *GeoCoord, res int) Index {
 	if res < 0 || res > MAX_H3_RES {
@@ -27,7 +27,7 @@ func FromGeo(g *GeoCoord, res int) Index {
 
 // ToGeo determines the spherical coordinates of the center point of an H3 index.
 //
-// `h` is the H3 index.
+// `h`: The H3 index.
 // Returns the spherical coordinates of the H3 cell center.
 func ToGeo(h Index) GeoCoord {
 	panic("not implemented")
@@ -35,8 +35,8 @@ func ToGeo(h Index) GeoCoord {
 
 // faceIjkToH3 converts an FaceIJK address to the corresponding H3 index.
 //
-// `fijk` is the FaceIJK address.
-// `res` is the cell resolution.
+// `fijk`: The FaceIJK address.
+// `res`: The cell resolution.
 // Returns the encoded H3 Index (or 0 on failure).
 func faceIjkToH3(fijk *FaceIJK, res int) Index {
 	/*

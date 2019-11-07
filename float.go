@@ -7,7 +7,7 @@ import (
 )
 
 // square of a number
-// `x` is the input number.
+// `x`: The input number.
 // Returns the square of the input number.
 func square(x float64) float64 { return x * x }
 
