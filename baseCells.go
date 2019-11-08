@@ -866,13 +866,20 @@ func _getBaseCellDirection(originBaseCell int, neighboringBaseCell int) Directio
 func res0IndexCount() int { return NUM_BASE_CELLS }
 
 // getRes0Indexes generates all base cells storing them into the provided
-// memory pointer. Buffer must be of size NUM_BASE_CELLS * sizeof(H3Index).
-// `out`: the fixed size array memory to store the resulting base cells in
-func getRes0Indexes(out *[NUM_BASE_CELLS]H3Index) {
+// memory pointer. Buffer should be of capacity NUM_BASE_CELLS * sizeof(H3Index).
+// `out`: the slice to store the resulting base cells in
+func getRes0Indexes(out *[]H3Index) {
+	// set slice size to NUM_BASE_CELLS
+	idxs := (*out)[:0] // trying to keep allocated memory
+	idxs = append(idxs, make([]H3Index, NUM_BASE_CELLS)...)
+
+	// filling slice
 	for bc := 0; bc < NUM_BASE_CELLS; bc++ {
 		baseCell := H3_INIT
 		H3_SET_MODE(&baseCell, H3_HEXAGON_MODE)
 		H3_SET_BASE_CELL(&baseCell, bc)
-		out[bc] = baseCell
+		idxs[bc] = baseCell
 	}
+
+	*out = idxs
 }
