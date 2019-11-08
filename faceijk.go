@@ -8,13 +8,13 @@ type FaceIJK struct {
 	coord CoordIJK // ijk coordinates on that face
 }
 
-// geoToFaceIjk encodes a coordinate on the sphere to the FaceIJK address of the containing
+// _geoToFaceIjk encodes a coordinate on the sphere to the FaceIJK address of the containing
 // cell at the specified resolution.
 //
 // `g`: The spherical coordinates to encode.
 // `res`: The desired H3 resolution for the encoding.
 // `h`: The FaceIJK address of the containing cell at resolution res.
-func geoToFaceIjk(g *GeoCoord, res int, h *FaceIJK) {
+func _geoToFaceIjk(g *GeoCoord, res int, h *FaceIJK) {
 	/*
 	   // first convert to hex2d
 	   Vec2d v;

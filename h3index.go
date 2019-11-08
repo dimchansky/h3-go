@@ -1,9 +1,11 @@
 package h3
 
-// InvalidIndex used to indicate an error from `FromGeo` and related functions.
-const InvalidIndex = Index(0)
+//lint:file-ignore U1000 Ignore all unused code
 
-// FromGeo encodes a coordinate on the sphere to the H3 index of the containing cell at
+// H3_INVALID_INDEX index used to indicate an error from geoToH3 and related functions.
+const H3_INVALID_INDEX = H3Index(0)
+
+// geoToH3 encodes a coordinate on the sphere to the H3 index of the containing cell at
 // the specified resolution.
 //
 // Returns 0 on invalid input.
@@ -11,34 +13,34 @@ const InvalidIndex = Index(0)
 // `g`: The spherical coordinates to encode.
 // `res`: The desired H3 resolution for the encoding.
 // Returns the encoded H3 index (or 0 on failure).
-func FromGeo(g *GeoCoord, res int) Index {
+func geoToH3(g *GeoCoord, res int) H3Index {
 	if res < 0 || res > MAX_H3_RES {
-		return InvalidIndex
+		return H3_INVALID_INDEX
 	}
 
 	if !isFinite(g.lat) || !isFinite(g.lon) {
-		return InvalidIndex
+		return H3_INVALID_INDEX
 	}
 
 	var fijk FaceIJK
-	geoToFaceIjk(g, res, &fijk)
-	return faceIjkToH3(&fijk, res)
+	_geoToFaceIjk(g, res, &fijk)
+	return _faceIjkToH3(&fijk, res)
 }
 
 // ToGeo determines the spherical coordinates of the center point of an H3 index.
 //
 // `h`: The H3 index.
 // Returns the spherical coordinates of the H3 cell center.
-func ToGeo(h Index) GeoCoord {
+func ToGeo(h H3Index) GeoCoord {
 	panic("not implemented")
 }
 
-// faceIjkToH3 converts an FaceIJK address to the corresponding H3 index.
+// _faceIjkToH3 converts an FaceIJK address to the corresponding H3 index.
 //
 // `fijk`: The FaceIJK address.
 // `res`: The cell resolution.
 // Returns the encoded H3 Index (or 0 on failure).
-func faceIjkToH3(fijk *FaceIJK, res int) Index {
+func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
 	/*
 
 	   // initialize the index
