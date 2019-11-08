@@ -390,3 +390,65 @@ func _geoToHex2d(g *GeoCoord, res int, face *int, v *Vec2d) {
 	v.x = r * math.Cos(theta)
 	v.y = r * math.Sin(theta)
 }
+
+// _hex2dToGeo determines the center point in spherical coordinates of a cell given by 2D
+// hex coordinates on a particular icosahedral face.
+//
+// `v`: The 2D hex coordinates of the cell.
+// `face`: The icosahedral face upon which the 2D hex coordinate system is centered.
+// `res`: The H3 resolution of the cell.
+// `substrate`: Indicates whether or not this grid is actually a substrate grid relative to the specified resolution.
+// `g`: The spherical coordinates of the cell center point.
+func _hex2dToGeo(v *Vec2d, face int, res int, substrate bool, g *GeoCoord) {
+	// calculate (r, theta) in hex2d
+	r := _v2dMag(v)
+
+	if r < EPSILON {
+		*g = faceCenterGeo[face]
+		return
+	}
+
+	theta := math.Atan2(v.y, v.x)
+
+	// scale for current resolution length u
+	for i := 0; i < res; i++ {
+		r /= M_SQRT7
+	}
+
+	// scale accordingly if this is a substrate grid
+	if substrate {
+		r /= 3.0
+		if isResClassIII(res) {
+			r /= M_SQRT7
+		}
+	}
+
+	r *= RES0_U_GNOMONIC
+
+	// perform inverse gnomonic scaling of r
+	r = math.Atan(r)
+
+	// adjust theta for Class III
+	// if a substrate grid, then it's already been adjusted for Class III
+	if !substrate && isResClassIII(res) {
+		theta = _posAngleRads(theta + M_AP7_ROT_RADS)
+	}
+
+	// find theta as an azimuth
+	theta = _posAngleRads(faceAxesAzRadsCII[face][0] - theta)
+
+	// now find the point at (r,theta) from the face center
+	_geoAzDistanceRads(&faceCenterGeo[face], theta, r, g)
+}
+
+// _faceIjkToGeo determines the center point in spherical coordinates of a cell given by
+// a FaceIJK address at a specified resolution.
+//
+// `h`: The FaceIJK address of the cell.
+// `res`: The H3 resolution of the cell.
+// `g`: The spherical coordinates of the cell center point.
+func _faceIjkToGeo(h *FaceIJK, res int, g *GeoCoord) {
+	var v Vec2d
+	_ijkToHex2d(&h.coord, &v)
+	_hex2dToGeo(&v, h.face, res, false, g)
+}
