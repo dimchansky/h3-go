@@ -19,7 +19,7 @@ const (
 	H3_RES_MASK_NEGATIVE      = ^H3_RES_MASK                     // 0's in the 4 resolution bits, 1's everywhere else.
 	H3_RESERVED_MASK          = H3Index(7) << H3_RESERVED_OFFSET // 1's in the 3 reserved bits, 0's everywhere else.
 	H3_RESERVED_MASK_NEGATIVE = ^H3_RESERVED_MASK                // 0's in the 3 reserved bits, 1's everywhere else.
-	H3_DIGIT_MASK             = H3Index(7)                       // 1's in the 3 bits of res 15 digit bits, 0's everywhere else.
+	H3_DIGIT_MASK             = Direction(7)                     // 1's in the 3 bits of res 15 digit bits, 0's everywhere else.
 	H3_INIT                   = H3Index(35184372088831)          // H3 index with mode 0, res 0, base cell 0, and 7 for all index digits.
 
 	// H3_INVALID_INDEX index used to indicate an error from geoToH3 and related functions.
@@ -52,12 +52,13 @@ func H3_SET_RESOLUTION(h3 *H3Index, res int) {
 
 // H3_GET_INDEX_DIGIT gets the resolution res integer digit (0-7) of h3.
 func H3_GET_INDEX_DIGIT(h3 H3Index, res int) Direction {
-	return Direction((h3 >> ((MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK)
+	return Direction(h3>>((MAX_H3_RES-res)*H3_PER_DIGIT_OFFSET)) & H3_DIGIT_MASK
 }
 
 // H3_SET_INDEX_DIGIT sets the resolution res digit of h3 to the integer digit (0-7)
 func H3_SET_INDEX_DIGIT(h3 *H3Index, res int, digit Direction) {
-	*h3 = (*h3 & ^(H3_DIGIT_MASK << ((MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET))) | (H3Index(digit) << ((MAX_H3_RES - (res)) * H3_PER_DIGIT_OFFSET))
+	*h3 = (*h3 & ^(H3Index(H3_DIGIT_MASK) << ((MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET))) |
+		(H3Index(digit) << ((MAX_H3_RES - res) * H3_PER_DIGIT_OFFSET))
 }
 
 // H3_GET_RESERVED_BITS gets a value in the reserved space. Should always be zero for valid indexes.
@@ -69,6 +70,226 @@ func H3_GET_RESERVED_BITS(h3 H3Index) int {
 // indexes.
 func H3_SET_RESERVED_BITS(h3 *H3Index, v int) {
 	*h3 = (*h3 & H3_RESERVED_MASK_NEGATIVE) | (H3Index(v) << H3_RESERVED_OFFSET)
+}
+
+// h3GetResolution returns the H3 resolution of an H3 index.
+// `h`: The H3 index.
+// Returns the resolution of the H3 index argument.
+func h3GetResolution(h H3Index) int { return H3_GET_RESOLUTION(h) }
+
+// h3GetBaseCell returns the H3 base cell number of an H3 index.
+// `h`: The H3 index.
+// Returns the base cell of the H3 index argument.
+func h3GetBaseCell(h H3Index) int { return H3_GET_BASE_CELL(h) }
+
+// h3IsValid returns whether or not an H3 index is valid.
+// `h`: The H3 index to validate.
+// Return true if the H3 index if valid, and false if it is not.
+func h3IsValid(h H3Index) bool {
+	if H3_GET_MODE(h) != H3_HEXAGON_MODE {
+		return false
+	}
+
+	baseCell := H3_GET_BASE_CELL(h)
+	if baseCell < 0 || baseCell >= NUM_BASE_CELLS {
+		return false
+	}
+
+	res := H3_GET_RESOLUTION(h)
+	if res < 0 || res > MAX_H3_RES {
+		return false
+	}
+
+	foundFirstNonZeroDigit := false
+	for r := 1; r <= res; r++ {
+		digit := H3_GET_INDEX_DIGIT(h, r)
+
+		if !foundFirstNonZeroDigit && digit != CENTER_DIGIT {
+			foundFirstNonZeroDigit = true
+			if _isBaseCellPentagon(baseCell) && digit == K_AXES_DIGIT {
+				return false
+			}
+		}
+
+		if digit < CENTER_DIGIT || digit >= NUM_DIGITS {
+			return false
+		}
+	}
+
+	for r := res + 1; r <= MAX_H3_RES; r++ {
+		digit := H3_GET_INDEX_DIGIT(h, r)
+		if digit != INVALID_DIGIT {
+			return false
+		}
+	}
+
+	return true
+}
+
+// setH3Index initializes an H3 index.
+// `hp`: The H3 index to initialize.
+// `res`: The H3 resolution to initialize the index to.
+// `baseCell`: The H3 base cell to initialize the index to.
+// `initDigit`: The H3 digit (0-7) to initialize all of the index digits to.
+func setH3Index(hp *H3Index, res int, baseCell int, initDigit Direction) {
+	h := H3_INIT
+	H3_SET_MODE(&h, H3_HEXAGON_MODE)
+	H3_SET_RESOLUTION(&h, res)
+	H3_SET_BASE_CELL(&h, baseCell)
+	for r := 1; r <= res; r++ {
+		H3_SET_INDEX_DIGIT(&h, r, initDigit)
+	}
+	*hp = h
+}
+
+// h3ToParent produces the parent index for a given H3 index
+//
+// `h`: H3Index to find parent of
+// `parentRes`: The resolution to switch to (parent, grandparent, etc)
+//
+// Returns H3Index of the parent, or 0 if you actually asked for a child
+func h3ToParent(h H3Index, parentRes int) H3Index {
+	childRes := H3_GET_RESOLUTION(h)
+	if parentRes > childRes {
+		return H3_INVALID_INDEX
+	} else if parentRes == childRes {
+		return h
+	} else if parentRes < 0 || parentRes > MAX_H3_RES {
+		return H3_INVALID_INDEX
+	}
+	H3_SET_RESOLUTION(&h, parentRes)
+	parentH := h
+	for i := parentRes + 1; i <= childRes; i++ {
+		H3_SET_INDEX_DIGIT(&parentH, i, H3_DIGIT_MASK)
+	}
+	return parentH
+}
+
+// _isValidChildRes Determines whether one resolution is a valid child resolution of another.
+// Each resolution is considered a valid child resolution of itself.
+//
+// `parentRes`: int resolution of the parent.
+// `childRes`: int resolution of the child.
+//
+// Returns the validity of the child resolution.
+func _isValidChildRes(parentRes int, childRes int) bool {
+	if childRes < parentRes || childRes > MAX_H3_RES {
+		return false
+	}
+	return true
+}
+
+// maxH3ToChildrenSize returns the maximum number of children possible for a
+// given child level.
+//
+// `h`: H3Index to find the number of children of.
+// `childRes`: The resolution of the child level you're interested in.
+//
+// Returns int count of maximum number of children (equal for hexagons, less for
+// pentagons.
+func maxH3ToChildrenSize(h H3Index, childRes int) int {
+	parentRes := H3_GET_RESOLUTION(h)
+	if !_isValidChildRes(parentRes, childRes) {
+		return 0
+	}
+	return _ipow(7, childRes-parentRes) // TODO: is int32 enough for this?
+}
+
+// makeDirectChild takes an index and immediately returns the immediate child
+// index based on the specified cell number. Bit operations only, could generate
+// invalid indexes if not careful (deleted cell under a pentagon).
+//
+// `h`: H3Index to find the direct child of.
+// `cellNumber`: int id of the direct child (0-6).
+//
+// Returns the new H3Index for the child.
+func makeDirectChild(h H3Index, cellNumber Direction) H3Index {
+	childRes := H3_GET_RESOLUTION(h) + 1
+	H3_SET_RESOLUTION(&h, childRes)
+	childH := h
+	H3_SET_INDEX_DIGIT(&childH, childRes, cellNumber)
+	return childH
+}
+
+// h3ToChildren takes the given hexagon id and generates all of the children
+// at the specified resolution storing them into the provided memory pointer.
+// It's assumed that maxH3ToChildrenSize was used to determine the allocation.
+//
+// `h`: H3Index to find the children of
+// `childRes`: int the child level to produce
+// `children`: slice to store the resulting addresses in
+// Returns slice with generated children.
+func h3ToChildren(h H3Index, childRes int, children []H3Index) []H3Index {
+	parentRes := H3_GET_RESOLUTION(h)
+	if !_isValidChildRes(parentRes, childRes) {
+		return children
+	} else if parentRes == childRes {
+		return append(children, h)
+	}
+	bufferSize := maxH3ToChildrenSize(h, childRes)
+	bufferChildStep := bufferSize / 7
+	isAPentagon := h3IsPentagon(h)
+	for i := Direction(0); i < 7; i++ {
+		if isAPentagon && i == K_AXES_DIGIT {
+			// TODO: do we really need to fill H3_INVALID_INDEX values?
+			children = append(children, make([]H3Index, bufferChildStep)...)
+		} else {
+			children = h3ToChildren(makeDirectChild(h, i), childRes, children)
+		}
+	}
+	return children
+}
+
+// h3ToCenterChild produces the center child index for a given H3 index at
+// the specified resolution.
+//
+// `h`: H3Index to find center child of.
+// `childRes`: The resolution to switch to.
+//
+// Returns H3Index of the center child, or H3_INVALID_INDEX if you actually asked for a parent.
+func h3ToCenterChild(h H3Index, childRes int) H3Index {
+	parentRes := H3_GET_RESOLUTION(h)
+	if !_isValidChildRes(parentRes, childRes) {
+		return H3_INVALID_INDEX
+	} else if childRes == parentRes {
+		return h
+	}
+	H3_SET_RESOLUTION(&h, childRes)
+	child := h
+	for i := parentRes + 1; i <= childRes; i++ {
+		H3_SET_INDEX_DIGIT(&child, i, CENTER_DIGIT)
+	}
+	return child
+}
+
+// h3IsResClassIII takes a hexagon ID and determines if it is in a
+// Class III resolution (rotated versus the icosahedron and subject
+// to shape distortion adding extra points on icosahedron edges, making
+// them not true hexagons).
+// `h`: The H3Index to check.
+// Returns true if the hexagon is class III, otherwise false.
+func h3IsResClassIII(h H3Index) bool { return H3_GET_RESOLUTION(h)%2 == 1 }
+
+// h3IsPentagon takes an H3Index and determines if it is actually a pentagon.
+// `h`: The H3Index to check.
+// Returns true if it is a pentagon, otherwise false.
+func h3IsPentagon(h H3Index) bool {
+	return _isBaseCellPentagon(H3_GET_BASE_CELL(h)) &&
+		_h3LeadingNonZeroDigit(h) == CENTER_DIGIT
+}
+
+// _h3LeadingNonZeroDigit returns the highest resolution non-zero digit in an H3Index.
+// `h`: The H3Index.
+// Return the highest resolution non-zero digit in the H3Index.
+func _h3LeadingNonZeroDigit(h H3Index) Direction {
+	for r := 1; r <= H3_GET_RESOLUTION(h); r++ {
+		if digit := H3_GET_INDEX_DIGIT(h, r); digit != CENTER_DIGIT {
+			return digit
+		}
+	}
+
+	// if we're here it's all 0's
+	return CENTER_DIGIT
 }
 
 // geoToH3 encodes a coordinate on the sphere to the H3 index of the containing cell at
