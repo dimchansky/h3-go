@@ -1,6 +1,6 @@
 module github.com/dimchansky/h3-go
 
-go 1.12
+go 1.13
 
 require (
 	golang.org/x/lint v0.0.0-20190930215403-16217165b5de // indirect

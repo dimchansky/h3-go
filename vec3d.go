@@ -26,7 +26,7 @@ func _pointSquareDist(v1 *Vec3d, v2 *Vec3d) float64 {
 //
 // `geo`: The latitude and longitude of the point.
 // `v`: The 3D coordinate of the point.
-func _geoToVec3d(geo GeoCoord, v *Vec3d) {
+func _geoToVec3d(geo *GeoCoord, v *Vec3d) {
 	r := math.Cos(geo.lat)
 
 	v.z = math.Sin(geo.lat)

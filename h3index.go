@@ -196,3 +196,9 @@ func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
 
 	panic("not implemented")
 }
+
+// isResClassIII returns whether or not a resolution is a Class III grid. Note that odd
+// resolutions are Class III and even resolutions are Class II.
+// `res`: The H3 resolution.
+// Returns true if the resolution is a Class III grid, and false if the resolution is a Class II grid.
+func isResClassIII(res int) bool { return res%2 == 1 }
