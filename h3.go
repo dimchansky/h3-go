@@ -3,7 +3,7 @@ package h3
 //lint:file-ignore U1000 Ignore all unused code
 
 // Index fits within a 64-bit unsigned integer.
-type Index = uint64
+type Index uint64
 
 const (
 	// MAX_CELL_BNDRY_VERTS is a maximum number of cell boundary vertices; worst case is pentagon:
@@ -28,4 +28,11 @@ type GeoPolygon struct {
 
 	// holes is a slice of interior boundary (holes) in the polygon
 	holes [][]GeoCoord
+}
+
+// CoordIJ holds IJ hexagon coordinates.
+// Each axis is spaced 120 degrees apart.
+type CoordIJ struct {
+	i int // i component
+	j int // j component
 }
