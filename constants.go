@@ -1,5 +1,7 @@
 package h3
 
+type H3Mode int
+
 const (
 	M_PI      = 3.14159265358979323846                       // pi
 	M_PI_2    = 1.5707963267948966                           // pi / 2.0
@@ -34,6 +36,6 @@ const (
 
 	// H3 index modes
 
-	H3_HEXAGON_MODE = 1
-	H3_UNIEDGE_MODE = 2
+	H3_HEXAGON_MODE H3Mode = 1
+	H3_UNIEDGE_MODE H3Mode = 2
 )
