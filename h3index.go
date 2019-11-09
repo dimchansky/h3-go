@@ -418,6 +418,22 @@ func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
 	panic("not implemented")
 }
 
+// getPentagonIndexes generates all pentagons at the specified resolution
+//
+// res: The resolution to produce pentagons at.
+// out: Output slice. Should be of capacity pentagonIndexCount().
+// Returns slice with all pentagons added to `out`.
+func getPentagonIndexes(res int, out []H3Index) []H3Index {
+	for bc := 0; bc < NUM_BASE_CELLS; bc++ {
+		if _isBaseCellPentagon(bc) {
+			var pentagon H3Index
+			setH3Index(&pentagon, res, bc, CENTER_DIGIT)
+			out = append(out, pentagon)
+		}
+	}
+	return out
+}
+
 // isResClassIII returns whether or not a resolution is a Class III grid. Note that odd
 // resolutions are Class III and even resolutions are Class II.
 // `res`: The H3 resolution.
