@@ -530,3 +530,20 @@ func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate 
 
 	return overage
 }
+
+// _adjustPentVertOverage adjusts a FaceIJK address for a pentagon vertex in a substrate grid in
+// place so that the resulting cell address is relative to the correct
+// icosahedral face.
+//
+// `fijk`: The FaceIJK address of the cell.
+// `res`: The H3 resolution of the cell.
+func _adjustPentVertOverage(fijk *FaceIJK, res int) Overage {
+	var overage Overage
+	for {
+		overage = _adjustOverageClassII(fijk, res, false, true)
+		if overage != NEW_FACE {
+			break
+		}
+	}
+	return overage
+}
