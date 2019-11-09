@@ -418,6 +418,11 @@ func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
 	panic("not implemented")
 }
 
+// pentagonIndexCount returns the number of pentagons (same at any resolution).
+//
+// Returns int count of pentagon indexes.
+func pentagonIndexCount() int { return NUM_PENTAGONS }
+
 // getPentagonIndexes generates all pentagons at the specified resolution
 //
 // res: The resolution to produce pentagons at.
