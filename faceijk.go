@@ -538,12 +538,9 @@ func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate 
 // `fijk`: The FaceIJK address of the cell.
 // `res`: The H3 resolution of the cell.
 func _adjustPentVertOverage(fijk *FaceIJK, res int) Overage {
-	var overage Overage
 	for {
-		overage = _adjustOverageClassII(fijk, res, false, true)
-		if overage != NEW_FACE {
-			break
+		if overage := _adjustOverageClassII(fijk, res, false, true); overage != NEW_FACE {
+			return overage
 		}
 	}
-	return overage
 }
