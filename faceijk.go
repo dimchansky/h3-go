@@ -452,3 +452,81 @@ func _faceIjkToGeo(h *FaceIJK, res int, g *GeoCoord) {
 	_ijkToHex2d(&h.coord, &v)
 	_hex2dToGeo(&v, h.face, res, false, g)
 }
+
+// _adjustOverageClassII adjusts a FaceIJK address in place so that the resulting cell address is
+// relative to the correct icosahedral face.
+//
+// `fijk`: The FaceIJK address of the cell.
+// `res`: The H3 resolution of the cell.
+// `pentLeading4`: Whether or not the cell is a pentagon with a leading digit 4.
+// `substrate`: Whether or not the cell is in a substrate grid.
+// Returns `NO_OVERAGE` if on original face (no overage);
+// `FACE_EDGE` if on face edge (only occurs on substrate grids);
+// `NEW_FACE` if overage on new face interior.
+func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate bool) Overage {
+	overage := NO_OVERAGE
+
+	ijk := &fijk.coord
+
+	// get the maximum dimension value scale if a substrate grid
+	maxDim := maxDimByCIIres[res]
+	if substrate {
+		maxDim *= 3
+	}
+
+	// check for overage
+	if substrate && ijk.i+ijk.j+ijk.k == maxDim { // on edge
+		overage = FACE_EDGE
+	} else if ijk.i+ijk.j+ijk.k > maxDim { // overage
+
+		overage = NEW_FACE
+
+		var fijkOrient *FaceOrientIJK
+		if ijk.k > 0 {
+			if ijk.j > 0 { // jk "quadrant"
+				fijkOrient = &faceNeighbors[fijk.face][JK]
+			} else { // ik "quadrant"
+
+				fijkOrient = &faceNeighbors[fijk.face][KI]
+
+				// adjust for the pentagonal missing sequence
+				if pentLeading4 {
+					// translate origin to center of pentagon
+					var origin CoordIJK
+					_setIJK(&origin, maxDim, 0, 0)
+					var tmp CoordIJK
+					_ijkSub(ijk, &origin, &tmp)
+					// rotate to adjust for the missing sequence
+					_ijkRotate60cw(&tmp)
+					// translate the origin back to the center of the triangle
+					_ijkAdd(&tmp, &origin, ijk)
+				}
+			}
+		} else { // ij "quadrant"
+			fijkOrient = &faceNeighbors[fijk.face][IJ]
+		}
+
+		fijk.face = fijkOrient.face
+
+		// rotate and translate for adjacent face
+		for i := 0; i < fijkOrient.ccwRot60; i++ {
+			_ijkRotate60ccw(ijk)
+		}
+
+		var transVec = fijkOrient.translate
+		var unitScale = unitScaleByCIIres[res]
+		if substrate {
+			unitScale *= 3
+		}
+		_ijkScale(&transVec, unitScale)
+		_ijkAdd(ijk, &transVec, ijk)
+		_ijkNormalize(ijk)
+
+		// overage points on pentagon boundaries can end up on edges
+		if substrate && ijk.i+ijk.j+ijk.k == maxDim { // on edge
+			overage = FACE_EDGE
+		}
+	}
+
+	return overage
+}
