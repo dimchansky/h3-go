@@ -865,23 +865,17 @@ func _getBaseCellDirection(originBaseCell int, neighboringBaseCell int) Directio
 // res0IndexCount returns the number of resolution 0 indexes. returns int count of resolution 0 indexes.
 func res0IndexCount() int { return NUM_BASE_CELLS }
 
-// getRes0Indexes generates all base cells
-func getRes0Indexes() []H3Index {
-	var out [NUM_BASE_CELLS]H3Index
-	return _getRes0Indexes(&out)
-}
-
-// _getRes0Indexes generates all base cells storing them into the provided
-// memory pointer. Buffer must be of size NUM_BASE_CELLS * sizeof(H3Index).
-// `out`: the array to store the resulting base cells in
+// getRes0Indexes generates all base cells storing them into the provided
+// slice. Slice should be of capacity NUM_BASE_CELLS.
+// `out`: the slice to store the resulting base cells in.
 // Returns slice with generated base cells.
-func _getRes0Indexes(out *[NUM_BASE_CELLS]H3Index) []H3Index {
+func getRes0Indexes(out []H3Index) []H3Index {
 	// filling slice
 	for bc := 0; bc < NUM_BASE_CELLS; bc++ {
 		baseCell := H3_INIT
 		H3_SET_MODE(&baseCell, H3_HEXAGON_MODE)
 		H3_SET_BASE_CELL(&baseCell, bc)
-		out[bc] = baseCell
+		out = append(out, baseCell)
 	}
-	return out[:]
+	return out
 }
