@@ -513,8 +513,8 @@ func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate 
 			_ijkRotate60ccw(ijk)
 		}
 
-		var transVec = fijkOrient.translate
-		var unitScale = unitScaleByCIIres[res]
+		transVec := fijkOrient.translate
+		unitScale := unitScaleByCIIres[res]
 		if substrate {
 			unitScale *= 3
 		}
