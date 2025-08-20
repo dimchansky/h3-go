@@ -63,3 +63,8 @@ IsValidCell function:
         }
 ```
 ---
+Continue.
+I suggest checking the structures you copy from C code by printing the structure from C code
+(you can temporarily create code that will do this) and printing the structure from Go and comparing the results.
+Similarly, you can check what result should be returned for specific parameters in C code.
+---

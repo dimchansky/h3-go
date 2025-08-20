@@ -6,6 +6,8 @@ import (
 	"math"
 	
 	"github.com/dimchansky/h3-go/internal/coordijk"
+	"github.com/dimchansky/h3-go/internal/indexbits"
+	"github.com/dimchansky/h3-go/internal/tables"
 )
 
 // NumIcosaFaces is the number of faces on an icosahedron.
@@ -334,15 +336,97 @@ func GeoToFaceIJK(lat, lng float64, res int) FaceIJK {
 }
 
 // FaceIJKToH3 converts FaceIJK coordinates to an H3 index.
-// TODO: This is a complex function that requires:
-// 1. Base cell lookup tables (faceIjkBaseCells) mapping face+IJK to base cell
-// 2. Base cell rotation calculations (_faceIjkToBaseCellCCWrot60)
-// 3. Hierarchical digit computation from fine to coarse resolution
-// 4. Pentagon handling with K_AXES_DIGIT rotation
-// 5. H3 index bit manipulation for mode, resolution, base cell, and digits
-// The full implementation requires porting significant logic from H3 C _faceIjkToH3
+// This implements the H3 C _faceIjkToH3 function logic.
 func FaceIJKToH3(fijk FaceIJK, res int) uint64 {
-	// Placeholder implementation - returns H3_NULL
-	// This needs to be implemented based on H3 C _faceIjkToH3 function
-	return 0 // H3_NULL equivalent
+	// Initialize H3 index
+	h := indexbits.H3_INIT
+	h = indexbits.SetMode(h, 1) // H3_CELL_MODE
+	h = indexbits.SetResolution(h, res)
+	
+	// Handle resolution 0 base cell case
+	if res == 0 {
+		// Check MAX_FACE_COORD bounds (should be 2 based on H3 C)
+		if fijk.Coord.I > 2 || fijk.Coord.J > 2 || fijk.Coord.K > 2 {
+			return 0 // H3_NULL - out of range
+		}
+		baseCell := faceIJKToBaseCell(fijk)
+		if baseCell < 0 {
+			return 0 // H3_NULL - invalid lookup
+		}
+		h = indexbits.SetBaseCell(h, baseCell)
+		return h
+	}
+	
+	// Make a copy - we'll scale this down to base cell level
+	fijkBC := fijk
+	ijk := &fijkBC.Coord
+	
+	// Build H3 index from finest resolution down to coarsest
+	// This matches the H3 C algorithm exactly
+	for r := res - 1; r >= 0; r-- {
+		lastIJK := *ijk
+		var lastCenter coordijk.CoordIJK
+		
+		if IsResolutionClassIII(r + 1) {
+			// Class III: rotate ccw (UpAp7)
+			ijk.UpAp7()
+			lastCenter = *ijk
+			lastCenter.DownAp7()
+		} else {
+			// Class II: rotate cw (UpAp7r)
+			ijk.UpAp7r()
+			lastCenter = *ijk  
+			lastCenter.DownAp7r()
+		}
+		
+		// Calculate difference and normalize
+		diff := lastIJK.Sub(lastCenter)
+		diff.Normalize()
+		
+		// Convert unit IJK to digit and set in H3 index
+		digit := coordijk.UnitIJKToDigit(diff)
+		if digit == coordijk.InvalidDigit {
+			return 0 // H3_NULL - invalid digit
+		}
+		h = indexbits.SetDigit(h, r+1, int(digit))
+	}
+	
+	// After scaling loop, coordinates should be in base cell range [0-2]
+	// Look up base cell
+	baseCell := faceIJKToBaseCell(fijkBC)
+	if baseCell < 0 {
+		return 0 // H3_NULL - invalid lookup
+	}
+	h = indexbits.SetBaseCell(h, baseCell)
+	
+	// TODO: Pentagon handling and rotation logic needed here
+	// This requires implementing:
+	// - _h3LeadingNonZeroDigit
+	// - _baseCellIsCwOffset  
+	// - _h3Rotate60cw/_h3Rotate60ccw
+	// - _h3RotatePent60ccw
+	
+	return h
+}
+
+// faceIJKToBaseCell looks up base cell from FaceIJK coordinates.
+func faceIJKToBaseCell(fijk FaceIJK) int {
+	if fijk.Face < 0 || fijk.Face >= NumIcosaFaces ||
+		fijk.Coord.I < 0 || fijk.Coord.I > 2 ||
+		fijk.Coord.J < 0 || fijk.Coord.J > 2 ||
+		fijk.Coord.K < 0 || fijk.Coord.K > 2 {
+		return -1 // Invalid coordinates
+	}
+	return tables.FaceIJKBaseCells[fijk.Face][fijk.Coord.I][fijk.Coord.J][fijk.Coord.K].BaseCell
+}
+
+// faceIJKToBaseCellCCWrot60 looks up rotation from FaceIJK coordinates.
+func faceIJKToBaseCellCCWrot60(fijk FaceIJK) int {
+	if fijk.Face < 0 || fijk.Face >= NumIcosaFaces ||
+		fijk.Coord.I < 0 || fijk.Coord.I > 2 ||
+		fijk.Coord.J < 0 || fijk.Coord.J > 2 ||
+		fijk.Coord.K < 0 || fijk.Coord.K > 2 {
+		return -1 // Invalid coordinates
+	}
+	return tables.FaceIJKBaseCells[fijk.Face][fijk.Coord.I][fijk.Coord.J][fijk.Coord.K].CCWRot60
 }

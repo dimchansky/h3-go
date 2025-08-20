@@ -3,6 +3,8 @@
 package h3
 
 import (
+	"github.com/dimchansky/h3-go/internal/angles"
+	"github.com/dimchansky/h3-go/internal/faceijk"
 	"github.com/dimchansky/h3-go/internal/indexbits"
 	"github.com/dimchansky/h3-go/internal/tables"
 )
@@ -230,12 +232,21 @@ func LatLngToCell(p LatLng, res int) (Cell, error) {
 		return 0, err
 	}
 	
-	// TODO: Complete implementation - currently returns error because
-	// FaceIJKToH3 conversion is not yet implemented. This requires:
-	// 1. Converting lat/lng degrees to radians
-	// 2. GeoToFaceIJK conversion (implemented)
-	// 3. FaceIJKToH3 conversion (needs implementation)
-	return 0, ErrOptionInvalid
+	// Convert degrees to radians
+	lat := angles.DegreesToRadians(p.Lat)
+	lng := angles.DegreesToRadians(p.Lng)
+	
+	// Convert geographic coordinates to FaceIJK
+	fijk := faceijk.GeoToFaceIJK(lat, lng, res)
+	
+	// Convert FaceIJK to H3 index
+	h3Index := faceijk.FaceIJKToH3(fijk, res)
+	
+	if h3Index == 0 {
+		return 0, ErrFailed // H3_NULL indicates conversion failure
+	}
+	
+	return Cell(h3Index), nil
 }
 
 // MaxKRingSize returns the maximum number of cells in a k-ring.

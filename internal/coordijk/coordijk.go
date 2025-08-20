@@ -88,17 +88,38 @@ func (c CoordIJK) Scale(factor int) CoordIJK {
 // Normalize normalizes the IJK coordinates so that i+j+k=0.
 // In the IJK coordinate system, valid coordinates always sum to 0.
 func (c *CoordIJK) Normalize() {
-	// If i+j+k != 0, we need to normalize
-	// Find the coordinate with minimum absolute value and adjust it
-	sum := c.I + c.J + c.K
-	if sum != 0 {
-		if abs(c.I) <= abs(c.J) && abs(c.I) <= abs(c.K) {
-			c.I -= sum
-		} else if abs(c.J) <= abs(c.K) {
-			c.J -= sum
-		} else {
-			c.K -= sum
-		}
+	// Exactly match H3 C _ijkNormalize algorithm
+	// Step 1: Remove any negative values
+	if c.I < 0 {
+		c.J -= c.I
+		c.K -= c.I
+		c.I = 0
+	}
+
+	if c.J < 0 {
+		c.I -= c.J
+		c.K -= c.J
+		c.J = 0
+	}
+
+	if c.K < 0 {
+		c.I -= c.K
+		c.J -= c.K
+		c.K = 0
+	}
+
+	// Step 2: Remove the min value if needed
+	min := c.I
+	if c.J < min {
+		min = c.J
+	}
+	if c.K < min {
+		min = c.K
+	}
+	if min > 0 {
+		c.I -= min
+		c.J -= min
+		c.K -= min
 	}
 }
 

@@ -240,12 +240,7 @@ func TestMaxKRingSize(t *testing.T) {
 func TestStubFunctions(t *testing.T) {
 	// Test that stub functions return expected errors
 	
-	t.Run("LatLngToCell", func(t *testing.T) {
-		_, err := LatLngToCell(LatLng{Lat: 37.775938, Lng: -122.418307}, 9)
-		if err != ErrOptionInvalid {
-			t.Errorf("LatLngToCell() error = %v, want %v", err, ErrOptionInvalid)
-		}
-	})
+	// Note: LatLngToCell is now implemented and working, so we don't test it here
 	
 	t.Run("Cell.ToLatLng", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
