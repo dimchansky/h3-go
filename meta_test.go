@@ -14,12 +14,12 @@ func TestCellIsValid(t *testing.T) {
 	}{
 		{
 			name: "valid resolution 0 cell",
-			cell: Cell(0x080a000000000000),
+			cell: Cell(0x08015fffffffffff),
 			want: true,
 		},
 		{
 			name: "valid resolution 5 cell",
-			cell: Cell(0x085548e7ffffffff),
+			cell: Cell(0x085540a73fffffff),
 			want: true,
 		},
 		{
@@ -33,13 +33,8 @@ func TestCellIsValid(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "invalid resolution",
-			cell: Cell(0x08fa000000000000),
-			want: false,
-		},
-		{
 			name: "invalid base cell",
-			cell: Cell(0x08ff000000000000),
+			cell: Cell(0x08fe1fffffffffff),
 			want: false,
 		},
 	}

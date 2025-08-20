@@ -21,7 +21,7 @@ func TestIndexPack(t *testing.T) {
 			res:      0,
 			baseCell: 10,
 			digits:   []int{},
-			want:     0x080a000000000000, // mode=1, res=0, baseCell=10, all digits=7
+			want:     0x08015fffffffffff, // mode=1, res=0, baseCell=10, all digits=7
 		},
 		{
 			name:     "resolution 1 cell",
@@ -29,7 +29,7 @@ func TestIndexPack(t *testing.T) {
 			res:      1,
 			baseCell: 20,
 			digits:   []int{3},
-			want:     0x0814dfffffffffff, // mode=1, res=1, baseCell=20, digit[0]=3, rest=7
+			want:     0x08128fffffffffff, // mode=1, res=1, baseCell=20, digit[0]=3, rest=7
 		},
 		{
 			name:     "resolution 5 cell",
@@ -37,7 +37,7 @@ func TestIndexPack(t *testing.T) {
 			res:      5,
 			baseCell: 42,
 			digits:   []int{0, 1, 2, 3, 4},
-			want:     0x085548e7ffffffff, // mode=1, res=5, baseCell=42, digits[0-4]=0,1,2,3,4, rest=7
+			want:     0x085540a73fffffff, // mode=1, res=5, baseCell=42, digits[0-4]=0,1,2,3,4, rest=7
 		},
 	}
 	
@@ -62,7 +62,7 @@ func TestIndexUnpack(t *testing.T) {
 	}{
 		{
 			name:         "resolution 0 cell",
-			h:            0x080a000000000000,
+			h:            0x08015fffffffffff,
 			wantMode:     1,
 			wantRes:      0,
 			wantBaseCell: 10,
@@ -70,7 +70,7 @@ func TestIndexUnpack(t *testing.T) {
 		},
 		{
 			name:         "resolution 1 cell",
-			h:            0x0814dfffffffffff,
+			h:            0x08128fffffffffff,
 			wantMode:     1,
 			wantRes:      1,
 			wantBaseCell: 20,
@@ -78,7 +78,7 @@ func TestIndexUnpack(t *testing.T) {
 		},
 		{
 			name:         "resolution 5 cell",
-			h:            0x085548e7ffffffff,
+			h:            0x085540a73fffffff,
 			wantMode:     1,
 			wantRes:      5,
 			wantBaseCell: 42,
@@ -120,12 +120,12 @@ func TestIsValidCell(t *testing.T) {
 	}{
 		{
 			name: "valid resolution 0 cell",
-			h:    0x080a000000000000,
+			h:    0x08015fffffffffff,
 			want: true,
 		},
 		{
 			name: "valid resolution 5 cell",
-			h:    0x085548e7ffffffff,
+			h:    0x085540a73fffffff,
 			want: true,
 		},
 		{
@@ -144,13 +144,8 @@ func TestIsValidCell(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "resolution too high",
-			h:    0x08fa000000000000, // res=16 (>15)
-			want: false,
-		},
-		{
-			name: "base cell too high",
-			h:    0x08ff000000000000, // baseCell=127 (>121)
+			name: "base cell too high", 
+			h:    0x08fe1fffffffffff, // mode=1, res=0, baseCell=127 > 121
 			want: false,
 		},
 		{
@@ -217,23 +212,23 @@ func TestGetSetBaseCell(t *testing.T) {
 func TestGetSetDigit(t *testing.T) {
 	h := uint64(0)
 	
-	// Set different digits at different positions
-	for pos := 0; pos < 15; pos++ {
+	// Set different digits at different resolutions (1-15)
+	for res := 1; res <= 15; res++ {
 		for digit := 0; digit <= 7; digit++ {
-			h = indexbits.SetDigit(h, pos, digit)
-			if got := indexbits.GetDigit(h, pos); got != digit {
+			h = indexbits.SetDigit(h, res, digit)
+			if got := indexbits.GetDigit(h, res); got != digit {
 				t.Errorf("GetDigit(%d) after SetDigit(%d, %d) = %d, want %d", 
-					pos, pos, digit, got, digit)
+					res, res, digit, got, digit)
 			}
 		}
 	}
 	
 	// Test out of bounds
-	if got := indexbits.GetDigit(h, -1); got != indexbits.InvalidDigit {
-		t.Errorf("GetDigit(-1) = %d, want %d", got, indexbits.InvalidDigit)
+	if got := indexbits.GetDigit(h, 0); got != indexbits.InvalidDigit {
+		t.Errorf("GetDigit(0) = %d, want %d", got, indexbits.InvalidDigit)
 	}
-	if got := indexbits.GetDigit(h, 15); got != indexbits.InvalidDigit {
-		t.Errorf("GetDigit(15) = %d, want %d", got, indexbits.InvalidDigit)
+	if got := indexbits.GetDigit(h, 16); got != indexbits.InvalidDigit {
+		t.Errorf("GetDigit(16) = %d, want %d", got, indexbits.InvalidDigit)
 	}
 }
 

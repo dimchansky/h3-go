@@ -2,30 +2,30 @@
 // H3 indices encode resolution, base cell, and up to 15 directional digits in a uint64.
 package indexbits
 
-// H3 index bit layout constants
+// H3 index bit layout constants (from H3 C v4.3.0)
 const (
-	// Mode bits (3 bits at positions 59-61)
+	// Mode bits (4 bits at positions 59-62)
 	ModeBitOffset = 59
-	ModeBitMask   = uint64(0x7) << ModeBitOffset
+	ModeBitMask   = uint64(0xF) << ModeBitOffset
 	ModeHexagon   = uint64(1) << ModeBitOffset
 
-	// Reserved bits (4 bits at positions 55-58)
-	ReservedBitOffset = 55
-	ReservedBitMask   = uint64(0xF) << ReservedBitOffset
+	// Reserved bits (3 bits at positions 56-58)
+	ReservedBitOffset = 56
+	ReservedBitMask   = uint64(0x7) << ReservedBitOffset
 
-	// Resolution bits (4 bits at positions 51-54)
-	ResolutionBitOffset = 51
+	// Resolution bits (4 bits at positions 52-55)
+	ResolutionBitOffset = 52
 	ResolutionBitMask   = uint64(0xF) << ResolutionBitOffset
 
-	// Base cell bits (7 bits at positions 44-50)
-	BaseCellBitOffset = 44
+	// Base cell bits (7 bits at positions 45-51)
+	BaseCellBitOffset = 45
 	BaseCellBitMask   = uint64(0x7F) << BaseCellBitOffset
 
 	// 15 directional digits (3 bits each from positions 0-44)
-	DirectionBitOffset = 0
-	DirectionBitMask   = uint64(0x7)
-	NumDigits          = 15
-	DigitBits          = 3
+	DirectionBitMask = uint64(0x7)
+	NumDigits        = 15
+	DigitBits        = 3
+	MaxH3Resolution  = 15
 
 	// Invalid digit marker
 	InvalidDigit = 7
@@ -65,40 +65,41 @@ func SetBaseCell(h uint64, baseCell int) uint64 {
 	return (h &^ BaseCellBitMask) | (uint64(baseCell&0x7F) << BaseCellBitOffset)
 }
 
-// GetDigit extracts a directional digit at a given position (0-14).
-func GetDigit(h uint64, position int) int {
-	if position < 0 || position >= NumDigits {
+// GetDigit extracts a directional digit at a given resolution (1-15).
+// This follows H3 C implementation where digits are 1-indexed by resolution.
+func GetDigit(h uint64, resolution int) int {
+	if resolution < 1 || resolution > MaxH3Resolution {
 		return InvalidDigit
 	}
-	offset := (NumDigits - 1 - position) * DigitBits
+	offset := (MaxH3Resolution - resolution) * DigitBits
 	return int((h >> offset) & DirectionBitMask)
 }
 
-// SetDigit sets a directional digit at a given position (0-14).
-func SetDigit(h uint64, position int, digit int) uint64 {
-	if position < 0 || position >= NumDigits {
+// SetDigit sets a directional digit at a given resolution (1-15).
+// This follows H3 C implementation where digits are 1-indexed by resolution.
+func SetDigit(h uint64, resolution int, digit int) uint64 {
+	if resolution < 1 || resolution > MaxH3Resolution {
 		return h
 	}
-	offset := (NumDigits - 1 - position) * DigitBits
+	offset := (MaxH3Resolution - resolution) * DigitBits
 	mask := DirectionBitMask << offset
 	return (h &^ mask) | (uint64(digit&0x7) << offset)
 }
 
+// H3_INIT equivalent - all digits set to 7 (invalid)
+const H3_INIT = uint64(0x00001fffffffffff)
+
 // Pack creates an H3 index from components.
 func Pack(mode uint64, res int, baseCell int, digits []int) uint64 {
-	h := uint64(0)
+	// Start with H3_INIT (all digits = 7, mode = 0)
+	h := H3_INIT
 	h = SetMode(h, mode)
 	h = SetResolution(h, res)
 	h = SetBaseCell(h, baseCell)
 	
-	// Set directional digits
-	for i := 0; i < len(digits) && i < NumDigits; i++ {
-		h = SetDigit(h, i, digits[i])
-	}
-	
-	// Fill remaining with invalid digits
-	for i := len(digits); i < NumDigits; i++ {
-		h = SetDigit(h, i, InvalidDigit)
+	// Set directional digits from resolution 1 to res
+	for i := 0; i < len(digits) && i < res; i++ {
+		h = SetDigit(h, i+1, digits[i])
 	}
 	
 	return h
@@ -110,9 +111,9 @@ func Unpack(h uint64) (mode uint64, res int, baseCell int, digits []int) {
 	res = GetResolution(h)
 	baseCell = GetBaseCell(h)
 	
-	digits = make([]int, NumDigits)
-	for i := 0; i < NumDigits; i++ {
-		digits[i] = GetDigit(h, i)
+	digits = make([]int, MaxH3Resolution)
+	for r := 1; r <= MaxH3Resolution; r++ {
+		digits[r-1] = GetDigit(h, r)
 	}
 	
 	return
@@ -142,16 +143,16 @@ func IsValidCell(h uint64) bool {
 		return false
 	}
 	
-	// Check that digits after resolution are all invalid (7)
-	for i := res; i < NumDigits; i++ {
-		if GetDigit(h, i) != InvalidDigit {
+	// Check that digits beyond resolution are all invalid (7)
+	for r := res + 1; r <= MaxH3Resolution; r++ {
+		if GetDigit(h, r) != InvalidDigit {
 			return false
 		}
 	}
 	
-	// Check that digits before resolution are valid (0-6)
-	for i := 0; i < res; i++ {
-		digit := GetDigit(h, i)
+	// Check that digits from resolution 1 to res are valid (0-6)
+	for r := 1; r <= res; r++ {
+		digit := GetDigit(h, r)
 		if digit < 0 || digit > 6 {
 			return false
 		}

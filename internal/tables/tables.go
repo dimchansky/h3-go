@@ -8,13 +8,15 @@ type BaseCellData struct {
 	// Face is the icosahedron face this base cell belongs to (0-19).
 	Face int
 	
-	// IsPentagon indicates if this base cell is a pentagon.
-	IsPentagon bool
-	
 	// IJK0 is the canonical IJK coordinates on the face.
 	IJK0 [3]int
 	
+	// IsPentagon indicates if this base cell is a pentagon (0=hex, 1=pentagon).
+	IsPentagon int
+	
 	// CWOffsetPent is the rotation offset for pentagon cells.
+	// Contains {ccwRot60, cwRot60} for the substring rotation.
+	// {-1, -1} indicates no offset faces exist.
 	CWOffsetPent [2]int
 }
 
@@ -48,30 +50,10 @@ const (
 	NumPentagons = 12
 )
 
-// BaseCells contains metadata for all base cells.
-// TODO: Populate with actual base cell data from H3 v4.3.0.
-var BaseCells = [NumBaseCells]BaseCellData{
-	// Stubbed with zero values for now
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-	{}, {},
-}
 
 // PentagonBaseCells lists the indices of all pentagon base cells.
-// TODO: Populate with actual pentagon base cell indices.
+// From H3 C v4.3.0 baseCells.c - these are the 12 pentagon base cells.
 var PentagonBaseCells = [NumPentagons]int{
-	// Pentagon base cells (12 total in H3)
-	// These are placeholders - actual values: 4, 14, 24, 38, 49, 58, 63, 72, 83, 97, 107, 117
 	4, 14, 24, 38, 49, 58, 63, 72, 83, 97, 107, 117,
 }
 
@@ -81,13 +63,8 @@ func IsPentagonBaseCell(baseCell int) bool {
 		return false
 	}
 	
-	// Check against known pentagon base cells
-	for _, p := range PentagonBaseCells {
-		if baseCell == p {
-			return true
-		}
-	}
-	return false
+	// Check the IsPentagon flag in the base cell data
+	return BaseCells[baseCell].IsPentagon == 1
 }
 
 // BaseCellNeighbors contains the neighbor relationships for base cells.

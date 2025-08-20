@@ -8,3 +8,7 @@ types.go is in the same package, so why move the code to another file? Maybe the
 ---
 I see that many functions take a parameter (c Cell). Wouldn't it be more idiomatic for Go to do this as a method receiver?
 ---
+Why don't you use the code https://github.com/uber/h3 (v4.3.0) as a reference? I thought you had downloaded this version to some directory a long time ago to use it as a reference.
+After all, you will need to transpose the code by looking at the source code, rather than inventing it yourself.
+---
+Are you kidding me? Why are you searching the entire h3 disk? Just create a temporary directory in the C code project, add this directory to gitignores, and that's it.

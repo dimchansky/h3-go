@@ -105,8 +105,8 @@ func (c Cell) IsPentagon() (bool, error) {
 		// At higher resolutions, check if all digits are 0
 		// (center child of pentagon is also a pentagon)
 		isPent := true
-		for i := 0; i < res; i++ {
-			if indexbits.GetDigit(uint64(c), i) != 0 {
+		for r := 1; r <= res; r++ {
+			if indexbits.GetDigit(uint64(c), r) != 0 {
 				isPent = false
 				break
 			}
