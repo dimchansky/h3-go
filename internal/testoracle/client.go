@@ -116,3 +116,29 @@ func (c *Client) Hex2DToIJK(x, y float64) [3]int {
     return [3]int{i, j, k}
 }
 
+// H3FromFaceIJK converts Face+IJK+res to an H3 index via oracle.
+func (c *Client) H3FromFaceIJK(face, i, j, k, res int) uint64 {
+    out := c.out("faceijk", strconv.Itoa(face), strconv.Itoa(i), strconv.Itoa(j), strconv.Itoa(k), strconv.Itoa(res))
+    // out like 0x8928308280fffff
+    v, err := strconv.ParseUint(strings.TrimPrefix(out, "0x"), 16, 64)
+    if err != nil { c.t.Fatalf("parse faceijk h3: %q: %v", out, err) }
+    return v
+}
+
+// H3FromLatLng converts latitude/longitude (degrees) + res to an H3 index via oracle.
+// Returns (h3, errCode) where errCode==0 on success.
+func (c *Client) H3FromLatLng(lat, lng float64, res int) (uint64, int) {
+    out := c.out("latlng",
+        strconv.FormatFloat(lat, 'g', -1, 64),
+        strconv.FormatFloat(lng, 'g', -1, 64),
+        strconv.Itoa(res),
+    )
+    // out like: "0x8928308280fffff 0" or "0x0 <err>"
+    f := strings.Fields(out)
+    if len(f) != 2 { c.t.Fatalf("unexpected latlng output: %q", out) }
+    h3, err := strconv.ParseUint(strings.TrimPrefix(f[0], "0x"), 16, 64)
+    if err != nil { c.t.Fatalf("parse latlng h3: %q: %v", out, err) }
+    code, err2 := strconv.Atoi(f[1])
+    if err2 != nil { c.t.Fatalf("parse latlng errcode: %q: %v", out, err2) }
+    return h3, code
+}
