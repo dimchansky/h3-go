@@ -6,3 +6,5 @@ But why did you move the errors here to internals? They will also be part of the
 ---
 types.go is in the same package, so why move the code to another file? Maybe there is still a problem with circular references?
 ---
+I see that many functions take a parameter (c Cell). Wouldn't it be more idiomatic for Go to do this as a method receiver?
+---

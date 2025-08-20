@@ -6,7 +6,7 @@ import (
 	"github.com/dimchansky/h3-go/internal/indexbits"
 )
 
-func TestIsValidCell_Public(t *testing.T) {
+func TestCellIsValid(t *testing.T) {
 	tests := []struct {
 		name string
 		cell Cell
@@ -46,15 +46,15 @@ func TestIsValidCell_Public(t *testing.T) {
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := IsValidCell(tt.cell)
+			got := tt.cell.IsValid()
 			if got != tt.want {
-				t.Errorf("IsValidCell(%016x) = %v, want %v", tt.cell, got, tt.want)
+				t.Errorf("Cell.IsValid(%016x) = %v, want %v", tt.cell, got, tt.want)
 			}
 		})
 	}
 }
 
-func TestResolution(t *testing.T) {
+func TestCellResolution(t *testing.T) {
 	tests := []struct {
 		name    string
 		cell    Cell
@@ -89,19 +89,19 @@ func TestResolution(t *testing.T) {
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Resolution(tt.cell)
+			got, err := tt.cell.Resolution()
 			if err != tt.wantErr {
-				t.Errorf("Resolution() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Cell.Resolution() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Resolution() = %v, want %v", got, tt.want)
+				t.Errorf("Cell.Resolution() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestBaseCell(t *testing.T) {
+func TestCellBaseCell(t *testing.T) {
 	tests := []struct {
 		name    string
 		cell    Cell
@@ -136,19 +136,19 @@ func TestBaseCell(t *testing.T) {
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := BaseCell(tt.cell)
+			got, err := tt.cell.BaseCell()
 			if err != tt.wantErr {
-				t.Errorf("BaseCell() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Cell.BaseCell() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("BaseCell() = %v, want %v", got, tt.want)
+				t.Errorf("Cell.BaseCell() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestIsPentagon(t *testing.T) {
+func TestCellIsPentagon(t *testing.T) {
 	tests := []struct {
 		name    string
 		cell    Cell
@@ -207,13 +207,13 @@ func TestIsPentagon(t *testing.T) {
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := IsPentagon(tt.cell)
+			got, err := tt.cell.IsPentagon()
 			if err != tt.wantErr {
-				t.Errorf("IsPentagon() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Cell.IsPentagon() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("IsPentagon() = %v, want %v", got, tt.want)
+				t.Errorf("Cell.IsPentagon() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -252,69 +252,69 @@ func TestStubFunctions(t *testing.T) {
 		}
 	})
 	
-	t.Run("CellToLatLng", func(t *testing.T) {
+	t.Run("Cell.ToLatLng", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
-		_, err := CellToLatLng(cell)
+		_, err := cell.ToLatLng()
 		if err != ErrOptionInvalid {
-			t.Errorf("CellToLatLng() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.ToLatLng() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 	
-	t.Run("CellToBoundary", func(t *testing.T) {
+	t.Run("Cell.ToBoundary", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
-		_, err := CellToBoundary(nil, cell)
+		_, err := cell.ToBoundary(nil)
 		if err != ErrOptionInvalid {
-			t.Errorf("CellToBoundary() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.ToBoundary() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 	
-	t.Run("AreNeighbors", func(t *testing.T) {
+	t.Run("Cell.IsNeighborOf", func(t *testing.T) {
 		cell1 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		cell2 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 5}))
-		_, err := AreNeighbors(cell1, cell2)
+		_, err := cell1.IsNeighborOf(cell2)
 		if err != ErrOptionInvalid {
-			t.Errorf("AreNeighbors() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.IsNeighborOf() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 	
-	t.Run("GridDistance", func(t *testing.T) {
+	t.Run("Cell.DistanceTo", func(t *testing.T) {
 		cell1 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		cell2 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 5}))
-		_, err := GridDistance(cell1, cell2)
+		_, err := cell1.DistanceTo(cell2)
 		if err != ErrOptionInvalid {
-			t.Errorf("GridDistance() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.DistanceTo() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 	
-	t.Run("KRing", func(t *testing.T) {
+	t.Run("Cell.KRing", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
-		_, err := KRing(nil, cell, 1)
+		_, err := cell.KRing(nil, 1)
 		if err != ErrOptionInvalid {
-			t.Errorf("KRing() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.KRing() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 	
-	t.Run("HexRange", func(t *testing.T) {
+	t.Run("Cell.HexRange", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
-		_, err := HexRange(nil, cell, 1)
+		_, err := cell.HexRange(nil, 1)
 		if err != ErrOptionInvalid {
-			t.Errorf("HexRange() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.HexRange() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 	
-	t.Run("HexRangeDistances", func(t *testing.T) {
+	t.Run("Cell.HexRangeDistances", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
-		_, err := HexRangeDistances(nil, cell, 1)
+		_, err := cell.HexRangeDistances(nil, 1)
 		if err != ErrOptionInvalid {
-			t.Errorf("HexRangeDistances() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.HexRangeDistances() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 	
-	t.Run("HexRing", func(t *testing.T) {
+	t.Run("Cell.HexRing", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
-		_, err := HexRing(nil, cell, 1)
+		_, err := cell.HexRing(nil, 1)
 		if err != ErrOptionInvalid {
-			t.Errorf("HexRing() error = %v, want %v", err, ErrOptionInvalid)
+			t.Errorf("Cell.HexRing() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
 }
@@ -354,20 +354,20 @@ func TestInputValidation(t *testing.T) {
 		}
 	})
 	
-	t.Run("KRing invalid k", func(t *testing.T) {
+	t.Run("Cell.KRing invalid k", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
-		_, err := KRing(nil, cell, -1)
+		_, err := cell.KRing(nil, -1)
 		if err != ErrDomain {
-			t.Errorf("KRing() with k=-1 error = %v, want %v", err, ErrDomain)
+			t.Errorf("Cell.KRing() with k=-1 error = %v, want %v", err, ErrDomain)
 		}
 	})
 	
-	t.Run("AreNeighbors resolution mismatch", func(t *testing.T) {
+	t.Run("Cell.IsNeighborOf resolution mismatch", func(t *testing.T) {
 		cell1 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		cell2 := Cell(indexbits.Pack(1, 6, 42, []int{0, 1, 2, 3, 4, 5}))
-		_, err := AreNeighbors(cell1, cell2)
+		_, err := cell1.IsNeighborOf(cell2)
 		if err != ErrResolutionMismatch {
-			t.Errorf("AreNeighbors() with different resolutions error = %v, want %v", err, ErrResolutionMismatch)
+			t.Errorf("Cell.IsNeighborOf() with different resolutions error = %v, want %v", err, ErrResolutionMismatch)
 		}
 	})
 }

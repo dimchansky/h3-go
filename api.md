@@ -53,19 +53,19 @@ type CellDistance struct {
 
 ### Point ↔ Cell
 ```go
-func LatLngToCell(p LatLng, res int) (Cell, error)           // Order: n/a
-func CellToLatLng(c Cell) (LatLng, error)                    // Order: n/a
-func CellToBoundary(dst []LatLng, c Cell) ([]LatLng, error)  // Order: boundary-winding, counterclockwise, starting at a canonical vertex
+func LatLngToCell(p LatLng, res int) (Cell, error)                 // Order: n/a
+func (c Cell) ToLatLng() (LatLng, error)                           // Order: n/a
+func (c Cell) ToBoundary(dst []LatLng) ([]LatLng, error)           // Order: boundary-winding, counterclockwise, starting at a canonical vertex
 ```
 - Errors: `ErrLatLngDomain`, `ErrResolutionDomain`, `ErrCellInvalid`, `ErrPentagon` (boundary around pentagons when relevant).
 - Output bounds: `CellToBoundary` returns up to 6 or 5 vertices (hex or pentagon). Caller may preallocate `dst` of length 7 to be safe.
 
 ### Index metadata
 ```go
-func IsValidCell(c Cell) bool
-func IsPentagon(c Cell) (bool, error)
-func Resolution(c Cell) (int, error)
-func BaseCell(c Cell) (int, error) // 0..121
+func (c Cell) IsValid() bool
+func (c Cell) IsPentagon() (bool, error)
+func (c Cell) Resolution() (int, error)
+func (c Cell) BaseCell() (int, error) // 0..121
 ```
 - Errors: `ErrCellInvalid` when index mode or fields are malformed.
 
@@ -86,17 +86,17 @@ func Uncompact(dst []Cell, cells []Cell, res int) ([]Cell, error) // Order: asce
 ## Neighborhoods & distances
 
 ```go
-func AreNeighbors(a, b Cell) (bool, error)
+func (a Cell) IsNeighborOf(b Cell) (bool, error)
 
-func GridDistance(a, b Cell) (int, error) // hex grid distance (>= 0)
+func (a Cell) DistanceTo(b Cell) (int, error) // hex grid distance (>= 0)
 
-func KRing(dst []Cell, origin Cell, k int) ([]Cell, error) // Order: ascending by Cell
+func (c Cell) KRing(dst []Cell, k int) ([]Cell, error) // Order: ascending by Cell
 
-func HexRange(dst []Cell, origin Cell, k int) ([]Cell, error) // Synonym of KRing semantics (bounded traversal)
+func (c Cell) HexRange(dst []Cell, k int) ([]Cell, error) // Synonym of KRing semantics (bounded traversal)
 
-func HexRangeDistances(dst []CellDistance, origin Cell, k int) ([]CellDistance, error) // Order: stable by (distance, Cell)
+func (c Cell) HexRangeDistances(dst []CellDistance, k int) ([]CellDistance, error) // Order: stable by (distance, Cell)
 
-func HexRing(dst []Cell, origin Cell, k int) ([]Cell, error) // Cells exactly at distance k; Order: ring-walk order (documented)
+func (c Cell) HexRing(dst []Cell, k int) ([]Cell, error) // Cells exactly at distance k; Order: ring-walk order (documented)
 ```
 - Errors: `ErrCellInvalid`, `ErrPentagon` (when traversal crosses pentagon distortions), `ErrResolutionDomain` if needed.
 - Helpers:

@@ -59,35 +59,35 @@ func validateCellPair(a, b Cell) error {
 	return nil
 }
 
-// IsValidCell checks if the given Cell represents a valid H3 index.
+// IsValid checks if the Cell represents a valid H3 index.
 // This performs bit-level validation of the index structure.
-func IsValidCell(c Cell) bool {
+func (c Cell) IsValid() bool {
 	return indexbits.IsValidCell(uint64(c))
 }
 
-// Resolution returns the resolution of the given cell.
+// Resolution returns the resolution of the cell.
 // Resolution ranges from 0 (coarsest) to 15 (finest).
 // Returns ErrCellInvalid if the cell is not valid.
-func Resolution(c Cell) (int, error) {
+func (c Cell) Resolution() (int, error) {
 	if err := validateCell(c); err != nil {
 		return 0, err
 	}
 	return indexbits.GetResolution(uint64(c)), nil
 }
 
-// BaseCell returns the base cell number (0-121) for the given cell.
+// BaseCell returns the base cell number (0-121) for the cell.
 // Returns ErrCellInvalid if the cell is not valid.
-func BaseCell(c Cell) (int, error) {
+func (c Cell) BaseCell() (int, error) {
 	if err := validateCell(c); err != nil {
 		return 0, err
 	}
 	return indexbits.GetBaseCell(uint64(c)), nil
 }
 
-// IsPentagon returns true if the given cell is a pentagon.
+// IsPentagon returns true if the cell is a pentagon.
 // Pentagons occur at each resolution due to the spherical geometry.
 // Returns ErrCellInvalid if the cell is not valid.
-func IsPentagon(c Cell) (bool, error) {
+func (c Cell) IsPentagon() (bool, error) {
 	if err := validateCell(c); err != nil {
 		return false, err
 	}
@@ -117,13 +117,107 @@ func IsPentagon(c Cell) (bool, error) {
 	return false, nil
 }
 
+// ToLatLng returns the center point of the cell.
+func (c Cell) ToLatLng() (LatLng, error) {
+	if err := validateCell(c); err != nil {
+		return LatLng{}, err
+	}
+	
+	// TODO: Implement actual conversion
+	return LatLng{}, ErrOptionInvalid
+}
+
+// ToBoundary returns the boundary vertices of the cell.
+// The returned vertices are in counterclockwise order starting from
+// a canonical vertex. Hexagons have 6 vertices, pentagons have 5.
+// The dst buffer is reused if it has sufficient capacity.
+func (c Cell) ToBoundary(dst []LatLng) ([]LatLng, error) {
+	if err := validateCell(c); err != nil {
+		return nil, err
+	}
+	
+	// TODO: Implement actual boundary calculation
+	return nil, ErrOptionInvalid
+}
+
+// IsNeighborOf returns true if this cell is a neighbor of the other cell.
+// Cells must be at the same resolution.
+func (c Cell) IsNeighborOf(other Cell) (bool, error) {
+	if err := validateCellPair(c, other); err != nil {
+		return false, err
+	}
+	
+	// TODO: Implement actual neighbor check
+	return false, ErrOptionInvalid
+}
+
+// DistanceTo returns the grid distance to another cell.
+// Cells must be at the same resolution.
+func (c Cell) DistanceTo(other Cell) (int, error) {
+	if err := validateCellPair(c, other); err != nil {
+		return 0, err
+	}
+	
+	// TODO: Implement actual distance calculation
+	return 0, ErrOptionInvalid
+}
+
+// KRing returns all cells within k grid steps of this cell.
+// Results are returned in ascending order by cell index.
+// The dst buffer is reused if it has sufficient capacity.
+func (c Cell) KRing(dst []Cell, k int) ([]Cell, error) {
+	if err := validateCell(c); err != nil {
+		return nil, err
+	}
+	if err := validateKValue(k); err != nil {
+		return nil, err
+	}
+	
+	// TODO: Implement actual k-ring calculation
+	return nil, ErrOptionInvalid
+}
+
+// HexRange returns all cells within k grid steps (synonym for KRing).
+func (c Cell) HexRange(dst []Cell, k int) ([]Cell, error) {
+	return c.KRing(dst, k)
+}
+
+// HexRangeDistances returns all cells within k grid steps of this cell,
+// annotated with their distance from this cell.
+// Results are ordered by (distance, cell index).
+// The dst buffer is reused if it has sufficient capacity.
+func (c Cell) HexRangeDistances(dst []CellDistance, k int) ([]CellDistance, error) {
+	if err := validateCell(c); err != nil {
+		return nil, err
+	}
+	if err := validateKValue(k); err != nil {
+		return nil, err
+	}
+	
+	// TODO: Implement actual range with distances
+	return nil, ErrOptionInvalid
+}
+
+// HexRing returns all cells exactly k grid steps from this cell.
+// Results are returned in ring-walk order (documented canonical order).
+// The dst buffer is reused if it has sufficient capacity.
+func (c Cell) HexRing(dst []Cell, k int) ([]Cell, error) {
+	if err := validateCell(c); err != nil {
+		return nil, err
+	}
+	if err := validateKValue(k); err != nil {
+		return nil, err
+	}
+	
+	// TODO: Implement actual hex ring
+	return nil, ErrOptionInvalid
+}
+
 // Additional helper type for range-with-distance results.
 type CellDistance struct {
 	Cell     Cell
 	Distance int
 }
-
-// Stub functions that return errors for now
 
 // LatLngToCell converts a geographic coordinate to an H3 cell at the specified resolution.
 // Resolution must be between 0 and 15 inclusive.
@@ -138,102 +232,6 @@ func LatLngToCell(p LatLng, res int) (Cell, error) {
 	
 	// TODO: Implement actual conversion
 	return 0, ErrOptionInvalid
-}
-
-// CellToLatLng returns the center point of the given cell.
-func CellToLatLng(c Cell) (LatLng, error) {
-	if err := validateCell(c); err != nil {
-		return LatLng{}, err
-	}
-	
-	// TODO: Implement actual conversion
-	return LatLng{}, ErrOptionInvalid
-}
-
-// CellToBoundary returns the boundary vertices of the given cell.
-// The returned vertices are in counterclockwise order starting from
-// a canonical vertex. Hexagons have 6 vertices, pentagons have 5.
-// The dst buffer is reused if it has sufficient capacity.
-func CellToBoundary(dst []LatLng, c Cell) ([]LatLng, error) {
-	if err := validateCell(c); err != nil {
-		return nil, err
-	}
-	
-	// TODO: Implement actual boundary calculation
-	return nil, ErrOptionInvalid
-}
-
-// AreNeighbors returns true if the two cells are neighbors.
-// Cells must be at the same resolution.
-func AreNeighbors(a, b Cell) (bool, error) {
-	if err := validateCellPair(a, b); err != nil {
-		return false, err
-	}
-	
-	// TODO: Implement actual neighbor check
-	return false, ErrOptionInvalid
-}
-
-// GridDistance returns the grid distance between two cells.
-// Cells must be at the same resolution.
-func GridDistance(a, b Cell) (int, error) {
-	if err := validateCellPair(a, b); err != nil {
-		return 0, err
-	}
-	
-	// TODO: Implement actual distance calculation
-	return 0, ErrOptionInvalid
-}
-
-// KRing returns all cells within k grid steps of the origin cell.
-// Results are returned in ascending order by cell index.
-// The dst buffer is reused if it has sufficient capacity.
-func KRing(dst []Cell, origin Cell, k int) ([]Cell, error) {
-	if err := validateCell(origin); err != nil {
-		return nil, err
-	}
-	if err := validateKValue(k); err != nil {
-		return nil, err
-	}
-	
-	// TODO: Implement actual k-ring calculation
-	return nil, ErrOptionInvalid
-}
-
-// HexRange is a synonym for KRing with bounded traversal semantics.
-func HexRange(dst []Cell, origin Cell, k int) ([]Cell, error) {
-	return KRing(dst, origin, k)
-}
-
-// HexRangeDistances returns all cells within k grid steps of the origin,
-// annotated with their distance from the origin.
-// Results are ordered by (distance, cell index).
-// The dst buffer is reused if it has sufficient capacity.
-func HexRangeDistances(dst []CellDistance, origin Cell, k int) ([]CellDistance, error) {
-	if err := validateCell(origin); err != nil {
-		return nil, err
-	}
-	if err := validateKValue(k); err != nil {
-		return nil, err
-	}
-	
-	// TODO: Implement actual range with distances
-	return nil, ErrOptionInvalid
-}
-
-// HexRing returns all cells exactly k grid steps from the origin.
-// Results are returned in ring-walk order (documented canonical order).
-// The dst buffer is reused if it has sufficient capacity.
-func HexRing(dst []Cell, origin Cell, k int) ([]Cell, error) {
-	if err := validateCell(origin); err != nil {
-		return nil, err
-	}
-	if err := validateKValue(k); err != nil {
-		return nil, err
-	}
-	
-	// TODO: Implement actual hex ring
-	return nil, ErrOptionInvalid
 }
 
 // MaxKRingSize returns the maximum number of cells in a k-ring.
