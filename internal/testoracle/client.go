@@ -116,6 +116,22 @@ func (c *Client) Hex2DToIJK(x, y float64) [3]int {
     return [3]int{i, j, k}
 }
 
+// Rotate an H3 index 60 degrees CCW via oracle.
+func (c *Client) RotateH3CCW(h uint64) uint64 {
+    out := c.out("rotate60ccw", strconv.FormatUint(h, 16))
+    v, err := strconv.ParseUint(strings.TrimPrefix(out, "0x"), 16, 64)
+    if err != nil { c.t.Fatalf("parse rotate60ccw: %q: %v", out, err) }
+    return v
+}
+
+// Rotate an H3 index 60 degrees CW via oracle.
+func (c *Client) RotateH3CW(h uint64) uint64 {
+    out := c.out("rotate60cw", strconv.FormatUint(h, 16))
+    v, err := strconv.ParseUint(strings.TrimPrefix(out, "0x"), 16, 64)
+    if err != nil { c.t.Fatalf("parse rotate60cw: %q: %v", out, err) }
+    return v
+}
+
 // H3FromFaceIJK converts Face+IJK+res to an H3 index via oracle.
 func (c *Client) H3FromFaceIJK(face, i, j, k, res int) uint64 {
     out := c.out("faceijk", strconv.Itoa(face), strconv.Itoa(i), strconv.Itoa(j), strconv.Itoa(k), strconv.Itoa(res))

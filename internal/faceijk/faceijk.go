@@ -399,25 +399,24 @@ func FaceIJKToH3(fijk FaceIJK, res int) uint64 {
 	}
 	h = indexbits.SetBaseCell(h, baseCell)
 	
-	// Pentagon handling for special base cells
-	if tables.IsPentagonBaseCell(baseCell) {
-		// Check if leading non-zero digit matches the pentagon's orientation
-		leadingNonZeroDigit := h3LeadingNonZeroDigit(h)
-		
-		// Pentagon base cells need special KAxesDigit rotation handling
-		if leadingNonZeroDigit == coordijk.KAxesDigit {
-			// Apply pentagon-specific 60-degree counter-clockwise rotation
-			h = h3RotatePent60ccw(h)
-		}
-	}
-	
-	// Apply base cell rotation if needed
-	baseCCWrot60 := faceIJKToBaseCellCCWrot60(fijkBC)
-	if baseCCWrot60 > 0 {
-		for i := 0; i < baseCCWrot60; i++ {
-			h = h3Rotate60ccw(h)
-		}
-	}
+    // Apply final rotations to canonical base cell orientation
+    numRots := faceIJKToBaseCellCCWrot60(fijkBC)
+    if tables.IsPentagonBaseCell(baseCell) {
+        if h3LeadingNonZeroDigit(h) == coordijk.KAxesDigit {
+            if baseCellIsCwOffset(baseCell, fijkBC.Face) {
+                h = h3Rotate60cw(h)
+            } else {
+                h = h3Rotate60ccw(h)
+            }
+        }
+        for i := 0; i < numRots; i++ {
+            h = h3RotatePent60ccw(h)
+        }
+    } else {
+        for i := 0; i < numRots; i++ {
+            h = h3Rotate60ccw(h)
+        }
+    }
 	
 	return h
 }
@@ -458,66 +457,84 @@ func h3LeadingNonZeroDigit(h uint64) coordijk.Direction {
 
 // h3Rotate60cw rotates an H3 index 60 degrees clockwise
 func h3Rotate60cw(h uint64) uint64 {
-	resolution := indexbits.GetResolution(h)
-	rotated := h
-	
-	for r := 1; r <= resolution; r++ {
-		digit := indexbits.GetDigit(h, r)
-		// Rotate digit 60 degrees clockwise: (d + 1) % 6, but skip 0
-		if digit != 0 {
-			newDigit := (digit % 6) + 1
-			rotated = indexbits.SetDigit(rotated, r, newDigit)
-		}
-	}
-	return rotated
+    res := indexbits.GetResolution(h)
+    rotated := h
+    for r := 1; r <= res; r++ {
+        d := coordijk.Direction(indexbits.GetDigit(rotated, r))
+        rotated = indexbits.SetDigit(rotated, r, int(rotate60cwDir(d)))
+    }
+    return rotated
 }
 
 // h3Rotate60ccw rotates an H3 index 60 degrees counter-clockwise
 func h3Rotate60ccw(h uint64) uint64 {
-	resolution := indexbits.GetResolution(h)
-	rotated := h
-	
-	for r := 1; r <= resolution; r++ {
-		digit := indexbits.GetDigit(h, r)
-		// Rotate digit 60 degrees counter-clockwise: (d - 1), wrapping from 1 to 6
-		if digit != 0 {
-			var newDigit int
-			if digit == 1 {
-				newDigit = 6
-			} else {
-				newDigit = digit - 1
-			}
-			rotated = indexbits.SetDigit(rotated, r, newDigit)
-		}
-	}
-	return rotated
+    res := indexbits.GetResolution(h)
+    rotated := h
+    for r := 1; r <= res; r++ {
+        d := coordijk.Direction(indexbits.GetDigit(rotated, r))
+        rotated = indexbits.SetDigit(rotated, r, int(rotate60ccwDir(d)))
+    }
+    return rotated
+}
+
+func rotate60ccwDir(d coordijk.Direction) coordijk.Direction {
+    switch d {
+    case coordijk.KAxesDigit:
+        return coordijk.IKAxesDigit
+    case coordijk.IKAxesDigit:
+        return coordijk.IAxesDigit
+    case coordijk.IAxesDigit:
+        return coordijk.IJAxesDigit
+    case coordijk.IJAxesDigit:
+        return coordijk.JAxesDigit
+    case coordijk.JAxesDigit:
+        return coordijk.JKAxesDigit
+    case coordijk.JKAxesDigit:
+        return coordijk.KAxesDigit
+    default:
+        return d
+    }
+}
+
+func rotate60cwDir(d coordijk.Direction) coordijk.Direction {
+    switch d {
+    case coordijk.KAxesDigit:
+        return coordijk.JKAxesDigit
+    case coordijk.JKAxesDigit:
+        return coordijk.JAxesDigit
+    case coordijk.JAxesDigit:
+        return coordijk.IJAxesDigit
+    case coordijk.IJAxesDigit:
+        return coordijk.IAxesDigit
+    case coordijk.IAxesDigit:
+        return coordijk.IKAxesDigit
+    case coordijk.IKAxesDigit:
+        return coordijk.KAxesDigit
+    default:
+        return d
+    }
 }
 
 // h3RotatePent60ccw applies pentagon-specific 60-degree counter-clockwise rotation
 // Pentagon cells have special handling for the KAxesDigit orientation
 func h3RotatePent60ccw(h uint64) uint64 {
-	baseCell := indexbits.GetBaseCell(h)
-	
-	// Verify this is actually a pentagon base cell
-	if !tables.IsPentagonBaseCell(baseCell) {
-		return h // No rotation for non-pentagon cells
-	}
-	
-	// Get pentagon-specific rotation offset from tables
-	pentOffset := tables.BaseCells[baseCell].CWOffsetPent
-	
-	// Apply pentagon rotation logic - this is a simplified implementation
-	// TODO: Full pentagon rotation requires more complex digit manipulation
-	// For now, apply standard counter-clockwise rotation with pentagon constraints
-	rotated := h3Rotate60ccw(h)
-	
-	// Pentagon cells may need additional digit adjustments
-	// This depends on the specific pentagon's CWOffsetPent values
-	if pentOffset[0] != -1 || pentOffset[1] != -1 {
-		// Pentagon has specific rotation offsets - apply them
-		// This is a placeholder for more complex pentagon rotation logic
-		// that would involve digit pattern adjustments specific to each pentagon
-	}
-	
-	return rotated
+    // Rotate all digits CCW and adjust if we rotated into the deleted K subsequence
+    foundFirst := false
+    res := indexbits.GetResolution(h)
+    for r := 1; r <= res; r++ {
+        d := coordijk.Direction(indexbits.GetDigit(h, r))
+        h = indexbits.SetDigit(h, r, int(rotate60ccwDir(d)))
+        if !foundFirst && d != coordijk.CenterDigit {
+            foundFirst = true
+            if h3LeadingNonZeroDigit(h) == coordijk.KAxesDigit {
+                h = h3Rotate60ccw(h)
+            }
+        }
+    }
+    return h
+}
+
+func baseCellIsCwOffset(baseCell, face int) bool {
+    off := tables.BaseCells[baseCell].CWOffsetPent
+    return off[0] == face || off[1] == face
 }
