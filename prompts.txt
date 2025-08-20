@@ -99,3 +99,14 @@ Only 2 specialized functions remaining untested in file internal/coordijk/coordi
 ---
 Take a look at the C code at the end to see if your implementation is different!
 ---
+The file internal/faceijk/faceijk.go contains too many functions that are not covered by tests.
+1. I suggest studying the C tests for the functions you have implemented in Go and covering the Go code with the same tests.
+2. If the tests are insufficient, I suggest creating tabular tests from the C code: you can call a function with specific arguments from the C code, get the result, and print tabular code in Go for testing.
+---
+I can see these main functions that need testing:
+
+  1. Utility functions: IsResolutionClassII, IsResolutionClassIII, PosAngleRads
+  2. Geographic functions: GeoToClosestFace, GeoAzimuthRads
+  3. Coordinate conversion: GeoToHex2d, GeoToFaceIJK
+  4. H3 index functions: FaceIJKToH3, faceIJKToBaseCell, faceIJKToBaseCellCCWrot60
+---
