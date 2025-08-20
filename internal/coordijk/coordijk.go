@@ -205,6 +205,34 @@ func Distance(a, b CoordIJK) int {
 	return (abs(diff.I) + abs(diff.J) + abs(diff.K)) / 2
 }
 
+// UpAp7 finds the normalized IJK coordinates of the indexing parent
+// in a counter-clockwise aperture 7 grid. Works in place.
+func (c *CoordIJK) UpAp7() {
+	// Convert to CoordIJ
+	i := c.I - c.K
+	j := c.J - c.K
+	
+	// Apply aperture 7 transformation
+	c.I = int(math.Round(float64(3*i-j) / 7.0))
+	c.J = int(math.Round(float64(i+2*j) / 7.0))
+	c.K = 0
+	c.Normalize()
+}
+
+// UpAp7r finds the normalized IJK coordinates of the indexing parent
+// in a clockwise aperture 7 grid. Works in place.
+func (c *CoordIJK) UpAp7r() {
+	// Convert to CoordIJ  
+	i := c.I - c.K
+	j := c.J - c.K
+	
+	// Apply reverse aperture 7 transformation
+	c.I = int(math.Round(float64(2*i+j) / 7.0))
+	c.J = int(math.Round(float64(3*j-i) / 7.0))
+	c.K = 0
+	c.Normalize()
+}
+
 // ToHex2d converts IJK coordinates to 2D hex coordinates.
 // The Vec2d represents a point in the hex2d coordinate system.
 func (c CoordIJK) ToHex2d() Vec2d {

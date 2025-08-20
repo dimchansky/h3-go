@@ -230,7 +230,11 @@ func LatLngToCell(p LatLng, res int) (Cell, error) {
 		return 0, err
 	}
 	
-	// TODO: Implement actual conversion
+	// TODO: Complete implementation - currently returns error because
+	// FaceIJKToH3 conversion is not yet implemented. This requires:
+	// 1. Converting lat/lng degrees to radians
+	// 2. GeoToFaceIJK conversion (implemented)
+	// 3. FaceIJKToH3 conversion (needs implementation)
 	return 0, ErrOptionInvalid
 }
 

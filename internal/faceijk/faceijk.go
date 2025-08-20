@@ -260,3 +260,89 @@ func GeoToClosestFace(lat, lng float64) (face int, sqDist float64) {
 	
 	return closestFace, minDist
 }
+
+// PosAngleRads normalizes radians to the range [0, 2π).
+func PosAngleRads(rads float64) float64 {
+	if rads < 0.0 {
+		rads += 2 * math.Pi
+	}
+	if rads >= 2*math.Pi {
+		rads -= 2 * math.Pi
+	}
+	return rads
+}
+
+// GeoAzimuthRads calculates the azimuth from p1 to p2 in radians.
+func GeoAzimuthRads(p1Lat, p1Lng, p2Lat, p2Lng float64) float64 {
+	return math.Atan2(math.Cos(p2Lat)*math.Sin(p2Lng-p1Lng),
+		math.Cos(p1Lat)*math.Sin(p2Lat)-math.Sin(p1Lat)*math.Cos(p2Lat)*math.Cos(p2Lng-p1Lng))
+}
+
+// GeoToHex2d converts geographic coordinates to hex2d coordinates on a specific face.
+func GeoToHex2d(lat, lng float64, res int) (face int, v coordijk.Vec2d) {
+	// Determine the icosahedron face
+	face, sqDist := GeoToClosestFace(lat, lng)
+	
+	// cos(r) = 1 - 2 * sin^2(r/2) = 1 - 2 * (sqd / 4) = 1 - sqd/2
+	r := math.Acos(1 - sqDist*0.5)
+	
+	if r < 1e-12 { // EPSILON
+		v = coordijk.Vec2d{X: 0.0, Y: 0.0}
+		return face, v
+	}
+	
+	// Find CCW theta from Class II i-axis
+	faceLat := FaceCenterGeo[face][0]
+	faceLng := FaceCenterGeo[face][1]
+	
+	azimuth := GeoAzimuthRads(faceLat, faceLng, lat, lng)
+	theta := PosAngleRads(FaceAxesAzRadsCII[face][0] - PosAngleRads(azimuth))
+	
+	// Adjust theta for Class III (odd resolutions)
+	if IsResolutionClassIII(res) {
+		theta = PosAngleRads(theta - M_AP7_ROT_RADS)
+	}
+	
+	// Perform gnomonic scaling of r
+	r = math.Tan(r)
+	
+	// Scale for current resolution length u
+	r *= 2.61803398874989588842 // INV_RES0_U_GNOMONIC
+	for i := 0; i < res; i++ {
+		r *= M_SQRT7
+	}
+	
+	// Convert to local x,y
+	v.X = r * math.Cos(theta)
+	v.Y = r * math.Sin(theta)
+	
+	return face, v
+}
+
+// GeoToFaceIJK converts geographic coordinates to FaceIJK coordinates.
+func GeoToFaceIJK(lat, lng float64, res int) FaceIJK {
+	// First convert to hex2d
+	face, v := GeoToHex2d(lat, lng, res)
+	
+	// Then convert to IJK
+	coord := coordijk.Hex2dToCoordIJK(v)
+	
+	return FaceIJK{
+		Face:  face,
+		Coord: coord,
+	}
+}
+
+// FaceIJKToH3 converts FaceIJK coordinates to an H3 index.
+// TODO: This is a complex function that requires:
+// 1. Base cell lookup tables (faceIjkBaseCells) mapping face+IJK to base cell
+// 2. Base cell rotation calculations (_faceIjkToBaseCellCCWrot60)
+// 3. Hierarchical digit computation from fine to coarse resolution
+// 4. Pentagon handling with K_AXES_DIGIT rotation
+// 5. H3 index bit manipulation for mode, resolution, base cell, and digits
+// The full implementation requires porting significant logic from H3 C _faceIjkToH3
+func FaceIJKToH3(fijk FaceIJK, res int) uint64 {
+	// Placeholder implementation - returns H3_NULL
+	// This needs to be implemented based on H3 C _faceIjkToH3 function
+	return 0 // H3_NULL equivalent
+}

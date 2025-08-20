@@ -13,3 +13,8 @@
 
 .idea/
 temp/
+
+coverage.html
+coverage.out
+
+.claude/

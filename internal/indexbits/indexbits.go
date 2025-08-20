@@ -42,7 +42,7 @@ func GetMode(h uint64) uint64 {
 
 // SetMode sets the mode in an H3 index.
 func SetMode(h uint64, mode uint64) uint64 {
-	return (h &^ ModeBitMask) | ((mode & 0x7) << ModeBitOffset)
+	return (h &^ ModeBitMask) | ((mode & 0xF) << ModeBitOffset)
 }
 
 // GetResolution extracts the resolution from an H3 index.
@@ -106,12 +106,21 @@ func Pack(mode uint64, res int, baseCell int, digits []int) uint64 {
 }
 
 // Unpack extracts all components from an H3 index.
-func Unpack(h uint64) (mode uint64, res int, baseCell int, digits []int) {
+// The digitsBuffer parameter is an optional buffer for digits.
+// If digitsBuffer has sufficient capacity (MaxH3Resolution), it will be reused;
+// otherwise a new slice will be allocated.
+func Unpack(h uint64, digitsBuffer []int) (mode uint64, res int, baseCell int, digits []int) {
 	mode = GetMode(h)
 	res = GetResolution(h)
 	baseCell = GetBaseCell(h)
 	
-	digits = make([]int, MaxH3Resolution)
+	// Reuse buffer if it has sufficient capacity
+	if cap(digitsBuffer) >= MaxH3Resolution {
+		digits = digitsBuffer[:MaxH3Resolution]
+	} else {
+		digits = make([]int, MaxH3Resolution)
+	}
+	
 	for r := 1; r <= MaxH3Resolution; r++ {
 		digits[r-1] = GetDigit(h, r)
 	}

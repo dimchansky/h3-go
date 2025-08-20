@@ -12,3 +12,54 @@ Why don't you use the code https://github.com/uber/h3 (v4.3.0) as a reference? I
 After all, you will need to transpose the code by looking at the source code, rather than inventing it yourself.
 ---
 Are you kidding me? Why are you searching the entire h3 disk? Just create a temporary directory in the C code project, add this directory to gitignores, and that's it.
+---
+I'm looking at the Unpack function. It seems to me that it would be possible to make the digits []int parameter optional, as in the function that calculates the hash, in order to optimize allocations:
+
+```go
+// Unpack extracts all components from an H3 index.
+func Unpack(h uint64) (mode uint64, res int, baseCell int, digits []int) {
+	mode = GetMode(h)
+	res = GetResolution(h)
+	baseCell = GetBaseCell(h)
+
+	digits = make([]int, MaxH3Resolution)
+	for r := 1; r <= MaxH3Resolution; r++ {
+		digits[r-1] = GetDigit(h, r)
+	}
+
+	return
+}
+```
+---
+Perhaps a more understandable name could be devised for the dst parameter, so that its purpose is clear even without reading the comment.
+---
+I don't quite understand why we have an indexbits_test.go file at the root of the project that tests the internal implementation of internal/indexbits?
+Shouldn't the test be closer to the actual implementation?
+If there are any tests that test functionality in the h3 package, then they need to be moved to a separate file.
+---
+1. Check what tests are available in the C code for the functionality we have implemented in the indexbits package.
+2. If there are tests in the C code that we do not have, implement them.
+3. Review whether all the code in the indexbits package is covered by tests.
+---
+here is the code marked with "NOT COVERED", which we need to cover:
+SetDigit function:
+```
+        if resolution < 1 || resolution > MaxH3Resolution {
+                return h // NOT COVERED
+        }
+```
+IsValidCell function:
+```
+        // Check resolution is valid
+        res := GetResolution(h)
+        if res < 0 || res > MaxResolution {
+                return false // NOT COVERED
+        }
+
+        // Check base cell is valid
+        baseCell := GetBaseCell(h)
+        if baseCell < 0 || baseCell > MaxBaseCell {
+                return false // NOT COVERED
+        }
+```
+---
