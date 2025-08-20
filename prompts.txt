@@ -130,3 +130,14 @@ Then this application would refer to these source files rather than the temp/h3 
 ---
 And if the version is updated, will we have to change the source code?
 #include "h3-4.3.0/src/h3lib/include/h3api.h"
+---
+I really don't like that you're creating a bunch of new files and it's completely unclear what exactly is being tested in those files.
+internal/faceijk/faceijk_oracle_validation_test.go
+internal/faceijk/faceijk_comprehensive_oracle_test.go
+You come up with different ways of testing, but it's not clear how exactly and what exactly we are testing.
+Each structure has specific methods, and we simply need to test each method so that the results from the C code and the Go code match.
+At the same time, if the test code grows and becomes large, it may make sense to create a separate file that would be responsible for a separate method that we are testing.
+If we have tabular tests that we have generated and we don't know what to call them, just number them. It will be easier than seeing something like: h3-4.3.0_tests_inputfiles_res00cells_3.
+---
+Okay, but there are still a few files whose names don't make it clear what is being tested.
+I suggest creating several files whose names will include, for example, the function being tested, and the files will only contain tests related to testing that specific function.

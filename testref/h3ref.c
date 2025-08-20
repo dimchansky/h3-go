@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "  pentagon <baseCell> - Check if base cell is pentagon\n");
         fprintf(stderr, "  rotate60cw <h3index> - Rotate H3 index 60 degrees clockwise\n");
         fprintf(stderr, "  rotate60ccw <h3index> - Rotate H3 index 60 degrees counter-clockwise\n");
+        fprintf(stderr, "  resolution <h3index> - Get H3 index resolution\n");
+        fprintf(stderr, "  basecell <h3index> - Get H3 index base cell\n");
         return 1;
     }
 
@@ -90,6 +92,26 @@ int main(int argc, char *argv[]) {
         H3Index h3 = (H3Index)strtoull(argv[2], NULL, 16);
         H3Index rotated = _h3Rotate60ccw(h3);
         printf("0x%" PRIx64 "\n", rotated);
+        
+    } else if (strcmp(command, "resolution") == 0) {
+        if (argc < 3) {
+            fprintf(stderr, "Usage: %s resolution <h3index>\n", argv[0]);
+            return 1;
+        }
+        
+        H3Index h3 = (H3Index)strtoull(argv[2], NULL, 16);
+        int res = getResolution(h3);
+        printf("%d\n", res);
+        
+    } else if (strcmp(command, "basecell") == 0) {
+        if (argc < 3) {
+            fprintf(stderr, "Usage: %s basecell <h3index>\n", argv[0]);
+            return 1;
+        }
+        
+        H3Index h3 = (H3Index)strtoull(argv[2], NULL, 16);
+        int baseCell = getBaseCellNumber(h3);
+        printf("%d\n", baseCell);
         
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
