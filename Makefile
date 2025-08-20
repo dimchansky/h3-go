@@ -1,4 +1,4 @@
-.PHONY: test bench lint gen ref
+.PHONY: test bench lint gen ref test-oracle test-all
 
 test:
 	go test -v ./...
@@ -18,3 +18,11 @@ ref:
 	$(MAKE) -C testref
 	@echo "Oracle built successfully at testref/h3ref"
 	@echo "Run 'make -C testref test' to verify installation"
+
+# Run tests that require the external C oracle as well
+test-oracle: ref
+	@echo "Running Go tests with oracle tag..."
+	go test -v -tags=oracle ./...
+
+# Convenience: run both regular and oracle-tagged tests
+test-all: test test-oracle

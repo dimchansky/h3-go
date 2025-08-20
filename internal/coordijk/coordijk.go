@@ -125,32 +125,41 @@ func (c *CoordIJK) Normalize() {
 
 // Neighbor moves the IJK coordinate in the specified direction.
 func (c *CoordIJK) Neighbor(dir Direction) {
-	if dir >= 0 && dir < NumDigits {
-		*c = c.Add(UnitVecs[dir])
-		c.Normalize()
-	}
+    // Mirror H3 C _neighbor: only act for digits (1..6). CENTER_DIGIT is no-op.
+    if dir > CenterDigit && dir < NumDigits {
+        *c = c.Add(UnitVecs[dir])
+        c.Normalize()
+    }
 }
 
 // Rotate60CCW rotates the IJK coordinates 60 degrees counter-clockwise.
 func (c *CoordIJK) Rotate60CCW() {
-	// Rotation: i' = -k, j' = -i, k' = -j
-	i := -c.K
-	j := -c.I
-	k := -c.J
-	c.I = i
-	c.J = j
-	c.K = k
+    // Match H3 C _ijkRotate60ccw by recombining unit vectors and normalizing.
+    iVec := CoordIJK{1, 1, 0}
+    jVec := CoordIJK{0, 1, 1}
+    kVec := CoordIJK{1, 0, 1}
+
+    iVec = iVec.Scale(c.I)
+    jVec = jVec.Scale(c.J)
+    kVec = kVec.Scale(c.K)
+
+    *c = iVec.Add(jVec).Add(kVec)
+    c.Normalize()
 }
 
 // Rotate60CW rotates the IJK coordinates 60 degrees clockwise.
 func (c *CoordIJK) Rotate60CW() {
-	// Rotation: i' = -j, j' = -k, k' = -i
-	i := -c.J
-	j := -c.K
-	k := -c.I
-	c.I = i
-	c.J = j
-	c.K = k
+    // Match H3 C _ijkRotate60cw by recombining unit vectors and normalizing.
+    iVec := CoordIJK{1, 0, 1}
+    jVec := CoordIJK{1, 1, 0}
+    kVec := CoordIJK{0, 1, 1}
+
+    iVec = iVec.Scale(c.I)
+    jVec = jVec.Scale(c.J)
+    kVec = kVec.Scale(c.K)
+
+    *c = iVec.Add(jVec).Add(kVec)
+    c.Normalize()
 }
 
 // DownAp7 transforms coordinates for a resolution decrease from Class III to Class II.
@@ -228,9 +237,17 @@ func abs(x int) int {
 // Distance computes the grid distance between two IJK coordinates.
 // This matches H3 C ijkDistance function behavior.
 func Distance(a, b CoordIJK) int {
-	diff := a.Sub(b)
-	diff.Normalize() // Important: normalize the difference as H3 C does
-	return (abs(diff.I) + abs(diff.J) + abs(diff.K)) / 2
+    // Match H3 C ijkDistance: normalize(a-b), then return max(|i|,|j|,|k|).
+    diff := a.Sub(b)
+    diff.Normalize()
+    ai, aj, ak := abs(diff.I), abs(diff.J), abs(diff.K)
+    if ai < aj {
+        ai = aj
+    }
+    if ai < ak {
+        ai = ak
+    }
+    return ai
 }
 
 // UpAp7 finds the normalized IJK coordinates of the indexing parent

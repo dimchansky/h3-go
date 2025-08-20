@@ -112,7 +112,100 @@ int main(int argc, char *argv[]) {
         H3Index h3 = (H3Index)strtoull(argv[2], NULL, 16);
         int baseCell = getBaseCellNumber(h3);
         printf("%d\n", baseCell);
-        
+
+    } else if (strcmp(command, "coordijk_distance") == 0) {
+        if (argc < 8) {
+            fprintf(stderr, "Usage: %s coordijk_distance <i1> <j1> <k1> <i2> <j2> <k2>\n", argv[0]);
+            return 1;
+        }
+        CoordIJK a = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        CoordIJK b = { atoi(argv[5]), atoi(argv[6]), atoi(argv[7]) };
+        int d = ijkDistance(&a, &b);
+        printf("%d\n", d);
+
+    } else if (strcmp(command, "coordijk_rotate") == 0) {
+        if (argc < 6) {
+            fprintf(stderr, "Usage: %s coordijk_rotate <ccw|cw> <i> <j> <k>\n", argv[0]);
+            return 1;
+        }
+        const char* which = argv[2];
+        CoordIJK v = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]) };
+        if (strcmp(which, "ccw") == 0) {
+            _ijkRotate60ccw(&v);
+        } else if (strcmp(which, "cw") == 0) {
+            _ijkRotate60cw(&v);
+        } else {
+            fprintf(stderr, "Unknown rotation: %s (use ccw or cw)\n", which);
+            return 1;
+        }
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "coordijk_hex2d") == 0) {
+        if (argc < 5) {
+            fprintf(stderr, "Usage: %s coordijk_hex2d <i> <j> <k>\n", argv[0]);
+            return 1;
+        }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        Vec2d out;
+        _ijkToHex2d(&v, &out);
+        printf("%.15f %.15f\n", out.x, out.y);
+
+    } else if (strcmp(command, "coordijk_from_hex2d") == 0) {
+        if (argc < 4) {
+            fprintf(stderr, "Usage: %s coordijk_from_hex2d <x> <y>\n", argv[0]);
+            return 1;
+        }
+        Vec2d in = { atof(argv[2]), atof(argv[3]) };
+        CoordIJK out;
+        _hex2dToCoordIJK(&in, &out);
+        printf("%d %d %d\n", out.i, out.j, out.k);
+
+    } else if (strcmp(command, "coordijk_neighbor") == 0) {
+        if (argc < 6) {
+            fprintf(stderr, "Usage: %s coordijk_neighbor <digit> <i> <j> <k>\n", argv[0]);
+            return 1;
+        }
+        Direction d = (Direction)atoi(argv[2]);
+        CoordIJK v = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]) };
+        _neighbor(&v, d);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "coordijk_up_ap7") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_up_ap7 <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _upAp7(&v);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "coordijk_up_ap7r") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_up_ap7r <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _upAp7r(&v);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "coordijk_down_ap7") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap7 <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _downAp7(&v);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "coordijk_down_ap7r") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap7r <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _downAp7r(&v);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "coordijk_down_ap3") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap3 <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _downAp3(&v);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "coordijk_down_ap3r") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap3r <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _downAp3r(&v);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
         return 1;

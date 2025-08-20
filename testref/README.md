@@ -63,6 +63,22 @@ The `h3ref` binary provides a simple command-line interface:
 # Rotate H3 indices
 ./h3ref rotate60cw 0x8021fffffffffff   # Returns: 0x8021fffffffffff
 ./h3ref rotate60ccw 0x8021fffffffffff  # Returns: 0x8021fffffffffff
+
+# CoordIJK helpers (for validating Go internal/coordijk)
+./h3ref coordijk_distance 0 0 0  1 0 1        # Returns: 1
+./h3ref coordijk_rotate ccw 1 0 0              # Returns: "1 1 0"
+./h3ref coordijk_rotate cw  0 1 0              # Returns: "1 1 0"
+./h3ref coordijk_hex2d 1 1 0                   # Returns: "0.500000... 0.866025..."
+./h3ref coordijk_from_hex2d 0.5 0.86602540378  # Returns: "1 1 0"
+./h3ref coordijk_neighbor 4 0 0 0              # Returns: "1 0 0"
+
+# Aperture transforms (Up/Down Ap7/Ap3)
+./h3ref coordijk_up_ap7   7 0 0   # Returns parent in CCW ap7
+./h3ref coordijk_up_ap7r  7 0 0   # Returns parent in CW ap7
+./h3ref coordijk_down_ap7 1 0 0   # Returns child at next finer CCW ap7
+./h3ref coordijk_down_ap7r 1 0 0  # Returns child at next finer CW ap7
+./h3ref coordijk_down_ap3 1 0 0   # Ap3 (pentagon) finer
+./h3ref coordijk_down_ap3r 1 0 0  # Ap3 reverse finer
 ```
 
 ## Error Code Mapping
@@ -98,6 +114,8 @@ Unknown error codes map to `ErrFailed` with logging.
 - [x] Download and build H3 C v4.3.0
 - [x] Implement `h3ref` CLI with command-line protocol
 - [x] Add `make ref` target to root Makefile
+- [x] Expose CoordIJK helpers (distance, rotate, neighbor, hex2d conversions)
+- [x] Expose aperture transforms (Up/Down Ap7/Ap3)
 - [ ] Wire up Go test harness to use oracle
 - [ ] Add golden test datasets for stable operations
 - [x] Validate pentagon handling and rotation functions
