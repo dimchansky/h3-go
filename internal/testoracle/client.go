@@ -3,6 +3,7 @@
 package testoracle
 
 import (
+    "fmt"
     "os"
     "os/exec"
     "path/filepath"
@@ -131,6 +132,20 @@ func (c *Client) RotateH3CW(h uint64) uint64 {
     if err != nil { c.t.Fatalf("parse rotate60cw: %q: %v", out, err) }
     return v
 }
+
+// GeoToFaceIJK returns (face,i,j,k) for given lat,lng (degrees) and res.
+func (c *Client) GeoToFaceIJK(lat, lng float64, res int) (int, int, int, int) {
+    out := c.out("geotofaceijk", strconv.FormatFloat(lat, 'g', -1, 64), strconv.FormatFloat(lng, 'g', -1, 64), strconv.Itoa(res))
+    var face, i, j, k int
+    _, err := fmt.Sscanf(out, "%d %d %d %d", &face, &i, &j, &k)
+    if err != nil {
+        c.t.Fatalf("parse geotofaceijk: %q: %v", out, err)
+    }
+    return face, i, j, k
+}
+
+// Raw provides direct access to oracle output for custom commands.
+func (c *Client) Raw(args ...string) string { return c.out(args...) }
 
 // H3FromFaceIJK converts Face+IJK+res to an H3 index via oracle.
 func (c *Client) H3FromFaceIJK(face, i, j, k, res int) uint64 {

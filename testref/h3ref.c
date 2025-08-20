@@ -53,7 +53,8 @@ int main(int argc, char *argv[]) {
         double lng = atof(argv[3]);
         int res = atoi(argv[4]);
         
-        LatLng geo = {lat, lng};
+        LatLng geo;
+        setGeoDegs(&geo, lat, lng);
         H3Index h3;
         H3Error err = latLngToCell(&geo, res, &h3);
         
@@ -205,6 +206,33 @@ int main(int argc, char *argv[]) {
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         _downAp3r(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
+
+    } else if (strcmp(command, "geotofaceijk") == 0) {
+        if (argc < 5) {
+            fprintf(stderr, "Usage: %s geotofaceijk <lat> <lng> <res>\n", argv[0]);
+            return 1;
+        }
+        double lat = atof(argv[2]);
+        double lng = atof(argv[3]);
+        int res = atoi(argv[4]);
+        LatLng g; setGeoDegs(&g, lat, lng);
+        FaceIJK fijk;
+        _geoToFaceIjk(&g, res, &fijk);
+        printf("%d %d %d %d\n", fijk.face, fijk.coord.i, fijk.coord.j, fijk.coord.k);
+
+    } else if (strcmp(command, "geohex2d") == 0) {
+        if (argc < 5) {
+            fprintf(stderr, "Usage: %s geohex2d <lat> <lng> <res>\n", argv[0]);
+            return 1;
+        }
+        double lat = atof(argv[2]);
+        double lng = atof(argv[3]);
+        int res = atoi(argv[4]);
+        LatLng g; setGeoDegs(&g, lat, lng);
+        int face;
+        Vec2d v;
+        _geoToHex2d(&g, res, &face, &v);
+        printf("%d %.17g %.17g\n", face, v.x, v.y);
 
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);
