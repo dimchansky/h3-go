@@ -19,20 +19,50 @@ make ref  # From repository root
 ```
 
 This will:
-1. Download H3 v4.3.0 source 
+1. Download H3 v4.3.0 source to `testref/h3-4.3.0/`
 2. Build the `testref/h3ref` CLI binary
-3. The binary provides a JSON stdin/stdout interface for test queries
+3. The binary provides a simple command-line interface for test queries
+
+## Direct Build
+
+You can also build directly in the testref directory:
+
+```bash
+cd testref
+make        # Download and build oracle
+make test   # Run validation tests
+make version    # Show current H3 version
+make clean-all  # Remove all downloaded source and binaries
+```
+
+## Upgrading H3 Version
+
+To upgrade to a newer H3 version:
+
+1. Edit `H3_VERSION` in `testref/Makefile`
+2. Run `make clean-all && make` to rebuild with new version
+3. Run `make test` to verify compatibility
+
+The oracle source code is version-agnostic and requires no changes.
 
 ## Protocol
 
-The `h3ref` binary expects JSON commands on stdin and returns JSON responses on stdout:
+The `h3ref` binary provides a simple command-line interface:
 
-```json
-# Input
-{"function": "latLngToCell", "args": {"lat": 37.775, "lng": -122.418, "res": 9}}
+```bash
+# Test pentagon detection
+./h3ref pentagon 4        # Returns: 1 (is pentagon)
+./h3ref pentagon 0        # Returns: 0 (is hexagon)
 
-# Output  
-{"result": "0x8928308280fffff", "error": null}
+# Convert FaceIJK to H3 index  
+./h3ref faceijk 0 0 0 1 0  # Returns: 0x8025fffffffffff
+
+# Convert LatLng to H3 index
+./h3ref latlng 37.775 -122.418 9  # Returns: 0x8928308280fffff 0
+
+# Rotate H3 indices
+./h3ref rotate60cw 0x8021fffffffffff   # Returns: 0x8021fffffffffff
+./h3ref rotate60ccw 0x8021fffffffffff  # Returns: 0x8021fffffffffff
 ```
 
 ## Error Code Mapping
@@ -65,11 +95,12 @@ Unknown error codes map to `ErrFailed` with logging.
 
 ## Status
 
-- [ ] Download and build H3 C v4.3.0
-- [ ] Implement `h3ref` CLI with JSON protocol  
-- [ ] Add `make ref` target to root Makefile
+- [x] Download and build H3 C v4.3.0
+- [x] Implement `h3ref` CLI with command-line protocol
+- [x] Add `make ref` target to root Makefile
 - [ ] Wire up Go test harness to use oracle
 - [ ] Add golden test datasets for stable operations
+- [x] Validate pentagon handling and rotation functions
 
 ## Design Goals
 

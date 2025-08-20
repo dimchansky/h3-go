@@ -12,7 +12,6 @@
 *.out
 
 .idea/
-temp/
 
 coverage.html
 coverage.out

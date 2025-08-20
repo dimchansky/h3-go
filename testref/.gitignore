@@ -1,0 +1,9 @@
+# Downloaded H3 reference source
+h3-*.tar.gz
+h3-*/
+
+# Built oracle binary
+h3ref
+
+# Object files
+*.o

@@ -110,3 +110,23 @@ I can see these main functions that need testing:
   3. Coordinate conversion: GeoToHex2d, GeoToFaceIJK
   4. H3 index functions: FaceIJKToH3, faceIJKToBaseCell, faceIJKToBaseCellCCWrot60
 ---
+But how can we be sure that everything is covered by tests if there is such a TODO in the FaceIJKToH3 function?
+```
+	// TODO: Pentagon handling and rotation logic needed here
+	// This requires implementing:
+	// - _h3LeadingNonZeroDigit
+	// - _baseCellIsCwOffset
+	// - _h3Rotate60cw/_h3Rotate60ccw
+	// - _h3RotatePent60ccw
+```
+I expect something to be covered by tests if we have a table test with at least a hundred rows, where we feed random or boundary inputs into the C function and get the result, and then test our code using this table.
+Here, we are actually only testing some happy paths.
+---
+I like your implementation of testref/h3ref.c, which allows us to quickly call the functions we need and get the result.
+This will allow us to do something like fuzzy testing in the future.
+Currently, we have a temp directory at the root of the project with a temporary version of the library https://github.com/uber/h3 (v4.3.0).
+Perhaps we should make it so that testref/Makefile allows us to download the required version of the h3 library to the testref/h3 directory, for example?
+Then this application would refer to these source files rather than the temp/h3 directory? How can this be done in accordance with best practices?
+---
+And if the version is updated, will we have to change the source code?
+#include "h3-4.3.0/src/h3lib/include/h3api.h"
