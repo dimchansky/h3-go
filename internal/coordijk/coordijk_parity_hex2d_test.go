@@ -5,10 +5,12 @@ package coordijk
 import (
     "math"
     "testing"
+
+    testoracle "github.com/dimchansky/h3-go/internal/testoracle"
 )
 
 func TestOracle_Hex2d_IJKToHex2D(t *testing.T) {
-    o := newOracle(t)
+    o := testoracle.New(t)
     cases := []CoordIJK{
         {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 1, 0},
         {-1, 0, 0}, {0, -1, 0}, {2, 1, -1}, {3, -2, 1}, {10, 5, -3},
@@ -16,15 +18,15 @@ func TestOracle_Hex2d_IJKToHex2D(t *testing.T) {
     const tol = 1e-12
     for _, v := range cases {
         got := v.ToHex2d()
-        want := o.IJKToHex2D(v)
-        if math.Abs(got.X-want.X) > tol || math.Abs(got.Y-want.Y) > tol {
-            t.Fatalf("ToHex2d(%v) = (%.15g, %.15g), want (%.15g, %.15g)", v, got.X, got.Y, want.X, want.Y)
+        x, y := o.IJKToHex2D([3]int{v.I, v.J, v.K})
+        if math.Abs(got.X-x) > tol || math.Abs(got.Y-y) > tol {
+            t.Fatalf("ToHex2d(%v) = (%.15g, %.15g), want (%.15g, %.15g)", v, got.X, got.Y, x, y)
         }
     }
 }
 
 func TestOracle_Hex2d_Hex2DToIJK(t *testing.T) {
-    o := newOracle(t)
+    o := testoracle.New(t)
     type pt struct{ X, Y float64 }
     cases := []pt{
         {0, 0}, {1, 0}, {0, 1}, {1, 1}, {-1, 0}, {0, -1}, {-1, -1},
@@ -32,10 +34,10 @@ func TestOracle_Hex2d_Hex2DToIJK(t *testing.T) {
     }
     for _, p := range cases {
         got := Hex2dToCoordIJK(Vec2d{X: p.X, Y: p.Y})
-        want := o.Hex2DToIJK(p.X, p.Y)
+        arr := o.Hex2DToIJK(p.X, p.Y)
+        want := CoordIJK{arr[0], arr[1], arr[2]}
         if got != want {
             t.Fatalf("Hex2dToCoordIJK(%.6f,%.6f) = %v, want %v", p.X, p.Y, got, want)
         }
     }
 }
-

@@ -25,8 +25,28 @@ See [TODO.md](./TODO.md) for the live plan, dependency breakdown, and acceptance
 
 ## Testing strategy
 - Table-driven tests mirroring H3 C behavior.
-- External **C oracle CLI** (built from H3 v4.3.0) invoked by Go tests via `exec.Command` — keeps this module pure Go while validating against the reference.
+- External **C oracle CLI** (built from H3 v4.3.0) invoked by Go tests — keeps this module pure Go while validating against the reference.
 - Fuzz tests for reversible transforms; microbenchmarks for hot paths.
+
+### Oracle-backed tests
+- Build oracle once: `make ref` (produces `testref/h3ref`).
+- Run parity tests: `make test-oracle` (or `make test-all` for both normal and oracle).
+- Controls (env):
+  - `ORACLE_MAX`: cap randomized/exhaustive cases in parity tests (default `200`).
+  - `ORACLE_SEED`: seed for randomized generators (default `1337`; set `0` for time-based).
+  - `ORACLE_PATH`: optional absolute path to `h3ref` binary (defaults to `./testref/h3ref`).
+
+Examples:
+```bash
+# Quick run with defaults
+make test-oracle
+
+# Heavier sweep locally
+ORACLE_MAX=2000 ORACLE_SEED=42 make test-oracle
+
+# Use a custom-built oracle binary
+ORACLE_PATH=/abs/path/to/h3ref make test-oracle
+```
 
 ## Development
 - Go ≥ 1.22 recommended.
