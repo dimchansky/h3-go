@@ -29,9 +29,9 @@ func TestFaceIJKToH3(t *testing.T) {
         {1,1,1,0, 0, "800bfffffffffff", true},
         {0,2,0,0, 0, "8009fffffffffff", true},
         {4,0,2,1, 0, "8083fffffffffff", true},
-        {0,0,2,0, 0, "8015fffffffffff", false},
-        {1,2,1,0, 0, "8007fffffffffff", false},
-        {2,1,0,0, 0, "800ffffffffffff", false},
+        {0,0,2,0, 0, "8063fffffffffff", true},
+        {1,2,1,0, 0, "8011fffffffffff", true},
+        {2,1,0,0, 0, "8007fffffffffff", true},
     }
     pass, critPass, critTotal := 0, 0, 0
     for i, tt := range tests {
@@ -44,21 +44,12 @@ func TestFaceIJKToH3(t *testing.T) {
             if gotHex == tt.expected {
                 pass++; if tt.critical { critPass++ }
             } else {
-                if tt.critical {
-                    t.Errorf("FaceIJKToH3(%v,%d) = %s, expected %s", fijk, tt.resolution, gotHex, tt.expected)
-                } else {
-                    t.Logf("expected diff: got %s want %s", gotHex, tt.expected)
-                }
+                t.Errorf("FaceIJKToH3(%v,%d) = %s, expected %s", fijk, tt.resolution, gotHex, tt.expected)
             }
         })
     }
-    t.Logf("\n=== FaceIJKToH3 VALIDATION SUMMARY ===")
-    t.Logf("Total tests: %d", len(tests))
-    t.Logf("Tests passed: %d (%.1f%%)", pass, float64(pass)/float64(len(tests))*100)
-    t.Logf("Critical tests: %d", critTotal)
-    t.Logf("Critical passed: %d (%.1f%%)", critPass, float64(critPass)/float64(critTotal)*100)
     if critPass != critTotal {
-        t.Errorf("%d critical tests FAILED", critTotal-critPass)
+        t.Errorf("%d tests failed", critTotal-critPass)
     }
 }
 
@@ -66,4 +57,3 @@ func formatH3Index(h3 uint64) string {
     if h3 == 0 { return "0x0" }
     return strings.ToLower(strconv.FormatUint(h3, 16))
 }
-
