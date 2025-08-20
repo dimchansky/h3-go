@@ -1,0 +1,8 @@
+Claude, DON'T READ THIS FILE, IT'S JUST THE HISTORY OF MY PROMPTS TO YOU!
+---
+These types and errors will be part of the public API, but you hide them somewhere in the internals.
+---
+But why did you move the errors here to internals? They will also be part of the API. How else will the user be able to compare which error was returned to them?
+---
+types.go is in the same package, so why move the code to another file? Maybe there is still a problem with circular references?
+---

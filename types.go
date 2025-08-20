@@ -1,5 +1,3 @@
-//go:build !cgo
-
 // Package h3 provides a pure-Go implementation of Uber's H3 hexagonal hierarchical
 // geospatial index. This package targets behavioral equivalence with H3 C v4.3.0
 // while offering Go-first APIs designed for performance and minimal allocations.
