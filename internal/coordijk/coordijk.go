@@ -202,10 +202,15 @@ func (c *CoordIJK) DownAp3r() {
 }
 
 // UnitIJKToDigit determines the H3 digit corresponding to a unit IJK coordinate.
+// Normalizes the input coordinate before checking, following H3 C _unitIjkToDigit.
 func UnitIJKToDigit(ijk CoordIJK) Direction {
+	// Normalize the coordinate first, matching H3 C behavior
+	normalized := ijk
+	normalized.Normalize()
+	
 	// Find which unit vector this matches
 	for dir := Direction(0); dir < NumDigits; dir++ {
-		if ijk == UnitVecs[dir] {
+		if normalized == UnitVecs[dir] {
 			return dir
 		}
 	}
@@ -221,8 +226,10 @@ func abs(x int) int {
 }
 
 // Distance computes the grid distance between two IJK coordinates.
+// This matches H3 C ijkDistance function behavior.
 func Distance(a, b CoordIJK) int {
 	diff := a.Sub(b)
+	diff.Normalize() // Important: normalize the difference as H3 C does
 	return (abs(diff.I) + abs(diff.J) + abs(diff.K)) / 2
 }
 

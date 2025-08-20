@@ -68,3 +68,34 @@ I suggest checking the structures you copy from C code by printing the structure
 (you can temporarily create code that will do this) and printing the structure from Go and comparing the results.
 Similarly, you can check what result should be returned for specific parameters in C code.
 ---
+You have now implemented quite a few functions in Go, effectively transpiling code from C to Go.
+1. I suggest studying the C tests for the functions you have implemented in Go and covering the Go code with the same tests.
+2. If the tests are insufficient, I suggest creating tabular tests from the C code: you can call a function with specific arguments from the C code, get the result, and print tabular code in Go for testing.
+---
+When you create test files, create them in the package you are testing, not just anywhere!
+---
+What tests do you have left in the project root? What do they relate to?
+---
+Don't you think the file name internal/coordijk/coordijk_c_validation_test.go should be simpler?
+---
+The file internal/coordijk/coordijk.go contains too many functions that are not covered by tests.
+1. I suggest studying the C tests for the functions you have implemented in Go and covering the Go code with the same tests.
+2. If the tests are insufficient, I suggest creating tabular tests from the C code: you can call a function with specific arguments from the C code, get the result, and print tabular code in Go for testing.
+---
+but wait, have you added tests for all functions?
+  Currently untested functions:
+  1. Add, Sub, Scale - Basic coordinate operations
+  2. Neighbor - Movement in specified direction
+  3. Rotate60CCW, Rotate60CW - Rotation functions
+  4. UpAp7, UpAp7r - Aperture transformations (upward)
+  5. DownAp7, DownAp7r, DownAp3, DownAp3r - Aperture transformations (downward)
+  6. Distance - IJK distance calculation
+  7. ToHex2d, Hex2dToCoordIJK - 2D hex coordinate conversion
+---
+Only 2 specialized functions remaining untested in file internal/coordijk/coordijk.go:
+  - ToHex2d, Hex2dToCoordIJK - 2D hex coordinate conversion (less critical for core H3 functionality)
+1. I suggest studying the C tests for the functions you have implemented in Go and covering the Go code with the same tests.
+2. If the tests are insufficient, I suggest creating tabular tests from the C code: you can call a function with specific arguments from the C code, get the result, and print tabular code in Go for testing.
+---
+Take a look at the C code at the end to see if your implementation is different!
+---
