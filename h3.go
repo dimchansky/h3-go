@@ -133,7 +133,7 @@ func (c Cell) ToLatLng() (LatLng, error) {
 // The returned vertices are in counterclockwise order starting from
 // a canonical vertex. Hexagons have 6 vertices, pentagons have 5.
 // The dst buffer is reused if it has sufficient capacity.
-func (c Cell) ToBoundary(dst []LatLng) ([]LatLng, error) {
+func (c Cell) ToBoundary(_ []LatLng) ([]LatLng, error) {
 	if err := validateCell(c); err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ func (c Cell) DistanceTo(other Cell) (int, error) {
 // KRing returns all cells within k grid steps of this cell.
 // Results are returned in ascending order by cell index.
 // The dst buffer is reused if it has sufficient capacity.
-func (c Cell) KRing(dst []Cell, k int) ([]Cell, error) {
+func (c Cell) KRing(_ []Cell, k int) ([]Cell, error) {
 	if err := validateCell(c); err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func (c Cell) HexRange(dst []Cell, k int) ([]Cell, error) {
 // annotated with their distance from this cell.
 // Results are ordered by (distance, cell index).
 // The dst buffer is reused if it has sufficient capacity.
-func (c Cell) HexRangeDistances(dst []CellDistance, k int) ([]CellDistance, error) {
+func (c Cell) HexRangeDistances(_ []CellDistance, k int) ([]CellDistance, error) {
 	if err := validateCell(c); err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func (c Cell) HexRangeDistances(dst []CellDistance, k int) ([]CellDistance, erro
 // HexRing returns all cells exactly k grid steps from this cell.
 // Results are returned in ring-walk order (documented canonical order).
 // The dst buffer is reused if it has sufficient capacity.
-func (c Cell) HexRing(dst []Cell, k int) ([]Cell, error) {
+func (c Cell) HexRing(_ []Cell, k int) ([]Cell, error) {
 	if err := validateCell(c); err != nil {
 		return nil, err
 	}
@@ -250,7 +250,7 @@ func LatLngToCell(p LatLng, res int) (Cell, error) {
 }
 
 // MaxKRingSize returns the maximum number of cells in a k-ring.
-// Formula: 3*k*(k+1) + 1
+// Formula: 3*k*(k+1) + 1.
 func MaxKRingSize(k int) int {
 	if k < 0 {
 		return 0

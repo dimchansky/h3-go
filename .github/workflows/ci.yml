@@ -32,8 +32,14 @@ jobs:
       - name: Download deps
         run: go mod download
 
-      - name: Lint
-        run: make fmt && make lint
+      - name: Format (gofmt)
+        run: make fmt
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v2.4.0
+          args: --timeout=5m
 
       - name: Test (race)
         run: go test -race ./...

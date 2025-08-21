@@ -10,7 +10,7 @@ type BaseCellRotation struct {
 // FaceIJKBaseCells is the massive lookup table that maps face+IJK coordinates to base cells.
 // This is ported directly from H3 C v4.3.0 baseCells.c faceIjkBaseCells table.
 // Valid lookup coordinates are from (0, 0, 0) to (2, 2, 2).
-// Structure: FaceIJKBaseCells[face][i][j][k] = BaseCellRotation{baseCell, ccwRot60}
+// Structure: FaceIJKBaseCells[face][i][j][k] = BaseCellRotation{baseCell, ccwRot60}.
 var FaceIJKBaseCells = [NumIcosahedronFaces][3][3][3]BaseCellRotation{
 	// face 0
 	{

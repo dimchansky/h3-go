@@ -87,7 +87,7 @@ func SetDigit(h uint64, resolution int, digit int) uint64 {
 }
 
 // H3_INIT equivalent - all digits set to 7 (invalid).
-const H3_INIT = uint64(0x00001fffffffffff)
+const H3_INIT = uint64(0x00001fffffffffff) //nolint:revive // keep H3 naming for constants
 
 // Pack creates an H3 index from components.
 func Pack(mode uint64, res int, baseCell int, digits []int) uint64 {

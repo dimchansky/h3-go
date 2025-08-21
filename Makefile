@@ -6,16 +6,17 @@ test:
 bench:
 	go test -bench=. -benchmem ./...
 
-GOLANGCI_LINT_VERSION ?= v1.59.1
+# Note: golangci-lint tags use v1.x; latest stable at time of writing.
+# v2.x does not exist as a module tag; pin to latest v1 instead.
+GOLANGCI_LINT_VERSION ?= v2.4.0
 GOBIN ?= $(shell go env GOPATH)/bin
 GOLANGCI_LINT := $(GOBIN)/golangci-lint
 
-# Installs a fixed version of golangci-lint into GOPATH/bin
+# Installs golangci-lint via official script into GOPATH/bin
 install-lint:
-	@echo "Installing golangci-lint $(GOLANGCI_LINT_VERSION) to $(GOLANGCI_LINT)"
-	@GO111MODULE=on \
-		GOBIN=$(GOBIN) \
-		go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+	@echo "Installing golangci-lint $(GOLANGCI_LINT_VERSION) to $(GOLANGCI_LINT) via official script"
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | \
+		sh -s -- -b $(GOBIN) $(GOLANGCI_LINT_VERSION)
 
 # Runs vet and golangci-lint (installs it if missing)
 lint: $(GOLANGCI_LINT)

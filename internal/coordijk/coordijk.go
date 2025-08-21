@@ -54,10 +54,10 @@ var UnitVecs = [7]CoordIJK{
 }
 
 // M_SQRT3_2 is sqrt(3) / 2.
-const M_SQRT3_2 = 0.8660254037844386467637231707529361834714
+const M_SQRT3_2 = 0.8660254037844386467637231707529361834714 //nolint:revive // keep H3 naming for constants
 
 // M_RSIN60 is 1 / sin(60 degrees) = 2 / sqrt(3).
-const M_RSIN60 = 1.1547005383792515290182975610039149269484
+const M_RSIN60 = 1.1547005383792515290182975610039149269484 //nolint:revive // keep H3 naming for constants
 
 // Add adds two IJK coordinates.
 func (c CoordIJK) Add(other CoordIJK) CoordIJK {

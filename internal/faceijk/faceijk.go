@@ -54,17 +54,17 @@ const (
 // Constants from H3 source for gnomonic projection.
 const (
 	// M_AP7_ROT_RADS is the rotation angle between Class II and Class III resolution axes.
-	M_AP7_ROT_RADS = 0.333473172251832115336090755351 // arcsin(sqrt(3/28))
+	M_AP7_ROT_RADS = 0.333473172251832115336090755351 //nolint:revive // keep H3 naming (arcsin(sqrt(3/28)))
 
 	// RES0_U_GNOMONIC is the scaling factor for gnomonic projection at resolution 0.
-	RES0_U_GNOMONIC = 0.38196601125010515179541316563436
+	RES0_U_GNOMONIC = 0.38196601125010515179541316563436 //nolint:revive // keep H3 naming
 
 	// Constants for azimuth calculation.
-	M_SQRT7 = 2.6457513110645905509222807479026
+	M_SQRT7 = 2.6457513110645905509222807479026 //nolint:revive // keep H3 naming
 )
 
 // FaceCenterGeo contains the center point of each icosahedron face in lat/lng radians.
-// From H3 C source faceijk.c
+// From H3 C source faceijk.c.
 var FaceCenterGeo = [NumIcosaFaces][2]float64{
 	{0.803582649718989942, 1.248397419617396099},   // face 0
 	{1.307747883455638156, 2.536945009877921159},   // face 1
@@ -531,7 +531,7 @@ func rotate60cwDir(d coordijk.Direction) coordijk.Direction {
 }
 
 // h3RotatePent60ccw applies pentagon-specific 60-degree counter-clockwise rotation.
-// Pentagon cells have special handling for the KAxesDigit orientation
+// Pentagon cells have special handling for the KAxesDigit orientation.
 func h3RotatePent60ccw(h uint64) uint64 {
 	// Rotate all digits CCW and adjust if we rotated into the deleted K subsequence
 	foundFirst := false

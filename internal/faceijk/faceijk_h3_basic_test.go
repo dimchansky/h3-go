@@ -19,7 +19,7 @@ func TestFaceIJKToH3Basic(t *testing.T) {
 		{"res1_face1_000", FaceIJK{Face: 1, Coord: coordijk.CoordIJK{I: 0, J: 0, K: 0}}, 1, true},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			_ = ToH3(tt.fijk, tt.res) // accept 0 (H3_NULL) for now per original test
 		})
 	}

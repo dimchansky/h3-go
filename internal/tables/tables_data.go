@@ -1,7 +1,7 @@
 package tables
 
 // BaseCells contains metadata for all base cells.
-// Data extracted from H3 C v4.3.0 baseCells.c
+// Data extracted from H3 C v4.3.0 baseCells.c.
 var BaseCells = [NumBaseCells]BaseCellData{
 	{Face: 1, IJK0: [3]int{1, 0, 0}, IsPentagon: 0, CWOffsetPent: [2]int{0, 0}},    // base cell 0
 	{Face: 2, IJK0: [3]int{1, 1, 0}, IsPentagon: 0, CWOffsetPent: [2]int{0, 0}},    // base cell 1
