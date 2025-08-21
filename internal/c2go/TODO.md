@@ -6,9 +6,10 @@ Checklist
 - [x] Scaffold package and docs (README.md)
 - [x] Add first dependency-free function: `mathExtensions.c::_ipow`
 - [x] Port `latLng.c::_posAngleRads` (angle normalization) — parity test via `_posAngleRadsC`
-- [x] Port `latLng.c::constrainLng` and `constrainLat`
-- [x] Port `latLng.c::degsToRads` and `radsToDegs`
-- [x] Port `latLng.c::geoAlmostEqualThreshold` and `geoAlmostEqual`
+ - [x] Port `latLng.c::constrainLng` and `constrainLat`
+ - [x] Port `latLng.c::degsToRads` and `radsToDegs`
+ - [x] Port `latLng.c::geoAlmostEqualThreshold` and `geoAlmostEqual`
+ - [ ] Port `latLng.c::H3_EXPORT(greatCircleDistanceRads/Km/M)`
 - [ ] Port additional small helpers from `mathExtensions.c` and `latLng.c`
 - [ ] Identify next targets with minimal dependencies; add TODO chains in code
 - [ ] Mirror select C tests (apps/testapps, fuzzers) where practical
@@ -24,6 +25,9 @@ Functions
   - [x] `H3_EXPORT(radsToDegs)(double radians)` — DONE
   - [x] `geoAlmostEqualThreshold(const LatLng*, const LatLng*, double)` — DONE
   - [x] `geoAlmostEqual(const LatLng*, const LatLng*)` — DONE
+  - [ ] `H3_EXPORT(greatCircleDistanceRads)(const LatLng*, const LatLng*)` — TODO
+  - [ ] `H3_EXPORT(greatCircleDistanceKm)(const LatLng*, const LatLng*)` — TODO
+  - [ ] `H3_EXPORT(greatCircleDistanceM)(const LatLng*, const LatLng*)` — TODO
 
 Conventions
 - One function per Go file: `<cfile>__<function>.go`

@@ -52,6 +52,30 @@ func radsToDegsC(radians float64) float64 {
     return float64(C.radsToDegs_c_wrapper(C.double(radians)))
 }
 
+// greatCircleDistanceRadsC calls the original C implementation.
+func greatCircleDistanceRadsC(a, b LatLng) float64 {
+    var ca, cb C.LatLng
+    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
+    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
+    return float64(C.greatCircleDistanceRads(&ca, &cb))
+}
+
+// greatCircleDistanceKmC calls the original C implementation.
+func greatCircleDistanceKmC(a, b LatLng) float64 {
+    var ca, cb C.LatLng
+    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
+    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
+    return float64(C.greatCircleDistanceKm(&ca, &cb))
+}
+
+// greatCircleDistanceMC calls the original C implementation.
+func greatCircleDistanceMC(a, b LatLng) float64 {
+    var ca, cb C.LatLng
+    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
+    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
+    return float64(C.greatCircleDistanceM(&ca, &cb))
+}
+
 // geoAlmostEqualThresholdC calls the original C function using plain doubles.
 func geoAlmostEqualThresholdC(a, b LatLng, threshold float64) bool {
     var ca, cb C.LatLng
