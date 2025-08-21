@@ -6,9 +6,9 @@ Checklist
 - [x] Scaffold package and docs (README.md)
 - [x] Add first dependency-free function: `mathExtensions.c::_ipow`
 - [x] Port `latLng.c::_posAngleRads` (angle normalization) — parity test via `_posAngleRadsC`
-- [ ] Port `latLng.c::constrainLng` and `constrainLat`
-- [ ] Port `latLng.c::degsToRads` and `radsToDegs`
-- [ ] Port `latLng.c::geoAlmostEqualThreshold` and `geoAlmostEqual`
+- [x] Port `latLng.c::constrainLng` and `constrainLat`
+- [x] Port `latLng.c::degsToRads` and `radsToDegs`
+- [x] Port `latLng.c::geoAlmostEqualThreshold` and `geoAlmostEqual`
 - [ ] Port additional small helpers from `mathExtensions.c` and `latLng.c`
 - [ ] Identify next targets with minimal dependencies; add TODO chains in code
 - [ ] Mirror select C tests (apps/testapps, fuzzers) where practical
@@ -18,12 +18,12 @@ Functions
   - [x] `_ipow(int64_t base, int64_t exp)` — implemented; parity-tested via `_ipowC` wrapper
 - latLng.c
   - [x] `_posAngleRads(double rads)` — DONE; parity via `_posAngleRadsC`
-  - [ ] `constrainLng(double lng)` — TODO
-  - [ ] `constrainLat(double lat)` — TODO
-  - [ ] `H3_EXPORT(degsToRads)(double degrees)` — TODO
-  - [ ] `H3_EXPORT(radsToDegs)(double radians)` — TODO
-  - [ ] `geoAlmostEqualThreshold(const LatLng*, const LatLng*, double)` — TODO
-  - [ ] `geoAlmostEqual(const LatLng*, const LatLng*)` — TODO
+  - [x] `constrainLng(double lng)` — DONE
+  - [x] `constrainLat(double lat)` — DONE
+  - [x] `H3_EXPORT(degsToRads)(double degrees)` — DONE
+  - [x] `H3_EXPORT(radsToDegs)(double radians)` — DONE
+  - [x] `geoAlmostEqualThreshold(const LatLng*, const LatLng*, double)` — DONE
+  - [x] `geoAlmostEqual(const LatLng*, const LatLng*)` — DONE
 
 Conventions
 - One function per Go file: `<cfile>__<function>.go`
@@ -47,3 +47,8 @@ Guideline going forward when a C function links in extra deps
 - Ensure each original C file is compiled in its own shim to avoid static symbol redefinitions across modules.
 - If link still fails due to further deps, add shims for those modules too (one TU per module).
 - Keep the Go interop file (`<cfile>_cgo.go`) limited to declaring wrappers that forward to C; never copy C logic.
+
+
+Note on C bool interop (cgo)
+- Preferred: include `<stdbool.h>` and compare C.bool return values directly to `0` in Go (`C.fn(...) != 0`). This is valid because `_Bool` is an integer type in C99.
+- Toolchain caveat: some cgo toolchains reject direct comparison `C.bool != 0`. In those cases, use a tiny inline C helper to normalize to `int` (e.g., `static int h3_bool_to_int(_Bool b) { return b ? 1 : 0; }`) and compare its result to `0` from Go.
