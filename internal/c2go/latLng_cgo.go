@@ -11,10 +11,14 @@ package c2go
 double _posAngleRads(double);
 double constrainLng(double);
 double constrainLat(double);
+double degsToRads(double);
+double radsToDegs(double);
 
 static double _posAngleRads_c_wrapper(double rads) { return _posAngleRads(rads); }
 static double constrainLng_c_wrapper(double lng) { return constrainLng(lng); }
 static double constrainLat_c_wrapper(double lat) { return constrainLat(lat); }
+static double degsToRads_c_wrapper(double degrees) { return degsToRads(degrees); }
+static double radsToDegs_c_wrapper(double radians) { return radsToDegs(radians); }
 */
 import "C"
 
@@ -31,4 +35,14 @@ func _constrainLngC(lng float64) float64 {
 // _constrainLatC invokes the original C implementation for parity tests.
 func _constrainLatC(lat float64) float64 {
     return float64(C.constrainLat_c_wrapper(C.double(lat)))
+}
+
+// degsToRadsC invokes the original C implementation for parity tests.
+func degsToRadsC(degrees float64) float64 {
+    return float64(C.degsToRads_c_wrapper(C.double(degrees)))
+}
+
+// radsToDegsC invokes the original C implementation for parity tests.
+func radsToDegsC(radians float64) float64 {
+    return float64(C.radsToDegs_c_wrapper(C.double(radians)))
 }
