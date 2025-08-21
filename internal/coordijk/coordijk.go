@@ -1,4 +1,5 @@
-// Package coordijk implements the H3 IJK coordinate system.
+// Package coordijk implements the H3 IJK axial coordinate system and
+// operations on integer IJK coordinates used in face-local hex grids.
 // IJK coordinates are a hexagonal coordinate system with 3 axes,
 // each 120 degrees apart.
 package coordijk
@@ -52,10 +53,10 @@ var UnitVecs = [7]CoordIJK{
 	{1, 1, 0}, // direction 6 (i+j)
 }
 
-// M_SQRT3_2 is sqrt(3) / 2
+// M_SQRT3_2 is sqrt(3) / 2.
 const M_SQRT3_2 = 0.8660254037844386467637231707529361834714
 
-// M_RSIN60 is 1 / sin(60 degrees) = 2 / sqrt(3)
+// M_RSIN60 is 1 / sin(60 degrees) = 2 / sqrt(3).
 const M_RSIN60 = 1.1547005383792515290182975610039149269484
 
 // Add adds two IJK coordinates.
@@ -109,57 +110,57 @@ func (c *CoordIJK) Normalize() {
 	}
 
 	// Step 2: Remove the min value if needed
-	min := c.I
-	if c.J < min {
-		min = c.J
+	minComponent := c.I
+	if c.J < minComponent {
+		minComponent = c.J
 	}
-	if c.K < min {
-		min = c.K
+	if c.K < minComponent {
+		minComponent = c.K
 	}
-	if min > 0 {
-		c.I -= min
-		c.J -= min
-		c.K -= min
+	if minComponent > 0 {
+		c.I -= minComponent
+		c.J -= minComponent
+		c.K -= minComponent
 	}
 }
 
 // Neighbor moves the IJK coordinate in the specified direction.
 func (c *CoordIJK) Neighbor(dir Direction) {
-    // Mirror H3 C _neighbor: only act for digits (1..6). CENTER_DIGIT is no-op.
-    if dir > CenterDigit && dir < NumDigits {
-        *c = c.Add(UnitVecs[dir])
-        c.Normalize()
-    }
+	// Mirror H3 C _neighbor: only act for digits (1..6). CENTER_DIGIT is no-op.
+	if dir > CenterDigit && dir < NumDigits {
+		*c = c.Add(UnitVecs[dir])
+		c.Normalize()
+	}
 }
 
 // Rotate60CCW rotates the IJK coordinates 60 degrees counter-clockwise.
 func (c *CoordIJK) Rotate60CCW() {
-    // Match H3 C _ijkRotate60ccw by recombining unit vectors and normalizing.
-    iVec := CoordIJK{1, 1, 0}
-    jVec := CoordIJK{0, 1, 1}
-    kVec := CoordIJK{1, 0, 1}
+	// Match H3 C _ijkRotate60ccw by recombining unit vectors and normalizing.
+	iVec := CoordIJK{1, 1, 0}
+	jVec := CoordIJK{0, 1, 1}
+	kVec := CoordIJK{1, 0, 1}
 
-    iVec = iVec.Scale(c.I)
-    jVec = jVec.Scale(c.J)
-    kVec = kVec.Scale(c.K)
+	iVec = iVec.Scale(c.I)
+	jVec = jVec.Scale(c.J)
+	kVec = kVec.Scale(c.K)
 
-    *c = iVec.Add(jVec).Add(kVec)
-    c.Normalize()
+	*c = iVec.Add(jVec).Add(kVec)
+	c.Normalize()
 }
 
 // Rotate60CW rotates the IJK coordinates 60 degrees clockwise.
 func (c *CoordIJK) Rotate60CW() {
-    // Match H3 C _ijkRotate60cw by recombining unit vectors and normalizing.
-    iVec := CoordIJK{1, 0, 1}
-    jVec := CoordIJK{1, 1, 0}
-    kVec := CoordIJK{0, 1, 1}
+	// Match H3 C _ijkRotate60cw by recombining unit vectors and normalizing.
+	iVec := CoordIJK{1, 0, 1}
+	jVec := CoordIJK{1, 1, 0}
+	kVec := CoordIJK{0, 1, 1}
 
-    iVec = iVec.Scale(c.I)
-    jVec = jVec.Scale(c.J)
-    kVec = kVec.Scale(c.K)
+	iVec = iVec.Scale(c.I)
+	jVec = jVec.Scale(c.J)
+	kVec = kVec.Scale(c.K)
 
-    *c = iVec.Add(jVec).Add(kVec)
-    c.Normalize()
+	*c = iVec.Add(jVec).Add(kVec)
+	c.Normalize()
 }
 
 // DownAp7 transforms coordinates for a resolution decrease from Class III to Class II.
@@ -169,7 +170,7 @@ func (c *CoordIJK) DownAp7() {
 	iVec := CoordIJK{3, 0, 1}
 	jVec := CoordIJK{1, 3, 0}
 	kVec := CoordIJK{0, 1, 3}
-	
+
 	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
 	c.Normalize()
 }
@@ -181,7 +182,7 @@ func (c *CoordIJK) DownAp7r() {
 	iVec := CoordIJK{3, 1, 0}
 	jVec := CoordIJK{0, 3, 1}
 	kVec := CoordIJK{1, 0, 3}
-	
+
 	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
 	c.Normalize()
 }
@@ -193,7 +194,7 @@ func (c *CoordIJK) DownAp3() {
 	iVec := CoordIJK{2, 0, 1}
 	jVec := CoordIJK{1, 2, 0}
 	kVec := CoordIJK{0, 1, 2}
-	
+
 	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
 	c.Normalize()
 }
@@ -205,7 +206,7 @@ func (c *CoordIJK) DownAp3r() {
 	iVec := CoordIJK{2, 1, 0}
 	jVec := CoordIJK{0, 2, 1}
 	kVec := CoordIJK{1, 0, 2}
-	
+
 	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
 	c.Normalize()
 }
@@ -216,7 +217,7 @@ func UnitIJKToDigit(ijk CoordIJK) Direction {
 	// Normalize the coordinate first, matching H3 C behavior
 	normalized := ijk
 	normalized.Normalize()
-	
+
 	// Find which unit vector this matches
 	for dir := Direction(0); dir < NumDigits; dir++ {
 		if normalized == UnitVecs[dir] {
@@ -237,17 +238,17 @@ func abs(x int) int {
 // Distance computes the grid distance between two IJK coordinates.
 // This matches H3 C ijkDistance function behavior.
 func Distance(a, b CoordIJK) int {
-    // Match H3 C ijkDistance: normalize(a-b), then return max(|i|,|j|,|k|).
-    diff := a.Sub(b)
-    diff.Normalize()
-    ai, aj, ak := abs(diff.I), abs(diff.J), abs(diff.K)
-    if ai < aj {
-        ai = aj
-    }
-    if ai < ak {
-        ai = ak
-    }
-    return ai
+	// Match H3 C ijkDistance: normalize(a-b), then return max(|i|,|j|,|k|).
+	diff := a.Sub(b)
+	diff.Normalize()
+	ai, aj, ak := abs(diff.I), abs(diff.J), abs(diff.K)
+	if ai < aj {
+		ai = aj
+	}
+	if ai < ak {
+		ai = ak
+	}
+	return ai
 }
 
 // UpAp7 finds the normalized IJK coordinates of the indexing parent
@@ -256,7 +257,7 @@ func (c *CoordIJK) UpAp7() {
 	// Convert to CoordIJ
 	i := c.I - c.K
 	j := c.J - c.K
-	
+
 	// Apply aperture 7 transformation
 	c.I = int(math.Round(float64(3*i-j) / 7.0))
 	c.J = int(math.Round(float64(i+2*j) / 7.0))
@@ -267,10 +268,10 @@ func (c *CoordIJK) UpAp7() {
 // UpAp7r finds the normalized IJK coordinates of the indexing parent
 // in a clockwise aperture 7 grid. Works in place.
 func (c *CoordIJK) UpAp7r() {
-	// Convert to CoordIJ  
+	// Convert to CoordIJ
 	i := c.I - c.K
 	j := c.J - c.K
-	
+
 	// Apply reverse aperture 7 transformation
 	c.I = int(math.Round(float64(2*i+j) / 7.0))
 	c.J = int(math.Round(float64(3*j-i) / 7.0))
@@ -283,7 +284,7 @@ func (c *CoordIJK) UpAp7r() {
 func (c CoordIJK) ToHex2d() Vec2d {
 	i := c.I - c.K
 	j := c.J - c.K
-	
+
 	return Vec2d{
 		X: float64(i) - 0.5*float64(j),
 		Y: float64(j) * M_SQRT3_2,
@@ -294,22 +295,22 @@ func (c CoordIJK) ToHex2d() Vec2d {
 func Hex2dToCoordIJK(v Vec2d) CoordIJK {
 	a1 := math.Abs(v.X)
 	a2 := math.Abs(v.Y)
-	
+
 	// Reverse conversion
 	x2 := a2 * M_RSIN60
 	x1 := a1 + x2/2.0
-	
+
 	// Quantize
 	m1 := int(x1)
 	m2 := int(x2)
-	
+
 	// Round correctly
 	r1 := x1 - float64(m1)
 	r2 := x2 - float64(m2)
-	
+
 	var h CoordIJK
 	h.K = 0
-	
+
 	if r1 < 0.5 {
 		if r1 < 1.0/3.0 {
 			if r2 < (1.0+r1)/2.0 {
@@ -325,7 +326,7 @@ func Hex2dToCoordIJK(v Vec2d) CoordIJK {
 			} else {
 				h.J = m2 + 1
 			}
-			
+
 			if (1.0-r1) <= r2 && r2 < (2.0*r1) {
 				h.I = m1 + 1
 			} else {
@@ -339,7 +340,7 @@ func Hex2dToCoordIJK(v Vec2d) CoordIJK {
 			} else {
 				h.J = m2 + 1
 			}
-			
+
 			if (2.0*r1-1.0) < r2 && r2 < (1.0-r1) {
 				h.I = m1
 			} else {
@@ -355,25 +356,25 @@ func Hex2dToCoordIJK(v Vec2d) CoordIJK {
 			}
 		}
 	}
-	
+
 	// Fold across axes if necessary
 	if v.X < 0.0 {
 		if h.J%2 == 0 {
 			axisi := h.J / 2
 			diff := h.I - axisi
-			h.I = h.I - 2*diff
+			h.I -= 2 * diff
 		} else {
 			axisi := (h.J + 1) / 2
 			diff := h.I - axisi
-			h.I = h.I - (2*diff + 1)
+			h.I -= (2*diff + 1)
 		}
 	}
-	
+
 	if v.Y < 0.0 {
-		h.I = h.I - (2*h.J+1)/2
+		h.I -= (2*h.J + 1) / 2
 		h.J = -h.J
 	}
-	
+
 	h.Normalize()
 	return h
 }

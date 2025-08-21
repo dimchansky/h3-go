@@ -32,12 +32,12 @@ func RadiansToDegrees(rad float64) float64 {
 func NormalizeRadians(rad float64) float64 {
 	// First reduce to [-2π, 2π]
 	rad = math.Mod(rad, 2*math.Pi)
-	
+
 	// Then shift to [0, 2π)
 	if rad < 0 {
 		rad += 2 * math.Pi
 	}
-	
+
 	return rad
 }
 
@@ -45,12 +45,12 @@ func NormalizeRadians(rad float64) float64 {
 func NormalizeDegrees(deg float64) float64 {
 	// First reduce to [-360, 360]
 	deg = math.Mod(deg, 360.0)
-	
+
 	// Then shift to [0, 360)
 	if deg < 0 {
 		deg += 360.0
 	}
-	
+
 	return deg
 }
 
@@ -58,12 +58,12 @@ func NormalizeDegrees(deg float64) float64 {
 func NormalizeLongitude(lng float64) float64 {
 	// Normalize to [0, 360)
 	lng = NormalizeDegrees(lng)
-	
+
 	// Shift to (-180, 180]
 	if lng > 180.0 {
 		lng -= 360.0
 	}
-	
+
 	return lng
 }
 

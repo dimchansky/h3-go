@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// TestIsResolutionClassII validates IsResolutionClassII implementation
+// TestIsResolutionClassII validates IsResolutionClassII implementation.
 func TestIsResolutionClassII(t *testing.T) {
 	tests := []struct {
 		resolution int
@@ -21,7 +21,7 @@ func TestIsResolutionClassII(t *testing.T) {
 		testName := fmt.Sprintf("test_%03d", i+1)
 		t.Run(testName, func(t *testing.T) {
 			result := IsResolutionClassII(tt.resolution)
-			
+
 			if result != tt.expected {
 				t.Errorf("IsResolutionClassII(%d) = %t, expected %t", tt.resolution, result, tt.expected)
 			} else {
@@ -31,7 +31,7 @@ func TestIsResolutionClassII(t *testing.T) {
 	}
 }
 
-// TestIsResolutionClassIII validates IsResolutionClassIII implementation
+// TestIsResolutionClassIII validates IsResolutionClassIII implementation.
 func TestIsResolutionClassIII(t *testing.T) {
 	tests := []struct {
 		resolution int
@@ -47,7 +47,7 @@ func TestIsResolutionClassIII(t *testing.T) {
 		testName := fmt.Sprintf("test_%03d", i+1)
 		t.Run(testName, func(t *testing.T) {
 			result := IsResolutionClassIII(tt.resolution)
-			
+
 			if result != tt.expected {
 				t.Errorf("IsResolutionClassIII(%d) = %t, expected %t", tt.resolution, result, tt.expected)
 			} else {
@@ -57,11 +57,11 @@ func TestIsResolutionClassIII(t *testing.T) {
 	}
 }
 
-// TestIsResolutionClass tests both resolution classification functions together
+// TestIsResolutionClass tests both resolution classification functions together.
 func TestIsResolutionClass(t *testing.T) {
 	tests := []struct {
-		res int
-		expectedII bool
+		res         int
+		expectedII  bool
 		expectedIII bool
 	}{
 		{0, true, false},

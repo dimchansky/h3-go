@@ -1,4 +1,4 @@
-.PHONY: test bench lint gen ref test-oracle test-all
+.PHONY: test bench lint gen ref test-oracle test-all golangci-lint install-lint fmt
 
 test:
 	go test -v ./...
@@ -6,9 +6,24 @@ test:
 bench:
 	go test -bench=. -benchmem ./...
 
-lint:
+GOLANGCI_LINT_VERSION ?= v1.59.1
+GOBIN ?= $(shell go env GOPATH)/bin
+GOLANGCI_LINT := $(GOBIN)/golangci-lint
+
+# Installs a fixed version of golangci-lint into GOPATH/bin
+install-lint:
+	@echo "Installing golangci-lint $(GOLANGCI_LINT_VERSION) to $(GOLANGCI_LINT)"
+	@GO111MODULE=on \
+		GOBIN=$(GOBIN) \
+		go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+
+# Runs vet and golangci-lint (installs it if missing)
+lint: $(GOLANGCI_LINT)
 	go vet ./...
-	@echo "Note: golangci-lint not configured yet (external dependency)"
+	$(GOLANGCI_LINT) run
+
+$(GOLANGCI_LINT):
+	@$(MAKE) install-lint
 
 gen:
 	@echo "Reserved for future table generation"
@@ -26,3 +41,12 @@ test-oracle: ref
 
 # Convenience: run both regular and oracle-tagged tests
 test-all: test test-oracle
+fmt:
+	@echo "Checking gofmt formatting..."
+	@files=$$(gofmt -s -l .); \
+	if [ -n "$$files" ]; then \
+		echo "gofmt found unformatted files:"; echo "$$files"; \
+		exit 1; \
+	else \
+		echo "gofmt OK"; \
+	fi

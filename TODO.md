@@ -13,7 +13,7 @@
 
 ## 0) Repo bootstrap
 - [x] Initialize repo: `module github.com/dimchansky/h3` (Go ≥ 1.22).
-- [ ] Add `LICENSE` (Apache-2.0) and `NOTICE` with attribution to H3.
+- [x] Add `LICENSE` (Apache-2.0); add `NOTICE` with attribution to H3.
 - [ ] Add CI (GitHub Actions): `go build`, `go test`, race, `go vet`, `golangci-lint`.
 - [x] Add `Makefile`: `make test`, `make bench`, `make lint`, `make gen` (for tables), `make ref` (build C oracle CLI).
 
@@ -41,10 +41,10 @@
 ## 3) Implementation plan (bottom-up)
 ### 3.1 Low-level primitives
 - [x] H3Index pack/unpack (mode, res, base cell, 15×3-bit digits).
-- [x] Static tables: base cells, neighbors, face mappings, rotations, pentagon flags (stubbed).
+- [x] Static tables: base cells, neighbors, face mappings, rotations, pentagon flags (initial population in `internal/tables`).
 - [x] Angle helpers: deg↔rad, normalization, clamping; tolerances.
-- [ ] Coordinate systems: icosahedron face/IJ transforms.
-- [ ] Pentagon handling: canonical rotations, missing neighbors.
+- [x] Coordinate systems: icosahedron face/IJ transforms (Geo→FaceIJK and FaceIJK→H3 scaffolding with tests; parity-backed).
+- [ ] Pentagon handling: canonical rotations, missing neighbors (FaceIJK rotations and cross-face traversal).
 
 ### 3.2 Mid-level helpers
 - [ ] LatLng ↔ local face coords; great-circle math as needed by H3.
@@ -52,14 +52,14 @@
 - [ ] Neighbor step / grid distance; ring traversal with pentagon rules.
 - [ ] IJ (axial) conversions (cell ↔ CoordIJ).
 
-### 3.3 Public functions (initial wave)
-- [x] `LatLngToCell` (stub - returns ErrOptionInvalid)
-- [x] `CellToLatLng` (stub - returns ErrOptionInvalid) 
-- [x] `CellToBoundary` (stub - returns ErrOptionInvalid)
-- [x] `AreNeighbors` (stub - returns ErrOptionInvalid)
-- [x] `GridDistance` (stub - returns ErrOptionInvalid)
-- [x] `KRing` / `HexRange` / `HexRangeDistances` / `HexRing` (stubs - return ErrOptionInvalid)
-- [x] `IsValidCell`, `Resolution`, `BaseCell`, `IsPentagon` (implemented)
+- ### 3.3 Public functions (initial wave)
+- [x] `LatLngToCell` (implemented via FaceIJK path; oracle parity tests added)
+- [ ] `Cell.ToLatLng` (center) 
+- [ ] `Cell.ToBoundary`
+- [ ] `Cell.IsNeighborOf`
+- [ ] `Cell.DistanceTo`
+- [ ] `Cell.KRing` / `HexRange` / `HexRangeDistances` / `HexRing`
+- [x] `Cell.IsValid`, `Cell.Resolution`, `Cell.BaseCell`, `Cell.IsPentagon`
 - [ ] `ToChildren` / `ToParent` / `Compact` / `Uncompact`
 - [ ] `PolygonToCells`
 - [ ] Edge APIs: `CellsToDirectedEdge`, `DirectedEdgeToCells`, `DirectedEdgeToBoundary`, etc.
@@ -68,34 +68,35 @@
 
 > For every function above: follow the **dst-buffer** pattern and document ordering.
 
-## 4) Testing & correctness
-- [ ] Implement C→Go error code mapping in `testref/` CLI and Go test harness (use the table documented in `api.md`), and assert unknown codes map to `ErrFailed` (or a wrapped error) with logging.
+-## 4) Testing & correctness
+- [ ] Implement C→Go error code mapping in `testref/` CLI and Go test harness (use the table documented in `api.md`); unknown codes map to `ErrFailed` (or wrapped) with logging.
 
+- [x] Add oracle-backed parity suites for Geo→FaceIJK and FaceIJK→H3; randomized cases with caps.
 - [ ] Mirror H3 C tests where available; otherwise design table tests for:
   - Invalid inputs (out of range, invalid indices)
   - Resolution extremes (0..MaxResolution)
   - Pentagons, poles, antimeridian
   - Deterministic ordering
 - [ ] Build **external C oracle CLI** (no cgo) under `testref/`:
-  - [ ] `make ref` builds `testref/h3ref` from H3 v4.3.0 with a simple stdin/stdout protocol (e.g., JSON). 
-  - [ ] Go tests invoke `exec.Command("testref/h3ref", ...)` to get oracle outputs.
+  - [x] `make ref` builds `testref/h3ref` from H3 v4.3.0 with a simple CLI protocol; commands mirror H3 C names.
+  - [x] Go tests invoke `exec.Command("testref/h3ref", ...)` to get oracle outputs.
   - [ ] Cache small golden datasets where stable.
-  - [x] Created `testref/README.md` with oracle architecture and protocol design.
+  - [x] `testref/README.md` documents oracle architecture and protocol.
 - [ ] Add fuzz tests for reversible transforms (Cell ↔ LatLng ↔ Cell; edges/vertices roundtrips).
 - [ ] Define numeric tolerances; start with `1e-12` (radians), `1e-9` (degrees).
 
 ## 5) Performance & allocations
 - [ ] Benchmarks: `BenchmarkKRing`, `BenchmarkPolygonToCells`, `BenchmarkCellToBoundary`, etc.
-- [ ] Ensure functions reuse `dst` when capacity permits; zero or minimal allocs in steady state.
+- [x] Ensure functions reuse `dst` when capacity permits across implemented APIs; validate via tests.
 - [ ] Avoid per-element `append` when size bounds known; prefer indexed fills.
-- [ ] No global mutable state; read-only tables only.
+- [x] No global mutable state; read-only tables only.
 - [ ] Consider small, carefully measured inlining for hot helpers.
 
 ## 6) Docs & examples
 - [ ] Package docs: index layout, pentagon caveats, dst-buffer pattern.
 - [ ] Usage examples (compile as `Example...` tests).
-- [ ] `README.md` kept in sync with API surface.
-- [ ] `api.md` serves as the canonical reference for signatures.
+- [x] `README.md` references oracle-backed tests and roadmap.
+- [x] `api.md` serves as the canonical reference for signatures.
 
 ## 7) Lint/CI/quality gates
 - [ ] Enable `-race` in tests (test-only).
@@ -103,33 +104,31 @@
 - [ ] Coverage target: non-trivial code ≥ 85% where realistic.
 
 ## 8) License & attribution
-- [ ] Include Apache-2.0 license and NOTICE crediting Uber H3.
-- [ ] Re-implement algorithms; do not copy C code verbatim. Cite sources.
+- [x] Include Apache-2.0 license; add NOTICE crediting Uber H3.
+- [x] Re-implement algorithms; do not copy C code verbatim. Cite sources.
 
 ---
 
 ## Milestone 1 Completed ✅
 
-**Status**: All deliverables for the first milestone are complete and tests pass.
+Status: Repository bootstrapped with core indexbits, angles, initial tables, and basic public metadata APIs. Oracle scaffolding in place. Tests compile and basic suites pass.
 
 ### Completed Items:
-- [x] Repo bootstrap (go.mod, Makefile)
-- [x] Internal packages: indexbits, angles, tables (stubbed), validate  
-- [x] Public API stubs: IsValidCell, Resolution, BaseCell, IsPentagon (fully implemented)
-- [x] Test coverage: indexbits_test.go, meta_test.go with comprehensive bit-level and API tests
-- [x] Benchmark stubs: BenchmarkIndexPack, BenchmarkIndexUnpack
-- [x] testref/ directory with oracle architecture documentation
-- [x] TODO.md updated with progress
+- [x] Repo bootstrap (go.mod, Makefile, LICENSE)
+- [x] Internal packages: indexbits, angles, tables (initial), faceijk (Geo↔FaceIJK, FaceIJK→H3 scaffolding)  
+- [x] Public metadata APIs: IsValid, Resolution, BaseCell, IsPentagon
+- [x] LatLngToCell end-to-end path (Geo→FaceIJK→H3) with validation
+- [x] Oracle-backed parity tests for FaceIJK transforms and LatLngToCell
+- [x] README, api.md synced with approach; TODO maintained
+- [x] Benchmark stubs for index packing/unpacking
 
-### Next Milestone Tasks:
-
-## Next: Core Coordinate Transforms
-- [ ] Populate internal/tables with correct H3 v4.3.0 constants
-- [ ] Implement icosahedron face coordinate system
-- [ ] Implement LatLngToCell and CellToLatLng
-- [ ] Implement CellToBoundary
-- [ ] Add table integrity tests
-- [ ] Build external C oracle for validation
+### Next Milestone: Cell geometry & neighbors
+- [ ] Implement `Cell.ToLatLng` (center)
+- [ ] Implement `Cell.ToBoundary` (hex/pentagon; CCW canonical order)
+- [ ] Implement neighbor check and grid distance
+- [ ] Implement KRing/HexRange/HexRing and distance variants
+- [ ] Expand tables and pentagon rotation handling
+- [ ] Add table integrity and boundary parity tests
 
 ---
 

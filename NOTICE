@@ -1,0 +1,15 @@
+This project reimplements algorithms and behavior from Uber's H3 library.
+
+Attribution:
+- H3: Copyright (c) 2018-2024 Uber Technologies, Inc.
+- H3 is licensed under the Apache License, Version 2.0 (the "License").
+  See https://github.com/uber/h3 and the LICENSE file therein for details.
+
+This repository does not link to or depend on H3 C at runtime. The test
+oracle under `testref/` downloads and builds the H3 C reference (v4.3.0)
+as a standalone CLI for parity testing only; it is not part of this Go
+module and is excluded from the library build.
+
+No source code from the H3 C implementation is copied verbatim. The
+algorithms are reimplemented based on public documentation and observed
+behavior of the reference implementation.

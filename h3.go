@@ -9,7 +9,7 @@ import (
 	"github.com/dimchansky/h3-go/internal/tables"
 )
 
-// Input validation helpers
+// Input validation helpers.
 func validateResolution(res int) error {
 	if res < 0 || res > MaxResolution {
 		return ErrResolutionDomain
@@ -21,11 +21,11 @@ func validateLatLng(lat, lng float64) error {
 	if lat < -90.0 || lat > 90.0 {
 		return ErrLatLngDomain
 	}
-	
+
 	if lng <= -180.0 || lng > 180.0 {
 		return ErrLatLngDomain
 	}
-	
+
 	return nil
 }
 
@@ -50,14 +50,14 @@ func validateCellPair(a, b Cell) error {
 	if err := validateCell(b); err != nil {
 		return err
 	}
-	
+
 	// Check resolution match
 	resA := indexbits.GetResolution(uint64(a))
 	resB := indexbits.GetResolution(uint64(b))
 	if resA != resB {
 		return ErrResolutionMismatch
 	}
-	
+
 	return nil
 }
 
@@ -93,9 +93,9 @@ func (c Cell) IsPentagon() (bool, error) {
 	if err := validateCell(c); err != nil {
 		return false, err
 	}
-	
+
 	baseCell := indexbits.GetBaseCell(uint64(c))
-	
+
 	// Check if base cell is a pentagon
 	if tables.IsPentagonBaseCell(baseCell) {
 		// At resolution 0, pentagon base cells are pentagons
@@ -103,7 +103,7 @@ func (c Cell) IsPentagon() (bool, error) {
 		if res == 0 {
 			return true, nil
 		}
-		
+
 		// At higher resolutions, check if all digits are 0
 		// (center child of pentagon is also a pentagon)
 		isPent := true
@@ -115,7 +115,7 @@ func (c Cell) IsPentagon() (bool, error) {
 		}
 		return isPent, nil
 	}
-	
+
 	return false, nil
 }
 
@@ -124,7 +124,7 @@ func (c Cell) ToLatLng() (LatLng, error) {
 	if err := validateCell(c); err != nil {
 		return LatLng{}, err
 	}
-	
+
 	// TODO: Implement actual conversion
 	return LatLng{}, ErrOptionInvalid
 }
@@ -137,7 +137,7 @@ func (c Cell) ToBoundary(dst []LatLng) ([]LatLng, error) {
 	if err := validateCell(c); err != nil {
 		return nil, err
 	}
-	
+
 	// TODO: Implement actual boundary calculation
 	return nil, ErrOptionInvalid
 }
@@ -148,7 +148,7 @@ func (c Cell) IsNeighborOf(other Cell) (bool, error) {
 	if err := validateCellPair(c, other); err != nil {
 		return false, err
 	}
-	
+
 	// TODO: Implement actual neighbor check
 	return false, ErrOptionInvalid
 }
@@ -159,7 +159,7 @@ func (c Cell) DistanceTo(other Cell) (int, error) {
 	if err := validateCellPair(c, other); err != nil {
 		return 0, err
 	}
-	
+
 	// TODO: Implement actual distance calculation
 	return 0, ErrOptionInvalid
 }
@@ -174,7 +174,7 @@ func (c Cell) KRing(dst []Cell, k int) ([]Cell, error) {
 	if err := validateKValue(k); err != nil {
 		return nil, err
 	}
-	
+
 	// TODO: Implement actual k-ring calculation
 	return nil, ErrOptionInvalid
 }
@@ -195,7 +195,7 @@ func (c Cell) HexRangeDistances(dst []CellDistance, k int) ([]CellDistance, erro
 	if err := validateKValue(k); err != nil {
 		return nil, err
 	}
-	
+
 	// TODO: Implement actual range with distances
 	return nil, ErrOptionInvalid
 }
@@ -210,12 +210,12 @@ func (c Cell) HexRing(dst []Cell, k int) ([]Cell, error) {
 	if err := validateKValue(k); err != nil {
 		return nil, err
 	}
-	
+
 	// TODO: Implement actual hex ring
 	return nil, ErrOptionInvalid
 }
 
-// Additional helper type for range-with-distance results.
+// CellDistance is a pair of Cell and its grid distance from the origin.
 type CellDistance struct {
 	Cell     Cell
 	Distance int
@@ -231,21 +231,21 @@ func LatLngToCell(p LatLng, res int) (Cell, error) {
 	if err := validateLatLng(p.Lat, p.Lng); err != nil {
 		return 0, err
 	}
-	
+
 	// Convert degrees to radians
 	lat := angles.DegreesToRadians(p.Lat)
 	lng := angles.DegreesToRadians(p.Lng)
-	
+
 	// Convert geographic coordinates to FaceIJK
 	fijk := faceijk.GeoToFaceIJK(lat, lng, res)
-	
+
 	// Convert FaceIJK to H3 index
-	h3Index := faceijk.FaceIJKToH3(fijk, res)
-	
+	h3Index := faceijk.ToH3(fijk, res)
+
 	if h3Index == 0 {
 		return 0, ErrFailed // H3_NULL indicates conversion failure
 	}
-	
+
 	return Cell(h3Index), nil
 }
 

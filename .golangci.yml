@@ -1,0 +1,79 @@
+run:
+  timeout: 3m
+  tests: true
+  issues-exit-code: 1
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - ineffassign
+    - gosimple
+    - unused
+    - unparam
+    - typecheck
+    - gocritic
+    - revive
+    - godot
+    - gocyclo
+    - cyclop
+    - nolintlint
+    - misspell
+  disable:
+    - depguard
+
+linters-settings:
+  govet:
+    enable-all: true
+  staticcheck:
+    checks: ["all"]
+  gocritic:
+    enabled-checks:
+      - emptyStringTest
+      - unnecessaryDefer
+      - commentedOutCode
+  revive:
+    severity: warning
+    rules:
+      - name: exported
+      - name: package-comments
+      - name: indent-error-flow
+      - name: empty-block
+      - name: early-return
+      - name: errorf
+      - name: context-as-argument
+      - name: range-val-in-closure
+      - name: unreachable-code
+      - name: redefines-builtin-id
+      - name: superfluous-else
+      - name: time-naming
+      - name: error-naming
+  godot:
+    capital: true
+    period: true
+    scope: allExceptTests
+  gocyclo:
+    min-complexity: 18
+  cyclop:
+    max-complexity: 15
+    package-average: 10
+  nolintlint:
+    allow-leading-space: false
+    require-explanation: true
+    require-specific: true
+  misspell:
+    locale: US
+    ignore-words:
+      - Uber
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-rules:
+    - path: '.*_test\.go$'
+      linters: [govet]
+      text: "fieldalignment"
+    - linters: [staticcheck]
+      text: "SA1019" # allow deprecated where needed temporarily

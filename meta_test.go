@@ -2,7 +2,7 @@ package h3
 
 import (
 	"testing"
-	
+
 	"github.com/dimchansky/h3-go/internal/indexbits"
 )
 
@@ -38,7 +38,7 @@ func TestCellIsValid(t *testing.T) {
 			want: false,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.cell.IsValid()
@@ -81,7 +81,7 @@ func TestCellResolution(t *testing.T) {
 			wantErr: ErrCellInvalid,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.cell.Resolution()
@@ -128,7 +128,7 @@ func TestCellBaseCell(t *testing.T) {
 			wantErr: ErrCellInvalid,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.cell.BaseCell()
@@ -199,7 +199,7 @@ func TestCellIsPentagon(t *testing.T) {
 			wantErr: ErrCellInvalid,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.cell.IsPentagon()
@@ -219,14 +219,14 @@ func TestMaxKRingSize(t *testing.T) {
 		k    int
 		want int
 	}{
-		{0, 1},      // 3*0*(0+1) + 1 = 1
-		{1, 7},      // 3*1*(1+1) + 1 = 7
-		{2, 19},     // 3*2*(2+1) + 1 = 19
-		{3, 37},     // 3*3*(3+1) + 1 = 37
-		{10, 331},   // 3*10*(10+1) + 1 = 331
-		{-1, 0},     // negative k returns 0
+		{0, 1},
+		{1, 7},
+		{2, 19},
+		{3, 37},
+		{10, 331},
+		{-1, 0},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
 			got := MaxKRingSize(tt.k)
@@ -239,9 +239,9 @@ func TestMaxKRingSize(t *testing.T) {
 
 func TestStubFunctions(t *testing.T) {
 	// Test that stub functions return expected errors
-	
+
 	// Note: LatLngToCell is now implemented and working, so we don't test it here
-	
+
 	t.Run("Cell.ToLatLng", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		_, err := cell.ToLatLng()
@@ -249,7 +249,7 @@ func TestStubFunctions(t *testing.T) {
 			t.Errorf("Cell.ToLatLng() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
-	
+
 	t.Run("Cell.ToBoundary", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		_, err := cell.ToBoundary(nil)
@@ -257,7 +257,7 @@ func TestStubFunctions(t *testing.T) {
 			t.Errorf("Cell.ToBoundary() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
-	
+
 	t.Run("Cell.IsNeighborOf", func(t *testing.T) {
 		cell1 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		cell2 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 5}))
@@ -266,7 +266,7 @@ func TestStubFunctions(t *testing.T) {
 			t.Errorf("Cell.IsNeighborOf() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
-	
+
 	t.Run("Cell.DistanceTo", func(t *testing.T) {
 		cell1 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		cell2 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 5}))
@@ -275,7 +275,7 @@ func TestStubFunctions(t *testing.T) {
 			t.Errorf("Cell.DistanceTo() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
-	
+
 	t.Run("Cell.KRing", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		_, err := cell.KRing(nil, 1)
@@ -283,7 +283,7 @@ func TestStubFunctions(t *testing.T) {
 			t.Errorf("Cell.KRing() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
-	
+
 	t.Run("Cell.HexRange", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		_, err := cell.HexRange(nil, 1)
@@ -291,7 +291,7 @@ func TestStubFunctions(t *testing.T) {
 			t.Errorf("Cell.HexRange() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
-	
+
 	t.Run("Cell.HexRangeDistances", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		_, err := cell.HexRangeDistances(nil, 1)
@@ -299,7 +299,7 @@ func TestStubFunctions(t *testing.T) {
 			t.Errorf("Cell.HexRangeDistances() error = %v, want %v", err, ErrOptionInvalid)
 		}
 	})
-	
+
 	t.Run("Cell.HexRing", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		_, err := cell.HexRing(nil, 1)
@@ -315,35 +315,35 @@ func TestInputValidation(t *testing.T) {
 		if err != ErrResolutionDomain {
 			t.Errorf("LatLngToCell() with res=-1 error = %v, want %v", err, ErrResolutionDomain)
 		}
-		
+
 		_, err = LatLngToCell(LatLng{Lat: 0, Lng: 0}, 16)
 		if err != ErrResolutionDomain {
 			t.Errorf("LatLngToCell() with res=16 error = %v, want %v", err, ErrResolutionDomain)
 		}
 	})
-	
+
 	t.Run("LatLngToCell invalid lat/lng", func(t *testing.T) {
 		_, err := LatLngToCell(LatLng{Lat: -91, Lng: 0}, 5)
 		if err != ErrLatLngDomain {
 			t.Errorf("LatLngToCell() with lat=-91 error = %v, want %v", err, ErrLatLngDomain)
 		}
-		
+
 		_, err = LatLngToCell(LatLng{Lat: 91, Lng: 0}, 5)
 		if err != ErrLatLngDomain {
 			t.Errorf("LatLngToCell() with lat=91 error = %v, want %v", err, ErrLatLngDomain)
 		}
-		
+
 		_, err = LatLngToCell(LatLng{Lat: 0, Lng: -180.1}, 5)
 		if err != ErrLatLngDomain {
 			t.Errorf("LatLngToCell() with lng=-180.1 error = %v, want %v", err, ErrLatLngDomain)
 		}
-		
+
 		_, err = LatLngToCell(LatLng{Lat: 0, Lng: 180.1}, 5)
 		if err != ErrLatLngDomain {
 			t.Errorf("LatLngToCell() with lng=180.1 error = %v, want %v", err, ErrLatLngDomain)
 		}
 	})
-	
+
 	t.Run("Cell.KRing invalid k", func(t *testing.T) {
 		cell := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		_, err := cell.KRing(nil, -1)
@@ -351,7 +351,7 @@ func TestInputValidation(t *testing.T) {
 			t.Errorf("Cell.KRing() with k=-1 error = %v, want %v", err, ErrDomain)
 		}
 	})
-	
+
 	t.Run("Cell.IsNeighborOf resolution mismatch", func(t *testing.T) {
 		cell1 := Cell(indexbits.Pack(1, 5, 42, []int{0, 1, 2, 3, 4}))
 		cell2 := Cell(indexbits.Pack(1, 6, 42, []int{0, 1, 2, 3, 4, 5}))

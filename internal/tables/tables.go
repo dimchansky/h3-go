@@ -1,19 +1,19 @@
-// Package tables provides static lookup tables for H3 operations.
-// These tables are stubbed with correct types and sizes but zero values.
-// TODO: Populate with actual H3 v4.3.0 data.
+// Package tables provides read-only static tables and lookup structures used by
+// H3 algorithms (base cells, face neighbors, and related metadata). These are
+// populated to match H3 C v4.3.0 semantics.
 package tables
 
 // BaseCellData contains metadata for each base cell.
 type BaseCellData struct {
 	// Face is the icosahedron face this base cell belongs to (0-19).
 	Face int
-	
+
 	// IJK0 is the canonical IJK coordinates on the face.
 	IJK0 [3]int
-	
+
 	// IsPentagon indicates if this base cell is a pentagon (0=hex, 1=pentagon).
 	IsPentagon int
-	
+
 	// CWOffsetPent is the rotation offset for pentagon cells.
 	// Contains {ccwRot60, cwRot60} for the substring rotation.
 	// {-1, -1} indicates no offset faces exist.
@@ -24,7 +24,7 @@ type BaseCellData struct {
 type NeighborRotation struct {
 	// Direction is the neighbor direction (0-6).
 	Direction int
-	
+
 	// RotationCCW is the counter-clockwise rotation count.
 	RotationCCW int
 }
@@ -39,17 +39,16 @@ type FaceIJK struct {
 const (
 	// NumBaseCells is the total number of base cells (122 in H3).
 	NumBaseCells = 122
-	
+
 	// NumIcosahedronFaces is the number of icosahedron faces.
 	NumIcosahedronFaces = 20
-	
+
 	// MaxCellNeighbors is the maximum number of neighbors a cell can have.
 	MaxCellNeighbors = 6
-	
+
 	// NumPentagons is the number of pentagon base cells.
 	NumPentagons = 12
 )
-
 
 // PentagonBaseCells lists the indices of all pentagon base cells.
 // From H3 C v4.3.0 baseCells.c - these are the 12 pentagon base cells.
@@ -62,7 +61,7 @@ func IsPentagonBaseCell(baseCell int) bool {
 	if baseCell < 0 || baseCell >= NumBaseCells {
 		return false
 	}
-	
+
 	// Check the IsPentagon flag in the base cell data
 	return BaseCells[baseCell].IsPentagon == 1
 }
@@ -111,11 +110,11 @@ var ResolutionEdgeLengthKm = [16]float64{
 // Direction 0 is the center (self), 1-6 are the six neighbors.
 // TODO: Verify IJK coordinate system and directions.
 var DirectionToNeighbor = [7][3]int{
-	{0, 0, 0},   // CENTER
-	{0, 1, 0},   // Direction 1
-	{1, 0, 0},   // Direction 2
-	{1, 1, 0},   // Direction 3
-	{0, 0, 1},   // Direction 4
-	{-1, 0, 1},  // Direction 5
-	{0, -1, 1},  // Direction 6
+	{0, 0, 0},  // CENTER
+	{0, 1, 0},  // Direction 1
+	{1, 0, 0},  // Direction 2
+	{1, 1, 0},  // Direction 3
+	{0, 0, 1},  // Direction 4
+	{-1, 0, 1}, // Direction 5
+	{0, -1, 1}, // Direction 6
 }
