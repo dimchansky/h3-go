@@ -1,4 +1,4 @@
-.PHONY: test bench lint gen ref test-oracle test-all golangci-lint install-lint install-smrcptr fmt
+.PHONY: test bench lint gen ref test-oracle test-all golangci-lint install-lint install-smrcptr fmt fix-fmt
 
 test:
 	go test -v ./...
@@ -24,8 +24,8 @@ install-smrcptr:
 	@echo "Installing smrcptr to $(SMRCPTR)"
 	@go install github.com/nikolaydubina/smrcptr@latest
 
-# Runs vet, golangci-lint, and smrcptr (installs them if missing)
-lint: $(GOLANGCI_LINT) $(SMRCPTR)
+# Runs fmt, vet, golangci-lint, and smrcptr (installs them if missing)
+lint: fmt $(GOLANGCI_LINT) $(SMRCPTR)
 	go vet ./...
 	$(GOLANGCI_LINT) run
 	@echo "Running smrcptr for consistent receiver type checking..."
@@ -62,3 +62,8 @@ fmt:
 	else \
 		echo "gofmt OK"; \
 	fi
+
+fix-fmt:
+	@echo "Formatting Go files..."
+	@gofmt -s -w .
+	@echo "All Go files formatted"

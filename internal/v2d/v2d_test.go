@@ -79,8 +79,8 @@ func TestVec2d_AlmostEqual(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := tt.v1.AlmostEqual(tt.v2)
 			if result != tt.expected {
-				t.Errorf("AlmostEqual() = %v, want %v (v1=%v, v2=%v, diff=(%v,%v))", 
-					result, tt.expected, tt.v1, tt.v2, 
+				t.Errorf("AlmostEqual() = %v, want %v (v1=%v, v2=%v, diff=(%v,%v))",
+					result, tt.expected, tt.v1, tt.v2,
 					math.Abs(tt.v1.X-tt.v2.X), math.Abs(tt.v1.Y-tt.v2.Y))
 			}
 
@@ -95,39 +95,39 @@ func TestVec2d_AlmostEqual(t *testing.T) {
 
 func TestIntersect(t *testing.T) {
 	tests := []struct {
-		name             string
-		p0, p1, p2, p3   Vec2d
-		expected         Vec2d
+		name           string
+		p0, p1, p2, p3 Vec2d
+		expected       Vec2d
 	}{
 		{
-			name:     "perpendicular lines intersecting at origin",
-			p0:       Vec2d{-1, 0}, p1: Vec2d{1, 0},
-			p2:       Vec2d{0, -1}, p3: Vec2d{0, 1},
+			name: "perpendicular lines intersecting at origin",
+			p0:   Vec2d{-1, 0}, p1: Vec2d{1, 0},
+			p2: Vec2d{0, -1}, p3: Vec2d{0, 1},
 			expected: Vec2d{0, 0},
 		},
 		{
-			name:     "diagonal lines intersecting at (1,1)",
-			p0:       Vec2d{0, 0}, p1: Vec2d{2, 2},
-			p2:       Vec2d{0, 2}, p3: Vec2d{2, 0},
+			name: "diagonal lines intersecting at (1,1)",
+			p0:   Vec2d{0, 0}, p1: Vec2d{2, 2},
+			p2: Vec2d{0, 2}, p3: Vec2d{2, 0},
 			expected: Vec2d{1, 1},
 		},
 		{
-			name:     "horizontal and vertical lines",
-			p0:       Vec2d{-2, 3}, p1: Vec2d{4, 3},
-			p2:       Vec2d{1, -1}, p3: Vec2d{1, 5},
+			name: "horizontal and vertical lines",
+			p0:   Vec2d{-2, 3}, p1: Vec2d{4, 3},
+			p2: Vec2d{1, -1}, p3: Vec2d{1, 5},
 			expected: Vec2d{1, 3},
 		},
 		{
-			name:     "lines with negative coordinates",
-			p0:       Vec2d{-2, -2}, p1: Vec2d{2, 2},
-			p2:       Vec2d{-2, 2}, p3: Vec2d{2, -2},
+			name: "lines with negative coordinates",
+			p0:   Vec2d{-2, -2}, p1: Vec2d{2, 2},
+			p2: Vec2d{-2, 2}, p3: Vec2d{2, -2},
 			expected: Vec2d{0, 0},
 		},
 		{
-			name:     "non-axis-aligned intersection",
-			p0:       Vec2d{0, 0}, p1: Vec2d{2, 1},
-			p2:       Vec2d{0, 2}, p3: Vec2d{2, 0},
-			expected: Vec2d{4.0/3.0, 2.0/3.0},
+			name: "non-axis-aligned intersection",
+			p0:   Vec2d{0, 0}, p1: Vec2d{2, 1},
+			p2: Vec2d{0, 2}, p3: Vec2d{2, 0},
+			expected: Vec2d{4.0 / 3.0, 2.0 / 3.0},
 		},
 	}
 
@@ -153,7 +153,7 @@ func TestFloat32Epsilon(t *testing.T) {
 func BenchmarkVec2d_Mag(b *testing.B) {
 	v := Vec2d{3.141592653589793, 2.718281828459045}
 	b.ResetTimer()
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = v.Mag()
 	}
@@ -162,7 +162,7 @@ func BenchmarkVec2d_Mag(b *testing.B) {
 func BenchmarkVec2d_Len2(b *testing.B) {
 	v := Vec2d{3.141592653589793, 2.718281828459045}
 	b.ResetTimer()
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = v.Len2()
 	}
@@ -172,7 +172,7 @@ func BenchmarkVec2d_AlmostEqual(b *testing.B) {
 	v1 := Vec2d{3.141592653589793, 2.718281828459045}
 	v2 := Vec2d{3.141592653589794, 2.718281828459046}
 	b.ResetTimer()
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = v1.AlmostEqual(v2)
 	}
@@ -184,7 +184,7 @@ func BenchmarkIntersect(b *testing.B) {
 	p2 := Vec2d{1, 0}
 	p3 := Vec2d{4, 3}
 	b.ResetTimer()
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = Intersect(p0, p1, p2, p3)
 	}
