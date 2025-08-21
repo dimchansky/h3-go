@@ -47,38 +47,38 @@ The oracle source code is version-agnostic and requires no changes.
 
 ## Protocol
 
-The `h3ref` binary provides a simple command-line interface:
+The `h3ref` binary provides a simple command-line interface (command names mirror the underlying H3 C function names):
 
 ```bash
 # Test pentagon detection
-./h3ref pentagon 4        # Returns: 1 (is pentagon)
-./h3ref pentagon 0        # Returns: 0 (is hexagon)
+./h3ref isBaseCellPentagon 4        # Returns: 1 (is pentagon)
+./h3ref isBaseCellPentagon 0        # Returns: 0 (is hexagon)
 
 # Convert FaceIJK to H3 index  
-./h3ref faceijk 0 0 0 1 0  # Returns: 0x8025fffffffffff
+./h3ref faceIjkToH3 0 0 0 1 0  # Returns: 0x8025fffffffffff
 
 # Convert LatLng to H3 index
-./h3ref latlng 37.775 -122.418 9  # Returns: 0x8928308280fffff 0
+./h3ref latLngToCell 37.775 -122.418 9  # Returns: 0x8928308280fffff 0
 
 # Rotate H3 indices
-./h3ref rotate60cw 0x8021fffffffffff   # Returns: 0x8021fffffffffff
-./h3ref rotate60ccw 0x8021fffffffffff  # Returns: 0x8021fffffffffff
+./h3ref h3Rotate60cw 0x8021fffffffffff   # Returns: 0x8021fffffffffff
+./h3ref h3Rotate60ccw 0x8021fffffffffff  # Returns: 0x8021fffffffffff
 
 # CoordIJK helpers (for validating Go internal/coordijk)
-./h3ref coordijk_distance 0 0 0  1 0 1        # Returns: 1
-./h3ref coordijk_rotate ccw 1 0 0              # Returns: "1 1 0"
-./h3ref coordijk_rotate cw  0 1 0              # Returns: "1 1 0"
-./h3ref coordijk_hex2d 1 1 0                   # Returns: "0.500000... 0.866025..."
-./h3ref coordijk_from_hex2d 0.5 0.86602540378  # Returns: "1 1 0"
-./h3ref coordijk_neighbor 4 0 0 0              # Returns: "1 0 0"
+./h3ref ijkDistance 0 0 0  1 0 1               # Returns: 1
+./h3ref ijkRotate60ccw 1 0 0                   # Returns: "1 1 0"
+./h3ref ijkRotate60cw  0 1 0                   # Returns: "1 1 0"
+./h3ref ijkToHex2d 1 1 0                       # Returns: "0.500000... 0.866025..."
+./h3ref hex2dToCoordIJK 0.5 0.86602540378      # Returns: "1 1 0"
+./h3ref neighbor 4 0 0 0                       # Returns: "1 0 0"
 
 # Aperture transforms (Up/Down Ap7/Ap3)
-./h3ref coordijk_up_ap7   7 0 0   # Returns parent in CCW ap7
-./h3ref coordijk_up_ap7r  7 0 0   # Returns parent in CW ap7
-./h3ref coordijk_down_ap7 1 0 0   # Returns child at next finer CCW ap7
-./h3ref coordijk_down_ap7r 1 0 0  # Returns child at next finer CW ap7
-./h3ref coordijk_down_ap3 1 0 0   # Ap3 (pentagon) finer
-./h3ref coordijk_down_ap3r 1 0 0  # Ap3 reverse finer
+./h3ref upAp7   7 0 0   # Returns parent in CCW ap7
+./h3ref upAp7r  7 0 0   # Returns parent in CW ap7
+./h3ref downAp7 1 0 0   # Returns child at next finer CCW ap7
+./h3ref downAp7r 1 0 0  # Returns child at next finer CW ap7
+./h3ref downAp3 1 0 0   # Ap3 (pentagon) finer
+./h3ref downAp3r 1 0 0  # Ap3 reverse finer
 ```
 
 ## Error Code Mapping

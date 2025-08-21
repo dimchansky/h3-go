@@ -14,21 +14,35 @@ int main(int argc, char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <command> [args...]\n", argv[0]);
         fprintf(stderr, "Commands:\n");
-        fprintf(stderr, "  faceijk <face> <i> <j> <k> <res> - Convert FaceIJK to H3 index\n");
-        fprintf(stderr, "  latlng <lat> <lng> <res> - Convert LatLng to H3 index\n");
-        fprintf(stderr, "  pentagon <baseCell> - Check if base cell is pentagon\n");
-        fprintf(stderr, "  rotate60cw <h3index> - Rotate H3 index 60 degrees clockwise\n");
-        fprintf(stderr, "  rotate60ccw <h3index> - Rotate H3 index 60 degrees counter-clockwise\n");
-        fprintf(stderr, "  resolution <h3index> - Get H3 index resolution\n");
-        fprintf(stderr, "  basecell <h3index> - Get H3 index base cell\n");
+        fprintf(stderr, "  faceIjkToH3 <face> <i> <j> <k> <res> - _faceIjkToH3\n");
+        fprintf(stderr, "  latLngToCell <lat> <lng> <res> - latLngToCell\n");
+        fprintf(stderr, "  isBaseCellPentagon <baseCell> - _isBaseCellPentagon\n");
+        fprintf(stderr, "  h3Rotate60cw <h3index> - _h3Rotate60cw\n");
+        fprintf(stderr, "  h3Rotate60ccw <h3index> - _h3Rotate60ccw\n");
+        fprintf(stderr, "  getResolution <h3index> - getResolution\n");
+        fprintf(stderr, "  getBaseCellNumber <h3index> - getBaseCellNumber\n");
+        fprintf(stderr, "  ijkDistance <i1> <j1> <k1> <i2> <j2> <k2> - ijkDistance\n");
+        fprintf(stderr, "  ijkRotate60ccw <i> <j> <k> - _ijkRotate60ccw\n");
+        fprintf(stderr, "  ijkRotate60cw <i> <j> <k> - _ijkRotate60cw\n");
+        fprintf(stderr, "  ijkToHex2d <i> <j> <k> - _ijkToHex2d\n");
+        fprintf(stderr, "  hex2dToCoordIJK <x> <y> - _hex2dToCoordIJK\n");
+        fprintf(stderr, "  neighbor <digit> <i> <j> <k> - _neighbor\n");
+        fprintf(stderr, "  upAp7 <i> <j> <k> - _upAp7\n");
+        fprintf(stderr, "  upAp7r <i> <j> <k> - _upAp7r\n");
+        fprintf(stderr, "  downAp7 <i> <j> <k> - _downAp7\n");
+        fprintf(stderr, "  downAp7r <i> <j> <k> - _downAp7r\n");
+        fprintf(stderr, "  downAp3 <i> <j> <k> - _downAp3\n");
+        fprintf(stderr, "  downAp3r <i> <j> <k> - _downAp3r\n");
+        fprintf(stderr, "  geoToFaceIjk <lat> <lng> <res> - _geoToFaceIjk\n");
+        fprintf(stderr, "  geoToHex2d <lat> <lng> <res> - _geoToHex2d\n");
         return 1;
     }
 
     const char* command = argv[1];
     
-    if (strcmp(command, "faceijk") == 0) {
+    if (strcmp(command, "faceIjkToH3") == 0) {
         if (argc < 7) {
-            fprintf(stderr, "Usage: %s faceijk <face> <i> <j> <k> <res>\n", argv[0]);
+            fprintf(stderr, "Usage: %s faceIjkToH3 <face> <i> <j> <k> <res>\n", argv[0]);
             return 1;
         }
         
@@ -43,9 +57,9 @@ int main(int argc, char *argv[]) {
         
         printf("0x%" PRIx64 "\n", h3);
         
-    } else if (strcmp(command, "latlng") == 0) {
+    } else if (strcmp(command, "latLngToCell") == 0) {
         if (argc < 5) {
-            fprintf(stderr, "Usage: %s latlng <lat> <lng> <res>\n", argv[0]);
+            fprintf(stderr, "Usage: %s latLngToCell <lat> <lng> <res>\n", argv[0]);
             return 1;
         }
         
@@ -64,9 +78,9 @@ int main(int argc, char *argv[]) {
             printf("0x%" PRIx64 " 0\n", h3);
         }
         
-    } else if (strcmp(command, "pentagon") == 0) {
+    } else if (strcmp(command, "isBaseCellPentagon") == 0) {
         if (argc < 3) {
-            fprintf(stderr, "Usage: %s pentagon <baseCell>\n", argv[0]);
+            fprintf(stderr, "Usage: %s isBaseCellPentagon <baseCell>\n", argv[0]);
             return 1;
         }
         
@@ -74,9 +88,9 @@ int main(int argc, char *argv[]) {
         int isPent = _isBaseCellPentagon(baseCell);
         printf("%d\n", isPent);
         
-    } else if (strcmp(command, "rotate60cw") == 0) {
+    } else if (strcmp(command, "h3Rotate60cw") == 0) {
         if (argc < 3) {
-            fprintf(stderr, "Usage: %s rotate60cw <h3index>\n", argv[0]);
+            fprintf(stderr, "Usage: %s h3Rotate60cw <h3index>\n", argv[0]);
             return 1;
         }
         
@@ -84,9 +98,9 @@ int main(int argc, char *argv[]) {
         H3Index rotated = _h3Rotate60cw(h3);
         printf("0x%" PRIx64 "\n", rotated);
         
-    } else if (strcmp(command, "rotate60ccw") == 0) {
+    } else if (strcmp(command, "h3Rotate60ccw") == 0) {
         if (argc < 3) {
-            fprintf(stderr, "Usage: %s rotate60ccw <h3index>\n", argv[0]);
+            fprintf(stderr, "Usage: %s h3Rotate60ccw <h3index>\n", argv[0]);
             return 1;
         }
         
@@ -94,9 +108,9 @@ int main(int argc, char *argv[]) {
         H3Index rotated = _h3Rotate60ccw(h3);
         printf("0x%" PRIx64 "\n", rotated);
         
-    } else if (strcmp(command, "resolution") == 0) {
+    } else if (strcmp(command, "getResolution") == 0) {
         if (argc < 3) {
-            fprintf(stderr, "Usage: %s resolution <h3index>\n", argv[0]);
+            fprintf(stderr, "Usage: %s getResolution <h3index>\n", argv[0]);
             return 1;
         }
         
@@ -104,9 +118,9 @@ int main(int argc, char *argv[]) {
         int res = getResolution(h3);
         printf("%d\n", res);
         
-    } else if (strcmp(command, "basecell") == 0) {
+    } else if (strcmp(command, "getBaseCellNumber") == 0) {
         if (argc < 3) {
-            fprintf(stderr, "Usage: %s basecell <h3index>\n", argv[0]);
+            fprintf(stderr, "Usage: %s getBaseCellNumber <h3index>\n", argv[0]);
             return 1;
         }
         
@@ -114,56 +128,45 @@ int main(int argc, char *argv[]) {
         int baseCell = getBaseCellNumber(h3);
         printf("%d\n", baseCell);
 
-    } else if (strcmp(command, "coordijk_distance") == 0) {
+    } else if (strcmp(command, "ijkDistance") == 0) {
         if (argc < 8) {
-            fprintf(stderr, "Usage: %s coordijk_distance <i1> <j1> <k1> <i2> <j2> <k2>\n", argv[0]);
+            fprintf(stderr, "Usage: %s ijkDistance <i1> <j1> <k1> <i2> <j2> <k2>\n", argv[0]);
             return 1;
         }
         CoordIJK a = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         CoordIJK b = { atoi(argv[5]), atoi(argv[6]), atoi(argv[7]) };
         int d = ijkDistance(&a, &b);
         printf("%d\n", d);
-
-    } else if (strcmp(command, "coordijk_rotate") == 0) {
-        if (argc < 6) {
-            fprintf(stderr, "Usage: %s coordijk_rotate <ccw|cw> <i> <j> <k>\n", argv[0]);
-            return 1;
-        }
-        const char* which = argv[2];
-        CoordIJK v = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]) };
-        if (strcmp(which, "ccw") == 0) {
-            _ijkRotate60ccw(&v);
-        } else if (strcmp(which, "cw") == 0) {
-            _ijkRotate60cw(&v);
-        } else {
-            fprintf(stderr, "Unknown rotation: %s (use ccw or cw)\n", which);
-            return 1;
-        }
+    
+    } else if (strcmp(command, "ijkRotate60ccw") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s ijkRotate60ccw <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _ijkRotate60ccw(&v);
+        printf("%d %d %d\n", v.i, v.j, v.k);
+    
+    } else if (strcmp(command, "ijkRotate60cw") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s ijkRotate60cw <i> <j> <k>\n", argv[0]); return 1; }
+        CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
+        _ijkRotate60cw(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "coordijk_hex2d") == 0) {
-        if (argc < 5) {
-            fprintf(stderr, "Usage: %s coordijk_hex2d <i> <j> <k>\n", argv[0]);
-            return 1;
-        }
+    } else if (strcmp(command, "ijkToHex2d") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s ijkToHex2d <i> <j> <k>\n", argv[0]); return 1; }
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         Vec2d out;
         _ijkToHex2d(&v, &out);
         printf("%.15f %.15f\n", out.x, out.y);
 
-    } else if (strcmp(command, "coordijk_from_hex2d") == 0) {
-        if (argc < 4) {
-            fprintf(stderr, "Usage: %s coordijk_from_hex2d <x> <y>\n", argv[0]);
-            return 1;
-        }
+    } else if (strcmp(command, "hex2dToCoordIJK") == 0) {
+        if (argc < 4) { fprintf(stderr, "Usage: %s hex2dToCoordIJK <x> <y>\n", argv[0]); return 1; }
         Vec2d in = { atof(argv[2]), atof(argv[3]) };
         CoordIJK out;
         _hex2dToCoordIJK(&in, &out);
         printf("%d %d %d\n", out.i, out.j, out.k);
 
-    } else if (strcmp(command, "coordijk_neighbor") == 0) {
+    } else if (strcmp(command, "neighbor") == 0) {
         if (argc < 6) {
-            fprintf(stderr, "Usage: %s coordijk_neighbor <digit> <i> <j> <k>\n", argv[0]);
+            fprintf(stderr, "Usage: %s neighbor <digit> <i> <j> <k>\n", argv[0]);
             return 1;
         }
         Direction d = (Direction)atoi(argv[2]);
@@ -171,45 +174,45 @@ int main(int argc, char *argv[]) {
         _neighbor(&v, d);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "coordijk_up_ap7") == 0) {
-        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_up_ap7 <i> <j> <k>\n", argv[0]); return 1; }
+    } else if (strcmp(command, "upAp7") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s upAp7 <i> <j> <k>\n", argv[0]); return 1; }
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         _upAp7(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "coordijk_up_ap7r") == 0) {
-        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_up_ap7r <i> <j> <k>\n", argv[0]); return 1; }
+    } else if (strcmp(command, "upAp7r") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s upAp7r <i> <j> <k>\n", argv[0]); return 1; }
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         _upAp7r(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "coordijk_down_ap7") == 0) {
-        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap7 <i> <j> <k>\n", argv[0]); return 1; }
+    } else if (strcmp(command, "downAp7") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s downAp7 <i> <j> <k>\n", argv[0]); return 1; }
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         _downAp7(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "coordijk_down_ap7r") == 0) {
-        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap7r <i> <j> <k>\n", argv[0]); return 1; }
+    } else if (strcmp(command, "downAp7r") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s downAp7r <i> <j> <k>\n", argv[0]); return 1; }
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         _downAp7r(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "coordijk_down_ap3") == 0) {
-        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap3 <i> <j> <k>\n", argv[0]); return 1; }
+    } else if (strcmp(command, "downAp3") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s downAp3 <i> <j> <k>\n", argv[0]); return 1; }
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         _downAp3(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "coordijk_down_ap3r") == 0) {
-        if (argc < 5) { fprintf(stderr, "Usage: %s coordijk_down_ap3r <i> <j> <k>\n", argv[0]); return 1; }
+    } else if (strcmp(command, "downAp3r") == 0) {
+        if (argc < 5) { fprintf(stderr, "Usage: %s downAp3r <i> <j> <k>\n", argv[0]); return 1; }
         CoordIJK v = { atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) };
         _downAp3r(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
-    } else if (strcmp(command, "geotofaceijk") == 0) {
+    } else if (strcmp(command, "geoToFaceIjk") == 0) {
         if (argc < 5) {
-            fprintf(stderr, "Usage: %s geotofaceijk <lat> <lng> <res>\n", argv[0]);
+            fprintf(stderr, "Usage: %s geoToFaceIjk <lat> <lng> <res>\n", argv[0]);
             return 1;
         }
         double lat = atof(argv[2]);
@@ -220,9 +223,9 @@ int main(int argc, char *argv[]) {
         _geoToFaceIjk(&g, res, &fijk);
         printf("%d %d %d %d\n", fijk.face, fijk.coord.i, fijk.coord.j, fijk.coord.k);
 
-    } else if (strcmp(command, "geohex2d") == 0) {
+    } else if (strcmp(command, "geoToHex2d") == 0) {
         if (argc < 5) {
-            fprintf(stderr, "Usage: %s geohex2d <lat> <lng> <res>\n", argv[0]);
+            fprintf(stderr, "Usage: %s geoToHex2d <lat> <lng> <res>\n", argv[0]);
             return 1;
         }
         double lat = atof(argv[2]);

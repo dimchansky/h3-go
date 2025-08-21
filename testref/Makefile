@@ -79,7 +79,7 @@ clean-all: clean
 
 test: h3ref
 	@echo "Testing H3 oracle CLI..."
-	./h3ref pentagon 4  # Should print 1 (pentagon)
-	./h3ref pentagon 0  # Should print 0 (hexagon) 
-	./h3ref faceijk 0 0 0 0 0  # Should generate a base H3 index
+	./h3ref isBaseCellPentagon 4  # Should print 1 (pentagon)
+	./h3ref isBaseCellPentagon 0  # Should print 0 (hexagon)
+	./h3ref faceIjkToH3 0 0 0 0 0  # Should generate a base H3 index
 	@echo "Oracle tests passed!"

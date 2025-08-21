@@ -21,7 +21,7 @@ func TestOracle_FaceIJKToH3_Table(t *testing.T) {
     }
     for _, f := range cases {
         got := FaceIJKToH3(f, 0)
-        want := o.H3FromFaceIJK(f.Face, f.Coord.I, f.Coord.J, f.Coord.K, 0)
+        want := o.FaceIjkToH3(f.Face, f.Coord.I, f.Coord.J, f.Coord.K, 0)
         if uint64(got) != want { t.Fatalf("FaceIJKToH3(%v,0) = 0x%x, want 0x%x", f, got, want) }
     }
 }
@@ -37,7 +37,7 @@ func TestOracle_FaceIJKToH3_Randomized(t *testing.T) {
         res := int(r.Intn(2))
         f := FaceIJK{face, coordijk.CoordIJK{u[0], u[1], u[2]}}
         got := FaceIJKToH3(f, res)
-        want := o.H3FromFaceIJK(face, u[0], u[1], u[2], res)
+        want := o.FaceIjkToH3(face, u[0], u[1], u[2], res)
         if uint64(got) != want { t.Fatalf("FaceIJKToH3(%v,%d) = 0x%x, want 0x%x", f, res, got, want) }
     }
 }

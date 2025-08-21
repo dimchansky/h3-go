@@ -19,13 +19,13 @@ func TestOracle_LatLngToCell_Parity(t *testing.T) {
             got, err := LatLngToCell(LatLng{Lat: lat, Lng: lng}, res)
             if err != nil {
                 // Ask oracle what it thinks
-                _, code := o.H3FromLatLng(lat, lng, res)
+                _, code := o.LatLngToCell(lat, lng, res)
                 if code == 0 {
                     t.Fatalf("Go returned error %v but oracle succeeded for latlng(%.6f,%.6f,%d)", err, lat, lng, res)
                 }
                 continue
             }
-            want, code := o.H3FromLatLng(lat, lng, res)
+            want, code := o.LatLngToCell(lat, lng, res)
             if code != 0 {
                 t.Fatalf("Oracle error code %d for latlng(%.6f,%.6f,%d)", code, lat, lng, res)
             }

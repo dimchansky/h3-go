@@ -19,7 +19,7 @@ func TestOracle_GeoToFaceIJK_Parity(t *testing.T) {
         // our
         got := GeoToFaceIJK(angles.DegreesToRadians(lat), angles.DegreesToRadians(lng), res)
         // oracle
-        face, I, J, K := o.GeoToFaceIJK(lat, lng, res)
+        face, I, J, K := o.GeoToFaceIjk(lat, lng, res)
         if got.Face != face || got.Coord.I != I || got.Coord.J != J || got.Coord.K != K {
             t.Fatalf("GeoToFaceIJK mismatch lat=%.6f lng=%.6f res=%d: got {%d %d %d %d} want {%d %d %d %d}",
                 lat, lng, res, got.Face, got.Coord.I, got.Coord.J, got.Coord.K, face, I, J, K)
