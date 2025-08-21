@@ -29,86 +29,95 @@ import "C"
 
 // _posAngleRadsC invokes the original C implementation for parity tests.
 func _posAngleRadsC(rads float64) float64 {
-    return float64(C._posAngleRads_c_wrapper(C.double(rads)))
+	return float64(C._posAngleRads_c_wrapper(C.double(rads)))
 }
 
 // _constrainLngC invokes the original C implementation for parity tests.
 func _constrainLngC(lng float64) float64 {
-    return float64(C.constrainLng_c_wrapper(C.double(lng)))
+	return float64(C.constrainLng_c_wrapper(C.double(lng)))
 }
 
 // _constrainLatC invokes the original C implementation for parity tests.
 func _constrainLatC(lat float64) float64 {
-    return float64(C.constrainLat_c_wrapper(C.double(lat)))
+	return float64(C.constrainLat_c_wrapper(C.double(lat)))
 }
 
 // degsToRadsC invokes the original C implementation for parity tests.
 func degsToRadsC(degrees float64) float64 {
-    return float64(C.degsToRads_c_wrapper(C.double(degrees)))
+	return float64(C.degsToRads_c_wrapper(C.double(degrees)))
 }
 
 // radsToDegsC invokes the original C implementation for parity tests.
 func radsToDegsC(radians float64) float64 {
-    return float64(C.radsToDegs_c_wrapper(C.double(radians)))
+	return float64(C.radsToDegs_c_wrapper(C.double(radians)))
 }
 
 // _geoAzimuthRadsC calls the original C internal implementation.
 func _geoAzimuthRadsC(a, b LatLng) float64 {
-    var ca, cb C.LatLng
-    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
-    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
-    return float64(C._geoAzimuthRads(&ca, &cb))
+	var ca, cb C.LatLng
+	ca.lat = C.double(a.Lat)
+	ca.lng = C.double(a.Lng)
+	cb.lat = C.double(b.Lat)
+	cb.lng = C.double(b.Lng)
+	return float64(C._geoAzimuthRads(&ca, &cb))
 }
 
 // _geoAzDistanceRadsC calls the original C internal implementation.
 func _geoAzDistanceRadsC(p1 LatLng, az, distance float64) LatLng {
-    var c1, c2 C.LatLng
-    c1.lat = C.double(p1.lat); c1.lng = C.double(p1.lng)
-    C._geoAzDistanceRads(&c1, C.double(az), C.double(distance), &c2)
-    return LatLng{lat: float64(c2.lat), lng: float64(c2.lng)}
+	var c1, c2 C.LatLng
+	c1.lat = C.double(p1.Lat)
+	c1.lng = C.double(p1.Lng)
+	C._geoAzDistanceRads(&c1, C.double(az), C.double(distance), &c2)
+	return LatLng{Lat: float64(c2.lat), Lng: float64(c2.lng)}
 }
 
 // greatCircleDistanceRadsC calls the original C implementation.
 func greatCircleDistanceRadsC(a, b LatLng) float64 {
-    var ca, cb C.LatLng
-    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
-    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
-    return float64(C.greatCircleDistanceRads(&ca, &cb))
+	var ca, cb C.LatLng
+	ca.lat = C.double(a.Lat)
+	ca.lng = C.double(a.Lng)
+	cb.lat = C.double(b.Lat)
+	cb.lng = C.double(b.Lng)
+	return float64(C.greatCircleDistanceRads(&ca, &cb))
 }
 
 // greatCircleDistanceKmC calls the original C implementation.
 func greatCircleDistanceKmC(a, b LatLng) float64 {
-    var ca, cb C.LatLng
-    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
-    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
-    return float64(C.greatCircleDistanceKm(&ca, &cb))
+	var ca, cb C.LatLng
+	ca.lat = C.double(a.Lat)
+	ca.lng = C.double(a.Lng)
+	cb.lat = C.double(b.Lat)
+	cb.lng = C.double(b.Lng)
+	return float64(C.greatCircleDistanceKm(&ca, &cb))
 }
 
 // greatCircleDistanceMC calls the original C implementation.
 func greatCircleDistanceMC(a, b LatLng) float64 {
-    var ca, cb C.LatLng
-    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
-    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
-    return float64(C.greatCircleDistanceM(&ca, &cb))
+	var ca, cb C.LatLng
+	ca.lat = C.double(a.Lat)
+	ca.lng = C.double(a.Lng)
+	cb.lat = C.double(b.Lat)
+	cb.lng = C.double(b.Lng)
+	return float64(C.greatCircleDistanceM(&ca, &cb))
 }
 
 // geoAlmostEqualThresholdC calls the original C function using plain doubles.
 func geoAlmostEqualThresholdC(a, b LatLng, threshold float64) bool {
-    var ca, cb C.LatLng
-    ca.lat = C.double(a.lat)
-    ca.lng = C.double(a.lng)
-    cb.lat = C.double(b.lat)
-    cb.lng = C.double(b.lng)
-    // Convert C.bool to int via C helper for toolchain compatibility
-    return C.h3_bool_to_int(C.geoAlmostEqualThreshold(&ca, &cb, C.double(threshold))) != 0
+	var ca, cb C.LatLng
+	ca.lat = C.double(a.Lat)
+	ca.lng = C.double(a.Lng)
+	cb.lat = C.double(b.Lat)
+	cb.lng = C.double(b.Lng)
+	// Convert C.bool to int via C helper for toolchain compatibility
+	return C.h3_bool_to_int(C.geoAlmostEqualThreshold(&ca, &cb, C.double(threshold))) != 0
 }
 
 // geoAlmostEqualC calls the original C function using plain doubles.
 func geoAlmostEqualC(a, b LatLng) bool {
-    var ca, cb C.LatLng
-    ca.lat = C.double(a.lat)
-    ca.lng = C.double(a.lng)
-    cb.lat = C.double(b.lat)
-    cb.lng = C.double(b.lng)
-    return C.h3_bool_to_int(C.geoAlmostEqual(&ca, &cb)) != 0
+	var ca, cb C.LatLng
+	ca.lat = C.double(a.Lat)
+	ca.lng = C.double(a.Lng)
+	cb.lat = C.double(b.Lat)
+	cb.lng = C.double(b.Lng)
+	return C.h3_bool_to_int(C.geoAlmostEqual(&ca, &cb)) != 0
 }

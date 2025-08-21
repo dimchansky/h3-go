@@ -4,6 +4,5 @@ package c2go
 // between two spherical coordinates (radians).
 // Ported from H3 C: latLng.c::H3_EXPORT(greatCircleDistanceM)
 func greatCircleDistanceM(a, b LatLng) float64 {
-    return greatCircleDistanceKm(a, b) * 1000.0
+	return greatCircleDistanceKm(a, b) * 1000.0
 }
-

@@ -18,5 +18,5 @@ import "C"
 // _ipowC invokes the original C implementation for parity tests.
 // Add more wrappers from mathExtensions.c here as needed.
 func _ipowC(base, exp int64) int64 {
-    return int64(C._ipow_c_wrapper(C.longlong(base), C.longlong(exp)))
+	return int64(C._ipow_c_wrapper(C.longlong(base), C.longlong(exp)))
 }
