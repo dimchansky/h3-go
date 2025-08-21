@@ -6,6 +6,8 @@ package coordijk
 
 import (
 	"math"
+
+	"github.com/dimchansky/h3-go/internal/v2d"
 )
 
 // Direction represents H3 digit values (0-7).
@@ -301,19 +303,19 @@ func (c *CoordIJK) UpAp7r() *CoordIJK {
 }
 
 // ToHex2d converts IJK coordinates to 2D hex coordinates.
-// The Vec2d represents a point in the hex2d coordinate system.
-func (c *CoordIJK) ToHex2d() Vec2d {
+// The v2d.Vec2d represents a point in the hex2d coordinate system.
+func (c *CoordIJK) ToHex2d() v2d.Vec2d {
 	i := c.I - c.K
 	j := c.J - c.K
 
-	return Vec2d{
+	return v2d.Vec2d{
 		X: float64(i) - 0.5*float64(j),
 		Y: float64(j) * M_SQRT3_2,
 	}
 }
 
 // Hex2dToCoordIJK converts 2D hex coordinates to IJK coordinates.
-func Hex2dToCoordIJK(v Vec2d) CoordIJK {
+func Hex2dToCoordIJK(v v2d.Vec2d) CoordIJK {
 	a1 := math.Abs(v.X)
 	a2 := math.Abs(v.Y)
 

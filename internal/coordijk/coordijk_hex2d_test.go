@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"testing"
+
+	"github.com/dimchansky/h3-go/internal/v2d"
 )
 
 // TestCoordIJKHex2dConversion tests 2D hex coordinate conversion functions.
@@ -58,7 +60,7 @@ func TestCoordIJKHex2dConversion(t *testing.T) {
 
 	for _, tt := range hex2dToIJKTests {
 		t.Run(tt.name, func(t *testing.T) {
-			v := Vec2d{X: tt.inputX, Y: tt.inputY}
+			v := v2d.Vec2d{X: tt.inputX, Y: tt.inputY}
 			result := Hex2dToCoordIJK(v)
 			if result != tt.expected {
 				t.Errorf("Hex2dToCoordIJK(%v) = %v, want %v", v, result, tt.expected)

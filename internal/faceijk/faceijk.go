@@ -10,6 +10,7 @@ import (
 	"github.com/dimchansky/h3-go/internal/coordijk"
 	"github.com/dimchansky/h3-go/internal/indexbits"
 	"github.com/dimchansky/h3-go/internal/tables"
+	"github.com/dimchansky/h3-go/internal/v2d"
 )
 
 // NumIcosaFaces is the number of faces on an icosahedron.
@@ -296,7 +297,7 @@ func GeoAzimuthRads(p1Lat, p1Lng, p2Lat, p2Lng float64) float64 {
 }
 
 // GeoToHex2d converts geographic coordinates to hex2d coordinates on a specific face.
-func GeoToHex2d(lat, lng float64, res int) (face int, v coordijk.Vec2d) {
+func GeoToHex2d(lat, lng float64, res int) (face int, v v2d.Vec2d) {
 	// Determine the icosahedron face
 	face, sqDist := GeoToClosestFace(lat, lng)
 
@@ -304,7 +305,7 @@ func GeoToHex2d(lat, lng float64, res int) (face int, v coordijk.Vec2d) {
 	r := math.Acos(1 - sqDist*0.5)
 
 	if r < 1e-12 { // EPSILON
-		v = coordijk.Vec2d{X: 0.0, Y: 0.0}
+		v = v2d.Vec2d{X: 0.0, Y: 0.0}
 		return face, v
 	}
 

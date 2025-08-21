@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	testoracle "github.com/dimchansky/h3-go/internal/testoracle"
+	"github.com/dimchansky/h3-go/internal/v2d"
 )
 
 func TestOracle_Hex2d_IJKToHex2d(t *testing.T) {
@@ -33,7 +34,7 @@ func TestOracle_Hex2d_Hex2dToCoordIJK(t *testing.T) {
 		{0.5, 0.866025}, {2.5, 1.299038}, {-2.5, -1.299038},
 	}
 	for _, p := range cases {
-		got := Hex2dToCoordIJK(Vec2d{X: p.X, Y: p.Y})
+		got := Hex2dToCoordIJK(v2d.Vec2d{X: p.X, Y: p.Y})
 		arr := o.Hex2dToCoordIJK(p.X, p.Y)
 		want := CoordIJK{arr[0], arr[1], arr[2]}
 		if got != want {
