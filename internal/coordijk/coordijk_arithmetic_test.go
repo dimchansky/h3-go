@@ -21,19 +21,22 @@ func TestCoordIJKBasicOperations(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resultAdd := tt.a.Add(tt.b)
-			if resultAdd != tt.expectedAdd {
-				t.Errorf("Add() = %v, want %v", resultAdd, tt.expectedAdd)
+			aCopy := tt.a
+			resultAdd := aCopy.Add(tt.b)
+			if *resultAdd != tt.expectedAdd {
+				t.Errorf("Add() = %v, want %v", *resultAdd, tt.expectedAdd)
 			}
 
-			resultSub := tt.a.Sub(tt.b)
-			if resultSub != tt.expectedSub {
-				t.Errorf("Sub() = %v, want %v", resultSub, tt.expectedSub)
+			aCopy = tt.a
+			resultSub := aCopy.Sub(tt.b)
+			if *resultSub != tt.expectedSub {
+				t.Errorf("Sub() = %v, want %v", *resultSub, tt.expectedSub)
 			}
 
-			resultScale := tt.a.Scale(tt.scaleFactor)
-			if resultScale != tt.expectedScale {
-				t.Errorf("Scale() = %v, want %v", resultScale, tt.expectedScale)
+			aCopy = tt.a
+			resultScale := aCopy.Scale(tt.scaleFactor)
+			if *resultScale != tt.expectedScale {
+				t.Errorf("Scale() = %v, want %v", *resultScale, tt.expectedScale)
 			}
 		})
 	}

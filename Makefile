@@ -1,4 +1,4 @@
-.PHONY: test bench lint gen ref test-oracle test-all golangci-lint install-lint fmt
+.PHONY: test bench lint gen ref test-oracle test-all golangci-lint install-lint install-smrcptr fmt
 
 test:
 	go test -v ./...
@@ -11,6 +11,7 @@ bench:
 GOLANGCI_LINT_VERSION ?= v2.4.0
 GOBIN ?= $(shell go env GOPATH)/bin
 GOLANGCI_LINT := $(GOBIN)/golangci-lint
+SMRCPTR := $(GOBIN)/smrcptr
 
 # Installs golangci-lint via official script into GOPATH/bin
 install-lint:
@@ -18,13 +19,23 @@ install-lint:
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | \
 		sh -s -- -b $(GOBIN) $(GOLANGCI_LINT_VERSION)
 
-# Runs vet and golangci-lint (installs it if missing)
-lint: $(GOLANGCI_LINT)
+# Installs smrcptr for consistent receiver type checking
+install-smrcptr:
+	@echo "Installing smrcptr to $(SMRCPTR)"
+	@go install github.com/nikolaydubina/smrcptr@latest
+
+# Runs vet, golangci-lint, and smrcptr (installs them if missing)
+lint: $(GOLANGCI_LINT) $(SMRCPTR)
 	go vet ./...
 	$(GOLANGCI_LINT) run
+	@echo "Running smrcptr for consistent receiver type checking..."
+	@$(SMRCPTR) ./...
 
 $(GOLANGCI_LINT):
 	@$(MAKE) install-lint
+
+$(SMRCPTR):
+	@$(MAKE) install-smrcptr
 
 gen:
 	@echo "Reserved for future table generation"

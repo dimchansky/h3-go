@@ -5,7 +5,7 @@ package h3
 import (
 	"testing"
 
-	testoracle "github.com/dimchansky/h3-go/internal/testoracle"
+	"github.com/dimchansky/h3-go/internal/testoracle"
 )
 
 // Parity test against the C oracle for LatLngToCell.

@@ -395,11 +395,10 @@ func ToH3(fijk FaceIJK, res int) uint64 {
 		}
 
 		// Calculate difference and normalize
-		diff := lastIJK.Sub(lastCenter)
-		diff.Normalize()
+		diff := lastIJK.Sub(lastCenter).Normalize()
 
 		// Convert unit IJK to digit and set in H3 index
-		digit := coordijk.UnitIJKToDigit(diff)
+		digit := coordijk.UnitIJKToDigit(*diff)
 		if digit == coordijk.InvalidDigit {
 			return 0 // H3_NULL - invalid digit
 		}

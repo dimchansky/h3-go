@@ -59,36 +59,34 @@ const M_SQRT3_2 = 0.8660254037844386467637231707529361834714 //nolint:revive // 
 // M_RSIN60 is 1 / sin(60 degrees) = 2 / sqrt(3).
 const M_RSIN60 = 1.1547005383792515290182975610039149269484 //nolint:revive // keep H3 naming for constants
 
-// Add adds two IJK coordinates.
-func (c CoordIJK) Add(other CoordIJK) CoordIJK {
-	return CoordIJK{
-		I: c.I + other.I,
-		J: c.J + other.J,
-		K: c.K + other.K,
-	}
+// Add adds two IJK coordinates in-place and returns the modified receiver.
+func (c *CoordIJK) Add(other CoordIJK) *CoordIJK {
+	c.I += other.I
+	c.J += other.J
+	c.K += other.K
+	return c
 }
 
-// Sub subtracts two IJK coordinates.
-func (c CoordIJK) Sub(other CoordIJK) CoordIJK {
-	return CoordIJK{
-		I: c.I - other.I,
-		J: c.J - other.J,
-		K: c.K - other.K,
-	}
+// Sub subtracts two IJK coordinates in-place and returns the modified receiver.
+func (c *CoordIJK) Sub(other CoordIJK) *CoordIJK {
+	c.I -= other.I
+	c.J -= other.J
+	c.K -= other.K
+	return c
 }
 
-// Scale multiplies all components by a factor.
-func (c CoordIJK) Scale(factor int) CoordIJK {
-	return CoordIJK{
-		I: c.I * factor,
-		J: c.J * factor,
-		K: c.K * factor,
-	}
+// Scale multiplies all components by a factor in-place and returns the modified receiver.
+func (c *CoordIJK) Scale(factor int) *CoordIJK {
+	c.I *= factor
+	c.J *= factor
+	c.K *= factor
+	return c
 }
 
 // Normalize normalizes the IJK coordinates so that i+j+k=0.
 // In the IJK coordinate system, valid coordinates always sum to 0.
-func (c *CoordIJK) Normalize() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) Normalize() *CoordIJK {
 	// Exactly match H3 C _ijkNormalize algorithm
 	// Step 1: Remove any negative values
 	if c.I < 0 {
@@ -122,105 +120,127 @@ func (c *CoordIJK) Normalize() {
 		c.J -= minComponent
 		c.K -= minComponent
 	}
+	return c
 }
 
-// Neighbor moves the IJK coordinate in the specified direction.
-func (c *CoordIJK) Neighbor(dir Direction) {
+// Neighbor moves the IJK coordinate in the specified direction and returns the modified receiver.
+func (c *CoordIJK) Neighbor(dir Direction) *CoordIJK {
 	// Mirror H3 C _neighbor: only act for digits (1..6). CENTER_DIGIT is no-op.
 	if dir > CenterDigit && dir < NumDigits {
-		*c = c.Add(UnitVecs[dir])
-		c.Normalize()
+		c.Add(UnitVecs[dir]).Normalize()
 	}
+	return c
 }
 
 // Rotate60CCW rotates the IJK coordinates 60 degrees counter-clockwise.
-func (c *CoordIJK) Rotate60CCW() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) Rotate60CCW() *CoordIJK {
 	// Match H3 C _ijkRotate60ccw by recombining unit vectors and normalizing.
 	iVec := CoordIJK{1, 1, 0}
 	jVec := CoordIJK{0, 1, 1}
 	kVec := CoordIJK{1, 0, 1}
 
-	iVec = iVec.Scale(c.I)
-	jVec = jVec.Scale(c.J)
-	kVec = kVec.Scale(c.K)
+	iVec.Scale(c.I)
+	jVec.Scale(c.J)
+	kVec.Scale(c.K)
 
-	*c = iVec.Add(jVec).Add(kVec)
-	c.Normalize()
+	*c = iVec
+	return c.Add(jVec).Add(kVec).Normalize()
 }
 
 // Rotate60CW rotates the IJK coordinates 60 degrees clockwise.
-func (c *CoordIJK) Rotate60CW() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) Rotate60CW() *CoordIJK {
 	// Match H3 C _ijkRotate60cw by recombining unit vectors and normalizing.
 	iVec := CoordIJK{1, 0, 1}
 	jVec := CoordIJK{1, 1, 0}
 	kVec := CoordIJK{0, 1, 1}
 
-	iVec = iVec.Scale(c.I)
-	jVec = jVec.Scale(c.J)
-	kVec = kVec.Scale(c.K)
+	iVec.Scale(c.I)
+	jVec.Scale(c.J)
+	kVec.Scale(c.K)
 
-	*c = iVec.Add(jVec).Add(kVec)
-	c.Normalize()
+	*c = iVec
+	return c.Add(jVec).Add(kVec).Normalize()
 }
 
 // DownAp7 transforms coordinates for a resolution decrease from Class III to Class II.
 // This is the aperture 7 transformation for going down in resolution.
-func (c *CoordIJK) DownAp7() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) DownAp7() *CoordIJK {
 	// From H3 source: res r unit vectors in res r+1
 	iVec := CoordIJK{3, 0, 1}
 	jVec := CoordIJK{1, 3, 0}
 	kVec := CoordIJK{0, 1, 3}
 
-	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
-	c.Normalize()
+	iVec.Scale(c.I)
+	jVec.Scale(c.J)
+	kVec.Scale(c.K)
+
+	*c = iVec
+	return c.Add(jVec).Add(kVec).Normalize()
 }
 
 // DownAp7r transforms coordinates for a resolution decrease from Class II to Class III.
 // This is the reverse aperture 7 transformation.
-func (c *CoordIJK) DownAp7r() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) DownAp7r() *CoordIJK {
 	// From H3 source: res r unit vectors in res r+1
 	iVec := CoordIJK{3, 1, 0}
 	jVec := CoordIJK{0, 3, 1}
 	kVec := CoordIJK{1, 0, 3}
 
-	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
-	c.Normalize()
+	iVec.Scale(c.I)
+	jVec.Scale(c.J)
+	kVec.Scale(c.K)
+
+	*c = iVec
+	return c.Add(jVec).Add(kVec).Normalize()
 }
 
 // DownAp3 transforms coordinates for a resolution decrease in Class III.
 // This is the aperture 3 transformation (used for pentagons).
-func (c *CoordIJK) DownAp3() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) DownAp3() *CoordIJK {
 	// From H3 source: res r unit vectors in res r+1
 	iVec := CoordIJK{2, 0, 1}
 	jVec := CoordIJK{1, 2, 0}
 	kVec := CoordIJK{0, 1, 2}
 
-	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
-	c.Normalize()
+	iVec.Scale(c.I)
+	jVec.Scale(c.J)
+	kVec.Scale(c.K)
+
+	*c = iVec
+	return c.Add(jVec).Add(kVec).Normalize()
 }
 
 // DownAp3r transforms coordinates for a resolution decrease in Class II.
 // This is the reverse aperture 3 transformation.
-func (c *CoordIJK) DownAp3r() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) DownAp3r() *CoordIJK {
 	// From H3 source: res r unit vectors in res r+1
 	iVec := CoordIJK{2, 1, 0}
 	jVec := CoordIJK{0, 2, 1}
 	kVec := CoordIJK{1, 0, 2}
 
-	*c = iVec.Scale(c.I).Add(jVec.Scale(c.J)).Add(kVec.Scale(c.K))
-	c.Normalize()
+	iVec.Scale(c.I)
+	jVec.Scale(c.J)
+	kVec.Scale(c.K)
+
+	*c = iVec
+	return c.Add(jVec).Add(kVec).Normalize()
 }
 
 // UnitIJKToDigit determines the H3 digit corresponding to a unit IJK coordinate.
 // Normalizes the input coordinate before checking, following H3 C _unitIjkToDigit.
 func UnitIJKToDigit(ijk CoordIJK) Direction {
 	// Normalize the coordinate first, matching H3 C behavior
-	normalized := ijk
-	normalized.Normalize()
+	ijk.Normalize()
 
 	// Find which unit vector this matches
 	for dir := Direction(0); dir < NumDigits; dir++ {
-		if normalized == UnitVecs[dir] {
+		if ijk == UnitVecs[dir] {
 			return dir
 		}
 	}
@@ -239,8 +259,7 @@ func abs(x int) int {
 // This matches H3 C ijkDistance function behavior.
 func Distance(a, b CoordIJK) int {
 	// Match H3 C ijkDistance: normalize(a-b), then return max(|i|,|j|,|k|).
-	diff := a.Sub(b)
-	diff.Normalize()
+	diff := a.Sub(b).Normalize()
 	ai, aj, ak := abs(diff.I), abs(diff.J), abs(diff.K)
 	if ai < aj {
 		ai = aj
@@ -253,7 +272,8 @@ func Distance(a, b CoordIJK) int {
 
 // UpAp7 finds the normalized IJK coordinates of the indexing parent
 // in a counter-clockwise aperture 7 grid. Works in place.
-func (c *CoordIJK) UpAp7() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) UpAp7() *CoordIJK {
 	// Convert to CoordIJ
 	i := c.I - c.K
 	j := c.J - c.K
@@ -262,12 +282,13 @@ func (c *CoordIJK) UpAp7() {
 	c.I = int(math.Round(float64(3*i-j) / 7.0))
 	c.J = int(math.Round(float64(i+2*j) / 7.0))
 	c.K = 0
-	c.Normalize()
+	return c.Normalize()
 }
 
 // UpAp7r finds the normalized IJK coordinates of the indexing parent
 // in a clockwise aperture 7 grid. Works in place.
-func (c *CoordIJK) UpAp7r() {
+// Returns the modified receiver for chaining.
+func (c *CoordIJK) UpAp7r() *CoordIJK {
 	// Convert to CoordIJ
 	i := c.I - c.K
 	j := c.J - c.K
@@ -276,12 +297,12 @@ func (c *CoordIJK) UpAp7r() {
 	c.I = int(math.Round(float64(2*i+j) / 7.0))
 	c.J = int(math.Round(float64(3*j-i) / 7.0))
 	c.K = 0
-	c.Normalize()
+	return c.Normalize()
 }
 
 // ToHex2d converts IJK coordinates to 2D hex coordinates.
 // The Vec2d represents a point in the hex2d coordinate system.
-func (c CoordIJK) ToHex2d() Vec2d {
+func (c *CoordIJK) ToHex2d() Vec2d {
 	i := c.I - c.K
 	j := c.J - c.K
 

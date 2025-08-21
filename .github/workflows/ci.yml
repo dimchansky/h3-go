@@ -41,5 +41,11 @@ jobs:
           version: v2.4.0
           args: --timeout=5m
 
+      - name: Install smrcptr
+        run: go install github.com/nikolaydubina/smrcptr@latest
+
+      - name: Check receiver consistency (smrcptr)
+        run: smrcptr ./...
+
       - name: Test (race)
         run: go test -race ./...

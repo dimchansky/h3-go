@@ -28,7 +28,9 @@ func TestCoordIJKDistance(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := Distance(tt.a, tt.b)
 			if result != tt.expected {
-				t.Logf("Distance calculation debug: (%v) - (%v) = %v", tt.a, tt.b, tt.a.Sub(tt.b))
+				diff := tt.a
+				diff.Sub(tt.b)
+				t.Logf("Distance calculation debug: (%v) - (%v) = %v", tt.a, tt.b, diff)
 				t.Errorf("Distance(%v, %v) = %d, want %d", tt.a, tt.b, result, tt.expected)
 			}
 		})
