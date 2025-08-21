@@ -10,7 +10,9 @@ Checklist
  - [x] Port `latLng.c::degsToRads` and `radsToDegs`
  - [x] Port `latLng.c::geoAlmostEqualThreshold` and `geoAlmostEqual`
  - [x] Port `latLng.c::H3_EXPORT(greatCircleDistanceRads/Km/M)`
- - [ ] Port `latLng.c::_geoAzimuthRads` and `_geoAzDistanceRads`
+ - [x] Port `latLng.c::_geoAzimuthRads` and `_geoAzDistanceRads`
+ - [ ] Port `latLng.c::normalizeLng`, `triangleEdgeLengthsToArea`, `triangleArea`, `_setGeoRads`, `setGeoDegs`
+ - [ ] Port `vec2d.c::_v2dMag`, `_v2dIntersect`, `_v2dAlmostEquals`
 - [ ] Port additional small helpers from `mathExtensions.c` and `latLng.c`
 - [ ] Identify next targets with minimal dependencies; add TODO chains in code
 - [ ] Mirror select C tests (apps/testapps, fuzzers) where practical
@@ -29,8 +31,8 @@ Functions
   - [x] `H3_EXPORT(greatCircleDistanceRads)(const LatLng*, const LatLng*)` — DONE
   - [x] `H3_EXPORT(greatCircleDistanceKm)(const LatLng*, const LatLng*)` — DONE
   - [x] `H3_EXPORT(greatCircleDistanceM)(const LatLng*, const LatLng*)` — DONE
-  - [ ] `_geoAzimuthRads(const LatLng*, const LatLng*)` — TODO
-  - [ ] `_geoAzDistanceRads(const LatLng*, double, double, LatLng*)` — TODO
+  - [x] `_geoAzimuthRads(const LatLng*, const LatLng*)` — DONE
+  - [x] `_geoAzDistanceRads(const LatLng*, double, double, LatLng*)` — DONE
 
 Conventions
 - One function per Go file: `<cfile>__<function>.go`
@@ -59,3 +61,20 @@ Guideline going forward when a C function links in extra deps
 Note on C bool interop (cgo)
 - Preferred: include `<stdbool.h>` and compare C.bool return values directly to `0` in Go (`C.fn(...) != 0`). This is valid because `_Bool` is an integer type in C99.
 - Toolchain caveat: some cgo toolchains reject direct comparison `C.bool != 0`. In those cases, use a tiny inline C helper to normalize to `int` (e.g., `static int h3_bool_to_int(_Bool b) { return b ? 1 : 0; }`) and compare its result to `0` from Go.
+
+Next up (planned)
+- latLng.c
+  - [ ] `normalizeLng(const double, const LongitudeNormalization)`
+  - [ ] `triangleEdgeLengthsToArea(double, double, double)`
+  - [ ] `triangleArea(const LatLng*, const LatLng*, const LatLng*)`
+  - [ ] `_setGeoRads(LatLng*, double, double)` and `setGeoDegs(LatLng*, double, double)`
+- vec2d.c
+  - [ ] `_v2dMag(const Vec2d*)`
+  - [ ] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)`
+  - [ ] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)`
+
+Execution plan per function
+- Extend `<cfile>_cgo.go` with direct calls to the original C functions using C structs where applicable (no scalar explosion; use C.LatLng / C.Vec2d).
+- Implement the Go port in `<cfile>__<function>.go` (faithful translation; same unexported name where possible).
+- Add parity test `<cfile>__<function>_parity_test.go` under `//go:build c2go` with tight but realistic tolerances.
+- If C returns `bool`, prefer `<stdbool.h>` and compare `!= 0`. If toolchain warns, route through a tiny C helper returning `int`.
