@@ -18,5 +18,7 @@ coverage.out
 
 .claude/
 
+.gocache/
+
 AGENTS.md
 CLAUDE.md

@@ -1,4 +1,4 @@
-.PHONY: test bench lint gen ref test-oracle test-all golangci-lint install-lint install-smrcptr fmt fix-fmt
+.PHONY: test bench lint gen ref test-oracle test-all test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt
 
 test:
 	go test -v ./...
@@ -53,6 +53,30 @@ test-oracle: ref
 
 # Convenience: run both regular and oracle-tagged tests
 test-all: test test-oracle
+
+# Run c2go parity tests (require cgo). Uses local GOCACHE to avoid sandboxed home cache writes.
+H3VER ?= 4.3.0
+test-c2go:
+	@echo "Running c2go parity tests (requires cgo)..."
+	@# Prefer clang from Xcode CLT if available
+	@CC=$$(command -v xcrun >/dev/null 2>&1 && xcrun --find clang || true); \
+	CXX=$$(command -v xcrun >/dev/null 2>&1 && xcrun --find clang++ || true); \
+	SDKROOT=$$(command -v xcrun >/dev/null 2>&1 && xcrun --sdk macosx --show-sdk-path || true); \
+	INC_BASE="$(PWD)/testref/h3-$(H3VER)/src/h3lib"; \
+	if [ ! -d "$$INC_BASE" ]; then \
+		echo "H3 C sources not found at $$INC_BASE. Run 'make ref' or set H3VER=..."; \
+		exit 1; \
+	fi; \
+	GOCACHE=$(PWD)/.gocache \
+	CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
+	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
+	go test -v -tags="c2go" ./internal/c2go || { \
+		echo; \
+		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
+		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \
+		echo " - Ensure a C toolchain is present (macOS: xcode-select --install)."; \
+		exit 1; \
+	}
 fmt:
 	@echo "Checking gofmt formatting..."
 	@files=$$(gofmt -s -l .); \

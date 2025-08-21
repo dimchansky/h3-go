@@ -1,6 +1,6 @@
 # h3 (pure Go) — TODO
 
-**Goal:** Re-implement Uber’s H3 (v4.3.0) in **pure Go** (no cgo, no external deps), with a high-performance, allocation-aware API.
+**Goal:** Re-implement Uber’s H3 (v4.3.0) in **pure Go** (no cgo in library code, no external deps), with a high-performance, allocation-aware API. In parallel, maintain a dedicated C-to-Go conversion workspace under `internal/c2go` that mirrors H3 C sources almost line-by-line to ease verification. Each converted C function lives in its own Go file and comes with a cgo-backed parity test comparing behavior against the original C implementation.
 
 **Ground truth:** Behavior must match H3 C @ tag **v4.3.0**.
 - Reference: https://github.com/uber/h3 (v4.3.0)
@@ -68,6 +68,31 @@
 
 > For every function above: follow the **dst-buffer** pattern and document ordering.
 
+## 3.4 C-to-Go conversion workspace (new)
+- [x] Create `internal/c2go` package dedicated to near line-by-line C→Go function ports.
+- [x] Define file naming: `<cfile>__<function>.go` (one function per file), keeping original C names/signatures where reasonable (unexported in Go).
+- [x] Add cgo-backed parity tests per function that compare against the original C implementation.
+- [x] Transpile minimal, dependency-free functions first (e.g., `mathExtensions.c::_ipow`).
+- [ ] Progress recursively by resolving dependencies; leave `TODO:` markers with the original C references when a dependency is missing.
+- [ ] Mirror select C tests (apps/testapps, fuzzers) into Go where feasible.
+
+Algorithm for porting a function:
+- Pick a target from `testref/h3-<ver>/src/h3lib/lib/<cfile>.c` with few deps.
+- Create `internal/c2go/<cfile>__<function>.go` porting logic as-is; keep name unexported and identical if possible (e.g., `_ipow`).
+- If it calls other helpers not yet ported, add `TODO:` with exact C symbol names, then port those recursively.
+- Add/extend `internal/c2go/<cfile>_cgo.go`:
+  - `//go:build cgo && c2go`
+  - `#include "<cfile>.c"` only by name (no versioned paths; dirs supplied via `CGO_CPPFLAGS`).
+  - Provide a small C wrapper (e.g., `_ipow_c_wrapper`) and a Go function (e.g., `_ipowC`) calling it.
+- Write `internal/c2go/<cfile>__<function>_parity_test.go` with `//go:build c2go` to compare Go vs C wrapper.
+- Optionally add plain-Go tests later in `internal/c2go/<cfile>__<function>_test.go` (no tags).
+- Run `make ref` once to download/build H3 sources; then run `make test-c2go`.
+
+Conventions and constraints:
+- Do not hardcode H3 version in code. The Make target passes include dirs via `CGO_CPPFLAGS` using `H3VER` (e.g., `make H3VER=4.4.0 test-c2go`).
+- Keep cgo only in non-test files under `internal/c2go/*_cgo.go`. Tests import only Go symbols and are guarded by `//go:build c2go`.
+- Do not modify `testref/` sources; only `make ref` should fetch/build them. Version is selected via `H3VER`.
+
 -## 4) Testing & correctness
 - [ ] Implement C→Go error code mapping in `testref/` CLI and Go test harness (use the table documented in `api.md`); unknown codes map to `ErrFailed` (or wrapped) with logging.
 
@@ -84,6 +109,10 @@
   - [x] `testref/README.md` documents oracle architecture and protocol.
 - [ ] Add fuzz tests for reversible transforms (Cell ↔ LatLng ↔ Cell; edges/vertices roundtrips).
 - [ ] Define numeric tolerances; start with `1e-12` (radians), `1e-9` (degrees).
+
+### C-to-Go workspace testing
+- [x] Enable cgo-backed parity tests in `internal/c2go` that compile the specific C source via `#include` and compare outputs.
+- [ ] Add a `-tags=c2go` optional test tag if conditional compilation becomes necessary; default tests run with cgo enabled.
 
 ## 5) Performance & allocations
 - [ ] Benchmarks: `BenchmarkKRing`, `BenchmarkPolygonToCells`, `BenchmarkCellToBoundary`, etc.
@@ -158,3 +187,4 @@ All code compiles and tests pass. The foundation is solid for implementing geome
 - Replaced Vec2d with performance-focused internal/v2d package
 - Enhanced CI with fmt checking and smrcptr validation
 - Added fix-fmt command for automatic code formatting
+ - Added `internal/c2go` with `_ipow` port, cgo interop wrappers per C file, and `make test-c2go` passing include dirs via `H3VER` and `CGO_CPPFLAGS`
