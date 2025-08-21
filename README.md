@@ -55,4 +55,4 @@ ORACLE_PATH=/abs/path/to/h3ref make test-oracle
 
 ## License & attribution
 - Apache-2.0.
-- This work reimplements algorithms from Uber’s H3; see `NOTICE` for attribution.
+- This work reimplements algorithms from Uber's H3; see [NOTICE](./NOTICE) for attribution.

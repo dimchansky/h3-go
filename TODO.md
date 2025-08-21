@@ -14,7 +14,7 @@
 ## 0) Repo bootstrap
 - [x] Initialize repo: `module github.com/dimchansky/h3` (Go ≥ 1.22).
 - [x] Add `LICENSE` (Apache-2.0); add `NOTICE` with attribution to H3.
-- [ ] Add CI (GitHub Actions): `go build`, `go test`, race, `go vet`, `golangci-lint`.
+- [x] Add CI (GitHub Actions): `go build`, `go test`, race, `go vet`, `golangci-lint`.
 - [x] Add `Makefile`: `make test`, `make bench`, `make lint`, `make gen` (for tables), `make ref` (build C oracle CLI).
 
 ## 1) Public API inventory
@@ -99,8 +99,9 @@
 - [x] `api.md` serves as the canonical reference for signatures.
 
 ## 7) Lint/CI/quality gates
-- [ ] Enable `-race` in tests (test-only).
-- [ ] `go vet`, `golangci-lint` (incl. `staticcheck`, `ineffassign`, `gocritic`).
+- [x] Enable `-race` in tests (test-only).
+- [x] `go vet`, `golangci-lint` (incl. `staticcheck`, `ineffassign`, `gocritic`).
+- [x] Added `smrcptr` for consistent receiver type checking.
 - [ ] Coverage target: non-trivial code ≥ 85% where realistic.
 
 ## 8) License & attribution
@@ -143,10 +144,17 @@ Status: Repository bootstrapped with core indexbits, angles, initial tables, and
 ## Architecture Notes
 
 The codebase follows a bottom-up dependency structure:
-- **Low-level**: `internal/indexbits` (bit layout), `internal/tables` (constants) ✅
-- **Mid-level**: `internal/angles` (conversions), `internal/validate` (input validation) ✅  
-- **Coordinate systems**: Face transforms, IJK math (TODO)
+- **Low-level**: `internal/indexbits` (bit layout), `internal/tables` (constants), `internal/v2d` (2D vectors) ✅
+- **Mid-level**: `internal/angles` (conversions), `internal/coordijk` (IJK coordinate system) ✅  
+- **Coordinate systems**: `internal/faceijk` (face transforms, geo↔H3) ✅
 - **High-level**: rings, polygons, edges/vertices (TODO)
 - **Public API**: dst-buffer pattern, deterministic ordering ✅
 
 All code compiles and tests pass. The foundation is solid for implementing geometric operations.
+
+**Recent improvements:**
+- Refactored CoordIJK to use consistent pointer receivers with method chaining
+- Added comprehensive smrcptr linting for receiver type consistency
+- Replaced Vec2d with performance-focused internal/v2d package
+- Enhanced CI with fmt checking and smrcptr validation
+- Added fix-fmt command for automatic code formatting
