@@ -9,7 +9,8 @@ Checklist
  - [x] Port `latLng.c::constrainLng` and `constrainLat`
  - [x] Port `latLng.c::degsToRads` and `radsToDegs`
  - [x] Port `latLng.c::geoAlmostEqualThreshold` and `geoAlmostEqual`
- - [ ] Port `latLng.c::H3_EXPORT(greatCircleDistanceRads/Km/M)`
+ - [x] Port `latLng.c::H3_EXPORT(greatCircleDistanceRads/Km/M)`
+ - [ ] Port `latLng.c::_geoAzimuthRads` and `_geoAzDistanceRads`
 - [ ] Port additional small helpers from `mathExtensions.c` and `latLng.c`
 - [ ] Identify next targets with minimal dependencies; add TODO chains in code
 - [ ] Mirror select C tests (apps/testapps, fuzzers) where practical
@@ -25,9 +26,11 @@ Functions
   - [x] `H3_EXPORT(radsToDegs)(double radians)` — DONE
   - [x] `geoAlmostEqualThreshold(const LatLng*, const LatLng*, double)` — DONE
   - [x] `geoAlmostEqual(const LatLng*, const LatLng*)` — DONE
-  - [ ] `H3_EXPORT(greatCircleDistanceRads)(const LatLng*, const LatLng*)` — TODO
-  - [ ] `H3_EXPORT(greatCircleDistanceKm)(const LatLng*, const LatLng*)` — TODO
-  - [ ] `H3_EXPORT(greatCircleDistanceM)(const LatLng*, const LatLng*)` — TODO
+  - [x] `H3_EXPORT(greatCircleDistanceRads)(const LatLng*, const LatLng*)` — DONE
+  - [x] `H3_EXPORT(greatCircleDistanceKm)(const LatLng*, const LatLng*)` — DONE
+  - [x] `H3_EXPORT(greatCircleDistanceM)(const LatLng*, const LatLng*)` — DONE
+  - [ ] `_geoAzimuthRads(const LatLng*, const LatLng*)` — TODO
+  - [ ] `_geoAzDistanceRads(const LatLng*, double, double, LatLng*)` — TODO
 
 Conventions
 - One function per Go file: `<cfile>__<function>.go`

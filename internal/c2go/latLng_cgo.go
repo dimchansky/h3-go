@@ -52,6 +52,22 @@ func radsToDegsC(radians float64) float64 {
     return float64(C.radsToDegs_c_wrapper(C.double(radians)))
 }
 
+// _geoAzimuthRadsC calls the original C internal implementation.
+func _geoAzimuthRadsC(a, b LatLng) float64 {
+    var ca, cb C.LatLng
+    ca.lat = C.double(a.lat); ca.lng = C.double(a.lng)
+    cb.lat = C.double(b.lat); cb.lng = C.double(b.lng)
+    return float64(C._geoAzimuthRads(&ca, &cb))
+}
+
+// _geoAzDistanceRadsC calls the original C internal implementation.
+func _geoAzDistanceRadsC(p1 LatLng, az, distance float64) LatLng {
+    var c1, c2 C.LatLng
+    c1.lat = C.double(p1.lat); c1.lng = C.double(p1.lng)
+    C._geoAzDistanceRads(&c1, C.double(az), C.double(distance), &c2)
+    return LatLng{lat: float64(c2.lat), lng: float64(c2.lng)}
+}
+
 // greatCircleDistanceRadsC calls the original C implementation.
 func greatCircleDistanceRadsC(a, b LatLng) float64 {
     var ca, cb C.LatLng
