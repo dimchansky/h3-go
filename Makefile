@@ -70,6 +70,8 @@ test-c2go:
 	GOCACHE=$(PWD)/.gocache \
 	CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
+	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
+	CGO_LDFLAGS="-Wl,-dead_strip" \
 	go test -v -tags="c2go" ./internal/c2go || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
