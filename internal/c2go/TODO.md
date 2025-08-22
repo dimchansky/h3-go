@@ -61,7 +61,8 @@ Next up (planned)
   - [x] `pointInsideGeoLoop(const GeoLoop*, const BBox*, const LatLng*)` — DONE
   - [x] `pointInsidePolygon(const GeoPolygon*, const BBox*, const LatLng*)` — DONE
   - [x] `cellBoundaryCrossesGeoLoop(const GeoLoop*, const BBox*, const CellBoundary*, const BBox*)` — DONE
-  - [ ] `cellBoundaryInsidePolygon(...)` and `cellBoundaryCrossesPolygon(...)`
+  - [x] `cellBoundaryInsidePolygon(...)` — DONE
+  - [ ] `cellBoundaryCrossesPolygon(...)`
 - h3Index.c (more utilities):
   - [ ] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` ports
   - [ ] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` ports

@@ -161,3 +161,84 @@ func cellBoundaryCrossesGeoLoopC(geoloop GeoLoop, loopBBox BBox, boundary CellBo
     }
     if C.cellBoundaryCrossesGeoLoop(&cg, &cLoopBBox, &cb, &cBoundaryBBox) { return true } else { return false }
 }
+
+
+// cellBoundaryInsidePolygonC calls C cellBoundaryInsidePolygon for a GeoPolygon.
+func cellBoundaryInsidePolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBoundary, boundaryBBox BBox) bool {
+    cp, freePoly := toCGeoPolygon(poly)
+    defer freePoly()
+    // bboxes
+    nb := len(bboxes)
+    var cbptr *C.BBox
+    var bbMem unsafe.Pointer
+    if nb > 0 {
+        bbMem = C.malloc(C.size_t(nb) * C.size_t(C.sizeof_BBox))
+        arr := (*[1 << 30]C.BBox)(bbMem)[:nb:nb]
+        for i, b := range bboxes {
+            arr[i].north = C.double(b.North)
+            arr[i].south = C.double(b.South)
+            arr[i].east = C.double(b.East)
+            arr[i].west = C.double(b.West)
+        }
+        cbptr = (*C.BBox)(bbMem)
+        defer C.free(unsafe.Pointer(bbMem))
+    }
+    // boundary bbox
+    var cBoundaryBBox C.BBox
+    cBoundaryBBox.north = C.double(boundaryBBox.North)
+    cBoundaryBBox.south = C.double(boundaryBBox.South)
+    cBoundaryBBox.east = C.double(boundaryBBox.East)
+    cBoundaryBBox.west = C.double(boundaryBBox.West)
+    // boundary
+    var cb C.CellBoundary
+    n := boundary.NumVerts
+    if n > 0 {
+        if n > int(C.MAX_CELL_BNDRY_VERTS) { n = int(C.MAX_CELL_BNDRY_VERTS) }
+        cb.numVerts = C.int(n)
+        for i := 0; i < n; i++ {
+            cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
+            cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
+        }
+    }
+    if C.cellBoundaryInsidePolygon(&cp, cbptr, &cb, &cBoundaryBBox) { return true } else { return false }
+}
+
+// cellBoundaryCrossesPolygonC calls C cellBoundaryCrossesPolygon for a GeoPolygon.
+func cellBoundaryCrossesPolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBoundary, boundaryBBox BBox) bool {
+    cp, freePoly := toCGeoPolygon(poly)
+    defer freePoly()
+    // bboxes
+    nb := len(bboxes)
+    var cbptr *C.BBox
+    var bbMem unsafe.Pointer
+    if nb > 0 {
+        bbMem = C.malloc(C.size_t(nb) * C.size_t(C.sizeof_BBox))
+        arr := (*[1 << 30]C.BBox)(bbMem)[:nb:nb]
+        for i, b := range bboxes {
+            arr[i].north = C.double(b.North)
+            arr[i].south = C.double(b.South)
+            arr[i].east = C.double(b.East)
+            arr[i].west = C.double(b.West)
+        }
+        cbptr = (*C.BBox)(bbMem)
+        defer C.free(unsafe.Pointer(bbMem))
+    }
+    // boundary bbox
+    var cBoundaryBBox C.BBox
+    cBoundaryBBox.north = C.double(boundaryBBox.North)
+    cBoundaryBBox.south = C.double(boundaryBBox.South)
+    cBoundaryBBox.east = C.double(boundaryBBox.East)
+    cBoundaryBBox.west = C.double(boundaryBBox.West)
+    // boundary
+    var cb C.CellBoundary
+    n := boundary.NumVerts
+    if n > 0 {
+        if n > int(C.MAX_CELL_BNDRY_VERTS) { n = int(C.MAX_CELL_BNDRY_VERTS) }
+        cb.numVerts = C.int(n)
+        for i := 0; i < n; i++ {
+            cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
+            cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
+        }
+    }
+    if C.cellBoundaryCrossesPolygon(&cp, cbptr, &cb, &cBoundaryBBox) { return true } else { return false }
+}
