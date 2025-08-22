@@ -200,7 +200,7 @@ Next up (planned)
   - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE (Go port + C parity); finds intersection between two lines
   - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE (Go port + C parity); compares 2D vectors for equality
  - vec3d.c
-  - [ ] `_geoToVec3d(const LatLng*, Vec3d*)`
+  - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE (Go port + C parity); converts geographic coordinates to 3D unit vector
 - h3Index.c
   - [ ] Next: `cellToChildren` iterator-based parity (depends on iterators); may be deferred
   - [ ] Other tiny getters: isValidCell (larger), error codes mapping (already wrapped)

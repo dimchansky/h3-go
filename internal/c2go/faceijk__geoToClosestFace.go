@@ -4,7 +4,8 @@ package c2go
 // from a lat/lng point to its closest icosahedral face center.
 // Mirrors static _geoToClosestFace in faceijk.c
 func _geoToClosestFace(g *LatLng, face *int, sqd *float64) {
-	v3d := _geoToVec3d(g)
+	var v3d Vec3d
+	_geoToVec3d(g, &v3d)
 
 	// determine the icosahedron face
 	*face = 0
