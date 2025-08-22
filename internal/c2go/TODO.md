@@ -182,7 +182,13 @@ Note on C bool interop (cgo)
 - Preferred: include `<stdbool.h>` and compare C.bool return values directly to `0` in Go (`C.fn(...) != 0`). This is valid because `_Bool` is an integer type in C99.
 - Toolchain caveat: some cgo toolchains reject direct comparison `C.bool != 0`. In those cases, use a tiny inline C helper to normalize to `int` (e.g., `static int h3_bool_to_int(_Bool b) { return b ? 1 : 0; }`) and compare its result to `0` from Go.
 
+- faceijk.c
+  - [x] `_geoToClosestFace(const LatLng*, int*, double*)` — DONE (Go port + C parity); finds closest icosahedral face center
+
 Next up (planned)
+- faceijk.c (continued small helpers):
+  - [ ] `_geoToHex2d(const LatLng*, int, int*, Vec2d*)` — convert geo to 2D hex coordinates on specified face
+  - [ ] `_hex2dToGeo(const Vec2d*, int, int, int, LatLng*)` — convert 2D hex coordinates back to geo
 - latLng.c
   - [ ] `normalizeLng(const double, const LongitudeNormalization)`
   - [ ] `triangleEdgeLengthsToArea(double, double, double)`
