@@ -7,6 +7,13 @@ package c2go
 #include <stdbool.h>
 #include <stdlib.h>
 #include "h3api.h"
+#include "h3Index.h"
+
+// Inline C helpers to expose macro behavior for parity tests
+static inline int h3_get_reserved_bits_c(H3Index h) { return H3_GET_RESERVED_BITS(h); }
+static inline H3Index h3_set_reserved_bits_c(H3Index h, int v) { H3Index x = h; H3_SET_RESERVED_BITS(x, v); return x; }
+static inline int h3_get_index_digit_c(H3Index h, int res) { return (int)H3_GET_INDEX_DIGIT(h, res); }
+static inline H3Index h3_set_index_digit_c(H3Index h, int res, int digit) { H3Index x = h; H3_SET_INDEX_DIGIT(x, res, digit); return x; }
 */
 import "C"
 
@@ -38,3 +45,24 @@ func h3ToStringC(h H3Index) (string, uint32) {
 
 // describeH3ErrorC calls the original C implementation.
 func describeH3ErrorC(code uint32) string { return C.GoString(C.describeH3Error(C.uint(code))) }
+
+// getReservedBitsC exposes H3_GET_RESERVED_BITS.
+func getReservedBitsC(h H3Index) int { return int(C.h3_get_reserved_bits_c(C.H3Index(h))) }
+
+// setReservedBitsC exposes H3_SET_RESERVED_BITS.
+func setReservedBitsC(h H3Index, v int) H3Index {
+	return H3Index(C.h3_set_reserved_bits_c(C.H3Index(h), C.int(v)))
+}
+
+// getIndexDigitC exposes H3_GET_INDEX_DIGIT.
+func getIndexDigitC(h H3Index, res int) int {
+	return int(C.h3_get_index_digit_c(C.H3Index(h), C.int(res)))
+}
+
+// setIndexDigitC exposes H3_SET_INDEX_DIGIT.
+func setIndexDigitC(h H3Index, res int, digit int) H3Index {
+	return H3Index(C.h3_set_index_digit_c(C.H3Index(h), C.int(res), C.int(digit)))
+}
+
+// h3LeadingNonZeroDigitC calls the original C implementation.
+func h3LeadingNonZeroDigitC(h H3Index) int { return int(C._h3LeadingNonZeroDigit(C.H3Index(h))) }

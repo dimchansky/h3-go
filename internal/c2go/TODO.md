@@ -8,6 +8,7 @@ Iteration Workflow (standard operating procedure)
 - Transpile: implement a faithful Go port in `internal/c2go/<cfile>__<function>.go`, mirroring names/signatures (unexported) and behavior.
 - Parity test: add `internal/c2go/<cfile>__<function>_parity_test.go` (`//go:build c2go`) that compares Go vs C output; use tight, justified tolerances for floats and safe bool handling.
 - Sanity run: `make test-c2go` and ensure all parity tests pass.
+- Format code: run `make fix-fmt` prior to committing.
 - Update tracker: update this TODO to mark the function DONE and list the next planned items (do this BEFORE each commit).
 - Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and TODO update.
 
@@ -55,6 +56,11 @@ Functions
   - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE
   - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE
 
+- h3Index.c
+  - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
+  - [x] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` — DONE (Go ports + cgo wrappers)
+  - [x] `_h3LeadingNonZeroDigit` — DONE (Go port + direct C call parity)
+
 Next up (planned)
 - polygon.c (next small helpers):
   - [x] `bboxFromGeoLoop(const GeoLoop*, BBox*)` — DONE
@@ -64,9 +70,9 @@ Next up (planned)
   - [x] `cellBoundaryInsidePolygon(...)` — DONE
   - [x] `cellBoundaryCrossesPolygon(...)` — DONE
 - h3Index.c (more utilities):
-  - [ ] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` ports
-  - [ ] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` ports
-  - [ ] `_h3LeadingNonZeroDigit` (interop + Go port)
+  - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` ports
+  - [x] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` ports
+  - [x] `_h3LeadingNonZeroDigit` (interop + Go port)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.

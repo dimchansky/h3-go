@@ -19,6 +19,7 @@ How to run
 - Build C reference once: `make ref`
 - Run parity tests: `make test-c2go` (defaults to `H3VER=4.3.0`)
 - Override version: `make H3VER=4.4.0 test-c2go`
+ - Format code before committing: `make fix-fmt`
 
 Porting algorithm
 - Pick a function in `testref/h3-<ver>/src/h3lib/lib/<cfile>.c` with minimal deps.
