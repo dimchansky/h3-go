@@ -7,7 +7,7 @@ func cellToChildrenSize(h H3Index, childRes int) (int64, uint32) {
 		return 0, _eResDomain
 	}
 	n := childRes - getResolution(h)
-    if isPentagonGo(h) {
+	if isPentagonGo(h) {
 		// 1 + 5 * (7^n - 1) / 6
 		return 1 + 5*(_ipow(int64(7), int64(n))-1)/6, _eSuccess
 	}
@@ -15,5 +15,5 @@ func cellToChildrenSize(h H3Index, childRes int) (int64, uint32) {
 }
 
 func isPentagonGo(h H3Index) bool {
-    return _isBaseCellPentagon(getBaseCellNumber(h)) != 0 && _h3LeadingNonZeroDigit(h) == 0
+	return _isBaseCellPentagon(getBaseCellNumber(h)) != 0 && _h3LeadingNonZeroDigit(h) == 0
 }

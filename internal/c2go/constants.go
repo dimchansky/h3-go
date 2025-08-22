@@ -4,133 +4,133 @@ package c2go
 // Keep values in sync with the referenced H3 version used in tests.
 
 const (
-    // Mathematical constants
-    M_PI        = 3.14159265358979323846
-    M_PI_2      = 1.5707963267948966
-    M_2PI       = 6.28318530717958647692528676655900576839433
-    M_PI_180    = 0.0174532925199432957692369076848861271111
-    M_180_PI    = 57.29577951308232087679815481410517033240547
-    EPSILON     = 0.0000000000000001
-    M_SQRT3_2   = 0.8660254037844386467637231707529361834714
-    M_SIN60     = M_SQRT3_2
-    M_RSIN60    = 1.1547005383792515290182975610039149112953
-    M_ONETHIRD  = 0.333333333333333333333333333333333333333
-    M_ONESEVENTH = 0.14285714285714285714285714285714285
-    M_AP7_ROT_RADS = 0.333473172251832115336090755351601070065900389
-    M_SIN_AP7_ROT  = 0.3273268353539885718950318
-    M_COS_AP7_ROT  = 0.9449111825230680680167902
+	// Mathematical constants
+	M_PI           = 3.14159265358979323846
+	M_PI_2         = 1.5707963267948966
+	M_2PI          = 6.28318530717958647692528676655900576839433
+	M_PI_180       = 0.0174532925199432957692369076848861271111
+	M_180_PI       = 57.29577951308232087679815481410517033240547
+	EPSILON        = 0.0000000000000001
+	M_SQRT3_2      = 0.8660254037844386467637231707529361834714
+	M_SIN60        = M_SQRT3_2
+	M_RSIN60       = 1.1547005383792515290182975610039149112953
+	M_ONETHIRD     = 0.333333333333333333333333333333333333333
+	M_ONESEVENTH   = 0.14285714285714285714285714285714285
+	M_AP7_ROT_RADS = 0.333473172251832115336090755351601070065900389
+	M_SIN_AP7_ROT  = 0.3273268353539885718950318
+	M_COS_AP7_ROT  = 0.9449111825230680680167902
 
-    // Earth radius (km)
-    EARTH_RADIUS_KM = 6371.007180918475
+	// Earth radius (km)
+	EARTH_RADIUS_KM = 6371.007180918475
 
-    // Resolution and topology
-    MAX_H3_RES      = 15
-    NUM_ICOSA_FACES = 20
-    NUM_BASE_CELLS  = 122
-    NUM_HEX_VERTS   = 6
-    NUM_PENT_VERTS  = 5
-    NUM_PENTAGONS   = 12
+	// Resolution and topology
+	MAX_H3_RES      = 15
+	NUM_ICOSA_FACES = 20
+	NUM_BASE_CELLS  = 122
+	NUM_HEX_VERTS   = 6
+	NUM_PENT_VERTS  = 5
+	NUM_PENTAGONS   = 12
 
-    // Modes
-    H3_CELL_MODE        = 1
-    H3_DIRECTEDEDGE_MODE = 2
-    H3_EDGE_MODE         = 3
-    H3_VERTEX_MODE       = 4
+	// Modes
+	H3_CELL_MODE         = 1
+	H3_DIRECTEDEDGE_MODE = 2
+	H3_EDGE_MODE         = 3
+	H3_VERTEX_MODE       = 4
 )
 
 // H3 index bit layout (from h3Index.h)
 const (
-    H3_NUM_BITS        = 64
-    H3_MAX_OFFSET      = 63
-    H3_MODE_OFFSET     = 59
-    H3_BC_OFFSET       = 45
-    H3_RES_OFFSET      = 52
-    H3_RESERVED_OFFSET = 56
-    H3_PER_DIGIT_OFFSET = 3
+	H3_NUM_BITS         = 64
+	H3_MAX_OFFSET       = 63
+	H3_MODE_OFFSET      = 59
+	H3_BC_OFFSET        = 45
+	H3_RES_OFFSET       = 52
+	H3_RESERVED_OFFSET  = 56
+	H3_PER_DIGIT_OFFSET = 3
 
-    H3_HIGH_BIT_MASK         uint64 = 1 << H3_MAX_OFFSET
-    H3_HIGH_BIT_MASK_NEGATIVE uint64 = ^H3_HIGH_BIT_MASK
+	H3_HIGH_BIT_MASK          uint64 = 1 << H3_MAX_OFFSET
+	H3_HIGH_BIT_MASK_NEGATIVE uint64 = ^H3_HIGH_BIT_MASK
 
-    H3_MODE_MASK         uint64 = 15 << H3_MODE_OFFSET
-    H3_MODE_MASK_NEGATIVE uint64 = ^H3_MODE_MASK
+	H3_MODE_MASK          uint64 = 15 << H3_MODE_OFFSET
+	H3_MODE_MASK_NEGATIVE uint64 = ^H3_MODE_MASK
 
-    H3_BC_MASK         uint64 = 127 << H3_BC_OFFSET
-    H3_BC_MASK_NEGATIVE uint64 = ^H3_BC_MASK
+	H3_BC_MASK          uint64 = 127 << H3_BC_OFFSET
+	H3_BC_MASK_NEGATIVE uint64 = ^H3_BC_MASK
 
-    H3_RES_MASK         uint64 = 15 << H3_RES_OFFSET
-    H3_RES_MASK_NEGATIVE uint64 = ^H3_RES_MASK
+	H3_RES_MASK          uint64 = 15 << H3_RES_OFFSET
+	H3_RES_MASK_NEGATIVE uint64 = ^H3_RES_MASK
 
-    H3_RESERVED_MASK         uint64 = 7 << H3_RESERVED_OFFSET
-    H3_RESERVED_MASK_NEGATIVE uint64 = ^H3_RESERVED_MASK
+	H3_RESERVED_MASK          uint64 = 7 << H3_RESERVED_OFFSET
+	H3_RESERVED_MASK_NEGATIVE uint64 = ^H3_RESERVED_MASK
 
-    H3_DIGIT_MASK         uint64 = 7
-    H3_DIGIT_MASK_NEGATIVE uint64 = ^H3_DIGIT_MASK
+	H3_DIGIT_MASK          uint64 = 7
+	H3_DIGIT_MASK_NEGATIVE uint64 = ^H3_DIGIT_MASK
 
-    // H3_INIT: mode=cell, res=0, base cell=0, digits all 7
-    H3_INIT uint64 = 35184372088831
+	// H3_INIT: mode=cell, res=0, base cell=0, digits all 7
+	H3_INIT uint64 = 35184372088831
 )
 
 // Direction enum (from coordijk.h)
 const (
-    CENTER_DIGIT          = 0
-    K_AXES_DIGIT          = 1
-    J_AXES_DIGIT          = 2
-    JK_AXES_DIGIT         = J_AXES_DIGIT | K_AXES_DIGIT // 3
-    I_AXES_DIGIT          = 4
-    IK_AXES_DIGIT         = I_AXES_DIGIT | K_AXES_DIGIT // 5
-    IJ_AXES_DIGIT         = I_AXES_DIGIT | J_AXES_DIGIT // 6
-    INVALID_DIGIT         = 7
-    NUM_DIGITS            = INVALID_DIGIT
-    PENTAGON_SKIPPED_DIGIT = K_AXES_DIGIT
+	CENTER_DIGIT           = 0
+	K_AXES_DIGIT           = 1
+	J_AXES_DIGIT           = 2
+	JK_AXES_DIGIT          = J_AXES_DIGIT | K_AXES_DIGIT // 3
+	I_AXES_DIGIT           = 4
+	IK_AXES_DIGIT          = I_AXES_DIGIT | K_AXES_DIGIT // 5
+	IJ_AXES_DIGIT          = I_AXES_DIGIT | J_AXES_DIGIT // 6
+	INVALID_DIGIT          = 7
+	NUM_DIGITS             = INVALID_DIGIT
+	PENTAGON_SKIPPED_DIGIT = K_AXES_DIGIT
 )
 
 // H3Error codes (from h3api.h)
 const (
-    _eSuccess          = uint32(0)
-    _eFailed           = uint32(1)
-    _eDomain           = uint32(2)
-    _eLatLngDomain     = uint32(3)
-    _eResDomain        = uint32(4)
-    _eCellInvalid      = uint32(5)
-    _eDirEdgeInvalid   = uint32(6)
-    _eUndirEdgeInvalid = uint32(7)
-    _eVertexInvalid    = uint32(8)
-    _ePentagon         = uint32(9)
-    _eDuplicateInput   = uint32(10)
-    _eNotNeighbors     = uint32(11)
-    _eResMismatch      = uint32(12)
-    _eMemoryAlloc      = uint32(13)
-    _eMemoryBounds     = uint32(14)
-    _eOptionInvalid    = uint32(15)
+	_eSuccess          = uint32(0)
+	_eFailed           = uint32(1)
+	_eDomain           = uint32(2)
+	_eLatLngDomain     = uint32(3)
+	_eResDomain        = uint32(4)
+	_eCellInvalid      = uint32(5)
+	_eDirEdgeInvalid   = uint32(6)
+	_eUndirEdgeInvalid = uint32(7)
+	_eVertexInvalid    = uint32(8)
+	_ePentagon         = uint32(9)
+	_eDuplicateInput   = uint32(10)
+	_eNotNeighbors     = uint32(11)
+	_eResMismatch      = uint32(12)
+	_eMemoryAlloc      = uint32(13)
+	_eMemoryBounds     = uint32(14)
+	_eOptionInvalid    = uint32(15)
 )
 
 // isBaseCellPentagonArr mirrors the compact array used in h3Index.c for pentagon base cells.
 // Size 128 for safe indexing; only first 122 are valid base cells.
 var isBaseCellPentagonArr = [128]bool{
-    /* 0-3 */ false, false, false, false,
-    /* 4 */ true,
-    /* 5-13 */ false, false, false, false, false, false, false, false, false,
-    /* 14 */ true,
-    /* 15-23 */ false, false, false, false, false, false, false, false, false,
-    /* 24 */ true,
-    /* 25-37 */ false, false, false, false, false, false, false, false, false, false, false, false, false,
-    /* 38 */ true,
-    /* 39-48 */ false, false, false, false, false, false, false, false, false, false,
-    /* 49 */ true,
-    /* 50-57 */ false, false, false, false, false, false, false, false,
-    /* 58 */ true,
-    /* 59-62 */ false, false, false, false,
-    /* 63 */ true,
-    /* 64-71 */ false, false, false, false, false, false, false, false,
-    /* 72 */ true,
-    /* 73-82 */ false, false, false, false, false, false, false, false, false, false,
-    /* 83 */ true,
-    /* 84-96 */ false, false, false, false, false, false, false, false, false, false, false, false, false,
-    /* 97 */ true,
-    /* 98-106 */ false, false, false, false, false, false, false, false, false,
-    /* 107 */ true,
-    /* 108-116 */ false, false, false, false, false, false, false, false, false,
-    /* 117 */ true,
+	/* 0-3 */ false, false, false, false,
+	/* 4 */ true,
+	/* 5-13 */ false, false, false, false, false, false, false, false, false,
+	/* 14 */ true,
+	/* 15-23 */ false, false, false, false, false, false, false, false, false,
+	/* 24 */ true,
+	/* 25-37 */ false, false, false, false, false, false, false, false, false, false, false, false, false,
+	/* 38 */ true,
+	/* 39-48 */ false, false, false, false, false, false, false, false, false, false,
+	/* 49 */ true,
+	/* 50-57 */ false, false, false, false, false, false, false, false,
+	/* 58 */ true,
+	/* 59-62 */ false, false, false, false,
+	/* 63 */ true,
+	/* 64-71 */ false, false, false, false, false, false, false, false,
+	/* 72 */ true,
+	/* 73-82 */ false, false, false, false, false, false, false, false, false, false,
+	/* 83 */ true,
+	/* 84-96 */ false, false, false, false, false, false, false, false, false, false, false, false, false,
+	/* 97 */ true,
+	/* 98-106 */ false, false, false, false, false, false, false, false, false,
+	/* 107 */ true,
+	/* 108-116 */ false, false, false, false, false, false, false, false, false,
+	/* 117 */ true,
 }
 
 // Note: C implementation lives in baseCells.c as _isBaseCellPentagon.

@@ -68,6 +68,7 @@ Functions
 
 - vec3d.c
   - [x] `_pointSquareDist(const Vec3d*, const Vec3d*)` — DONE (Go port + C parity via vec3d shim; no C logic duplication)
+  - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE (Go port + C parity via vec3d shim)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
@@ -103,6 +104,14 @@ Next up (planned)
   - [x] `H3_EXPORT(childPosToCell)(int64_t, H3Index, int, H3Index*)` — DONE (Go port + C parity)
   - [x] `validateChildPos` (static) — DONE (Go port; covered indirectly by parity)
   - [x] `isResolutionClassIII(int res)` — DONE (Go port + C parity)
+
+Planned small targets
+- vec3d.c:
+  - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE this iteration; converts LL to 3D vector
+  - [_] consider `_v3dNormalize(const Vec3d*, Vec3d*)` if present
+
+Notes this iteration
+- Verified available vec3d symbols via header; opted to plan `_geoToVec3d` as a safe, dependency-light target.
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.
