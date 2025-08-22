@@ -18,6 +18,7 @@ int ijkDistance(const CoordIJK* c1, const CoordIJK* c2);
 void _ijkRotate60ccw(CoordIJK* ijk);
 void _ijkRotate60cw(CoordIJK* ijk);
 Direction _unitIjkToDigit(const CoordIJK* ijk);
+void _neighbor(CoordIJK* ijk, Direction digit);
 */
 import "C"
 
@@ -135,4 +136,15 @@ func _unitIjkToDigitC(ijk *CoordIJK) int {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	return int(C._unitIjkToDigit(&cc))
+}
+
+// _neighborC calls the original C implementation for applying a direction to IJK coordinates.
+// Bridges to coordijk.c::_neighbor.
+func _neighborC(ijk *CoordIJK, digit int) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._neighbor(&cc, C.Direction(digit))
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
 }
