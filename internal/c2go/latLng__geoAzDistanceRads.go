@@ -6,31 +6,29 @@ import (
 
 // _geoAzDistanceRads computes the point p2 at azimuth az and distance from p1.
 // Ported from H3 C: latLng.c::_geoAzDistanceRads
-func _geoAzDistanceRads(p1 *LatLng, az, distance float64) LatLng {
-	const epsilon = 1e-16
-	if distance < epsilon {
-		return *p1
+func _geoAzDistanceRads(p1 *LatLng, az, distance float64, p2 *LatLng) {
+	if distance < EPSILON {
+		*p2 = *p1
+		return
 	}
 	az = _posAngleRads(az)
-
-	var p2 LatLng
-	if az < epsilon || math.Abs(az-math.Pi) < epsilon {
+	if az < EPSILON || math.Abs(az-math.Pi) < EPSILON {
 		// Due north or south
-		if az < epsilon {
+		if az < EPSILON {
 			p2.Lat = p1.Lat + distance
 		} else {
 			p2.Lat = p1.Lat - distance
 		}
-		if math.Abs(p2.Lat-math.Pi/2) < epsilon {
+		if math.Abs(p2.Lat-math.Pi/2) < EPSILON {
 			p2.Lat = math.Pi / 2
 			p2.Lng = 0
-		} else if math.Abs(p2.Lat+math.Pi/2) < epsilon {
+		} else if math.Abs(p2.Lat+math.Pi/2) < EPSILON {
 			p2.Lat = -math.Pi / 2
 			p2.Lng = 0
 		} else {
 			p2.Lng = constrainLng(p1.Lng)
 		}
-		return p2
+		return
 	}
 
 	sinlat := math.Sin(p1.Lat)*math.Cos(distance) + math.Cos(p1.Lat)*math.Sin(distance)*math.Cos(az)
@@ -41,14 +39,14 @@ func _geoAzDistanceRads(p1 *LatLng, az, distance float64) LatLng {
 		sinlat = -1.0
 	}
 	p2.Lat = math.Asin(sinlat)
-	if math.Abs(p2.Lat-math.Pi/2) < epsilon {
+	if math.Abs(p2.Lat-math.Pi/2) < EPSILON {
 		p2.Lat = math.Pi / 2
 		p2.Lng = 0
-		return p2
-	} else if math.Abs(p2.Lat+math.Pi/2) < epsilon {
+		return
+	} else if math.Abs(p2.Lat+math.Pi/2) < EPSILON {
 		p2.Lat = -math.Pi / 2
 		p2.Lng = 0
-		return p2
+		return
 	}
 
 	invcosp2lat := 1.0 / math.Cos(p2.Lat)
@@ -67,5 +65,4 @@ func _geoAzDistanceRads(p1 *LatLng, az, distance float64) LatLng {
 		coslng = -1.0
 	}
 	p2.Lng = constrainLng(p1.Lng + math.Atan2(sinlng, coslng))
-	return p2
 }
