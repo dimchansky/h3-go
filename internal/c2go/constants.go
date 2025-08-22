@@ -84,6 +84,17 @@ const (
 	PENTAGON_SKIPPED_DIGIT = K_AXES_DIGIT
 )
 
+// UNIT_VECS mirrors coordijk.h::UNIT_VECS - CoordIJK unit vectors corresponding to the 7 H3 digits.
+var UNIT_VECS = [NUM_DIGITS]CoordIJK{
+	{0, 0, 0}, // direction 0 (CENTER_DIGIT)
+	{0, 0, 1}, // direction 1 (K_AXES_DIGIT)
+	{0, 1, 0}, // direction 2 (J_AXES_DIGIT)
+	{0, 1, 1}, // direction 3 (JK_AXES_DIGIT)
+	{1, 0, 0}, // direction 4 (I_AXES_DIGIT)
+	{1, 0, 1}, // direction 5 (IK_AXES_DIGIT)
+	{1, 1, 0}, // direction 6 (IJ_AXES_DIGIT)
+}
+
 // H3Error codes (from h3api.h)
 const (
 	_eSuccess          = uint32(0)

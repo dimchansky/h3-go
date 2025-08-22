@@ -17,6 +17,7 @@ void _ijkNormalize(CoordIJK* c);
 int ijkDistance(const CoordIJK* c1, const CoordIJK* c2);
 void _ijkRotate60ccw(CoordIJK* ijk);
 void _ijkRotate60cw(CoordIJK* ijk);
+Direction _unitIjkToDigit(const CoordIJK* ijk);
 */
 import "C"
 
@@ -124,4 +125,14 @@ func _ijkRotate60cwC(c *CoordIJK) CoordIJK {
 	cc.k = C.int(c.K)
 	C._ijkRotate60cw(&cc)
 	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _unitIjkToDigitC calls the original C implementation for converting unit IJK to digit.
+// Bridges to coordijk.c::_unitIjkToDigit.
+func _unitIjkToDigitC(ijk *CoordIJK) int {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	return int(C._unitIjkToDigit(&cc))
 }

@@ -85,6 +85,7 @@ Functions
   - [x] `ijkDistance(const CoordIJK*, const CoordIJK*)` — DONE (Go port + C parity)
   - [x] `_ijkRotate60ccw(CoordIJK*)` — DONE (Go port + C parity)
   - [x] `_ijkRotate60cw(CoordIJK*)` — DONE (Go port + C parity)
+  - [x] `_unitIjkToDigit(const CoordIJK*)` — DONE (Go port + C parity)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
@@ -134,6 +135,7 @@ Planned small targets
   - [x] `ijkDistance(const CoordIJK*, const CoordIJK*)` — DONE; computes distance between IJK coordinates
   - [x] `_ijkRotate60ccw(CoordIJK*)` — DONE; rotates IJK coordinates 60° counter-clockwise
   - [x] `_ijkRotate60cw(CoordIJK*)` — DONE; rotates IJK coordinates 60° clockwise
+  - [x] `_unitIjkToDigit(const CoordIJK*)` — DONE; converts unit IJK coordinate to direction digit
 
 Notes this iteration
 - Verified available vec3d symbols via header; opted to plan `_geoToVec3d` as a safe, dependency-light target.
