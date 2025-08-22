@@ -17,3 +17,6 @@ func isBaseCellPentagonC(base int) int { return int(C._isBaseCellPentagon(C.int(
 func _isBaseCellPolarPentagonC(baseCell int) bool {
 	return bool(C._isBaseCellPolarPentagon(C.int(baseCell)))
 }
+
+// res0CellCountC calls the original C implementation res0CellCount.
+func res0CellCountC() int { return int(C.res0CellCount()) }
