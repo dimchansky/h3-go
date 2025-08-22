@@ -14,6 +14,8 @@ static inline int h3_get_reserved_bits_c(H3Index h) { return H3_GET_RESERVED_BIT
 static inline H3Index h3_set_reserved_bits_c(H3Index h, int v) { H3Index x = h; H3_SET_RESERVED_BITS(x, v); return x; }
 static inline int h3_get_index_digit_c(H3Index h, int res) { return (int)H3_GET_INDEX_DIGIT(h, res); }
 static inline H3Index h3_set_index_digit_c(H3Index h, int res, int digit) { H3Index x = h; H3_SET_INDEX_DIGIT(x, res, digit); return x; }
+// Direct bridges for small helpers under test
+static inline H3Index zero_index_digits_c(H3Index h, int start, int end) { return _zeroIndexDigits(h, start, end); }
 */
 import "C"
 
@@ -66,3 +68,11 @@ func setIndexDigitC(h H3Index, res int, digit int) H3Index {
 
 // h3LeadingNonZeroDigitC calls the original C implementation.
 func h3LeadingNonZeroDigitC(h H3Index) int { return int(C._h3LeadingNonZeroDigit(C.H3Index(h))) }
+
+// zeroIndexDigitsC calls the original C implementation.
+func zeroIndexDigitsC(h H3Index, start, end int) H3Index {
+	return H3Index(C.zero_index_digits_c(C.H3Index(h), C.int(start), C.int(end)))
+}
+
+// isResClassIIIC calls the original C implementation and returns int for parity.
+func isResClassIIIC(h H3Index) int { return int(C.isResClassIII(C.H3Index(h))) }

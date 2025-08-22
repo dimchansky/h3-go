@@ -73,6 +73,8 @@ Next up (planned)
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` ports
   - [x] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` ports
   - [x] `_h3LeadingNonZeroDigit` (interop + Go port)
+  - [x] `_zeroIndexDigits(H3Index, int, int)` — DONE (Go port + C parity); note: C allows start=0 (overlaps base cell bits) and treats end>15 as no-op
+  - [x] `H3_EXPORT(isResClassIII)(H3Index)` — DONE (Go port returns int for parity)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.
@@ -116,6 +118,8 @@ Next up (planned)
   - [ ] `_v2dMag(const Vec2d*)`
   - [ ] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)`
   - [ ] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)`
+ - h3Index.c
+   - [ ] Small helpers around class/parent-child ops (e.g., zeroing to res, isValidDigit) — pick minimal-deps next
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls to the original C functions using C structs where applicable (no scalar explosion; use C.LatLng / C.Vec2d).
