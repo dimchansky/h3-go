@@ -223,10 +223,10 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `_baseCellIsCwOffset` — TODO: needs C→Go port + parity test
   - [ ] `_baseCellToCCWrot60` — TODO: needs C→Go port + parity test
   - [ ] `_baseCellToFaceIjk` — TODO: needs C→Go port + parity test
-  - [ ] `_downAp3` — TODO: needs C→Go port + parity test
-  - [ ] `_downAp3r` — TODO: needs C→Go port + parity test
-  - [ ] `_downAp7` — TODO: needs C→Go port + parity test
-  - [ ] `_downAp7r` — TODO: needs C→Go port + parity test
+  - [x] `_downAp3` — DONE (Go port + C parity)
+  - [x] `_downAp3r` — DONE (Go port + C parity)
+  - [x] `_downAp7` — DONE (Go port + C parity)
+  - [x] `_downAp7r` — DONE (Go port + C parity)
   - [ ] `_faceIjkPentToVerts` — TODO: needs C→Go port + parity test
   - [ ] `_faceIjkToBaseCell` — TODO: needs C→Go port + parity test
   - [ ] `_faceIjkToBaseCellCCWrot60` — TODO: needs C→Go port + parity test
