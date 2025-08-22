@@ -85,6 +85,7 @@ Next up (planned)
   - [x] `_hasChildAtRes(H3Index, int)` — DONE (Go port + C parity via shim)
   - [x] `H3_EXPORT(cellToChildrenSize)(H3Index, int, int64_t*)` — DONE (Go port + C parity)
   - [x] `H3_EXPORT(pentagonCount)(void)` — DONE (Go port + C parity)
+  - [x] `_isBaseCellPentagon(int)` — DONE (Go parity test via baseCells shim; local mirror in constants.go)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.

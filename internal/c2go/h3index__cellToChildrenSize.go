@@ -15,5 +15,5 @@ func cellToChildrenSize(h H3Index, childRes int) (int64, uint32) {
 }
 
 func isPentagonGo(h H3Index) bool {
-    return isBaseCellPentagon(getBaseCellNumber(h)) && _h3LeadingNonZeroDigit(h) == 0
+    return _isBaseCellPentagon(getBaseCellNumber(h)) != 0 && _h3LeadingNonZeroDigit(h) == 0
 }

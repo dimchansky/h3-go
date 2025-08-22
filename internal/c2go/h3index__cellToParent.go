@@ -26,8 +26,8 @@ func cellToParent(h H3Index, parentRes int) (H3Index, uint32) {
 	x |= (uint64(parentRes) & 15) << resOffset
 	parentH := H3Index(x)
 	// Set digits above parentRes to 7
-	for i := parentRes + 1; i <= childRes; i++ {
-		parentH = setIndexDigit(parentH, i, int(_digitMask))
-	}
+    for i := parentRes + 1; i <= childRes; i++ {
+        parentH = setIndexDigit(parentH, i, int(H3_DIGIT_MASK))
+    }
 	return parentH, _eSuccess
 }

@@ -38,6 +38,38 @@ const (
     H3_VERTEX_MODE       = 4
 )
 
+// H3 index bit layout (from h3Index.h)
+const (
+    H3_NUM_BITS        = 64
+    H3_MAX_OFFSET      = 63
+    H3_MODE_OFFSET     = 59
+    H3_BC_OFFSET       = 45
+    H3_RES_OFFSET      = 52
+    H3_RESERVED_OFFSET = 56
+    H3_PER_DIGIT_OFFSET = 3
+
+    H3_HIGH_BIT_MASK         uint64 = 1 << H3_MAX_OFFSET
+    H3_HIGH_BIT_MASK_NEGATIVE uint64 = ^H3_HIGH_BIT_MASK
+
+    H3_MODE_MASK         uint64 = 15 << H3_MODE_OFFSET
+    H3_MODE_MASK_NEGATIVE uint64 = ^H3_MODE_MASK
+
+    H3_BC_MASK         uint64 = 127 << H3_BC_OFFSET
+    H3_BC_MASK_NEGATIVE uint64 = ^H3_BC_MASK
+
+    H3_RES_MASK         uint64 = 15 << H3_RES_OFFSET
+    H3_RES_MASK_NEGATIVE uint64 = ^H3_RES_MASK
+
+    H3_RESERVED_MASK         uint64 = 7 << H3_RESERVED_OFFSET
+    H3_RESERVED_MASK_NEGATIVE uint64 = ^H3_RESERVED_MASK
+
+    H3_DIGIT_MASK         uint64 = 7
+    H3_DIGIT_MASK_NEGATIVE uint64 = ^H3_DIGIT_MASK
+
+    // H3_INIT: mode=cell, res=0, base cell=0, digits all 7
+    H3_INIT uint64 = 35184372088831
+)
+
 // isBaseCellPentagonArr mirrors the compact array used in h3Index.c for pentagon base cells.
 // Size 128 for safe indexing; only first 122 are valid base cells.
 var isBaseCellPentagonArr = [128]bool{
@@ -67,9 +99,4 @@ var isBaseCellPentagonArr = [128]bool{
     /* 117 */ true,
 }
 
-func isBaseCellPentagon(base int) bool {
-    if base < 0 || base >= len(isBaseCellPentagonArr) {
-        return false
-    }
-    return isBaseCellPentagonArr[base]
-}
+// Note: C implementation lives in baseCells.c as _isBaseCellPentagon.
