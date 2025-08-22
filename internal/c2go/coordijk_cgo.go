@@ -21,6 +21,8 @@ Direction _unitIjkToDigit(const CoordIJK* ijk);
 void _neighbor(CoordIJK* ijk, Direction digit);
 Direction _rotate60ccw(Direction digit);
 Direction _rotate60cw(Direction digit);
+void ijkToCube(CoordIJK* ijk);
+void cubeToIjk(CoordIJK* ijk);
 */
 import "C"
 
@@ -161,4 +163,26 @@ func _rotate60ccwC(digit int) int {
 // Bridges to coordijk.c::_rotate60cw.
 func _rotate60cwC(digit int) int {
 	return int(C._rotate60cw(C.Direction(digit)))
+}
+
+// ijkToCubeC calls the original C implementation for converting IJK to cube coordinates.
+// Bridges to coordijk.c::ijkToCube.
+func ijkToCubeC(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C.ijkToCube(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// cubeToIjkC calls the original C implementation for converting cube to IJK coordinates.
+// Bridges to coordijk.c::cubeToIjk.
+func cubeToIjkC(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C.cubeToIjk(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
 }

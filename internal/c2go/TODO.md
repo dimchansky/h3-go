@@ -89,6 +89,8 @@ Functions
   - [x] `_neighbor(CoordIJK*, Direction)` — DONE (Go port + C parity)
   - [x] `_rotate60ccw(Direction)` — DONE (Go port + C parity)
   - [x] `_rotate60cw(Direction)` — DONE (Go port + C parity)
+  - [x] `ijkToCube(CoordIJK*)` — DONE (Go port + C parity)
+  - [x] `cubeToIjk(CoordIJK*)` — DONE (Go port + C parity)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
