@@ -75,7 +75,10 @@ Functions
 - vec3d.c
   - [x] `_pointSquareDist(const Vec3d*, const Vec3d*)` — DONE (Go port + C parity via vec3d shim; no C logic duplication)
   - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE (Go port + C parity via vec3d shim)
-  - [x] `_v3dNormalize(const Vec3d*, Vec3d*)` — DONE (Go port returns Vec3d; C parity via vec3d shim; zero vector yields zero)
+
+- coordijk.c
+  - [x] `_ijkAdd(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE (Go port + C parity)
+  - [x] `_ijkSub(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE (Go port + C parity)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
@@ -115,9 +118,9 @@ Next up (planned)
 Planned small targets
 - vec3d.c:
   - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE this iteration; converts LL to 3D vector
-  - [x] `_v3dNormalize(const Vec3d*, Vec3d*)` — DONE; normalized unit vector with zero guard
- - coordijk.c (if available):
-   - [_] consider `_ijkAdd(const CoordIJK*, const CoordIJK*, CoordIJK*)` and `_ijkSub(...)` as small, dependency-light targets
+- coordijk.c:
+  - [x] `_ijkAdd(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE
+  - [x] `_ijkSub(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE
 
 Notes this iteration
 - Verified available vec3d symbols via header; opted to plan `_geoToVec3d` as a safe, dependency-light target.
