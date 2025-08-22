@@ -9,9 +9,9 @@ func Test_pointInsidePolygon_ParityWithC(t *testing.T) {
 	hole := GeoLoop{{Lat: 0.5, Lng: 0.5}, {Lat: 0.5, Lng: 1.5}, {Lat: 1.5, Lng: 1.5}, {Lat: 1.5, Lng: 0.5}}
 	poly := GeoPolygon{Geoloop: outer, Holes: []GeoLoop{hole}}
 	bboxes := make([]BBox, 1+len(poly.Holes))
-	bboxes[0] = bboxFromGeoLoop(poly.Geoloop)
+	bboxFromGeoLoop(poly.Geoloop, &bboxes[0])
 	for i := range poly.Holes {
-		bboxes[i+1] = bboxFromGeoLoop(poly.Holes[i])
+		bboxFromGeoLoop(poly.Holes[i], &bboxes[i+1])
 	}
 	pts := []LatLng{{Lat: 0.25, Lng: 0.25}, {Lat: 1.0, Lng: 1.0}, {Lat: 3, Lng: 3}}
 	for _, p := range pts {

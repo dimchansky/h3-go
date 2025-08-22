@@ -7,7 +7,8 @@ func bboxOverlapsBBox(a, b *BBox) bool {
 		return false
 	}
 	// Longitude overlap with normalization
-	aNorm, bNorm := bboxNormalization(*a, *b)
+	var aNorm, bNorm LongitudeNormalization
+	bboxNormalization(a, b, &aNorm, &bNorm)
 	if normalizeLng(a.East, aNorm) < normalizeLng(b.West, bNorm) ||
 		normalizeLng(a.West, aNorm) > normalizeLng(b.East, bNorm) {
 		return false
@@ -20,7 +21,8 @@ func bboxContainsBBox(a, b *BBox) bool {
 	if a.North < b.North || a.South > b.South {
 		return false
 	}
-	aNorm, bNorm := bboxNormalization(*a, *b)
+	var aNorm, bNorm LongitudeNormalization
+	bboxNormalization(a, b, &aNorm, &bNorm)
 	return normalizeLng(a.West, aNorm) <= normalizeLng(b.West, bNorm) &&
 		normalizeLng(a.East, aNorm) >= normalizeLng(b.East, bNorm)
 }

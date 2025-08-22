@@ -6,7 +6,8 @@ func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellB
 	if !bboxOverlapsBBox(loopBBox, boundaryBBox) {
 		return false
 	}
-	loopNorm, boundNorm := bboxNormalization(*loopBBox, *boundaryBBox)
+	var loopNorm, boundNorm LongitudeNormalization
+	bboxNormalization(loopBBox, boundaryBBox, &loopNorm, &boundNorm)
 	// Normalize boundary longitudes
 	normalBoundary := CellBoundary{NumVerts: boundary.NumVerts, Verts: make([]LatLng, boundary.NumVerts)}
 	copy(normalBoundary.Verts, boundary.Verts)

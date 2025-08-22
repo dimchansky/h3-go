@@ -3,10 +3,11 @@ package c2go
 import "math"
 
 // bboxFromGeoLoop computes a bounding box for a loop of coordinates.
-// Ported from polygonAlgos.h::bboxFrom (GeoLoop variant).
-func bboxFromGeoLoop(loop []LatLng) BBox {
+// Mirrors H3's polygon.c::bboxFromGeoLoop behavior.
+func bboxFromGeoLoop(loop []LatLng, bbox *BBox) {
 	if len(loop) == 0 {
-		return BBox{}
+		*bbox = BBox{}
+		return
 	}
 	south := math.MaxFloat64
 	west := math.MaxFloat64
@@ -46,5 +47,5 @@ func bboxFromGeoLoop(loop []LatLng) BBox {
 		east = maxNegLng
 		west = minPosLng
 	}
-	return BBox{North: north, South: south, East: east, West: west}
+	*bbox = BBox{North: north, South: south, East: east, West: west}
 }

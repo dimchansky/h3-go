@@ -9,13 +9,14 @@ func Test_cellBoundaryCrossesPolygon_ParityWithC(t *testing.T) {
 	hole := GeoLoop{{Lat: 0.5, Lng: 0.5}, {Lat: 0.5, Lng: 1.5}, {Lat: 1.5, Lng: 1.5}, {Lat: 1.5, Lng: 0.5}}
 	poly := GeoPolygon{Geoloop: outer, Holes: []GeoLoop{hole}}
 	bboxes := make([]BBox, 1+len(poly.Holes))
-	bboxes[0] = bboxFromGeoLoop(poly.Geoloop)
+	bboxFromGeoLoop(poly.Geoloop, &bboxes[0])
 	for i := range poly.Holes {
-		bboxes[i+1] = bboxFromGeoLoop(poly.Holes[i])
+		bboxFromGeoLoop(poly.Holes[i], &bboxes[i+1])
 	}
 	// Crossing outer loop
 	boundary := CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: -1, Lng: 1}, {Lat: 3, Lng: 1}}}
-	boundaryBBox := bboxFromGeoLoop(boundary.Verts)
+	var boundaryBBox BBox
+	bboxFromGeoLoop(boundary.Verts, &boundaryBBox)
 	goVal := cellBoundaryCrossesPolygon(poly, bboxes, &boundary, &boundaryBBox)
 	cVal := cellBoundaryCrossesPolygonC(poly, bboxes, boundary, boundaryBBox)
 	if goVal != cVal {
@@ -23,7 +24,7 @@ func Test_cellBoundaryCrossesPolygon_ParityWithC(t *testing.T) {
 	}
 	// Crossing hole only (inside outer but crossing hole)
 	boundary = CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: 0.75, Lng: 0.4}, {Lat: 0.75, Lng: 1.6}}}
-	boundaryBBox = bboxFromGeoLoop(boundary.Verts)
+	bboxFromGeoLoop(boundary.Verts, &boundaryBBox)
 	goVal = cellBoundaryCrossesPolygon(poly, bboxes, &boundary, &boundaryBBox)
 	cVal = cellBoundaryCrossesPolygonC(poly, bboxes, boundary, boundaryBBox)
 	if goVal != cVal {
