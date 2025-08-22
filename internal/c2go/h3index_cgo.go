@@ -91,3 +91,17 @@ func setH3IndexC(res, baseCell, initDigit int) H3Index {
 func makeDirectChildC(h H3Index, cellNumber int) H3Index {
 	return H3Index(C.make_direct_child_c(C.H3Index(h), C.int(cellNumber)))
 }
+
+// cellToParentC calls the original C implementation.
+func cellToParentC(h H3Index, parentRes int) (H3Index, uint32) {
+	var out C.H3Index
+	err := C.cellToParent(C.H3Index(h), C.int(parentRes), &out)
+	return H3Index(out), uint32(err)
+}
+
+// cellToCenterChildC calls the original C implementation.
+func cellToCenterChildC(h H3Index, childRes int) (H3Index, uint32) {
+	var out C.H3Index
+	err := C.cellToCenterChild(C.H3Index(h), C.int(childRes), &out)
+	return H3Index(out), uint32(err)
+}

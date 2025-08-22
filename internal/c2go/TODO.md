@@ -77,6 +77,8 @@ Next up (planned)
   - [x] `H3_EXPORT(isResClassIII)(H3Index)` — DONE (Go port returns int for parity)
   - [x] `setH3Index(H3Index*, int, int, Direction)` — DONE (Go port + parity)
   - [x] `makeDirectChild(H3Index, int)` — DONE (Go port + parity via inline C wrapper)
+  - [x] `H3_EXPORT(cellToCenterChild)(H3Index, int, H3Index*)` — DONE (Go port + C parity)
+  - [x] `H3_EXPORT(cellToParent)(H3Index, int, H3Index*)` — DONE (Go port + C parity)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.
@@ -120,9 +122,8 @@ Next up (planned)
   - [ ] `_v2dMag(const Vec2d*)`
   - [ ] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)`
   - [ ] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)`
-- h3Index.c
-   - [ ] `cellToCenterChild(H3Index, int, H3Index*)` — small wrapper around `_zeroIndexDigits`; add parity
-   - [ ] `cellToParent(H3Index, int, H3Index*)` — small helper with simple error codes; add parity
+ - h3Index.c
+   - [ ] Next minimal: `_hasChildAtRes` (if needed elsewhere) and `cellToChildrenSize` — small arithmetic; verify parity
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls to the original C functions using C structs where applicable (no scalar explosion; use C.LatLng / C.Vec2d).
