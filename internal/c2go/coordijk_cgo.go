@@ -10,6 +10,8 @@ package c2go
 // Prototypes for the original C helpers in coordijk.c
 void _ijkAdd(const CoordIJK* h1, const CoordIJK* h2, CoordIJK* sum);
 void _ijkSub(const CoordIJK* h1, const CoordIJK* h2, CoordIJK* diff);
+void _setIJK(CoordIJK* ijk, int i, int j, int k);
+int _ijkMatches(const CoordIJK* c1, const CoordIJK* c2);
 */
 import "C"
 
@@ -39,4 +41,25 @@ func _ijkSubC(h1, h2 *CoordIJK) CoordIJK {
 	ch2.k = C.int(h2.K)
 	C._ijkSub(&ch1, &ch2, &diff)
 	return CoordIJK{I: int(diff.i), J: int(diff.j), K: int(diff.k)}
+}
+
+// _setIJKC calls the original C implementation for setting IJK coordinates.
+// Bridges to coordijk.c::_setIJK.
+func _setIJKC(i, j, k int) CoordIJK {
+	var cijk C.CoordIJK
+	C._setIJK(&cijk, C.int(i), C.int(j), C.int(k))
+	return CoordIJK{I: int(cijk.i), J: int(cijk.j), K: int(cijk.k)}
+}
+
+// _ijkMatchesC calls the original C implementation for comparing IJK coordinates.
+// Bridges to coordijk.c::_ijkMatches.
+func _ijkMatchesC(c1, c2 *CoordIJK) bool {
+	var cc1, cc2 C.CoordIJK
+	cc1.i = C.int(c1.I)
+	cc1.j = C.int(c1.J)
+	cc1.k = C.int(c1.K)
+	cc2.i = C.int(c2.I)
+	cc2.j = C.int(c2.J)
+	cc2.k = C.int(c2.K)
+	return C._ijkMatches(&cc1, &cc2) != 0
 }
