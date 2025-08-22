@@ -12,7 +12,7 @@ Checklist
  - [x] Port `latLng.c::H3_EXPORT(greatCircleDistanceRads/Km/M)`
  - [x] Port `latLng.c::_geoAzimuthRads` and `_geoAzDistanceRads`
  - [ ] Port `latLng.c::normalizeLng`, `triangleEdgeLengthsToArea`, `triangleArea`, `_setGeoRads`, `setGeoDegs`
- - [ ] Port `vec2d.c::_v2dMag`, `_v2dIntersect`, `_v2dAlmostEquals`
+ - [x] Port `vec2d.c::_v2dMag`, `_v2dIntersect`, `_v2dAlmostEquals`
 - [ ] Port additional small helpers from `mathExtensions.c` and `latLng.c`
 - [ ] Identify next targets with minimal dependencies; add TODO chains in code
 - [ ] Mirror select C tests (apps/testapps, fuzzers) where practical
@@ -33,7 +33,31 @@ Functions
   - [x] `H3_EXPORT(greatCircleDistanceM)(const LatLng*, const LatLng*)` — DONE
   - [x] `_geoAzimuthRads(const LatLng*, const LatLng*)` — DONE
   - [x] `_geoAzDistanceRads(const LatLng*, double, double, LatLng*)` — DONE
+  - [x] `normalizeLng(const double, const LongitudeNormalization)` — DONE
+  - [x] `triangleEdgeLengthsToArea(double, double, double)` — DONE
+  - [x] `triangleArea(const LatLng*, const LatLng*, const LatLng*)` — DONE
+  - [x] `_setGeoRads(LatLng*, double, double)` and `setGeoDegs(LatLng*, double, double)` — DONE
 
+- vec2d.c
+  - [x] `_v2dMag(const Vec2d*)` — DONE
+  - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE
+  - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE
+
+Next up (planned)
+- bbox.c (basic helpers that don't require bboxNormalization):
+  - [ ] `bboxIsTransmeridian(const BBox*)`
+  - [ ] `bboxWidthRads(const BBox*)` and `bboxHeightRads(const BBox*)`
+  - [ ] `bboxCenter(const BBox*, LatLng*)`
+  - [ ] `bboxContains(const BBox*, const LatLng*)`
+  - [ ] `bboxEquals(const BBox*, const BBox*)`
+- Defer until later (requires bboxNormalization):
+  - [ ] `bboxOverlapsBBox(const BBox*, const BBox*)`
+  - [ ] `bboxContainsBBox(const BBox*, const BBox*)`
+
+Execution plan per function
+- Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng); avoid scalar params.
+- Implement faithful Go ports in `<cfile>__<function>.go` with same unexported names.
+- Add `<cfile>__<function>_parity_test.go` with tight tolerances; compare bools directly.
 Conventions
 - One function per Go file: `<cfile>__<function>.go`
 - cgo interop per C module: `<cfile>_cgo.go` (build tag `cgo && c2go`), includes `"<cfile>.c"` by name only.
