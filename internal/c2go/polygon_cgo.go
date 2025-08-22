@@ -129,3 +129,35 @@ func pointInsidePolygonC(poly GeoPolygon, bboxes []BBox, p LatLng) bool {
     cpnt.lng = C.double(p.Lng)
     if C.pointInsidePolygon(&cp, cbptr, &cpnt) { return true } else { return false }
 }
+
+
+// cellBoundaryCrossesGeoLoopC calls the C implementation.
+func cellBoundaryCrossesGeoLoopC(geoloop GeoLoop, loopBBox BBox, boundary CellBoundary, boundaryBBox BBox) bool {
+    cg, freeFn := toCGeoLoop(geoloop)
+    defer freeFn()
+    var cLoopBBox C.BBox
+    cLoopBBox.north = C.double(loopBBox.North)
+    cLoopBBox.south = C.double(loopBBox.South)
+    cLoopBBox.east = C.double(loopBBox.East)
+    cLoopBBox.west = C.double(loopBBox.West)
+    var cBoundaryBBox C.BBox
+    cBoundaryBBox.north = C.double(boundaryBBox.North)
+    cBoundaryBBox.south = C.double(boundaryBBox.South)
+    cBoundaryBBox.east = C.double(boundaryBBox.East)
+    cBoundaryBBox.west = C.double(boundaryBBox.West)
+    var cb C.CellBoundary
+    n := boundary.NumVerts
+    if n > 0 {
+        if n > int(C.MAX_CELL_BNDRY_VERTS) {
+            n = int(C.MAX_CELL_BNDRY_VERTS)
+        }
+        cb.numVerts = C.int(n)
+        for i := 0; i < n; i++ {
+            cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
+            cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
+        }
+    } else {
+        cb.numVerts = 0
+    }
+    if C.cellBoundaryCrossesGeoLoop(&cg, &cLoopBBox, &cb, &cBoundaryBBox) { return true } else { return false }
+}
