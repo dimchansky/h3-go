@@ -82,6 +82,7 @@ Next up (planned)
   - [x] `H3_EXPORT(cellToParent)(H3Index, int, H3Index*)` — DONE (Go port + C parity)
   - [x] `_hasChildAtRes(H3Index, int)` — DONE (Go port + C parity via shim)
   - [x] `H3_EXPORT(cellToChildrenSize)(H3Index, int, int64_t*)` — DONE (Go port + C parity)
+  - [x] `H3_EXPORT(pentagonCount)(void)` — DONE (Go port + C parity)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.

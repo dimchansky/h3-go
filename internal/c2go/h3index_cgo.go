@@ -85,6 +85,9 @@ func isResClassIIIC(h H3Index) int { return int(C.isResClassIII(C.H3Index(h))) }
 // isPentagonC calls the original C implementation and returns int for parity.
 func isPentagonC(h H3Index) int { return int(C.isPentagon(C.H3Index(h))) }
 
+// pentagonCountC calls the original C implementation.
+func pentagonCountC() int { return int(C.pentagonCount()) }
+
 // setH3IndexC calls the original C implementation and returns the built index.
 func setH3IndexC(res, baseCell, initDigit int) H3Index {
 	var out C.H3Index
