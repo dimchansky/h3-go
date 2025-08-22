@@ -127,22 +127,24 @@ func triangleAreaC(a, b, c LatLng) float64 {
 	return float64(C.triangleArea(&ca, &cb, &cc))
 }
 
-// _setGeoRadsC calls the original C implementation and returns the result.
-func _setGeoRadsC(p LatLng, latRads, lngRads float64) LatLng {
+// _setGeoRadsC calls the original C implementation.
+func _setGeoRadsC(p *LatLng, latRads, lngRads float64) {
 	var cp C.LatLng
 	cp.lat = C.double(p.Lat)
 	cp.lng = C.double(p.Lng)
 	C._setGeoRads(&cp, C.double(latRads), C.double(lngRads))
-	return LatLng{Lat: float64(cp.lat), Lng: float64(cp.lng)}
+	p.Lat = float64(cp.lat)
+	p.Lng = float64(cp.lng)
 }
 
-// setGeoDegsC calls the original C implementation and returns the result.
-func setGeoDegsC(p LatLng, latDegs, lngDegs float64) LatLng {
+// setGeoDegsC calls the original C implementation.
+func setGeoDegsC(p *LatLng, latDegs, lngDegs float64) {
 	var cp C.LatLng
 	cp.lat = C.double(p.Lat)
 	cp.lng = C.double(p.Lng)
 	C.setGeoDegs(&cp, C.double(latDegs), C.double(lngDegs))
-	return LatLng{Lat: float64(cp.lat), Lng: float64(cp.lng)}
+	p.Lat = float64(cp.lat)
+	p.Lng = float64(cp.lng)
 }
 
 // geoAlmostEqualThresholdC calls the original C function using plain doubles.

@@ -194,7 +194,8 @@ Next up (planned)
   - [ ] `normalizeLng(const double, const LongitudeNormalization)`
   - [ ] `triangleEdgeLengthsToArea(double, double, double)`
   - [ ] `triangleArea(const LatLng*, const LatLng*, const LatLng*)`
-  - [ ] `_setGeoRads(LatLng*, double, double)` and `setGeoDegs(LatLng*, double, double)`
+  - [x] `_setGeoRads(LatLng*, double, double)` — DONE (Go port + C parity); sets LatLng components in radians
+  - [x] `setGeoDegs(LatLng*, double, double)` — DONE (Go port + C parity); sets LatLng components in degrees
 - vec2d.c
   - [x] `_v2dMag(const Vec2d*)` — DONE (Go port + C parity); calculates magnitude of 2D vector
   - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE (Go port + C parity); finds intersection between two lines
