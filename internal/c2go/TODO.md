@@ -2,6 +2,12 @@ Scope
 - Track C→Go function conversions performed in `internal/c2go`.
 - Record dependencies and testing status for each function.
 
+Design rule (performance, Go‑friendly APIs)
+- Use the dst‑buffer slice pattern for any function producing collections.
+  - Prefer signatures like `func fn(dst []T, args ...) ([]T, H3Error)`.
+  - Reuse capacity in `dst` when sufficient; allocate only when `cap(dst)` is too small.
+  - Keep element ordering identical to the C reference.
+
 Iteration Workflow (standard operating procedure)
 - Select target: pick a small, self-contained C function (or a tight cluster) from the planned list.
 - Prepare interop: if the C function is not exported or uses structs, add minimal cgo helpers to call it directly (use C structs like C.LatLng/C.BBox, etc.); avoid splitting scalars.
