@@ -184,10 +184,10 @@ Note on C bool interop (cgo)
 
 - faceijk.c
   - [x] `_geoToClosestFace(const LatLng*, int*, double*)` — DONE (Go port + C parity); finds closest icosahedral face center
+  - [x] `_geoToHex2d(const LatLng*, int, int*, Vec2d*)` — DONE (Go port + C parity); converts geo to 2D hex coordinates on face
 
 Next up (planned)
 - faceijk.c (continued small helpers):
-  - [ ] `_geoToHex2d(const LatLng*, int, int*, Vec2d*)` — convert geo to 2D hex coordinates on specified face
   - [ ] `_hex2dToGeo(const Vec2d*, int, int, int, LatLng*)` — convert 2D hex coordinates back to geo
 - latLng.c
   - [ ] `normalizeLng(const double, const LongitudeNormalization)`
