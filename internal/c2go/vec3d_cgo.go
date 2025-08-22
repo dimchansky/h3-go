@@ -9,6 +9,7 @@ package c2go
 // Prototype for the original C helper in vec3d.c
 double _pointSquareDist(const Vec3d* v1, const Vec3d* v2);
 // Additional helpers used for parity tests (prototypes added as needed)
+void _v3dNormalize(const Vec3d* v, Vec3d* out);
 */
 import "C"
 
@@ -35,4 +36,15 @@ func geoToVec3dC(geo LatLng) Vec3d {
 	var cv C.Vec3d
 	C._geoToVec3d(&cg, &cv)
 	return Vec3d{X: float64(cv.x), Y: float64(cv.y), Z: float64(cv.z)}
+}
+
+// v3dNormalizeC calls the original C implementation to normalize a 3D vector.
+// Bridges to vec3d.c::_v3dNormalize.
+func v3dNormalizeC(v Vec3d) Vec3d {
+	var cv, out C.Vec3d
+	cv.x = C.double(v.X)
+	cv.y = C.double(v.Y)
+	cv.z = C.double(v.Z)
+	C._v3dNormalize(&cv, &out)
+	return Vec3d{X: float64(out.x), Y: float64(out.y), Z: float64(out.z)}
 }
