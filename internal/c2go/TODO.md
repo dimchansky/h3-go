@@ -45,8 +45,8 @@ Functions
 
 Next up (planned)
 - polygon.c (next small helpers):
-  - [ ] `bboxFromGeoLoop(const GeoLoop*, BBox*)`
-  - [ ] `pointInsideGeoLoop(const GeoLoop*, const BBox*, const LatLng*)`
+  - [x] `bboxFromGeoLoop(const GeoLoop*, BBox*)` — DONE
+  - [x] `pointInsideGeoLoop(const GeoLoop*, const BBox*, const LatLng*)` — DONE
   - [ ] `pointInsidePolygon(const GeoPolygon*, const BBox*, const LatLng*)`
   - [ ] `cellBoundaryCrossesGeoLoop(const GeoLoop*, const BBox*, const CellBoundary*, const BBox*)`
   - [ ] `cellBoundaryInsidePolygon(...)` and `cellBoundaryCrossesPolygon(...)`
