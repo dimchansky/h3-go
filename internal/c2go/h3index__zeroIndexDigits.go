@@ -7,10 +7,10 @@ func _zeroIndexDigits(h H3Index, start, end int) H3Index {
 		return h
 	}
 	// Allow start at 0 to mirror C behavior (affects bits overlapping base cell).
-	if end > _maxH3Res {
-		// Mirror C: out-of-range end results in no-op.
-		return h
-	}
+    if end > MAX_H3_RES {
+        // Mirror C: out-of-range end results in no-op.
+        return h
+    }
 	for r := start; r <= end; r++ {
 		h = setIndexDigit(h, r, 0)
 	}

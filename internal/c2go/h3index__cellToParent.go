@@ -11,12 +11,12 @@ const (
 // Returns (out, err) where err mirrors H3Error codes.
 func cellToParent(h H3Index, parentRes int) (H3Index, uint32) {
 	childRes := getResolution(h)
-	if parentRes < 0 || parentRes > _maxH3Res {
-		return 0, _eResDomain
-	} else if parentRes > childRes {
-		return 0, _eResMismatch
-	} else if parentRes == childRes {
-		return h, _eSuccess
+    if parentRes < 0 || parentRes > MAX_H3_RES {
+        return 0, _eResDomain
+    } else if parentRes > childRes {
+        return 0, _eResMismatch
+    } else if parentRes == childRes {
+        return h, _eSuccess
 	}
 	// Set resolution to parentRes
 	const resOffset = 52
