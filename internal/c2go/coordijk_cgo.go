@@ -16,6 +16,7 @@ void _ijkScale(CoordIJK* c, int factor);
 void _ijkNormalize(CoordIJK* c);
 int ijkDistance(const CoordIJK* c1, const CoordIJK* c2);
 void _ijkRotate60ccw(CoordIJK* ijk);
+void _ijkRotate60cw(CoordIJK* ijk);
 */
 import "C"
 
@@ -111,5 +112,16 @@ func _ijkRotate60ccwC(c *CoordIJK) CoordIJK {
 	cc.j = C.int(c.J)
 	cc.k = C.int(c.K)
 	C._ijkRotate60ccw(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _ijkRotate60cwC calls the original C implementation for rotating IJK coordinates 60° clockwise.
+// Bridges to coordijk.c::_ijkRotate60cw.
+func _ijkRotate60cwC(c *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(c.I)
+	cc.j = C.int(c.J)
+	cc.k = C.int(c.K)
+	C._ijkRotate60cw(&cc)
 	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
 }
