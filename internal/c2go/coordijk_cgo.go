@@ -25,6 +25,10 @@ void ijkToCube(CoordIJK* ijk);
 void cubeToIjk(CoordIJK* ijk);
 void _ijkToHex2d(const CoordIJK* h, Vec2d* v);
 void _hex2dToCoordIJK(const Vec2d* v, CoordIJK* h);
+void _upAp7(CoordIJK* ijk);
+void _upAp7r(CoordIJK* ijk);
+void _downAp7(CoordIJK* ijk);
+void _downAp7r(CoordIJK* ijk);
 */
 import "C"
 
@@ -209,5 +213,49 @@ func _hex2dToCoordIJKC(v *Vec2d) CoordIJK {
 	cv.x = C.double(v.X)
 	cv.y = C.double(v.Y)
 	C._hex2dToCoordIJK(&cv, &cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _upAp7C calls the original C implementation for aperture 7 up transformation.
+// Bridges to coordijk.c::_upAp7.
+func _upAp7C(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._upAp7(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _upAp7rC calls the original C implementation for aperture 7 up (clockwise) transformation.
+// Bridges to coordijk.c::_upAp7r.
+func _upAp7rC(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._upAp7r(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _downAp7C calls the original C implementation for aperture 7 down transformation.
+// Bridges to coordijk.c::_downAp7.
+func _downAp7C(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._downAp7(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _downAp7rC calls the original C implementation for aperture 7 down (clockwise) transformation.
+// Bridges to coordijk.c::_downAp7r.
+func _downAp7rC(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._downAp7r(&cc)
 	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
 }

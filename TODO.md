@@ -188,3 +188,6 @@ All code compiles and tests pass. The foundation is solid for implementing geome
 - Enhanced CI with fmt checking and smrcptr validation
 - Added fix-fmt command for automatic code formatting
  - Added `internal/c2go` with `_ipow` port, cgo interop wrappers per C file, and `make test-c2go` passing include dirs via `H3VER` and `CGO_CPPFLAGS`
+
+**Recent C-to-Go conversions (coordijk.c):**
+- DONE: `_ijkNormalize`, `_unitIjkToDigit`, `_neighbor`, `_ijkRotate60cw`, `_ijkRotate60ccw`, `_ijkScale`, `_ijkAdd`, `_ijkSub`, `_ijkDistance`, `ijkToCube`, `cubeToIjk`, `_ijkToHex2d`, `_hex2dToCoordIJK`, `_upAp7`, `_upAp7r`, `_downAp7`, `_downAp7r` with comprehensive parity tests
