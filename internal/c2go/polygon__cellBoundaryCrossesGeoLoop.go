@@ -2,11 +2,11 @@ package c2go
 
 // cellBoundaryCrossesGeoLoop reports whether any segment of the boundary crosses the loop.
 // Ported from polygon.c::cellBoundaryCrossesGeoLoop
-func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox BBox, boundary CellBoundary, boundaryBBox BBox) bool {
+func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellBoundary, boundaryBBox *BBox) bool {
 	if !bboxOverlapsBBox(loopBBox, boundaryBBox) {
 		return false
 	}
-	loopNorm, boundNorm := bboxNormalization(loopBBox, boundaryBBox)
+	loopNorm, boundNorm := bboxNormalization(*loopBBox, *boundaryBBox)
 	// Normalize boundary longitudes
 	normalBoundary := CellBoundary{NumVerts: boundary.NumVerts, Verts: make([]LatLng, boundary.NumVerts)}
 	copy(normalBoundary.Verts, boundary.Verts)
@@ -35,7 +35,7 @@ func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox BBox, boundary CellBou
 		for j := 0; j < normalBoundary.NumVerts; j++ {
 			a := normalBoundary.Verts[j]
 			b := normalBoundary.Verts[(j+1)%normalBoundary.NumVerts]
-			if lineCrossesLine(loop1, loop2, a, b) {
+			if lineCrossesLine(&loop1, &loop2, &a, &b) {
 				return true
 			}
 		}

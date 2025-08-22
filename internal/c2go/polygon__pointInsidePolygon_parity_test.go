@@ -15,7 +15,7 @@ func Test_pointInsidePolygon_ParityWithC(t *testing.T) {
 	}
 	pts := []LatLng{{Lat: 0.25, Lng: 0.25}, {Lat: 1.0, Lng: 1.0}, {Lat: 3, Lng: 3}}
 	for _, p := range pts {
-		goVal := pointInsidePolygon(poly, bboxes, p)
+		goVal := pointInsidePolygon(poly, bboxes, &p)
 		cVal := pointInsidePolygonC(poly, bboxes, p)
 		if goVal != cVal {
 			t.Fatalf("pointInsidePolygon mismatch for p=%+v: go=%v c=%v", p, goVal, cVal)

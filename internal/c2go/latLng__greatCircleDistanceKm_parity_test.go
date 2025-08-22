@@ -17,7 +17,7 @@ func Test_greatCircleDistanceKm_ParityWithC(t *testing.T) {
 		{LatLng{0.5, 0.5}, LatLng{-0.5, -0.5}},
 	}
 	for _, tc := range cases {
-		goVal := greatCircleDistanceKm(tc.a, tc.b)
+		goVal := greatCircleDistanceKm(&tc.a, &tc.b)
 		cVal := greatCircleDistanceKmC(tc.a, tc.b)
 		if math.Abs(goVal-cVal) > 1e-11 {
 			t.Fatalf("greatCircleDistanceKm mismatch: go=%.17g c=%.17g", goVal, cVal)

@@ -3,8 +3,8 @@ package c2go
 // bboxNormalization determines longitude normalization for two bboxes.
 // Ported from H3 C: bbox.c::bboxNormalization
 func bboxNormalization(a, b BBox) (LongitudeNormalization, LongitudeNormalization) {
-	aIsTrans := bboxIsTransmeridian(a)
-	bIsTrans := bboxIsTransmeridian(b)
+	aIsTrans := bboxIsTransmeridian(&a)
+	bIsTrans := bboxIsTransmeridian(&b)
 	aToBTrendsEast := a.West-b.East < b.West-a.East
 	var aNorm, bNorm LongitudeNormalization
 	if !aIsTrans {

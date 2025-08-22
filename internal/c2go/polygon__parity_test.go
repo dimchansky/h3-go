@@ -20,12 +20,12 @@ func Test_lineCrossesLine_ParityWithC(t *testing.T) {
 	a2 := LatLng{Lat: 1, Lng: 1}
 	b1 := LatLng{Lat: 0, Lng: 1}
 	b2 := LatLng{Lat: 1, Lng: 0}
-	if lineCrossesLine(a1, a2, b1, b2) != lineCrossesLineC(a1, a2, b1, b2) {
+	if lineCrossesLine(&a1, &a2, &b1, &b2) != lineCrossesLineC(a1, a2, b1, b2) {
 		t.Fatalf("lineCrossesLine mismatch (cross)")
 	}
 	b1 = LatLng{Lat: 0, Lng: 2}
 	b2 = LatLng{Lat: 1, Lng: 2}
-	if lineCrossesLine(a1, a2, b1, b2) != lineCrossesLineC(a1, a2, b1, b2) {
+	if lineCrossesLine(&a1, &a2, &b1, &b2) != lineCrossesLineC(a1, a2, b1, b2) {
 		t.Fatalf("lineCrossesLine mismatch (no cross)")
 	}
 }

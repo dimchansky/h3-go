@@ -25,7 +25,7 @@ func Test_vec3d__pointSquareDist_Parity(t *testing.T) {
 
 	const tol = 1e-14
 	for i, tc := range cases {
-		gotGo := _pointSquareDist(tc.a, tc.b)
+		gotGo := _pointSquareDist(&tc.a, &tc.b)
 		gotC := pointSquareDistC(tc.a, tc.b)
 		if math.IsNaN(gotGo) || math.IsNaN(gotC) {
 			t.Fatalf("case %d produced NaN: go=%v c=%v", i, gotGo, gotC)

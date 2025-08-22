@@ -16,7 +16,7 @@ func Test_geoAlmostEqualThreshold_ParityWithC(t *testing.T) {
 		{LatLng{-1.5, 3.2}, LatLng{-1.5 + 1e-10, 3.2 + 1e-10}, 1e-9},
 	}
 	for _, tc := range cases {
-		goVal := geoAlmostEqualThreshold(tc.a, tc.b, tc.thr)
+		goVal := geoAlmostEqualThreshold(&tc.a, &tc.b, tc.thr)
 		cVal := geoAlmostEqualThresholdC(tc.a, tc.b, tc.thr)
 		if goVal != cVal {
 			t.Fatalf("geoAlmostEqualThreshold parity mismatch: go=%v c=%v", goVal, cVal)

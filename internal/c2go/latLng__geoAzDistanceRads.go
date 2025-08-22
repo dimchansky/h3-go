@@ -6,10 +6,10 @@ import (
 
 // _geoAzDistanceRads computes the point p2 at azimuth az and distance from p1.
 // Ported from H3 C: latLng.c::_geoAzDistanceRads
-func _geoAzDistanceRads(p1 LatLng, az, distance float64) LatLng {
+func _geoAzDistanceRads(p1 *LatLng, az, distance float64) LatLng {
 	const epsilon = 1e-16
 	if distance < epsilon {
-		return p1
+		return *p1
 	}
 	az = _posAngleRads(az)
 

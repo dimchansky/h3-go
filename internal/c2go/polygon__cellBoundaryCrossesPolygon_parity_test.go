@@ -16,7 +16,7 @@ func Test_cellBoundaryCrossesPolygon_ParityWithC(t *testing.T) {
 	// Crossing outer loop
 	boundary := CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: -1, Lng: 1}, {Lat: 3, Lng: 1}}}
 	boundaryBBox := bboxFromGeoLoop(boundary.Verts)
-	goVal := cellBoundaryCrossesPolygon(poly, bboxes, boundary, boundaryBBox)
+	goVal := cellBoundaryCrossesPolygon(poly, bboxes, &boundary, &boundaryBBox)
 	cVal := cellBoundaryCrossesPolygonC(poly, bboxes, boundary, boundaryBBox)
 	if goVal != cVal {
 		t.Fatalf("cellBoundaryCrossesPolygon mismatch (outer)")
@@ -24,7 +24,7 @@ func Test_cellBoundaryCrossesPolygon_ParityWithC(t *testing.T) {
 	// Crossing hole only (inside outer but crossing hole)
 	boundary = CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: 0.75, Lng: 0.4}, {Lat: 0.75, Lng: 1.6}}}
 	boundaryBBox = bboxFromGeoLoop(boundary.Verts)
-	goVal = cellBoundaryCrossesPolygon(poly, bboxes, boundary, boundaryBBox)
+	goVal = cellBoundaryCrossesPolygon(poly, bboxes, &boundary, &boundaryBBox)
 	cVal = cellBoundaryCrossesPolygonC(poly, bboxes, boundary, boundaryBBox)
 	if goVal != cVal {
 		t.Fatalf("cellBoundaryCrossesPolygon mismatch (hole)")

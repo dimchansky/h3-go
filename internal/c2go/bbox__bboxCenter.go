@@ -1,7 +1,7 @@
 package c2go
 
 // bboxCenter returns the center of a bbox. Port of bbox.c::bboxCenter
-func bboxCenter(b BBox) LatLng {
+func bboxCenter(b *BBox) LatLng {
 	center := LatLng{}
 	center.Lat = (b.North + b.South) * 0.5
 	east := b.East
