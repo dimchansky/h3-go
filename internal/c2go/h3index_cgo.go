@@ -14,6 +14,10 @@ static inline int h3_get_reserved_bits_c(H3Index h) { return H3_GET_RESERVED_BIT
 static inline H3Index h3_set_reserved_bits_c(H3Index h, int v) { H3Index x = h; H3_SET_RESERVED_BITS(x, v); return x; }
 static inline int h3_get_index_digit_c(H3Index h, int res) { return (int)H3_GET_INDEX_DIGIT(h, res); }
 static inline H3Index h3_set_index_digit_c(H3Index h, int res, int digit) { H3Index x = h; H3_SET_INDEX_DIGIT(x, res, digit); return x; }
+static inline int h3_get_mode_c(H3Index h) { return H3_GET_MODE(h); }
+static inline H3Index h3_set_mode_c(H3Index h, int v) { H3Index x = h; H3_SET_MODE(x, v); return x; }
+static inline int h3_get_high_bit_c(H3Index h) { return H3_GET_HIGH_BIT(h); }
+static inline H3Index h3_set_high_bit_c(H3Index h, int v) { H3Index x = h; H3_SET_HIGH_BIT(x, v); return x; }
 // Direct bridges for small helpers under test
 static inline H3Index zero_index_digits_c(H3Index h, int start, int end) { return _zeroIndexDigits(h, start, end); }
 // Prototype for non-exported helper in h3Index.c
@@ -87,6 +91,20 @@ func isPentagonC(h H3Index) int { return int(C.isPentagon(C.H3Index(h))) }
 
 // pentagonCountC calls the original C implementation.
 func pentagonCountC() int { return int(C.pentagonCount()) }
+
+// getModeC exposes H3_GET_MODE.
+func getModeC(h H3Index) int { return int(C.h3_get_mode_c(C.H3Index(h))) }
+
+// setModeC exposes H3_SET_MODE.
+func setModeC(h H3Index, v int) H3Index { return H3Index(C.h3_set_mode_c(C.H3Index(h), C.int(v))) }
+
+// getHighBitC exposes H3_GET_HIGH_BIT.
+func getHighBitC(h H3Index) int { return int(C.h3_get_high_bit_c(C.H3Index(h))) }
+
+// setHighBitC exposes H3_SET_HIGH_BIT.
+func setHighBitC(h H3Index, v int) H3Index {
+	return H3Index(C.h3_set_high_bit_c(C.H3Index(h), C.int(v)))
+}
 
 // setH3IndexC calls the original C implementation and returns the built index.
 func setH3IndexC(res, baseCell, initDigit int) H3Index {

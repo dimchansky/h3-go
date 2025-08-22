@@ -73,6 +73,8 @@ Next up (planned)
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` ports
   - [x] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` ports
   - [x] `_h3LeadingNonZeroDigit` (interop + Go port)
+  - [x] `H3_GET_MODE/H3_SET_MODE` — DONE (Go ports + cgo wrappers + parity)
+  - [x] `H3_GET_HIGH_BIT/H3_SET_HIGH_BIT` — DONE (Go ports + cgo wrappers + parity)
   - [x] `_zeroIndexDigits(H3Index, int, int)` — DONE (Go port + C parity); note: C allows start=0 (overlaps base cell bits) and treats end>15 as no-op
   - [x] `H3_EXPORT(isResClassIII)(H3Index)` — DONE (Go port returns int for parity)
   - [x] `H3_EXPORT(isPentagon)(H3Index)` — DONE (Go port + C parity via tables.IsPentagonBaseCell and _h3LeadingNonZeroDigit)
