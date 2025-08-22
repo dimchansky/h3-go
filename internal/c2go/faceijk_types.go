@@ -1,5 +1,12 @@
 package c2go
 
+// FaceIJK represents a face number and IJK coordinates on that face-centered coordinate system.
+// Mirrors the FaceIJK struct from faceijk.h
+type FaceIJK struct {
+	Face  int      // face number
+	Coord CoordIJK // ijk coordinates on that face
+}
+
 // faceCenterPoint mirrors the static Vec3d faceCenterPoint array from faceijk.c
 // These are icosahedron face centers in x/y/z coordinates on the unit sphere.
 var faceCenterPoint = [NUM_ICOSA_FACES]Vec3d{

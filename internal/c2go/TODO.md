@@ -189,16 +189,16 @@ Note on C bool interop (cgo)
 
 Next up (planned)
 - faceijk.c (additional functions for future consideration):
-  - [ ] `_faceIjkToGeo(const FaceIJK*, int, LatLng*)` — depends on _ijkToHex2d from coordijk.c
+  - [x] `_faceIjkToGeo(const FaceIJK*, int, LatLng*)` — DONE (Go port + C parity); converts FaceIJK coordinates to geographic coordinates
 - latLng.c
   - [ ] `normalizeLng(const double, const LongitudeNormalization)`
   - [ ] `triangleEdgeLengthsToArea(double, double, double)`
   - [ ] `triangleArea(const LatLng*, const LatLng*, const LatLng*)`
   - [ ] `_setGeoRads(LatLng*, double, double)` and `setGeoDegs(LatLng*, double, double)`
 - vec2d.c
-  - [ ] `_v2dMag(const Vec2d*)`
-  - [ ] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)`
-  - [ ] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)`
+  - [x] `_v2dMag(const Vec2d*)` — DONE (Go port + C parity); calculates magnitude of 2D vector
+  - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE (Go port + C parity); finds intersection between two lines
+  - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE (Go port + C parity); compares 2D vectors for equality
  - vec3d.c
   - [ ] `_geoToVec3d(const LatLng*, Vec3d*)`
 - h3Index.c

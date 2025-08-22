@@ -22,6 +22,11 @@ static inline void geo_to_hex2d_c(const LatLng* g, int res, int* face, Vec2d* v)
 static inline void hex2d_to_geo_c(const Vec2d* v, int face, int res, int substrate, LatLng* g) {
     _hex2dToGeo(v, face, res, substrate, g);
 }
+
+// Inline C helper to call _faceIjkToGeo
+static inline void face_ijk_to_geo_c(const FaceIJK* h, int res, LatLng* g) {
+    _faceIjkToGeo(h, res, g);
+}
 */
 import "C"
 
@@ -65,6 +70,22 @@ func _hex2dToGeoC(v *Vec2d, face int, res int, substrate int, g *LatLng) {
 	var cg C.LatLng
 
 	C.hex2d_to_geo_c(&cv, C.int(face), C.int(res), C.int(substrate), &cg)
+
+	g.Lat = float64(cg.lat)
+	g.Lng = float64(cg.lng)
+}
+
+// _faceIjkToGeoC calls the original C implementation.
+func _faceIjkToGeoC(h *FaceIJK, res int, g *LatLng) {
+	var ch C.FaceIJK
+	ch.face = C.int(h.Face)
+	ch.coord.i = C.int(h.Coord.I)
+	ch.coord.j = C.int(h.Coord.J)
+	ch.coord.k = C.int(h.Coord.K)
+
+	var cg C.LatLng
+
+	C.face_ijk_to_geo_c(&ch, C.int(res), &cg)
 
 	g.Lat = float64(cg.lat)
 	g.Lng = float64(cg.lng)
