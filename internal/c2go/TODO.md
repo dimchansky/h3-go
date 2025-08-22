@@ -8,6 +8,12 @@ Design rule (performance, Go‑friendly APIs)
   - Reuse capacity in `dst` when sufficient; allocate only when `cap(dst)` is too small.
   - Keep element ordering identical to the C reference.
 
+Signature mirroring (C pointers → Go pointers)
+- When the C function takes struct pointers (e.g., `const LatLng*`, `const BBox*`), mirror that in Go with pointer parameters (`*LatLng`, `*BBox`, `*Vec2d`, `*Vec3d`, etc.).
+  - Rationale: preserves in/out semantics, avoids accidental copies, and keeps the port traceable to the C API.
+  - Const semantics: if the C pointer is `const`, keep the Go pointer parameter but do not mutate the pointed value.
+  - Out‑params: prefer Go return values for outputs rather than in‑place mutation unless the C function’s contract is explicitly in‑place and flows better that way (collections still use the dst‑buffer pattern above).
+
 Iteration Workflow (standard operating procedure)
 - Select target: pick a small, self-contained C function (or a tight cluster) from the planned list.
 - Prepare interop: if the C function is not exported or uses structs, add minimal cgo helpers to call it directly (use C structs like C.LatLng/C.BBox, etc.); avoid splitting scalars.
