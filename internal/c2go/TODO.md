@@ -36,6 +36,10 @@ Checklist
 - [ ] Identify next targets with minimal dependencies; add TODO chains in code
 - [ ] Mirror select C tests (apps/testapps, fuzzers) where practical
 
+Non-negotiable constraints (repo policy)
+- Do not copy or vendor H3 `.c` or `.h` files into this repo. Only include original files via build-tagged shims (e.g., `h3lib_*.c`) and let `CGO_CPPFLAGS` provide include paths.
+- Keep all c2go work scoped to `internal/c2go` only; do not introduce dependencies on other Go packages.
+
 Functions
 - mathExtensions.c
   - [x] `_ipow(int64_t base, int64_t exp)` — implemented; parity-tested via `_ipowC` wrapper
@@ -61,6 +65,9 @@ Functions
   - [x] `_v2dMag(const Vec2d*)` — DONE
   - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE
   - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE
+
+- vec3d.c
+  - [x] `_pointSquareDist(const Vec3d*, const Vec3d*)` — DONE (Go port + C parity via vec3d shim; no C logic duplication)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
@@ -139,6 +146,8 @@ Next up (planned)
   - [ ] `_v2dMag(const Vec2d*)`
   - [ ] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)`
   - [ ] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)`
+ - vec3d.c
+  - [ ] `_geoToVec3d(const LatLng*, Vec3d*)`
 - h3Index.c
   - [ ] Next: `cellToChildren` iterator-based parity (depends on iterators); may be deferred
   - [ ] Other tiny getters: isValidCell (larger), error codes mapping (already wrapped)
