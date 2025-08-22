@@ -16,6 +16,9 @@ static inline int h3_get_index_digit_c(H3Index h, int res) { return (int)H3_GET_
 static inline H3Index h3_set_index_digit_c(H3Index h, int res, int digit) { H3Index x = h; H3_SET_INDEX_DIGIT(x, res, digit); return x; }
 // Direct bridges for small helpers under test
 static inline H3Index zero_index_digits_c(H3Index h, int start, int end) { return _zeroIndexDigits(h, start, end); }
+// Prototype for non-exported helper in h3Index.c
+extern H3Index makeDirectChild(H3Index h, int cellNumber);
+static inline H3Index make_direct_child_c(H3Index h, int cellNumber) { return makeDirectChild(h, cellNumber); }
 */
 import "C"
 
@@ -76,3 +79,15 @@ func zeroIndexDigitsC(h H3Index, start, end int) H3Index {
 
 // isResClassIIIC calls the original C implementation and returns int for parity.
 func isResClassIIIC(h H3Index) int { return int(C.isResClassIII(C.H3Index(h))) }
+
+// setH3IndexC calls the original C implementation and returns the built index.
+func setH3IndexC(res, baseCell, initDigit int) H3Index {
+	var out C.H3Index
+	C.setH3Index(&out, C.int(res), C.int(baseCell), C.Direction(initDigit))
+	return H3Index(out)
+}
+
+// makeDirectChildC calls the original C implementation.
+func makeDirectChildC(h H3Index, cellNumber int) H3Index {
+	return H3Index(C.make_direct_child_c(C.H3Index(h), C.int(cellNumber)))
+}
