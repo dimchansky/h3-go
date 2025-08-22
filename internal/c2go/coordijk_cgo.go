@@ -29,6 +29,9 @@ void _upAp7(CoordIJK* ijk);
 void _upAp7r(CoordIJK* ijk);
 void _downAp7(CoordIJK* ijk);
 void _downAp7r(CoordIJK* ijk);
+void _downAp3(CoordIJK* ijk);
+void _downAp3r(CoordIJK* ijk);
+void ijkToIj(const CoordIJK* ijk, CoordIJ* ij);
 */
 import "C"
 
@@ -258,4 +261,38 @@ func _downAp7rC(ijk *CoordIJK) CoordIJK {
 	cc.k = C.int(ijk.K)
 	C._downAp7r(&cc)
 	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _downAp3C calls the original C implementation for aperture 3 down transformation.
+// Bridges to coordijk.c::_downAp3.
+func _downAp3C(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._downAp3(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _downAp3rC calls the original C implementation for aperture 3 down (clockwise) transformation.
+// Bridges to coordijk.c::_downAp3r.
+func _downAp3rC(ijk *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._downAp3r(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// ijkToIjC calls the original C implementation to convert IJK to IJ coordinates.
+// Bridges to coordijk.c::ijkToIj.
+func ijkToIjC(ijk *CoordIJK) CoordIJ {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	var cij C.CoordIJ
+	C.ijkToIj(&cc, &cij)
+	return CoordIJ{I: int(cij.i), J: int(cij.j)}
 }

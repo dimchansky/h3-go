@@ -7,3 +7,9 @@ type CoordIJK struct {
 	J int // j component
 	K int // k component
 }
+
+// CoordIJ represents IJ coordinates (axial coordinates).
+type CoordIJ struct {
+	I int // i component
+	J int // j component
+}
