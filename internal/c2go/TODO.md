@@ -191,9 +191,9 @@ Next up (planned)
 - faceijk.c (additional functions for future consideration):
   - [x] `_faceIjkToGeo(const FaceIJK*, int, LatLng*)` — DONE (Go port + C parity); converts FaceIJK coordinates to geographic coordinates
 - latLng.c
-  - [ ] `normalizeLng(const double, const LongitudeNormalization)`
-  - [ ] `triangleEdgeLengthsToArea(double, double, double)`
-  - [ ] `triangleArea(const LatLng*, const LatLng*, const LatLng*)`
+  - [x] `normalizeLng(const double, const LongitudeNormalization)` — DONE (Go port + C parity); normalizes longitude values based on strategy
+  - [x] `triangleEdgeLengthsToArea(double, double, double)` — DONE (Go port + C parity); calculates spherical triangle area from edge lengths
+  - [x] `triangleArea(const LatLng*, const LatLng*, const LatLng*)` — DONE (Go port + C parity); calculates spherical triangle area from vertices
   - [x] `_setGeoRads(LatLng*, double, double)` — DONE (Go port + C parity); sets LatLng components in radians
   - [x] `setGeoDegs(LatLng*, double, double)` — DONE (Go port + C parity); sets LatLng components in degrees
 - vec2d.c
