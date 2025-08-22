@@ -32,6 +32,8 @@ void _downAp7r(CoordIJK* ijk);
 void _downAp3(CoordIJK* ijk);
 void _downAp3r(CoordIJK* ijk);
 void ijkToIj(const CoordIJK* ijk, CoordIJ* ij);
+bool _ijkNormalizeCouldOverflow(const CoordIJK* ijk);
+H3Error ijToIjk(const CoordIJ* ij, CoordIJK* ijk);
 */
 import "C"
 
@@ -295,4 +297,25 @@ func ijkToIjC(ijk *CoordIJK) CoordIJ {
 	var cij C.CoordIJ
 	C.ijkToIj(&cc, &cij)
 	return CoordIJ{I: int(cij.i), J: int(cij.j)}
+}
+
+// _ijkNormalizeCouldOverflowC calls the original C implementation to check for overflow.
+// Bridges to coordijk.c::_ijkNormalizeCouldOverflow.
+func _ijkNormalizeCouldOverflowC(ijk *CoordIJK) bool {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	return bool(C._ijkNormalizeCouldOverflow(&cc))
+}
+
+// ijToIjkC calls the original C implementation to convert IJ to IJK coordinates.
+// Bridges to coordijk.c::ijToIjk.
+func ijToIjkC(ij *CoordIJ) (CoordIJK, H3Error) {
+	var cij C.CoordIJ
+	cij.i = C.int(ij.I)
+	cij.j = C.int(ij.J)
+	var cc C.CoordIJK
+	err := C.ijToIjk(&cij, &cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}, H3Error(err)
 }

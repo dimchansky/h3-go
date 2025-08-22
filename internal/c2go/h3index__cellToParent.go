@@ -2,14 +2,14 @@ package c2go
 
 // cellToParent produces the parent index for a given H3 index at parentRes.
 // Returns (out, err) where err mirrors H3Error codes.
-func cellToParent(h H3Index, parentRes int) (H3Index, uint32) {
+func cellToParent(h H3Index, parentRes int) (H3Index, H3Error) {
 	childRes := getResolution(h)
 	if parentRes < 0 || parentRes > MAX_H3_RES {
-		return 0, _eResDomain
+		return 0, E_RES_DOMAIN
 	} else if parentRes > childRes {
-		return 0, _eResMismatch
+		return 0, E_RES_MISMATCH
 	} else if parentRes == childRes {
-		return h, _eSuccess
+		return h, E_SUCCESS
 	}
 	// Set resolution to parentRes
 	const resOffset = 52
@@ -22,5 +22,5 @@ func cellToParent(h H3Index, parentRes int) (H3Index, uint32) {
 	for i := parentRes + 1; i <= childRes; i++ {
 		parentH = setIndexDigit(parentH, i, int(H3_DIGIT_MASK))
 	}
-	return parentH, _eSuccess
+	return parentH, E_SUCCESS
 }

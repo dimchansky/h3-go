@@ -95,24 +95,33 @@ var UNIT_VECS = [NUM_DIGITS]CoordIJK{
 	{1, 1, 0}, // direction 6 (IJ_AXES_DIGIT)
 }
 
+// H3Error represents H3 operation result codes.
+type H3Error uint32
+
 // H3Error codes (from h3api.h)
 const (
-	_eSuccess          = uint32(0)
-	_eFailed           = uint32(1)
-	_eDomain           = uint32(2)
-	_eLatLngDomain     = uint32(3)
-	_eResDomain        = uint32(4)
-	_eCellInvalid      = uint32(5)
-	_eDirEdgeInvalid   = uint32(6)
-	_eUndirEdgeInvalid = uint32(7)
-	_eVertexInvalid    = uint32(8)
-	_ePentagon         = uint32(9)
-	_eDuplicateInput   = uint32(10)
-	_eNotNeighbors     = uint32(11)
-	_eResMismatch      = uint32(12)
-	_eMemoryAlloc      = uint32(13)
-	_eMemoryBounds     = uint32(14)
-	_eOptionInvalid    = uint32(15)
+	E_SUCCESS            H3Error = 0
+	E_FAILED             H3Error = 1
+	E_DOMAIN             H3Error = 2
+	E_LATLNG_DOMAIN      H3Error = 3
+	E_RES_DOMAIN         H3Error = 4
+	E_CELL_INVALID       H3Error = 5
+	E_DIR_EDGE_INVALID   H3Error = 6
+	E_UNDIR_EDGE_INVALID H3Error = 7
+	E_VERTEX_INVALID     H3Error = 8
+	E_PENTAGON           H3Error = 9
+	E_DUPLICATE_INPUT    H3Error = 10
+	E_NOT_NEIGHBORS      H3Error = 11
+	E_RES_MISMATCH       H3Error = 12
+	E_MEMORY_ALLOC       H3Error = 13
+	E_MEMORY_BOUNDS      H3Error = 14
+	E_OPTION_INVALID     H3Error = 15
+)
+
+// Integer limits for overflow checking (from stdint.h)
+const (
+	INT32_MAX = 2147483647
+	INT32_MIN = -2147483648
 )
 
 // isBaseCellPentagonArr mirrors the compact array used in h3Index.c for pentagon base cells.

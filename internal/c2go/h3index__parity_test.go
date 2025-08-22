@@ -15,7 +15,7 @@ func Test_string_h3_ParityWithC(t *testing.T) {
 	// stringToH3 parity
 	goH, goE := stringToH3(cStr)
 	cH, cE := stringToH3C(cStr)
-	if goE != cE || goH != cH {
+	if goE != H3Error(cE) || goH != cH {
 		t.Fatalf("stringToH3 mismatch: go=(%x,%d) c=(%x,%d)", uint64(goH), goE, uint64(cH), cE)
 	}
 	// invalid

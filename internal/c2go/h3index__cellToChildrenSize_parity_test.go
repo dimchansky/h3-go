@@ -12,7 +12,7 @@ func Test_h3index_cellToChildrenSize_ParityWithC(t *testing.T) {
 		for _, childRes := range cases {
 			goCount, goErr := cellToChildrenSize(h, childRes)
 			cCount, cErr := cellToChildrenSizeC(h, childRes)
-			if goErr != cErr || goCount != cCount {
+			if goErr != H3Error(cErr) || goCount != cCount {
 				t.Fatalf("cellToChildrenSize mismatch h=%x childRes=%d: go(count=%d,err=%d) c(count=%d,err=%d)", uint64(h), childRes, goCount, goErr, cCount, cErr)
 			}
 		}

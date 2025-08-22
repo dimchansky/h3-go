@@ -2,15 +2,15 @@ package c2go
 
 // childPosToCell returns the child cell at a given position under parent at childRes.
 // Ports H3_EXPORT(childPosToCell).
-func childPosToCell(childPos int64, parent H3Index, childRes int) (H3Index, uint32) {
+func childPosToCell(childPos int64, parent H3Index, childRes int) (H3Index, H3Error) {
 	if childRes < 0 || childRes > MAX_H3_RES {
-		return 0, _eResDomain
+		return 0, E_RES_DOMAIN
 	}
 	parentRes := getResolution(parent)
 	if childRes < parentRes {
-		return 0, _eResMismatch
+		return 0, E_RES_MISMATCH
 	}
-	if err := validateChildPos(childPos, parent, childRes); err != _eSuccess {
+	if err := validateChildPos(childPos, parent, childRes); err != E_SUCCESS {
 		return 0, err
 	}
 
@@ -51,5 +51,5 @@ func childPosToCell(childPos int64, parent H3Index, childRes int) (H3Index, uint
 		}
 	}
 
-	return child, _eSuccess
+	return child, E_SUCCESS
 }

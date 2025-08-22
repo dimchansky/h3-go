@@ -10,10 +10,10 @@ func Test_h3index_getPentagons_ParityWithC(t *testing.T) {
 		var dst []H3Index
 		goOut, goErr := getPentagons(dst, res)
 		cOut, cErr := getPentagonsC(res)
-		if goErr != cErr {
+		if goErr != H3Error(cErr) {
 			t.Fatalf("getPentagons err mismatch res=%d: go=%d c=%d", res, goErr, cErr)
 		}
-		if goErr != _eSuccess {
+		if goErr != E_SUCCESS {
 			continue
 		}
 		if len(goOut) != len(cOut) {
@@ -30,7 +30,7 @@ func Test_h3index_getPentagons_ParityWithC(t *testing.T) {
 		if goErr2 != goErr {
 			t.Fatalf("getPentagons err mismatch (cap reuse) res=%d: go2=%d go=%d", res, goErr2, goErr)
 		}
-		if goErr2 == _eSuccess {
+		if goErr2 == E_SUCCESS {
 			if len(goOut2) != len(goOut) {
 				t.Fatalf("getPentagons length mismatch (cap reuse) res=%d: %d vs %d", res, len(goOut2), len(goOut))
 			}

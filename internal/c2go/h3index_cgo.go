@@ -165,7 +165,7 @@ func childPosToCellC(childPos int64, parent H3Index, childRes int) (H3Index, uin
 func getPentagonsC(res int) ([]H3Index, uint32) {
 	n := pentagonCountC()
 	if n <= 0 {
-		return nil, _eFailed
+		return nil, uint32(E_FAILED)
 	}
 	buf := make([]H3Index, n)
 	err := C.getPentagons(C.int(res), (*C.H3Index)(&buf[0]))

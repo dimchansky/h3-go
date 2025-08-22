@@ -12,7 +12,7 @@ func Test_h3index_cellToCenterChild_ParityWithC(t *testing.T) {
 		for _, childRes := range cases {
 			goOut, goErr := cellToCenterChild(h, childRes)
 			cOut, cErr := cellToCenterChildC(h, childRes)
-			if goErr != cErr || goOut != cOut {
+			if goErr != H3Error(cErr) || goOut != cOut {
 				t.Fatalf("cellToCenterChild mismatch h=%x childRes=%d: go(out=%x,err=%d) c(out=%x,err=%d)", uint64(h), childRes, uint64(goOut), goErr, uint64(cOut), cErr)
 			}
 		}

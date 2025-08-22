@@ -2,10 +2,10 @@ package c2go
 
 // getPentagons appends pentagon indices at resolution res into dst and returns the slice.
 // Ports H3_EXPORT(getPentagons) using the dst‑buffer pattern for performance.
-func getPentagons(dst []H3Index, res int) ([]H3Index, uint32) {
+func getPentagons(dst []H3Index, res int) ([]H3Index, H3Error) {
 	if res < 0 || res > MAX_H3_RES {
 		// Do not modify dst on error
-		return dst, _eResDomain
+		return dst, E_RES_DOMAIN
 	}
 	n := NUM_PENTAGONS
 	var out []H3Index
@@ -23,5 +23,5 @@ func getPentagons(dst []H3Index, res int) ([]H3Index, uint32) {
 			i++
 		}
 	}
-	return out, _eSuccess
+	return out, E_SUCCESS
 }

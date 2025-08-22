@@ -190,4 +190,6 @@ All code compiles and tests pass. The foundation is solid for implementing geome
  - Added `internal/c2go` with `_ipow` port, cgo interop wrappers per C file, and `make test-c2go` passing include dirs via `H3VER` and `CGO_CPPFLAGS`
 
 **Recent C-to-Go conversions (coordijk.c):**
-- DONE: `_ijkNormalize`, `_unitIjkToDigit`, `_neighbor`, `_ijkRotate60cw`, `_ijkRotate60ccw`, `_ijkScale`, `_ijkAdd`, `_ijkSub`, `_ijkDistance`, `ijkToCube`, `cubeToIjk`, `_ijkToHex2d`, `_hex2dToCoordIJK`, `_upAp7`, `_upAp7r`, `_downAp7`, `_downAp7r`, `_downAp3`, `_downAp3r`, `ijkToIj` with comprehensive parity tests
+- DONE: `_ijkNormalize`, `_unitIjkToDigit`, `_neighbor`, `_ijkRotate60cw`, `_ijkRotate60ccw`, `_ijkScale`, `_ijkAdd`, `_ijkSub`, `_ijkDistance`, `ijkToCube`, `cubeToIjk`, `_ijkToHex2d`, `_hex2dToCoordIJK`, `_upAp7`, `_upAp7r`, `_downAp7`, `_downAp7r`, `_downAp3`, `_downAp3r`, `ijkToIj`, `_ijkNormalizeCouldOverflow`, `ijToIjk` with comprehensive parity tests
+
+**coordijk.c is now complete** - all major functions have been ported with full parity testing. Added H3Error type system and overflow checking for safe coordinate transformations.
