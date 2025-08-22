@@ -82,6 +82,8 @@ Functions
   - [x] `_ijkMatches(const CoordIJK*, const CoordIJK*)` — DONE (Go port + C parity)
   - [x] `_ijkScale(CoordIJK*, int)` — DONE (Go port + C parity)
   - [x] `_ijkNormalize(CoordIJK*)` — DONE (Go port + C parity)
+  - [x] `ijkDistance(const CoordIJK*, const CoordIJK*)` — DONE (Go port + C parity)
+  - [x] `_ijkRotate60ccw(CoordIJK*)` — DONE (Go port + C parity)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
@@ -124,10 +126,12 @@ Planned small targets
 - coordijk.c:
   - [x] `_ijkAdd(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE
   - [x] `_ijkSub(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE
-  - [x] `_setIJK(CoordIJK*, int, int, int)` — DONE this iteration; sets IJK coordinate components
-  - [x] `_ijkMatches(const CoordIJK*, const CoordIJK*)` — DONE this iteration; compares IJK coordinates for equality
-  - [x] `_ijkScale(CoordIJK*, int)` — DONE this iteration; scales IJK coordinates by factor
-  - [x] `_ijkNormalize(CoordIJK*)` — DONE this iteration; normalizes IJK by removing negatives
+  - [x] `_setIJK(CoordIJK*, int, int, int)` — DONE; sets IJK coordinate components
+  - [x] `_ijkMatches(const CoordIJK*, const CoordIJK*)` — DONE; compares IJK coordinates for equality
+  - [x] `_ijkScale(CoordIJK*, int)` — DONE; scales IJK coordinates by factor
+  - [x] `_ijkNormalize(CoordIJK*)` — DONE; normalizes IJK by removing negatives
+  - [x] `ijkDistance(const CoordIJK*, const CoordIJK*)` — DONE; computes distance between IJK coordinates
+  - [x] `_ijkRotate60ccw(CoordIJK*)` — DONE; rotates IJK coordinates 60° counter-clockwise
 
 Notes this iteration
 - Verified available vec3d symbols via header; opted to plan `_geoToVec3d` as a safe, dependency-light target.
