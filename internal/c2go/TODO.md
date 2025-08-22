@@ -91,6 +91,8 @@ Functions
   - [x] `_rotate60cw(Direction)` — DONE (Go port + C parity)
   - [x] `ijkToCube(CoordIJK*)` — DONE (Go port + C parity)
   - [x] `cubeToIjk(CoordIJK*)` — DONE (Go port + C parity)
+  - [x] `_ijkToHex2d(const CoordIJK*, Vec2d*)` — DONE (Go port + C parity)
+  - [x] `_hex2dToCoordIJK(const Vec2d*, CoordIJK*)` — DONE (Go port + C parity)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)

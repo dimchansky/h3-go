@@ -23,6 +23,8 @@ Direction _rotate60ccw(Direction digit);
 Direction _rotate60cw(Direction digit);
 void ijkToCube(CoordIJK* ijk);
 void cubeToIjk(CoordIJK* ijk);
+void _ijkToHex2d(const CoordIJK* h, Vec2d* v);
+void _hex2dToCoordIJK(const Vec2d* v, CoordIJK* h);
 */
 import "C"
 
@@ -184,5 +186,28 @@ func cubeToIjkC(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C.cubeToIjk(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _ijkToHex2dC calls the original C implementation for converting IJK to 2D hex coordinates.
+// Bridges to coordijk.c::_ijkToHex2d.
+func _ijkToHex2dC(ijk *CoordIJK) Vec2d {
+	var cc C.CoordIJK
+	var cv C.Vec2d
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	C._ijkToHex2d(&cc, &cv)
+	return Vec2d{X: float64(cv.x), Y: float64(cv.y)}
+}
+
+// _hex2dToCoordIJKC calls the original C implementation for converting 2D hex to IJK coordinates.
+// Bridges to coordijk.c::_hex2dToCoordIJK.
+func _hex2dToCoordIJKC(v *Vec2d) CoordIJK {
+	var cv C.Vec2d
+	var cc C.CoordIJK
+	cv.x = C.double(v.X)
+	cv.y = C.double(v.Y)
+	C._hex2dToCoordIJK(&cv, &cc)
 	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
 }
