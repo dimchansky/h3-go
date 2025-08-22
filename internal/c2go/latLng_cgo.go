@@ -107,37 +107,42 @@ func greatCircleDistanceMC(a, b LatLng) float64 {
 
 // normalizeLngC calls the original C implementation.
 func normalizeLngC(lng float64, normalization LongitudeNormalization) float64 {
-    return float64(C.normalizeLng(C.double(lng), C.LongitudeNormalization(normalization)))
+	return float64(C.normalizeLng(C.double(lng), C.LongitudeNormalization(normalization)))
 }
 
 // triangleEdgeLengthsToAreaC calls the original C implementation.
 func triangleEdgeLengthsToAreaC(a, b, c float64) float64 {
-    return float64(C.triangleEdgeLengthsToArea(C.double(a), C.double(b), C.double(c)))
+	return float64(C.triangleEdgeLengthsToArea(C.double(a), C.double(b), C.double(c)))
 }
 
 // triangleAreaC calls the original C implementation.
 func triangleAreaC(a, b, c LatLng) float64 {
-    var ca, cb, cc C.LatLng
-    ca.lat = C.double(a.Lat); ca.lng = C.double(a.Lng)
-    cb.lat = C.double(b.Lat); cb.lng = C.double(b.Lng)
-    cc.lat = C.double(c.Lat); cc.lng = C.double(c.Lng)
-    return float64(C.triangleArea(&ca, &cb, &cc))
+	var ca, cb, cc C.LatLng
+	ca.lat = C.double(a.Lat)
+	ca.lng = C.double(a.Lng)
+	cb.lat = C.double(b.Lat)
+	cb.lng = C.double(b.Lng)
+	cc.lat = C.double(c.Lat)
+	cc.lng = C.double(c.Lng)
+	return float64(C.triangleArea(&ca, &cb, &cc))
 }
 
 // _setGeoRadsC calls the original C implementation and returns the result.
 func _setGeoRadsC(p LatLng, latRads, lngRads float64) LatLng {
-    var cp C.LatLng
-    cp.lat = C.double(p.Lat); cp.lng = C.double(p.Lng)
-    C._setGeoRads(&cp, C.double(latRads), C.double(lngRads))
-    return LatLng{Lat: float64(cp.lat), Lng: float64(cp.lng)}
+	var cp C.LatLng
+	cp.lat = C.double(p.Lat)
+	cp.lng = C.double(p.Lng)
+	C._setGeoRads(&cp, C.double(latRads), C.double(lngRads))
+	return LatLng{Lat: float64(cp.lat), Lng: float64(cp.lng)}
 }
 
 // setGeoDegsC calls the original C implementation and returns the result.
 func setGeoDegsC(p LatLng, latDegs, lngDegs float64) LatLng {
-    var cp C.LatLng
-    cp.lat = C.double(p.Lat); cp.lng = C.double(p.Lng)
-    C.setGeoDegs(&cp, C.double(latDegs), C.double(lngDegs))
-    return LatLng{Lat: float64(cp.lat), Lng: float64(cp.lng)}
+	var cp C.LatLng
+	cp.lat = C.double(p.Lat)
+	cp.lng = C.double(p.Lng)
+	C.setGeoDegs(&cp, C.double(latDegs), C.double(lngDegs))
+	return LatLng{Lat: float64(cp.lat), Lng: float64(cp.lng)}
 }
 
 // geoAlmostEqualThresholdC calls the original C function using plain doubles.
