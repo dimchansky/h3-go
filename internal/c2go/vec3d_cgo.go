@@ -8,6 +8,7 @@ package c2go
 #include "vec3d.h"
 // Prototype for the original C helper in vec3d.c
 double _pointSquareDist(const Vec3d* v1, const Vec3d* v2);
+double _square(double x);
 */
 import "C"
 
@@ -36,4 +37,9 @@ func _geoToVec3dC(geo *LatLng, v *Vec3d) {
 	v.X = float64(cv.x)
 	v.Y = float64(cv.y)
 	v.Z = float64(cv.z)
+}
+
+// _squareC calls the original C implementation.
+func _squareC(x float64) float64 {
+	return float64(C._square(C.double(x)))
 }

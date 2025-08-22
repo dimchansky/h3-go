@@ -202,6 +202,7 @@ Next up (planned)
   - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE (Go port + C parity); compares 2D vectors for equality
  - vec3d.c
   - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE (Go port + C parity); converts geographic coordinates to 3D unit vector
+  - [x] `_square(double)` — DONE (Go port + C parity); returns square of a number
 - h3Index.c
   - [ ] Next: `cellToChildren` iterator-based parity (depends on iterators); may be deferred
   - [ ] Other tiny getters: isValidCell (larger), error codes mapping (already wrapped)
