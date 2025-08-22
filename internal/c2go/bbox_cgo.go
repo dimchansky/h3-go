@@ -61,3 +61,17 @@ func bboxContainsC(b BBox, p LatLng) bool {
     cp.lng = C.double(p.Lng)
     if C.bboxContains(&cb, &cp) { return true } else { return false }
 }
+
+// bboxOverlapsBBoxC calls the original C implementation.
+func bboxOverlapsBBoxC(a, b BBox) bool {
+    ca := toCBBox(a)
+    cb := toCBBox(b)
+    if C.bboxOverlapsBBox(&ca, &cb) { return true } else { return false }
+}
+
+// bboxContainsBBoxC calls the original C implementation.
+func bboxContainsBBoxC(a, b BBox) bool {
+    ca := toCBBox(a)
+    cb := toCBBox(b)
+    if C.bboxContainsBBox(&ca, &cb) { return true } else { return false }
+}
