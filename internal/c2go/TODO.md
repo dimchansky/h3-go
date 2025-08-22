@@ -87,6 +87,8 @@ Functions
   - [x] `_ijkRotate60cw(CoordIJK*)` — DONE (Go port + C parity)
   - [x] `_unitIjkToDigit(const CoordIJK*)` — DONE (Go port + C parity)
   - [x] `_neighbor(CoordIJK*, Direction)` — DONE (Go port + C parity)
+  - [x] `_rotate60ccw(Direction)` — DONE (Go port + C parity)
+  - [x] `_rotate60cw(Direction)` — DONE (Go port + C parity)
 
 - h3Index.c
   - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
@@ -138,6 +140,8 @@ Planned small targets
   - [x] `_ijkRotate60cw(CoordIJK*)` — DONE; rotates IJK coordinates 60° clockwise
   - [x] `_unitIjkToDigit(const CoordIJK*)` — DONE; converts unit IJK coordinate to direction digit
   - [x] `_neighbor(CoordIJK*, Direction)` — DONE; applies direction vector to IJK coordinates
+  - [x] `_rotate60ccw(Direction)` — DONE; rotates direction digit 60° counter-clockwise
+  - [x] `_rotate60cw(Direction)` — DONE; rotates direction digit 60° clockwise
 
 Notes this iteration
 - Verified available vec3d symbols via header; opted to plan `_geoToVec3d` as a safe, dependency-light target.

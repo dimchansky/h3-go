@@ -19,6 +19,8 @@ void _ijkRotate60ccw(CoordIJK* ijk);
 void _ijkRotate60cw(CoordIJK* ijk);
 Direction _unitIjkToDigit(const CoordIJK* ijk);
 void _neighbor(CoordIJK* ijk, Direction digit);
+Direction _rotate60ccw(Direction digit);
+Direction _rotate60cw(Direction digit);
 */
 import "C"
 
@@ -147,4 +149,16 @@ func _neighborC(ijk *CoordIJK, digit int) CoordIJK {
 	cc.k = C.int(ijk.K)
 	C._neighbor(&cc, C.Direction(digit))
 	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _rotate60ccwC calls the original C implementation for rotating a direction 60° counter-clockwise.
+// Bridges to coordijk.c::_rotate60ccw.
+func _rotate60ccwC(digit int) int {
+	return int(C._rotate60ccw(C.Direction(digit)))
+}
+
+// _rotate60cwC calls the original C implementation for rotating a direction 60° clockwise.
+// Bridges to coordijk.c::_rotate60cw.
+func _rotate60cwC(digit int) int {
+	return int(C._rotate60cw(C.Direction(digit)))
 }
