@@ -84,6 +84,26 @@ const (
     PENTAGON_SKIPPED_DIGIT = K_AXES_DIGIT
 )
 
+// H3Error codes (from h3api.h)
+const (
+    _eSuccess          = uint32(0)
+    _eFailed           = uint32(1)
+    _eDomain           = uint32(2)
+    _eLatLngDomain     = uint32(3)
+    _eResDomain        = uint32(4)
+    _eCellInvalid      = uint32(5)
+    _eDirEdgeInvalid   = uint32(6)
+    _eUndirEdgeInvalid = uint32(7)
+    _eVertexInvalid    = uint32(8)
+    _ePentagon         = uint32(9)
+    _eDuplicateInput   = uint32(10)
+    _eNotNeighbors     = uint32(11)
+    _eResMismatch      = uint32(12)
+    _eMemoryAlloc      = uint32(13)
+    _eMemoryBounds     = uint32(14)
+    _eOptionInvalid    = uint32(15)
+)
+
 // isBaseCellPentagonArr mirrors the compact array used in h3Index.c for pentagon base cells.
 // Size 128 for safe indexing; only first 122 are valid base cells.
 var isBaseCellPentagonArr = [128]bool{

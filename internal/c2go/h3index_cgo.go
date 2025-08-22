@@ -157,3 +157,14 @@ func childPosToCellC(childPos int64, parent H3Index, childRes int) (H3Index, uin
     err := C.childPosToCell(C.int64_t(childPos), C.H3Index(parent), C.int(childRes), &out)
     return H3Index(out), uint32(err)
 }
+
+// getPentagonsC calls the original C implementation and returns slice + err.
+func getPentagonsC(res int) ([]H3Index, uint32) {
+    n := pentagonCountC()
+    if n <= 0 {
+        return nil, _eFailed
+    }
+    buf := make([]H3Index, n)
+    err := C.getPentagons(C.int(res), (*C.H3Index)(&buf[0]))
+    return buf, uint32(err)
+}

@@ -1,12 +1,5 @@
 package c2go
 
-// Local copies of select H3Error codes for parity returns.
-const (
-	_eSuccess     = uint32(0)
-	_eResDomain   = uint32(4)
-	_eResMismatch = uint32(12)
-)
-
 // cellToParent produces the parent index for a given H3 index at parentRes.
 // Returns (out, err) where err mirrors H3Error codes.
 func cellToParent(h H3Index, parentRes int) (H3Index, uint32) {
