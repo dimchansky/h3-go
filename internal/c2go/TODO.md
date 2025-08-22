@@ -95,6 +95,7 @@ Next up (planned)
   - [x] `H3_EXPORT(cellToChildPos)(H3Index, int, int64_t*)` — DONE (Go port + C parity)
   - [x] `H3_EXPORT(childPosToCell)(int64_t, H3Index, int, H3Index*)` — DONE (Go port + C parity)
   - [x] `validateChildPos` (static) — DONE (Go port; covered indirectly by parity)
+  - [x] `isResolutionClassIII(int res)` — DONE (Go port + C parity)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.

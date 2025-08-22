@@ -103,8 +103,11 @@ func getHighBitC(h H3Index) int { return int(C.h3_get_high_bit_c(C.H3Index(h))) 
 
 // setHighBitC exposes H3_SET_HIGH_BIT.
 func setHighBitC(h H3Index, v int) H3Index {
-	return H3Index(C.h3_set_high_bit_c(C.H3Index(h), C.int(v)))
+    return H3Index(C.h3_set_high_bit_c(C.H3Index(h), C.int(v)))
 }
+
+// isResolutionClassIIIC bridges to the C helper taking a resolution.
+func isResolutionClassIIIC(res int) int { return int(C.isResolutionClassIII(C.int(res))) }
 
 // setH3IndexC calls the original C implementation and returns the built index.
 func setH3IndexC(res, baseCell, initDigit int) H3Index {
