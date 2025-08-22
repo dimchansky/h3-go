@@ -124,8 +124,9 @@ const (
 
 // Integer limits for overflow checking (from stdint.h)
 const (
-	INT32_MAX = 2147483647
-	INT32_MIN = -2147483648
+	INT32_MAX   = 2147483647
+	INT32_MIN   = -2147483648
+	INT32_MAX_3 = INT32_MAX / 3 // Used in aperture 7 overflow checking
 )
 
 // isBaseCellPentagonArr mirrors the compact array used in h3Index.c for pentagon base cells.

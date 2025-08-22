@@ -250,14 +250,14 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `_hasGoodTopBits` — TODO: needs C→Go port + parity test
   - [ ] `_hashVertex` — TODO: needs C→Go port + parity test
   - [ ] `_hexRadiusKm` — TODO: needs C→Go port + parity test
-  - [ ] `_ijkNormalizeCouldOverflow` — TODO: needs C→Go port + parity test
+  - [x] `_ijkNormalizeCouldOverflow` — DONE (Go port + C parity)
   - [ ] `_incrementResDigit` — TODO: needs C→Go port + parity test
   - [ ] `_iterInitParent` — TODO: needs C→Go port + parity test
   - [ ] `_null_iter` — TODO: needs C→Go port + parity test
-  - [ ] `_upAp7` — TODO: needs C→Go port + parity test
-  - [ ] `_upAp7Checked` — TODO: needs C→Go port + parity test
-  - [ ] `_upAp7r` — TODO: needs C→Go port + parity test
-  - [ ] `_upAp7rChecked` — TODO: needs C→Go port + parity test
+  - [x] `_upAp7` — DONE (Go port + C parity)
+  - [x] `_upAp7Checked` — DONE (Go port + C parity)  
+  - [x] `_upAp7r` — DONE (Go port + C parity)
+  - [x] `_upAp7rChecked` — DONE (Go port + C parity)
   - [ ] `_vertexGraphToLinkedGeo` — TODO: needs C→Go port + parity test
   - [ ] `baseCellNumToCell` — TODO: needs C→Go port + parity test
   - [ ] `bboxCenter` — TODO: needs C→Go port + parity test
@@ -275,12 +275,10 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `countLinkedLoops` — TODO: needs C→Go port + parity test
   - [ ] `countLinkedPolygons` — TODO: needs C→Go port + parity test
   - [ ] `cubeRound` — TODO: needs C→Go port + parity test
-  - [ ] `d` — TODO: needs C→Go port + parity test
   - [ ] `destroyLinkedGeoLoop` — TODO: needs C→Go port + parity test
   - [ ] `destroyVertexGraph` — TODO: needs C→Go port + parity test
   - [ ] `directionForNeighbor` — TODO: needs C→Go port + parity test
   - [ ] `directionForVertexNum` — TODO: needs C→Go port + parity test
-  - [ ] `e` — TODO: needs C→Go port + parity test
   - [ ] `getAverageCellArea` — TODO: needs C→Go port + parity test
   - [ ] `ijkToIj` — TODO: needs C→Go port + parity test
   - [ ] `ijToIjk` — TODO: needs C→Go port + parity test
@@ -294,13 +292,10 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `iterStepPolygonCompact` — TODO: needs C→Go port + parity test
   - [ ] `iterStepRes` — TODO: needs C→Go port + parity test
   - [ ] `localIjkToCell` — TODO: needs C→Go port + parity test
-  - [ ] `n` — TODO: needs C→Go port + parity test
   - [ ] `nextCell` — TODO: needs C→Go port + parity test
   - [ ] `normalizeMultiPolygon` — TODO: needs C→Go port + parity test
-  - [ ] `p` — TODO: needs C→Go port + parity test
   - [ ] `removeVertexNode` — TODO: needs C→Go port + parity test
   - [ ] `scaleBBox` — TODO: needs C→Go port + parity test
   - [ ] `validatePolygonFlags` — TODO: needs C→Go port + parity test
   - [ ] `vertexNumForDirection` — TODO: needs C→Go port + parity test
   - [ ] `vertexRotations` — TODO: needs C→Go port + parity test
-  - [ ] `x` — TODO: needs C→Go port + parity test

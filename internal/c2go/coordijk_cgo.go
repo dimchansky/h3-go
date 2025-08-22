@@ -34,6 +34,8 @@ void _downAp3r(CoordIJK* ijk);
 void ijkToIj(const CoordIJK* ijk, CoordIJ* ij);
 bool _ijkNormalizeCouldOverflow(const CoordIJK* ijk);
 H3Error ijToIjk(const CoordIJ* ij, CoordIJK* ijk);
+H3Error _upAp7Checked(CoordIJK* ijk);
+H3Error _upAp7rChecked(CoordIJK* ijk);
 */
 import "C"
 
@@ -317,5 +319,27 @@ func ijToIjkC(ij *CoordIJ) (CoordIJK, H3Error) {
 	cij.j = C.int(ij.J)
 	var cc C.CoordIJK
 	err := C.ijToIjk(&cij, &cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}, H3Error(err)
+}
+
+// _upAp7CheckedC calls the original C implementation for aperture 7 up transformation with overflow checking.
+// Bridges to coordijk.c::_upAp7Checked.
+func _upAp7CheckedC(ijk *CoordIJK) (CoordIJK, H3Error) {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	err := C._upAp7Checked(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}, H3Error(err)
+}
+
+// _upAp7rCheckedC calls the original C implementation for aperture 7 up (clockwise) transformation with overflow checking.
+// Bridges to coordijk.c::_upAp7rChecked.
+func _upAp7rCheckedC(ijk *CoordIJK) (CoordIJK, H3Error) {
+	var cc C.CoordIJK
+	cc.i = C.int(ijk.I)
+	cc.j = C.int(ijk.J)
+	cc.k = C.int(ijk.K)
+	err := C._upAp7rChecked(&cc)
 	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}, H3Error(err)
 }
