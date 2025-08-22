@@ -19,6 +19,8 @@ static inline H3Index zero_index_digits_c(H3Index h, int start, int end) { retur
 // Prototype for non-exported helper in h3Index.c
 extern H3Index makeDirectChild(H3Index h, int cellNumber);
 static inline H3Index make_direct_child_c(H3Index h, int cellNumber) { return makeDirectChild(h, cellNumber); }
+// Prototypes for cgo-exposed helpers in h3lib_h3Index_c2go.c
+extern int has_child_at_res_c(H3Index h, int childRes);
 */
 import "C"
 
@@ -104,4 +106,16 @@ func cellToCenterChildC(h H3Index, childRes int) (H3Index, uint32) {
 	var out C.H3Index
 	err := C.cellToCenterChild(C.H3Index(h), C.int(childRes), &out)
 	return H3Index(out), uint32(err)
+}
+
+// hasChildAtResC bridges to the static helper via our shim.
+func hasChildAtResC(h H3Index, childRes int) int {
+	return int(C.has_child_at_res_c(C.H3Index(h), C.int(childRes)))
+}
+
+// cellToChildrenSizeC calls the original C implementation.
+func cellToChildrenSizeC(h H3Index, childRes int) (int64, uint32) {
+	var out C.int64_t
+	err := C.cellToChildrenSize(C.H3Index(h), C.int(childRes), &out)
+	return int64(out), uint32(err)
 }
