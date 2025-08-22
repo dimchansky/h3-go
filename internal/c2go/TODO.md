@@ -2,6 +2,18 @@ Scope
 - Track C→Go function conversions performed in `internal/c2go`.
 - Record dependencies and testing status for each function.
 
+Iteration Workflow (standard operating procedure)
+- Select target: pick a small, self-contained C function (or a tight cluster) from the planned list.
+- Prepare interop: if the C function is not exported or uses structs, add minimal cgo helpers to call it directly (use C structs like C.LatLng/C.BBox, etc.); avoid splitting scalars.
+- Transpile: implement a faithful Go port in `internal/c2go/<cfile>__<function>.go`, mirroring names/signatures (unexported) and behavior.
+- Parity test: add `internal/c2go/<cfile>__<function>_parity_test.go` (`//go:build c2go`) that compares Go vs C output; use tight, justified tolerances for floats and safe bool handling.
+- Sanity run: `make test-c2go` and ensure all parity tests pass.
+- Update tracker: update this TODO to mark the function DONE and list the next planned items (do this BEFORE each commit).
+- Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and TODO update.
+
+Interop helper note
+- When performing Go→C struct conversions in `*_cgo.go`, prefer creating small helper functions to convert common types (e.g., `toCGeoLoop`, `toCGeoPolygon`, `toCBBox`). This avoids duplication when multiple functions need the same transformation and makes memory management (malloc/free) clearer and safer.
+
 Checklist
 - [x] Scaffold package and docs (README.md)
 - [x] Add first dependency-free function: `mathExtensions.c::_ipow`
