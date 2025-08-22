@@ -47,7 +47,7 @@ Next up (planned)
 - polygon.c (next small helpers):
   - [x] `bboxFromGeoLoop(const GeoLoop*, BBox*)` — DONE
   - [x] `pointInsideGeoLoop(const GeoLoop*, const BBox*, const LatLng*)` — DONE
-  - [ ] `pointInsidePolygon(const GeoPolygon*, const BBox*, const LatLng*)`
+  - [x] `pointInsidePolygon(const GeoPolygon*, const BBox*, const LatLng*)` — DONE
   - [ ] `cellBoundaryCrossesGeoLoop(const GeoLoop*, const BBox*, const CellBoundary*, const BBox*)`
   - [ ] `cellBoundaryInsidePolygon(...)` and `cellBoundaryCrossesPolygon(...)`
 - h3Index.c (more utilities):

@@ -71,3 +71,61 @@ func pointInsideGeoLoopC(loop []LatLng, bbox BBox, p LatLng) bool {
     cp.lng = C.double(p.Lng)
     if C.pointInsideGeoLoop(&cg, &cb, &cp) { return true } else { return false }
 }
+
+
+// toCGeoPolygon converts Go GeoPolygon to C GeoPolygon; caller must free via returned function.
+func toCGeoPolygon(poly GeoPolygon) (C.GeoPolygon, func()) {
+    var cp C.GeoPolygon
+    // Outer loop
+    outer, freeOuter := toCGeoLoop(poly.Geoloop)
+    cp.geoloop = outer
+    // Holes
+    n := len(poly.Holes)
+    cp.numHoles = C.int(n)
+    var freeHoles []func()
+    var holesMem unsafe.Pointer
+    if n > 0 {
+        holesMem = C.malloc(C.size_t(n) * C.size_t(C.sizeof_GeoLoop))
+        holesArr := (*[1 << 30]C.GeoLoop)(holesMem)[:n:n]
+        for i, h := range poly.Holes {
+            ch, fh := toCGeoLoop(h)
+            holesArr[i] = ch
+            freeHoles = append(freeHoles, fh)
+        }
+        cp.holes = (*C.GeoLoop)(holesMem)
+    } else {
+        cp.holes = nil
+    }
+    freeFn := func() {
+        for _, fh := range freeHoles { fh() }
+        if holesMem != nil { C.free(unsafe.Pointer(holesMem)) }
+        freeOuter()
+    }
+    return cp, freeFn
+}
+
+// pointInsidePolygonC calls C pointInsidePolygon for a GeoPolygon.
+func pointInsidePolygonC(poly GeoPolygon, bboxes []BBox, p LatLng) bool {
+    cp, freePoly := toCGeoPolygon(poly)
+    defer freePoly()
+    // Prepare bboxes array
+    nb := len(bboxes)
+    var cbptr *C.BBox
+    var bbMem unsafe.Pointer
+    if nb > 0 {
+        bbMem = C.malloc(C.size_t(nb) * C.size_t(C.sizeof_BBox))
+        arr := (*[1 << 30]C.BBox)(bbMem)[:nb:nb]
+        for i, b := range bboxes {
+            arr[i].north = C.double(b.North)
+            arr[i].south = C.double(b.South)
+            arr[i].east = C.double(b.East)
+            arr[i].west = C.double(b.West)
+        }
+        cbptr = (*C.BBox)(bbMem)
+        defer C.free(unsafe.Pointer(bbMem))
+    }
+    var cpnt C.LatLng
+    cpnt.lat = C.double(p.Lat)
+    cpnt.lng = C.double(p.Lng)
+    if C.pointInsidePolygon(&cp, cbptr, &cpnt) { return true } else { return false }
+}
