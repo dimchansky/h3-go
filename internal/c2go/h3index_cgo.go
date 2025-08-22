@@ -127,9 +127,9 @@ func cellToParentC(h H3Index, parentRes int) (H3Index, uint32) {
 
 // cellToCenterChildC calls the original C implementation.
 func cellToCenterChildC(h H3Index, childRes int) (H3Index, uint32) {
-	var out C.H3Index
-	err := C.cellToCenterChild(C.H3Index(h), C.int(childRes), &out)
-	return H3Index(out), uint32(err)
+    var out C.H3Index
+    err := C.cellToCenterChild(C.H3Index(h), C.int(childRes), &out)
+    return H3Index(out), uint32(err)
 }
 
 // hasChildAtResC bridges to the static helper via our shim.
@@ -139,7 +139,21 @@ func hasChildAtResC(h H3Index, childRes int) int {
 
 // cellToChildrenSizeC calls the original C implementation.
 func cellToChildrenSizeC(h H3Index, childRes int) (int64, uint32) {
-	var out C.int64_t
-	err := C.cellToChildrenSize(C.H3Index(h), C.int(childRes), &out)
-	return int64(out), uint32(err)
+    var out C.int64_t
+    err := C.cellToChildrenSize(C.H3Index(h), C.int(childRes), &out)
+    return int64(out), uint32(err)
+}
+
+// cellToChildPosC calls the original C implementation.
+func cellToChildPosC(child H3Index, parentRes int) (int64, uint32) {
+    var out C.int64_t
+    err := C.cellToChildPos(C.H3Index(child), C.int(parentRes), &out)
+    return int64(out), uint32(err)
+}
+
+// childPosToCellC calls the original C implementation.
+func childPosToCellC(childPos int64, parent H3Index, childRes int) (H3Index, uint32) {
+    var out C.H3Index
+    err := C.childPosToCell(C.int64_t(childPos), C.H3Index(parent), C.int(childRes), &out)
+    return H3Index(out), uint32(err)
 }

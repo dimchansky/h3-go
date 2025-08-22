@@ -70,6 +70,20 @@ const (
     H3_INIT uint64 = 35184372088831
 )
 
+// Direction enum (from coordijk.h)
+const (
+    CENTER_DIGIT          = 0
+    K_AXES_DIGIT          = 1
+    J_AXES_DIGIT          = 2
+    JK_AXES_DIGIT         = J_AXES_DIGIT | K_AXES_DIGIT // 3
+    I_AXES_DIGIT          = 4
+    IK_AXES_DIGIT         = I_AXES_DIGIT | K_AXES_DIGIT // 5
+    IJ_AXES_DIGIT         = I_AXES_DIGIT | J_AXES_DIGIT // 6
+    INVALID_DIGIT         = 7
+    NUM_DIGITS            = INVALID_DIGIT
+    PENTAGON_SKIPPED_DIGIT = K_AXES_DIGIT
+)
+
 // isBaseCellPentagonArr mirrors the compact array used in h3Index.c for pentagon base cells.
 // Size 128 for safe indexing; only first 122 are valid base cells.
 var isBaseCellPentagonArr = [128]bool{
