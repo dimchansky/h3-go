@@ -12,6 +12,8 @@ void _ijkAdd(const CoordIJK* h1, const CoordIJK* h2, CoordIJK* sum);
 void _ijkSub(const CoordIJK* h1, const CoordIJK* h2, CoordIJK* diff);
 void _setIJK(CoordIJK* ijk, int i, int j, int k);
 int _ijkMatches(const CoordIJK* c1, const CoordIJK* c2);
+void _ijkScale(CoordIJK* c, int factor);
+void _ijkNormalize(CoordIJK* c);
 */
 import "C"
 
@@ -62,4 +64,26 @@ func _ijkMatchesC(c1, c2 *CoordIJK) bool {
 	cc2.j = C.int(c2.J)
 	cc2.k = C.int(c2.K)
 	return C._ijkMatches(&cc1, &cc2) != 0
+}
+
+// _ijkScaleC calls the original C implementation for scaling IJK coordinates.
+// Bridges to coordijk.c::_ijkScale.
+func _ijkScaleC(c *CoordIJK, factor int) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(c.I)
+	cc.j = C.int(c.J)
+	cc.k = C.int(c.K)
+	C._ijkScale(&cc, C.int(factor))
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+}
+
+// _ijkNormalizeC calls the original C implementation for normalizing IJK coordinates.
+// Bridges to coordijk.c::_ijkNormalize.
+func _ijkNormalizeC(c *CoordIJK) CoordIJK {
+	var cc C.CoordIJK
+	cc.i = C.int(c.I)
+	cc.j = C.int(c.J)
+	cc.k = C.int(c.K)
+	C._ijkNormalize(&cc)
+	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
 }
