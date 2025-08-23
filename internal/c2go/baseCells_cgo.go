@@ -44,3 +44,23 @@ func _baseCellToCCWrot60C(baseCell int, face int) int {
 func _baseCellIsCwOffsetC(baseCell int, testFace int) bool {
 	return bool(C._baseCellIsCwOffset(C.int(baseCell), C.int(testFace)))
 }
+
+// _faceIjkToBaseCellC calls the original C helper _faceIjkToBaseCell.
+func _faceIjkToBaseCellC(h *FaceIJK) int {
+	var cFijk C.FaceIJK
+	cFijk.face = C.int(h.Face)
+	cFijk.coord.i = C.int(h.Coord.I)
+	cFijk.coord.j = C.int(h.Coord.J)
+	cFijk.coord.k = C.int(h.Coord.K)
+	return int(C._faceIjkToBaseCell(&cFijk))
+}
+
+// _faceIjkToBaseCellCCWrot60C calls the original C helper _faceIjkToBaseCellCCWrot60.
+func _faceIjkToBaseCellCCWrot60C(h *FaceIJK) int {
+	var cFijk C.FaceIJK
+	cFijk.face = C.int(h.Face)
+	cFijk.coord.i = C.int(h.Coord.I)
+	cFijk.coord.j = C.int(h.Coord.J)
+	cFijk.coord.k = C.int(h.Coord.K)
+	return int(C._faceIjkToBaseCellCCWrot60(&cFijk))
+}
