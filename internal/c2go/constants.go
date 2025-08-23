@@ -35,6 +35,10 @@ const (
 	NUM_PENT_VERTS  = 5
 	NUM_PENTAGONS   = 12
 
+	// Base cell constants
+	INVALID_BASE_CELL = 127
+	INVALID_ROTATIONS = -1
+
 	// Modes
 	H3_CELL_MODE         = 1
 	H3_DIRECTEDEDGE_MODE = 2
