@@ -211,3 +211,13 @@ func h3Rotate60ccwC(h H3Index) H3Index {
 func h3Rotate60cwC(h H3Index) H3Index {
 	return H3Index(C._h3Rotate60cw(C.H3Index(h)))
 }
+
+// h3RotatePent60ccwC calls the original C implementation.
+func h3RotatePent60ccwC(h H3Index) H3Index {
+	return H3Index(C._h3RotatePent60ccw(C.H3Index(h)))
+}
+
+// h3RotatePent60cwC calls the original C implementation.
+func h3RotatePent60cwC(h H3Index) H3Index {
+	return H3Index(C._h3RotatePent60cw(C.H3Index(h)))
+}

@@ -260,8 +260,8 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `_gridRingInternal` — TODO: needs C→Go port + parity test
   - [x] `_h3Rotate60ccw` — DONE (Go port + C parity)
   - [x] `_h3Rotate60cw` — DONE (Go port + C parity)
-  - [ ] `_h3RotatePent60ccw` — TODO: needs C→Go port + parity test
-  - [ ] `_h3RotatePent60cw` — TODO: needs C→Go port + parity test
+  - [x] `_h3RotatePent60ccw` — DONE [parity test]
+  - [x] `_h3RotatePent60cw` — DONE [parity test]
   - [ ] `_h3ToFaceIjk` — TODO: needs C→Go port + parity test
   - [ ] `_h3ToFaceIjkWithInitializedFijk` — TODO: needs C→Go port + parity test
   - [x] `_hasAll7AfterRes` — DONE (Go port + C parity)
