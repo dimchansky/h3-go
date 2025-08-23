@@ -31,8 +31,8 @@ func Test_adjustPentVertOverage_parity(t *testing.T) {
 			res:  4,
 		},
 		{
-			name: "center face 12",
-			fijk: FaceIJK{Face: 12, Coord: CoordIJK{I: 0, J: 0, K: 0}},
+			name: "critical difference case",
+			fijk: FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}},
 			res:  3,
 		},
 	}

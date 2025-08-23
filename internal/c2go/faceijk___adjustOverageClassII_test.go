@@ -9,41 +9,41 @@ import (
 func Test_adjustOverageClassII_CriticalDifference(t *testing.T) {
 	// Test the specific case where Go and C implementations differ
 	// This is the termination point where C returns NO_OVERAGE but Go returns NEW_FACE
-	
+
 	testCase := struct {
-		name     string
-		input    FaceIJK
-		expectedC FaceIJK
+		name             string
+		input            FaceIJK
+		expectedC        FaceIJK
 		expectedOverageC Overage
 	}{
-		name:     "termination_point",
-		input:    FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}},
-		expectedC: FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}}, // C doesn't change it
-		expectedOverageC: NO_OVERAGE, // C returns 0 (NO_OVERAGE)
+		name:             "termination_point",
+		input:            FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}},
+		expectedC:        FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}}, // C doesn't change it
+		expectedOverageC: NO_OVERAGE,                                                           // C returns 0 (NO_OVERAGE)
 	}
-	
+
 	res := 3
 	pentLeading4Go := false
 	substrateGo := true
 	pentLeading4C := 0
 	substrateC := 1
-	
+
 	t.Run(testCase.name, func(t *testing.T) {
 		// Test Go implementation
 		fijkGo := testCase.input
 		overageGo := _adjustOverageClassII(&fijkGo, res, pentLeading4Go, substrateGo)
-		
+
 		// Test C implementation
 		fijkC := testCase.input
 		overageC := _adjustOverageClassIIC(&fijkC, res, pentLeading4C, substrateC)
-		
-		t.Logf("Input: Face=%d, Coord={%d,%d,%d}", 
+
+		t.Logf("Input: Face=%d, Coord={%d,%d,%d}",
 			testCase.input.Face, testCase.input.Coord.I, testCase.input.Coord.J, testCase.input.Coord.K)
 		t.Logf("Go result:  overage=%d, Face=%d, Coord={%d,%d,%d}",
 			int(overageGo), fijkGo.Face, fijkGo.Coord.I, fijkGo.Coord.J, fijkGo.Coord.K)
 		t.Logf("C result:   overage=%d, Face=%d, Coord={%d,%d,%d}",
 			int(overageC), fijkC.Face, fijkC.Coord.I, fijkC.Coord.J, fijkC.Coord.K)
-		
+
 		// Check what C actually returns
 		if overageC != testCase.expectedOverageC {
 			t.Errorf("C overage unexpected: expected %d, got %d", int(testCase.expectedOverageC), int(overageC))
@@ -53,7 +53,7 @@ func Test_adjustOverageClassII_CriticalDifference(t *testing.T) {
 				testCase.expectedC.Face, testCase.expectedC.Coord.I, testCase.expectedC.Coord.J, testCase.expectedC.Coord.K,
 				fijkC.Face, fijkC.Coord.I, fijkC.Coord.J, fijkC.Coord.K)
 		}
-		
+
 		// Compare Go vs C - this is the critical difference
 		if overageC != overageGo {
 			t.Logf("*** CRITICAL DIFFERENCE CONFIRMED! ***")
