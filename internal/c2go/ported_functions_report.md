@@ -1,0 +1,201 @@
+# Ported H3 Internal Functions Report
+
+This report lists all H3 C functions that have been ported to Go in the internal/c2go package.
+These are primarily internal/static functions used to build the public API.
+
+## baseCells.c (14 functions)
+
+- _baseCellIsCwOffset
+- _baseCellToCCWrot60
+- _baseCellToFaceIjk
+- _faceIjkToBaseCell
+- _faceIjkToBaseCellCCWrot60
+- _getBaseCellDirection
+- _getBaseCellNeighbor
+- _isBaseCellPolarPentagon
+- baseCellData
+- baseCellNeighbor60CCWRots
+- baseCellNeighbors
+- faceIjkBaseCells
+- isBaseCellPentagon
+- res0CellCount
+
+## bbox.c (10 functions)
+
+- bboxCenter
+- bboxContains
+- bboxContainsBBox
+- bboxEquals
+- bboxHeightRads
+- bboxIsTransmeridian
+- bboxNormalization
+- bboxOverlapsBBox
+- bboxWidthRads
+- scaleBBox
+
+## coordijk.c (28 functions)
+
+- _rotate60cw
+- cubeToIjk
+- downAp3
+- downAp3r
+- downAp7
+- downAp7r
+- hex2dToCoordIJK
+- ijToIjk
+- ijkAdd
+- ijkDistance
+- ijkMatches
+- ijkNormalize
+- ijkNormalizeCouldOverflow
+- ijkRotate60ccw
+- ijkRotate60cw
+- ijkScale
+- ijkSub
+- ijkToCube
+- ijkToHex2d
+- ijkToIj
+- neighbor
+- rotate60ccw
+- setIJK
+- unitIjkToDigit
+- upAp7
+- upAp7Checked
+- upAp7r
+- upAp7rChecked
+
+## faceijk.c (5 functions)
+
+- _faceIjkToGeo
+- _geoToFaceIjk
+- geoToClosestFace
+- geoToHex2d
+- hex2dToGeo
+
+## h3Index.c (38 functions)
+
+- _firstOneIndex
+- _getResDigit
+- _h3LeadingNonZeroDigit
+- _h3Rotate60ccw
+- _h3Rotate60cw
+- _h3RotatePent60ccw
+- _h3RotatePent60cw
+- _hasAll7AfterRes
+- _hasAny7UptoRes
+- _hasChildAtRes
+- _hasDeletedSubsequence
+- _hasGoodTopBits
+- _zeroIndexDigits
+- cellToCenterChild
+- cellToChildPos
+- cellToChildrenSize
+- cellToParent
+- childPosToCell
+- getBaseCellNumber
+- getHighBit
+- getIndexDigit
+- getMode
+- getPentagons
+- getReservedBits
+- getResolution
+- h3ToString
+- isPentagon
+- isResClassIII
+- isResolutionClassIII
+- makeDirectChild
+- pentagonCount
+- setH3Index
+- setHighBit
+- setIndexDigit
+- setMode
+- setReservedBits
+- stringToH3
+- validateChildPos
+
+## iterators.c (3 functions)
+
+- _incrementResDigit
+- _iterInitParent
+- _null_iter
+
+## latLng.c (17 functions)
+
+- _geoAzDistanceRads
+- _geoAzimuthRads
+- _setGeoRads
+- constrainLat
+- constrainLng
+- degsToRads
+- geoAlmostEqual
+- geoAlmostEqualThreshold
+- greatCircleDistanceKm
+- greatCircleDistanceM
+- greatCircleDistanceRads
+- normalizeLng
+- posAngleRads
+- radsToDegs
+- setGeoDegs
+- triangleArea
+- triangleEdgeLengthsToArea
+
+## linkedGeo.c (11 functions)
+
+- addLinkedCoord
+- addLinkedLoop
+- addNewLinkedLoop
+- addNewLinkedPolygon
+- countContainers
+- countLinkedCoords
+- countLinkedLoops
+- countLinkedPolygons
+- findDeepestContainer
+- findPolygonForHole
+- normalizeMultiPolygon
+
+## localij.c (1 functions)
+
+- cubeRound
+
+## mathExtensions.c (1 functions)
+
+- ipow
+
+## polyfill.c (1 functions)
+
+- baseCellNumToCell
+
+## polygon.c (9 functions)
+
+- bboxFromGeoLoop
+- bboxesFromGeoPolygon
+- cellBoundaryCrossesGeoLoop
+- cellBoundaryCrossesPolygon
+- cellBoundaryInsidePolygon
+- lineCrossesLine
+- pointInsideGeoLoop
+- pointInsidePolygon
+- validatePolygonFlags
+
+## vec2d.c (3 functions)
+
+- _v2dAlmostEquals
+- _v2dMag
+- v2dIntersect
+
+## vec3d.c (3 functions)
+
+- _geoToVec3d
+- _square
+- pointSquareDist
+
+## vertexGraph.c (2 functions)
+
+- _hashVertex
+- initVertexGraph
+
+**Total ported internal functions: 146**
+
+---
+
+*This report is automatically generated. Run `./scripts/update-h3-status.sh` to refresh.*

@@ -51,131 +51,42 @@ Comment Style Requirements
 Interop helper note
 - When performing Go→C struct conversions in `*_cgo.go`, prefer creating small helper functions to convert common types (e.g., `toCGeoLoop`, `toCGeoPolygon`, `toCBBox`). This avoids duplication when multiple functions need the same transformation and makes memory management (malloc/free) clearer and safer.
 
-Checklist
-- [x] Scaffold package and docs (README.md)
-- [x] Add first dependency-free function: `mathExtensions.c::_ipow`
-- [x] Port `latLng.c::_posAngleRads` (angle normalization) — parity test via `_posAngleRadsC`
- - [x] Port `latLng.c::constrainLng` and `constrainLat`
- - [x] Port `latLng.c::degsToRads` and `radsToDegs`
- - [x] Port `latLng.c::geoAlmostEqualThreshold` and `geoAlmostEqual`
- - [x] Port `latLng.c::H3_EXPORT(greatCircleDistanceRads/Km/M)`
- - [x] Port `latLng.c::_geoAzimuthRads` and `_geoAzDistanceRads`
- - [x] Port `latLng.c::normalizeLng`, `triangleEdgeLengthsToArea`, `triangleArea`, `_setGeoRads`, `setGeoDegs`
- - [x] Port `vec2d.c::_v2dMag`, `_v2dIntersect`, `_v2dAlmostEquals`
-- [ ] Port additional small helpers from `mathExtensions.c` and `latLng.c`
-- [ ] Identify next targets with minimal dependencies; add TODO chains in code
-- [ ] Mirror select C tests (apps/testapps, fuzzers) where practical
+## Current Status
+
+**Run the following command to get current implementation status:**
+```bash
+./scripts/update-h3-status.sh
+```
+
+This will generate/update:
+- `internal/c2go/h3_functions.md` - Public API implementation status (checklist)
+- `internal/c2go/ported_functions_report.md` - Detailed report of all ported internal functions
+
+**Quick status check:**
+```bash
+./scripts/list-ported-functions.sh  # Live terminal output of ported functions
+```
+
+## Completed Milestones
+- [x] Scaffold package and basic infrastructure
+- [x] Core utility functions (math, angles, coordinates)  
+- [x] Geographic and coordinate system functions
+- [x] H3 index manipulation and validation
+- [x] Automated status tracking and reporting system
 
 Non-negotiable constraints (repo policy)
 - Do not copy or vendor H3 `.c` or `.h` files into this repo. Only include original files via build-tagged shims (e.g., `h3lib_*.c`) and let `CGO_CPPFLAGS` provide include paths.
 - Keep all c2go work scoped to `internal/c2go` only; do not introduce dependencies on other Go packages.
 
-Functions
-- mathExtensions.c
-  - [x] `_ipow(int64_t base, int64_t exp)` — implemented; parity-tested via `_ipowC` wrapper
-- latLng.c
-  - [x] `_posAngleRads(double rads)` — DONE; parity via `_posAngleRadsC`
-  - [x] `constrainLng(double lng)` — DONE
-  - [x] `constrainLat(double lat)` — DONE
-  - [x] `H3_EXPORT(degsToRads)(double degrees)` — DONE
-  - [x] `H3_EXPORT(radsToDegs)(double radians)` — DONE
-  - [x] `geoAlmostEqualThreshold(const LatLng*, const LatLng*, double)` — DONE
-  - [x] `geoAlmostEqual(const LatLng*, const LatLng*)` — DONE
-  - [x] `H3_EXPORT(greatCircleDistanceRads)(const LatLng*, const LatLng*)` — DONE
-  - [x] `H3_EXPORT(greatCircleDistanceKm)(const LatLng*, const LatLng*)` — DONE
-  - [x] `H3_EXPORT(greatCircleDistanceM)(const LatLng*, const LatLng*)` — DONE
-  - [x] `_geoAzimuthRads(const LatLng*, const LatLng*)` — DONE
-  - [x] `_geoAzDistanceRads(const LatLng*, double, double, LatLng*)` — DONE
-  - [x] `normalizeLng(const double, const LongitudeNormalization)` — DONE
-  - [x] `triangleEdgeLengthsToArea(double, double, double)` — DONE
-  - [x] `triangleArea(const LatLng*, const LatLng*, const LatLng*)` — DONE
-  - [x] `_setGeoRads(LatLng*, double, double)` and `setGeoDegs(LatLng*, double, double)` — DONE
+## Planning Next Targets
 
-- vec2d.c
-  - [x] `_v2dMag(const Vec2d*)` — DONE
-  - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE
-  - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE
+Use the automated reports to identify the next functions to implement:
 
-- vec3d.c
-  - [x] `_pointSquareDist(const Vec3d*, const Vec3d*)` — DONE (Go port + C parity via vec3d shim; no C logic duplication)
-  - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE (Go port + C parity via vec3d shim)
+1. **Check public API gaps**: Review `internal/c2go/h3_functions.md` for unchecked functions
+2. **Review available building blocks**: Check `internal/c2go/ported_functions_report.md` for internal functions that can support new public APIs
+3. **Select minimal dependency targets**: Choose functions that depend only on already-ported internal functions
 
-- coordijk.c
-  - [x] `_ijkAdd(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_ijkSub(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_setIJK(CoordIJK*, int, int, int)` — DONE (Go port + C parity)
-  - [x] `_ijkMatches(const CoordIJK*, const CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_ijkScale(CoordIJK*, int)` — DONE (Go port + C parity)
-  - [x] `_ijkNormalize(CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `ijkDistance(const CoordIJK*, const CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_ijkRotate60ccw(CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_ijkRotate60cw(CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_unitIjkToDigit(const CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_neighbor(CoordIJK*, Direction)` — DONE (Go port + C parity)
-  - [x] `_rotate60ccw(Direction)` — DONE (Go port + C parity)
-  - [x] `_rotate60cw(Direction)` — DONE (Go port + C parity)
-  - [x] `ijkToCube(CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `cubeToIjk(CoordIJK*)` — DONE (Go port + C parity)
-  - [x] `_ijkToHex2d(const CoordIJK*, Vec2d*)` — DONE (Go port + C parity)
-  - [x] `_hex2dToCoordIJK(const Vec2d*, CoordIJK*)` — DONE (Go port + C parity)
-
-- h3Index.c
-  - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` — DONE (Go ports + cgo wrappers)
-  - [x] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` — DONE (Go ports + cgo wrappers)
-  - [x] `_h3LeadingNonZeroDigit` — DONE (Go port + direct C call parity)
-
-Next up (planned)
-- polygon.c (next small helpers):
-  - [x] `bboxFromGeoLoop(const GeoLoop*, BBox*)` — DONE
-  - [x] `pointInsideGeoLoop(const GeoLoop*, const BBox*, const LatLng*)` — DONE
-  - [x] `pointInsidePolygon(const GeoPolygon*, const BBox*, const LatLng*)` — DONE
-  - [x] `cellBoundaryCrossesGeoLoop(const GeoLoop*, const BBox*, const CellBoundary*, const BBox*)` — DONE
-  - [x] `cellBoundaryInsidePolygon(...)` — DONE
-  - [x] `cellBoundaryCrossesPolygon(...)` — DONE
-- h3Index.c (more utilities):
-  - [x] `H3_GET_RESERVED_BITS/H3_SET_RESERVED_BITS` ports
-  - [x] `H3_GET_INDEX_DIGIT/H3_SET_INDEX_DIGIT` ports
-  - [x] `_h3LeadingNonZeroDigit` (interop + Go port)
-  - [x] `H3_GET_MODE/H3_SET_MODE` — DONE (Go ports + cgo wrappers + parity)
-  - [x] `H3_GET_HIGH_BIT/H3_SET_HIGH_BIT` — DONE (Go ports + cgo wrappers + parity)
-  - [x] `_zeroIndexDigits(H3Index, int, int)` — DONE (Go port + C parity); note: C allows start=0 (overlaps base cell bits) and treats end>15 as no-op
-  - [x] `H3_EXPORT(isResClassIII)(H3Index)` — DONE (Go port returns int for parity)
-  - [x] `H3_EXPORT(isPentagon)(H3Index)` — DONE (Go port + C parity via tables.IsPentagonBaseCell and _h3LeadingNonZeroDigit)
-  - [x] `setH3Index(H3Index*, int, int, Direction)` — DONE (Go port + parity)
-  - [x] `makeDirectChild(H3Index, int)` — DONE (Go port + parity via inline C wrapper)
-  - [x] `H3_EXPORT(cellToCenterChild)(H3Index, int, H3Index*)` — DONE (Go port + C parity)
-  - [x] `H3_EXPORT(cellToParent)(H3Index, int, H3Index*)` — DONE (Go port + C parity)
-  - [x] `_hasChildAtRes(H3Index, int)` — DONE (Go port + C parity via shim)
-  - [x] `H3_EXPORT(cellToChildrenSize)(H3Index, int, int64_t*)` — DONE (Go port + C parity)
-  - [x] `H3_EXPORT(pentagonCount)(void)` — DONE (Go port + C parity)
-  - [x] `_isBaseCellPentagon(int)` — DONE (Go parity test via baseCells shim; local mirror in constants.go)
-  - [x] `_isBaseCellPolarPentagon(int)` — DONE (Go port + C parity)
-  - [x] `H3_EXPORT(res0CellCount)(void)` — DONE (Go port + C parity)
-  - [x] `H3_EXPORT(cellToChildPos)(H3Index, int, int64_t*)` — DONE (Go port + C parity)
-  - [x] `H3_EXPORT(childPosToCell)(int64_t, H3Index, int, H3Index*)` — DONE (Go port + C parity)
-  - [x] `validateChildPos` (static) — DONE (Go port; covered indirectly by parity)
-  - [x] `isResolutionClassIII(int res)` — DONE (Go port + C parity)
-
-Planned small targets
-- vec3d.c:
-  - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE this iteration; converts LL to 3D vector
-- coordijk.c:
-  - [x] `_ijkAdd(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE
-  - [x] `_ijkSub(const CoordIJK*, const CoordIJK*, CoordIJK*)` — DONE
-  - [x] `_setIJK(CoordIJK*, int, int, int)` — DONE; sets IJK coordinate components
-  - [x] `_ijkMatches(const CoordIJK*, const CoordIJK*)` — DONE; compares IJK coordinates for equality
-  - [x] `_ijkScale(CoordIJK*, int)` — DONE; scales IJK coordinates by factor
-  - [x] `_ijkNormalize(CoordIJK*)` — DONE; normalizes IJK by removing negatives
-  - [x] `ijkDistance(const CoordIJK*, const CoordIJK*)` — DONE; computes distance between IJK coordinates
-  - [x] `_ijkRotate60ccw(CoordIJK*)` — DONE; rotates IJK coordinates 60° counter-clockwise
-  - [x] `_ijkRotate60cw(CoordIJK*)` — DONE; rotates IJK coordinates 60° clockwise
-  - [x] `_unitIjkToDigit(const CoordIJK*)` — DONE; converts unit IJK coordinate to direction digit
-  - [x] `_neighbor(CoordIJK*, Direction)` — DONE; applies direction vector to IJK coordinates
-  - [x] `_rotate60ccw(Direction)` — DONE; rotates direction digit 60° counter-clockwise
-  - [x] `_rotate60cw(Direction)` — DONE; rotates direction digit 60° clockwise
-
-Notes this iteration
-- Verified available vec3d symbols via header; opted to plan `_geoToVec3d` as a safe, dependency-light target.
+**Strategy**: Focus on completing public API functions that have the most internal dependencies already satisfied.
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.
@@ -204,35 +115,9 @@ Guideline going forward when a C function links in extra deps
 - If link still fails due to further deps, add shims for those modules too (one TU per module).
 - Keep the Go interop file (`<cfile>_cgo.go`) limited to declaring wrappers that forward to C; never copy C logic.
 
-
 Note on C bool interop (cgo)
 - Preferred: include `<stdbool.h>` and compare C.bool return values directly to `0` in Go (`C.fn(...) != 0`). This is valid because `_Bool` is an integer type in C99.
 - Toolchain caveat: some cgo toolchains reject direct comparison `C.bool != 0`. In those cases, use a tiny inline C helper to normalize to `int` (e.g., `static int h3_bool_to_int(_Bool b) { return b ? 1 : 0; }`) and compare its result to `0` from Go.
-
-- faceijk.c
-  - [x] `_geoToClosestFace(const LatLng*, int*, double*)` — DONE (Go port + C parity); finds closest icosahedral face center
-  - [x] `_geoToHex2d(const LatLng*, int, int*, Vec2d*)` — DONE (Go port + C parity); converts geo to 2D hex coordinates on face
-  - [x] `_hex2dToGeo(const Vec2d*, int, int, int, LatLng*)` — DONE (Go port + C parity); converts 2D hex coordinates back to geo
-
-Next up (planned)
-- faceijk.c (additional functions for future consideration):
-  - [x] `_faceIjkToGeo(const FaceIJK*, int, LatLng*)` — DONE (Go port + C parity); converts FaceIJK coordinates to geographic coordinates
-- latLng.c
-  - [x] `normalizeLng(const double, const LongitudeNormalization)` — DONE (Go port + C parity); normalizes longitude values based on strategy
-  - [x] `triangleEdgeLengthsToArea(double, double, double)` — DONE (Go port + C parity); calculates spherical triangle area from edge lengths
-  - [x] `triangleArea(const LatLng*, const LatLng*, const LatLng*)` — DONE (Go port + C parity); calculates spherical triangle area from vertices
-  - [x] `_setGeoRads(LatLng*, double, double)` — DONE (Go port + C parity); sets LatLng components in radians
-  - [x] `setGeoDegs(LatLng*, double, double)` — DONE (Go port + C parity); sets LatLng components in degrees
-- vec2d.c
-  - [x] `_v2dMag(const Vec2d*)` — DONE (Go port + C parity); calculates magnitude of 2D vector
-  - [x] `_v2dIntersect(const Vec2d*, const Vec2d*, const Vec2d*, const Vec2d*, Vec2d*)` — DONE (Go port + C parity); finds intersection between two lines
-  - [x] `_v2dAlmostEquals(const Vec2d*, const Vec2d*)` — DONE (Go port + C parity); compares 2D vectors for equality
- - vec3d.c
-  - [x] `_geoToVec3d(const LatLng*, Vec3d*)` — DONE (Go port + C parity); converts geographic coordinates to 3D unit vector
-  - [x] `_square(double)` — DONE (Go port + C parity); returns square of a number
-- h3Index.c
-  - [ ] Next: `cellToChildren` iterator-based parity (depends on iterators); may be deferred
-  - [ ] Other tiny getters: isValidCell (larger), error codes mapping (already wrapped)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls to the original C functions using C structs where applicable (no scalar explosion; use C.LatLng / C.Vec2d).
@@ -240,97 +125,11 @@ Execution plan per function
 - Add parity test `<cfile>__<function>_parity_test.go` under `//go:build c2go` with tight but realistic tolerances.
 - If C returns `bool`, prefer `<stdbool.h>` and compare `!= 0`. If toolchain warns, route through a tiny C helper returning `int`.
 
-## Missing Functions from Gap Analysis
+## Update Status After Implementation
 
-The following 96 functions were identified from comprehensive H3 source analysis but are not yet tracked in TODO:
+After completing function implementations, always run:
+```bash
+./scripts/update-h3-status.sh
+```
 
-  - [ ] `_adjustPentVertOverage` — TODO: needs C→Go port + parity test
-  - [x] `_baseCellIsCwOffset` — DONE (Go port + C parity)
-  - [x] `_baseCellToCCWrot60` — DONE (Go port + C parity)
-  - [x] `_baseCellToFaceIjk` — DONE (Go port + C parity)
-  - [x] `_downAp3` — DONE (Go port + C parity)
-  - [x] `_downAp3r` — DONE (Go port + C parity)
-  - [x] `_downAp7` — DONE (Go port + C parity)
-  - [x] `_downAp7r` — DONE (Go port + C parity)
-  - [ ] `_faceIjkPentToVerts` — TODO: needs C→Go port + parity test
-  - [x] `_faceIjkToBaseCell` — DONE (Go port + C parity)
-  - [x] `_faceIjkToBaseCellCCWrot60` — DONE (Go port + C parity)
-  - [ ] `_faceIjkToH3` — TODO: needs C→Go port + parity test
-  - [ ] `_faceIjkToVerts` — TODO: needs C→Go port + parity test
-  - [x] `_firstOneIndex` — DONE (Go port + C parity)
-  - [x] `_geoToFaceIjk` — DONE (Go port + C parity)
-  - [x] `_getBaseCellDirection` — DONE (Go port + C parity)
-  - [x] `_getBaseCellNeighbor` — DONE (Go port + C parity)
-  - [x] `_getResDigit` — DONE (Go port + C parity)
-  - [ ] `_gridRingInternal` — TODO: needs C→Go port + parity test
-  - [x] `_h3Rotate60ccw` — DONE (Go port + C parity)
-  - [x] `_h3Rotate60cw` — DONE (Go port + C parity)
-  - [x] `_h3RotatePent60ccw` — DONE [parity test]
-  - [x] `_h3RotatePent60cw` — DONE [parity test]
-  - [ ] `_h3ToFaceIjk` — TODO: needs C→Go port + parity test
-  - [ ] `_h3ToFaceIjkWithInitializedFijk` — TODO: needs C→Go port + parity test
-  - [x] `_hasAll7AfterRes` — DONE (Go port + C parity)
-  - [x] `_hasAny7UptoRes` — DONE (Go port + C parity)
-  - [x] `_hasDeletedSubsequence` — DONE (Go port + C parity)
-  - [x] `_hasGoodTopBits` — DONE (Go port + C parity)
-  - [x] `_hashVertex` — DONE (Go port + C parity)
-  - [ ] `_hexRadiusKm` — TODO: needs C→Go port + parity test
-  - [x] `_ijkNormalizeCouldOverflow` — DONE (Go port + C parity)
-  - [x] `_incrementResDigit` — DONE: iterators__incrementResDigit.go with parity test
-  - [x] `_iterInitParent` — DONE: iterators__iterInitParent.go with parity test
-  - [x] `_null_iter` — DONE: iterators__null_iter.go with parity test
-  - [x] `_upAp7` — DONE (Go port + C parity)
-  - [x] `_upAp7Checked` — DONE (Go port + C parity)  
-  - [x] `_upAp7r` — DONE (Go port + C parity)
-  - [x] `_upAp7rChecked` — DONE (Go port + C parity)
-  - [ ] `_vertexGraphToLinkedGeo` — TODO: needs C→Go port + parity test
-  - [x] `baseCellNumToCell` — DONE (Go port + C parity)
-  - [x] `bboxCenter` — DONE (Go port + C parity)
-  - [x] `bboxContains` — DONE (Go port + C parity)
-  - [x] `bboxContainsBBox` — DONE (Go port + C parity)
-  - [x] `bboxEquals` — DONE (Go port + C parity)
-  - [x] `bboxesFromGeoPolygon` — DONE: polygon__bboxesFromGeoPolygon.go with parity test
-  - [ ] `bboxHexEstimate` — TODO: needs C→Go port + parity test
-  - [x] `bboxIsTransmeridian` — DONE (Go port + C parity)
-  - [x] `bboxOverlapsBBox` — DONE (Go port + C parity)
-  - [ ] `bboxToCellBoundary` — TODO: needs C→Go port + parity test
-  - [ ] `cellToBBox` — TODO: needs C→Go port + parity test
-  - [ ] `cellToLocalIjk` — TODO: needs C→Go port + parity test
-  - [x] `bboxFromLinkedGeoLoop` — DONE (Go port + C parity)
-  - [x] `countLinkedCoords` — DONE (Go port + C parity)
-  - [x] `countLinkedLoops` — DONE (Go port + C parity)
-  - [x] `isClockwiseLinkedGeoLoop` — DONE (Go port + C parity)
-  - [x] `pointInsideLinkedGeoLoop` — DONE (Go port + C parity)
-  - [x] `addNewLinkedPolygon` — DONE (Go port + C parity)
-  - [x] `addLinkedLoop` — DONE (Go port + C parity)
-  - [x] `addNewLinkedLoop` — DONE (Go port + C parity)
-  - [x] `addLinkedCoord` — DONE (Go port + C parity)
-  - [x] `countLinkedPolygons` — DONE (Go port + C parity)
-  - [x] `countContainers` — DONE (Go port, C parity has technical issues)
-  - [x] `findDeepestContainer` — DONE (Go port + C parity)
-  - [x] `findPolygonForHole` — DONE (Go port + C parity)
-  - [x] `cubeRound` — DONE (Go port + C parity)
-  - [ ] `destroyLinkedGeoLoop` — TODO: needs C→Go port + parity test
-  - [ ] `destroyVertexGraph` — TODO: needs C→Go port + parity test
-  - [ ] `directionForNeighbor` — TODO: needs C→Go port + parity test
-  - [ ] `directionForVertexNum` — TODO: needs C→Go port + parity test
-  - [ ] `getAverageCellArea` — TODO: needs C→Go port + parity test
-  - [x] `ijkToIj` — DONE [parity test]
-  - [x] `ijToIjk` — DONE [parity test]
-  - [x] `initVertexGraph` — DONE (Go port + C parity)
-  - [ ] `iterDestroyPolygon` — TODO: needs C→Go port + parity test
-  - [ ] `iterDestroyPolygonCompact` — TODO: needs C→Go port + parity test
-  - [ ] `iterInitBaseCellNum` — TODO: needs C→Go port + parity test
-  - [ ] `iterInitRes` — TODO: needs C→Go port + parity test
-  - [ ] `iterStepChild` — TODO: needs C→Go port + parity test
-  - [ ] `iterStepPolygon` — TODO: needs C→Go port + parity test
-  - [ ] `iterStepPolygonCompact` — TODO: needs C→Go port + parity test
-  - [ ] `iterStepRes` — TODO: needs C→Go port + parity test
-  - [ ] `localIjkToCell` — TODO: needs C→Go port + parity test
-  - [ ] `nextCell` — TODO: needs C→Go port + parity test
-  - [x] `normalizeMultiPolygon` — DONE (Go port + C parity has technical issues with complex memory management)
-  - [ ] `removeVertexNode` — TODO: needs C→Go port + parity test
-  - [x] `scaleBBox` — DONE [parity test]
-  - [x] `validatePolygonFlags` — DONE [parity test]
-  - [ ] `vertexNumForDirection` — TODO: needs C→Go port + parity test
-  - [ ] `vertexRotations` — TODO: needs C→Go port + parity test
+This ensures the automated tracking stays current and provides accurate progress reporting.
