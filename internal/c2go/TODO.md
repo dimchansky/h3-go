@@ -238,10 +238,10 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [x] `_faceIjkToBaseCellCCWrot60` — DONE (Go port + C parity)
   - [ ] `_faceIjkToH3` — TODO: needs C→Go port + parity test
   - [ ] `_faceIjkToVerts` — TODO: needs C→Go port + parity test
-  - [ ] `_firstOneIndex` — TODO: needs C→Go port + parity test
+  - [x] `_firstOneIndex` — DONE (Go port + C parity)
   - [ ] `_geoToFaceIjk` — TODO: needs C→Go port + parity test
-  - [ ] `_getBaseCellDirection` — TODO: needs C→Go port + parity test
-  - [ ] `_getBaseCellNeighbor` — TODO: needs C→Go port + parity test
+  - [x] `_getBaseCellDirection` — DONE (Go port + C parity)
+  - [x] `_getBaseCellNeighbor` — DONE (Go port + C parity)
   - [ ] `_getResDigit` — TODO: needs C→Go port + parity test
   - [ ] `_gridRingInternal` — TODO: needs C→Go port + parity test
   - [ ] `_h3Rotate60ccw` — TODO: needs C→Go port + parity test
@@ -253,7 +253,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `_hasAll7AfterRes` — TODO: needs C→Go port + parity test
   - [ ] `_hasAny7UptoRes` — TODO: needs C→Go port + parity test
   - [ ] `_hasDeletedSubsequence` — TODO: needs C→Go port + parity test
-  - [ ] `_hasGoodTopBits` — TODO: needs C→Go port + parity test
+  - [x] `_hasGoodTopBits` — DONE (Go port + C parity)
   - [ ] `_hashVertex` — TODO: needs C→Go port + parity test
   - [ ] `_hexRadiusKm` — TODO: needs C→Go port + parity test
   - [x] `_ijkNormalizeCouldOverflow` — DONE (Go port + C parity)

@@ -25,6 +25,8 @@ extern H3Index makeDirectChild(H3Index h, int cellNumber);
 static inline H3Index make_direct_child_c(H3Index h, int cellNumber) { return makeDirectChild(h, cellNumber); }
 // Prototypes for cgo-exposed helpers in h3lib_h3Index_c2go.c
 extern int has_child_at_res_c(H3Index h, int childRes);
+extern int first_one_index_c(H3Index h);
+extern int has_good_top_bits_c(H3Index h);
 */
 import "C"
 
@@ -170,4 +172,15 @@ func getPentagonsC(res int) ([]H3Index, uint32) {
 	buf := make([]H3Index, n)
 	err := C.getPentagons(C.int(res), (*C.H3Index)(&buf[0]))
 	return buf, uint32(err)
+}
+
+// firstOneIndexC calls the original C implementation.
+func firstOneIndexC(h H3Index) int {
+	return int(C.first_one_index_c(C.H3Index(h)))
+}
+
+
+// hasGoodTopBitsC calls the original C implementation.
+func hasGoodTopBitsC(h H3Index) bool {
+	return C.has_good_top_bits_c(C.H3Index(h)) != 0
 }
