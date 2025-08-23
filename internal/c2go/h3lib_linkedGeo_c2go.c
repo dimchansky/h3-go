@@ -17,3 +17,8 @@ bool isClockwiseLinkedGeoLoopC(const LinkedGeoLoop *loop) {
     return isClockwiseLinkedGeoLoop(loop);
 }
 
+// Wrapper for addNewLinkedPolygon
+LinkedGeoPolygon* addNewLinkedPolygonC(LinkedGeoPolygon *polygon) {
+    return addNewLinkedPolygon(polygon);
+}
+

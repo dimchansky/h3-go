@@ -13,6 +13,7 @@ int countLinkedLoops(LinkedGeoPolygon* polygon);
 void bboxFromLinkedGeoLoopC(const LinkedGeoLoop *loop, BBox *bbox);
 bool pointInsideLinkedGeoLoopC(const LinkedGeoLoop *loop, const BBox *bbox, const LatLng *coord);
 bool isClockwiseLinkedGeoLoopC(const LinkedGeoLoop *loop);
+LinkedGeoPolygon* addNewLinkedPolygonC(LinkedGeoPolygon *polygon);
 */
 import "C"
 import "unsafe"
@@ -264,4 +265,29 @@ func isClockwiseLinkedGeoLoopC(loop *LinkedGeoLoop) bool {
 	C.free(unsafe.Pointer(cLoop))
 
 	return result
+}
+
+// addNewLinkedPolygonC wraps the C addNewLinkedPolygon function for parity testing.
+func addNewLinkedPolygonC(polygon *LinkedGeoPolygon) *LinkedGeoPolygon {
+	// Create a minimal C LinkedGeoPolygon structure
+	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
+	cPolygon.first = nil
+	cPolygon.last = nil
+	cPolygon.next = nil
+
+	// Call C function
+	cResult := C.addNewLinkedPolygonC(cPolygon)
+
+	// Convert result back to Go
+	goResult := &LinkedGeoPolygon{
+		First: nil,
+		Last:  nil,
+		Next:  nil,
+	}
+
+	// Clean up C memory
+	C.free(unsafe.Pointer(cResult))
+	C.free(unsafe.Pointer(cPolygon))
+
+	return goResult
 }
