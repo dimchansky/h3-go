@@ -29,6 +29,11 @@ Source Reference
 - When porting C code, reference the local sources directly for accurate implementation
 - Port as closely as possible to the C implementation, preserving algorithm details and edge cases
 
+Type Mapping Rules (C to Go)
+- **C `int` → Go `int32`**: Always use `int32` for C int types to ensure consistent 32-bit overflow behavior
+- **C `bool` → Go `bool`**: Keep boolean semantics as Go `bool` for clarity
+- **Rationale**: H3 C library uses 32-bit integers which can overflow differently than Go's platform-dependent `int` (typically 64-bit), leading to infinite loops or incorrect behavior in coordinate calculations
+
 Build Tag Rules
 - **Pure Go implementations** (`<cfile>__<function>.go`): NO build tags
 - **CGO interop files** (`*_cgo.go`): Must have `//go:build cgo` as first line
