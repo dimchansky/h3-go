@@ -3,7 +3,7 @@ package c2go
 // isValidCell determines if an H3 index is valid by checking bit patterns
 // and structural constraints.
 // Ported from H3 C: h3Index.c::isValidCell
-func isValidCell(h H3Index) int {
+func isValidCell(h H3Index) bool {
 	/*
 	   Look for bit patterns that would disqualify an H3Index from
 	   being valid. If identified, exit early.
@@ -26,7 +26,7 @@ func isValidCell(h H3Index) int {
 	   whenever possible.
 	*/
 	if !_hasGoodTopBits(h) {
-		return 0
+		return false
 	}
 
 	// No need to check resolution; any 4 bits give a valid resolution.
@@ -35,19 +35,19 @@ func isValidCell(h H3Index) int {
 	// Get base cell number and check that it is valid.
 	bc := getBaseCellNumber(h)
 	if bc >= NUM_BASE_CELLS {
-		return 0
+		return false
 	}
 
 	if _hasAny7UptoRes(h, res) {
-		return 0
+		return false
 	}
 	if !_hasAll7AfterRes(h, res) {
-		return 0
+		return false
 	}
 	if _hasDeletedSubsequence(h, bc) {
-		return 0
+		return false
 	}
 
 	// If no disqualifications were identified, the index is a valid H3 cell.
-	return 1
+	return true
 }

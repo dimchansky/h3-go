@@ -54,14 +54,18 @@ func TestIsValidCellParity(t *testing.T) {
 			// Test C implementation
 			cResult := isValidCellC(tc.h3)
 
-			// Compare results
-			if goResult != cResult {
-				t.Errorf("Result mismatch for 0x%x: Go=%d, C=%d",
-					uint64(tc.h3), goResult, cResult)
+			// Compare results (convert bool to int for comparison)
+			goInt := 0
+			if goResult {
+				goInt = 1
+			}
+			if goInt != cResult {
+				t.Errorf("Result mismatch for 0x%x: Go=%t (%d), C=%d",
+					uint64(tc.h3), goResult, goInt, cResult)
 			}
 
 			// Log results for visibility
-			t.Logf("H3Index 0x%x -> valid=%d", uint64(tc.h3), goResult)
+			t.Logf("H3Index 0x%x -> valid=%t", uint64(tc.h3), goResult)
 		})
 	}
 }
@@ -101,14 +105,18 @@ func TestIsValidCellSystematic(t *testing.T) {
 			// Test C implementation
 			cResult := isValidCellC(h3)
 
-			// Compare results
-			if goResult != cResult {
-				t.Errorf("Result mismatch for 0x%x: Go=%d, C=%d",
-					uint64(h3), goResult, cResult)
+			// Compare results (convert bool to int for comparison)
+			goInt := 0
+			if goResult {
+				goInt = 1
+			}
+			if goInt != cResult {
+				t.Errorf("Result mismatch for 0x%x: Go=%t (%d), C=%d",
+					uint64(h3), goResult, goInt, cResult)
 			}
 
 			// Log the result without assuming validity
-			t.Logf("H3Index 0x%x -> Go=%d, C=%d", uint64(h3), goResult, cResult)
+			t.Logf("H3Index 0x%x -> Go=%t, C=%d", uint64(h3), goResult, cResult)
 		})
 	}
 }
