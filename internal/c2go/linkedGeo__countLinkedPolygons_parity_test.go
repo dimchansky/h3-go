@@ -8,9 +8,9 @@ import (
 
 func Test_countLinkedPolygons_parity(t *testing.T) {
 	tests := []struct {
-		name            string
-		setupPolygons   func() *LinkedGeoPolygon
-		expectedCount   int
+		name          string
+		setupPolygons func() *LinkedGeoPolygon
+		expectedCount int
 	}{
 		{
 			name: "nil polygon",
@@ -96,18 +96,18 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup test data
 			polygon := tt.setupPolygons()
-			
+
 			// Test Go implementation
 			goResult := countLinkedPolygons(polygon)
-			
+
 			// Test C implementation
 			cResult := countLinkedPolygonsC(polygon)
-			
+
 			// Compare results
 			if goResult != cResult {
 				t.Errorf("Result mismatch: Go=%d, C=%d", goResult, cResult)
 			}
-			
+
 			// Also verify against expected count
 			if goResult != tt.expectedCount {
 				t.Errorf("Go result %d does not match expected %d", goResult, tt.expectedCount)
@@ -117,20 +117,20 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 			}
 		})
 	}
-	
+
 	// Additional test: verify both handle larger chains correctly
 	t.Run("large chain", func(t *testing.T) {
 		// Create a chain of 100 polygons
 		const chainSize = 100
 		var first, prev *LinkedGeoPolygon
-		
+
 		for i := 0; i < chainSize; i++ {
 			polygon := &LinkedGeoPolygon{
 				First: nil,
 				Last:  nil,
 				Next:  nil,
 			}
-			
+
 			if first == nil {
 				first = polygon
 			} else {
@@ -138,18 +138,18 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 			}
 			prev = polygon
 		}
-		
+
 		// Test Go implementation
 		goResult := countLinkedPolygons(first)
-		
+
 		// Test C implementation
 		cResult := countLinkedPolygonsC(first)
-		
+
 		// Compare results
 		if goResult != cResult {
 			t.Errorf("Result mismatch for large chain: Go=%d, C=%d", goResult, cResult)
 		}
-		
+
 		if goResult != chainSize {
 			t.Errorf("Go result %d does not match expected %d", goResult, chainSize)
 		}

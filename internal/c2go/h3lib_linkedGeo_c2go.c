@@ -55,3 +55,10 @@ const LinkedGeoPolygon* findDeepestContainerC(const LinkedGeoPolygon **polygons,
     return findDeepestContainer(polygons, bboxes, polygonCount);
 }
 
+// Wrapper for findPolygonForHole
+const LinkedGeoPolygon* findPolygonForHoleC(const LinkedGeoLoop *loop, 
+                                             const LinkedGeoPolygon *polygon,
+                                             const BBox *bboxes, int polygonCount) {
+    return findPolygonForHole(loop, polygon, bboxes, polygonCount);
+}
+

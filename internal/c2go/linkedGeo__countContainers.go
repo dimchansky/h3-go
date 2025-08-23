@@ -11,12 +11,12 @@ func countContainers(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes [
 	if len(polygons) != len(bboxes) {
 		panic("countContainers: polygons and bboxes must have same length")
 	}
-	
+
 	// If loop is nil or has no coordinates, it can't be contained
 	if loop == nil || loop.First == nil {
 		return 0
 	}
-	
+
 	containerCount := 0
 	for i := 0; i < len(polygons); i++ {
 		// Check that this isn't the same loop (avoid self-containment)

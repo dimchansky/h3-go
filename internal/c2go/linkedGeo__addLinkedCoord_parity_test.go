@@ -12,16 +12,16 @@ func Test_addLinkedCoord_parity(t *testing.T) {
 		goLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
 		vertex := &LatLng{Lat: 0.123, Lng: 0.456}
 		goResult := addLinkedCoord(goLoop, vertex)
-		
+
 		// Check Go behavior
 		goReturnsCoord := (goResult != nil)
 		goSetsFirst := (goLoop.First == goResult)
 		goSetsLast := (goLoop.Last == goResult)
 		goVertexMatches := (goResult != nil && goResult.Vertex.Lat == vertex.Lat && goResult.Vertex.Lng == vertex.Lng)
-		
+
 		// Test C implementation behavior
 		cReturnsCoord, cSetsFirst, cSetsLast, _, cVertexMatches := addLinkedCoordC(true, false, *vertex)
-		
+
 		// Compare behaviors
 		if goReturnsCoord != cReturnsCoord {
 			t.Errorf("Return behavior mismatch: Go=%v, C=%v", goReturnsCoord, cReturnsCoord)
@@ -36,7 +36,7 @@ func Test_addLinkedCoord_parity(t *testing.T) {
 			t.Errorf("Vertex copy behavior mismatch: Go=%v, C=%v", goVertexMatches, cVertexMatches)
 		}
 	})
-	
+
 	t.Run("loop with existing coordinate", func(t *testing.T) {
 		// Test Go implementation
 		existingCoord := &LinkedLatLng{
@@ -46,17 +46,17 @@ func Test_addLinkedCoord_parity(t *testing.T) {
 		goLoop := &LinkedGeoLoop{First: existingCoord, Last: existingCoord, Next: nil}
 		vertex := &LatLng{Lat: 0.789, Lng: 0.012}
 		goResult := addLinkedCoord(goLoop, vertex)
-		
+
 		// Check Go behavior
 		goReturnsCoord := (goResult != nil)
 		goKeepsFirst := (goLoop.First == existingCoord)
 		goSetsLast := (goLoop.Last == goResult)
 		goLinksCoords := (existingCoord.Next == goResult)
 		goVertexMatches := (goResult != nil && goResult.Vertex.Lat == vertex.Lat && goResult.Vertex.Lng == vertex.Lng)
-		
+
 		// Test C implementation behavior
 		cReturnsCoord, cKeepsFirst, cSetsLast, cLinksCoords, cVertexMatches := addLinkedCoordC(false, true, *vertex)
-		
+
 		// Compare behaviors
 		if goReturnsCoord != cReturnsCoord {
 			t.Errorf("Return behavior mismatch: Go=%v, C=%v", goReturnsCoord, cReturnsCoord)
@@ -74,35 +74,35 @@ func Test_addLinkedCoord_parity(t *testing.T) {
 			t.Errorf("Vertex copy behavior mismatch: Go=%v, C=%v", goVertexMatches, cVertexMatches)
 		}
 	})
-	
+
 	t.Run("multiple coordinates", func(t *testing.T) {
 		// Test Go implementation with multiple additions
 		goLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
-		
+
 		// Add first coordinate
 		vertex1 := &LatLng{Lat: 0.1, Lng: 0.2}
 		coord1 := addLinkedCoord(goLoop, vertex1)
-		
+
 		// Add second coordinate
 		vertex2 := &LatLng{Lat: 0.3, Lng: 0.4}
 		coord2 := addLinkedCoord(goLoop, vertex2)
-		
+
 		// Add third coordinate
 		vertex3 := &LatLng{Lat: 0.5, Lng: 0.6}
 		coord3 := addLinkedCoord(goLoop, vertex3)
-		
+
 		// Check Go behavior for final state
 		goHasThreeCoords := (coord1 != nil && coord2 != nil && coord3 != nil)
 		goFirstIsCoord1 := (goLoop.First == coord1)
 		goLastIsCoord3 := (goLoop.Last == coord3)
 		goProperLinking := (coord1.Next == coord2 && coord2.Next == coord3 && coord3.Next == nil)
-		
+
 		// We can't directly test multiple additions with C, but we can verify the pattern
 		// by checking that each addition follows the expected behavior
 		_, c1SetsFirst, c1SetsLast, _, _ := addLinkedCoordC(true, false, *vertex1)
 		_, c2KeepsFirst, c2SetsLast, c2Links, _ := addLinkedCoordC(false, true, *vertex2)
 		_, c3KeepsFirst, c3SetsLast, c3Links, _ := addLinkedCoordC(false, true, *vertex3)
-		
+
 		// Verify the pattern matches
 		if !goHasThreeCoords {
 			t.Error("Go failed to create three coordinates")

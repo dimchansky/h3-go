@@ -12,7 +12,7 @@ func addLinkedCoord(loop *LinkedGeoLoop, vertex *LatLng) *LinkedLatLng {
 		Vertex: *vertex, // Copy the vertex value
 		Next:   nil,
 	}
-	
+
 	// Get the current last coordinate
 	last := loop.Last
 	if last == nil {

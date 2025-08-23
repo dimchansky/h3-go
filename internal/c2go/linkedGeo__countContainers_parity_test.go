@@ -17,7 +17,7 @@ func Test_countContainers_parity(t *testing.T) {
 			{Lat: x + 0.1, Lng: y},
 			{Lat: x, Lng: y}, // Close the loop
 		}
-		
+
 		var prev *LinkedLatLng
 		for i, coord := range coords {
 			node := &LinkedLatLng{
@@ -34,7 +34,7 @@ func Test_countContainers_parity(t *testing.T) {
 		}
 		return loop
 	}
-	
+
 	// Helper to create bbox for a loop
 	createBboxForLoop := func(loop *LinkedGeoLoop) *BBox {
 		bbox := &BBox{
@@ -43,7 +43,7 @@ func Test_countContainers_parity(t *testing.T) {
 			East:  -180.0,
 			West:  180.0,
 		}
-		
+
 		// Simple bbox calculation (not exact but sufficient for testing)
 		current := loop.First
 		for current != nil {
@@ -61,10 +61,10 @@ func Test_countContainers_parity(t *testing.T) {
 			}
 			current = current.Next
 		}
-		
+
 		return bbox
 	}
-	
+
 	tests := []struct {
 		name          string
 		setupTest     func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox)
@@ -83,15 +83,15 @@ func Test_countContainers_parity(t *testing.T) {
 			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
 				// Test loop
 				testLoop := createSquareLoop(0, 0)
-				
+
 				// Polygon that doesn't contain the test loop
 				polygon := &LinkedGeoPolygon{
 					First: createSquareLoop(10, 10), // Far away
 				}
 				polygon.Last = polygon.First
-				
+
 				bbox := createBboxForLoop(polygon.First)
-				
+
 				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
 			},
 			expectedCount: 0,
@@ -101,15 +101,15 @@ func Test_countContainers_parity(t *testing.T) {
 			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
 				// Test loop
 				testLoop := createSquareLoop(0, 0)
-				
+
 				// Polygon with the same loop as its first
 				polygon := &LinkedGeoPolygon{
 					First: testLoop, // Same loop - should not count as container
 				}
 				polygon.Last = polygon.First
-				
+
 				bbox := createBboxForLoop(polygon.First)
-				
+
 				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
 			},
 			expectedCount: 0,
@@ -119,15 +119,15 @@ func Test_countContainers_parity(t *testing.T) {
 			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
 				// Small test loop inside
 				testLoop := createSquareLoop(0.025, 0.025)
-				
+
 				// Larger polygon containing the test loop
 				polygon := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0), // Contains test loop
 				}
 				polygon.Last = polygon.First
-				
+
 				bbox := createBboxForLoop(polygon.First)
-				
+
 				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
 			},
 			expectedCount: 1,
@@ -137,28 +137,28 @@ func Test_countContainers_parity(t *testing.T) {
 			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
 				// Small test loop at center
 				testLoop := createSquareLoop(0.04, 0.04)
-				
+
 				// Create nested polygons (each contains the test loop)
 				polygon1 := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0), // Largest
 				}
 				polygon1.Last = polygon1.First
-				
+
 				polygon2 := &LinkedGeoPolygon{
 					First: createSquareLoop(0.02, 0.02), // Medium
 				}
 				polygon2.Last = polygon2.First
-				
+
 				polygon3 := &LinkedGeoPolygon{
 					First: createSquareLoop(0.03, 0.03), // Smallest but still contains test
 				}
 				polygon3.Last = polygon3.First
-				
+
 				bbox1 := createBboxForLoop(polygon1.First)
 				bbox2 := createBboxForLoop(polygon2.First)
 				bbox3 := createBboxForLoop(polygon3.First)
-				
-				return testLoop, 
+
+				return testLoop,
 					[]*LinkedGeoPolygon{polygon1, polygon2, polygon3},
 					[]*BBox{bbox1, bbox2, bbox3}
 			},
@@ -171,9 +171,9 @@ func Test_countContainers_parity(t *testing.T) {
 					First: createSquareLoop(0, 0),
 				}
 				polygon.Last = polygon.First
-				
+
 				bbox := createBboxForLoop(polygon.First)
-				
+
 				return nil, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
 			},
 			expectedCount: 0,
@@ -185,14 +185,14 @@ func Test_countContainers_parity(t *testing.T) {
 					First: nil,
 					Last:  nil,
 				}
-				
+
 				polygon := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0),
 				}
 				polygon.Last = polygon.First
-				
+
 				bbox := createBboxForLoop(polygon.First)
-				
+
 				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
 			},
 			expectedCount: 0,
@@ -203,18 +203,18 @@ func Test_countContainers_parity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup test data
 			loop, polygons, bboxes := tt.setupTest()
-			
+
 			// Test Go implementation
 			goResult := countContainers(loop, polygons, bboxes)
-			
+
 			// Test C implementation
 			cResult := countContainersC(loop, polygons, bboxes)
-			
+
 			// Compare results
 			if goResult != cResult {
 				t.Errorf("Result mismatch: Go=%d, C=%d", goResult, cResult)
 			}
-			
+
 			// Also verify against expected count
 			if goResult != tt.expectedCount {
 				t.Errorf("Go result %d does not match expected %d", goResult, tt.expectedCount)

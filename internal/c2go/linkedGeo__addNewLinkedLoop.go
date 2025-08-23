@@ -32,7 +32,7 @@ func addNewLinkedLoop(polygon *LinkedGeoPolygon) *LinkedGeoLoop {
 		Last:  nil,
 		Next:  nil,
 	}
-	
+
 	// Use addLinkedLoop to properly link it into the polygon
 	return addLinkedLoop(polygon, loop)
 }
