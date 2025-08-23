@@ -74,3 +74,16 @@ func _getBaseCellNeighborC(baseCell int, dir Direction) int {
 func _getBaseCellDirectionC(originBaseCell int, neighboringBaseCell int) Direction {
 	return Direction(C._getBaseCellDirection(C.int(originBaseCell), C.int(neighboringBaseCell)))
 }
+
+// getRes0CellsC calls the original C implementation getRes0Cells.
+func getRes0CellsC(out []H3Index) H3Error {
+	if len(out) != NUM_BASE_CELLS {
+		return E_FAILED // Need exactly NUM_BASE_CELLS slots
+	}
+	cOut := make([]C.H3Index, NUM_BASE_CELLS)
+	err := C.getRes0Cells(&cOut[0])
+	for i := 0; i < NUM_BASE_CELLS; i++ {
+		out[i] = H3Index(cOut[i])
+	}
+	return H3Error(err)
+}

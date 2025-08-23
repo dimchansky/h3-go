@@ -971,7 +971,7 @@ func normalizeMultiPolygonC(root *LinkedGeoPolygon) H3Error {
 		nextCPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 		// For simplicity, just set up basic structure - the main test is the Next pointer existence
 		nextCPolygon.first = nil
-		nextCPolygon.last = nil  
+		nextCPolygon.last = nil
 		nextCPolygon.next = nil
 		cPolygon.next = nextCPolygon
 	} else {
@@ -993,6 +993,6 @@ func normalizeMultiPolygonC(root *LinkedGeoPolygon) H3Error {
 	//
 	// Since the function modifies the structure in-place and manages
 	// its own memory, we should not attempt to free anything we allocated.
-	
+
 	return H3Error(result)
 }

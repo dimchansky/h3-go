@@ -3,7 +3,7 @@
 This report lists all H3 C functions that have been ported to Go in the internal/c2go package.
 These are primarily internal/static functions used to build the public API.
 
-## baseCells.c (14 functions)
+## baseCells.c (15 functions)
 
 - _baseCellIsCwOffset
 - _baseCellToCCWrot60
@@ -17,6 +17,7 @@ These are primarily internal/static functions used to build the public API.
 - baseCellNeighbor60CCWRots
 - baseCellNeighbors
 - faceIjkBaseCells
+- getRes0Cells
 - isBaseCellPentagon
 - res0CellCount
 
@@ -194,7 +195,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 146**
+**Total ported internal functions: 147**
 
 ---
 

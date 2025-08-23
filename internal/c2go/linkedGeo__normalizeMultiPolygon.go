@@ -75,7 +75,7 @@ func normalizeMultiPolygon(root *LinkedGeoPolygon) H3Error {
 
 	// Find polygon for each inner loop and assign the hole to it
 	for i := 0; i < innerCount; i++ {
-		// Create slice views for bboxes to pass to findPolygonForHole  
+		// Create slice views for bboxes to pass to findPolygonForHole
 		bboxPtrs := make([]*BBox, outerCount)
 		for j := 0; j < outerCount; j++ {
 			bboxPtrs[j] = &bboxes[j]
