@@ -170,3 +170,24 @@ var isBaseCellPentagonArr = [128]bool{
 }
 
 // Note: C implementation lives in baseCells.c as _isBaseCellPentagon.
+
+// h3ErrorDescriptions contains error message strings for each H3Error code.
+// Mirrored from H3 C: h3Index.c::H3ErrorDescriptions
+var h3ErrorDescriptions = [16]string{
+	/* E_SUCCESS */ "Success",
+	/* E_FAILED */ "The operation failed but a more specific error is not available",
+	/* E_DOMAIN */ "Argument was outside of acceptable range",
+	/* E_LATLNG_DOMAIN */ "Latitude or longitude arguments were outside of acceptable range",
+	/* E_RES_DOMAIN */ "Resolution argument was outside of acceptable range",
+	/* E_CELL_INVALID */ "Cell argument was not valid",
+	/* E_DIR_EDGE_INVALID */ "Directed edge argument was not valid",
+	/* E_UNDIR_EDGE_INVALID */ "Undirected edge argument was not valid",
+	/* E_VERTEX_INVALID */ "Vertex argument was not valid",
+	/* E_PENTAGON */ "Pentagon distortion was encountered",
+	/* E_DUPLICATE_INPUT */ "Duplicate input",
+	/* E_NOT_NEIGHBORS */ "Cell arguments were not neighbors",
+	/* E_RES_MISMATCH */ "Cell arguments had incompatible resolutions",
+	/* E_MEMORY_ALLOC */ "Memory allocation failed",
+	/* E_MEMORY_BOUNDS */ "Bounds of provided memory were insufficient",
+	/* E_OPTION_INVALID */ "Mode or flags argument was not valid",
+}
