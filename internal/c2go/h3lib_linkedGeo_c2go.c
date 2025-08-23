@@ -32,3 +32,8 @@ LinkedGeoLoop* addNewLinkedLoopC(LinkedGeoPolygon *polygon) {
     return addNewLinkedLoop(polygon);
 }
 
+// Wrapper for addLinkedCoord
+LinkedLatLng* addLinkedCoordC(LinkedGeoLoop *loop, const LatLng *vertex) {
+    return addLinkedCoord(loop, vertex);
+}
+

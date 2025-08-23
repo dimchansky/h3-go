@@ -16,6 +16,7 @@ bool isClockwiseLinkedGeoLoopC(const LinkedGeoLoop *loop);
 LinkedGeoPolygon* addNewLinkedPolygonC(LinkedGeoPolygon *polygon);
 LinkedGeoLoop* addLinkedLoopC(LinkedGeoPolygon *polygon, LinkedGeoLoop *loop);
 LinkedGeoLoop* addNewLinkedLoopC(LinkedGeoPolygon *polygon);
+LinkedLatLng* addLinkedCoordC(LinkedGeoLoop *loop, const LatLng *vertex);
 */
 import "C"
 import "unsafe"
@@ -372,6 +373,51 @@ func addNewLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (createsLoop bool, se
 		setsFirst = (wasEmpty && cPolygon.first == cResult) || (!wasEmpty && cPolygon.first == cExisting)
 		setsLast = (cPolygon.last == cResult)
 		linksLoops = (polygonHadLoop && cExisting != nil && cExisting.next == cResult)
+	}
+	
+	return
+}
+
+// addLinkedCoordC wraps the C addLinkedCoord function for parity testing.
+// Returns information about C function behavior
+func addLinkedCoordC(wasEmpty bool, loopHadCoord bool, vertex LatLng) (returnsCoord bool, setsFirst bool, setsLast bool, linksCoords bool, vertexMatches bool) {
+	// Create C structures to test behavior
+	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+	defer C.free(unsafe.Pointer(cLoop))
+	
+	var cExisting *C.LinkedLatLng
+	if loopHadCoord {
+		// Create a dummy coordinate for existing first
+		cExisting = (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
+		defer C.free(unsafe.Pointer(cExisting))
+		cExisting.vertex.lat = C.double(0.5) // dummy value
+		cExisting.vertex.lng = C.double(1.0) // dummy value
+		cExisting.next = nil
+		cLoop.first = cExisting
+		cLoop.last = cExisting
+	} else {
+		cLoop.first = nil
+		cLoop.last = nil
+	}
+	cLoop.next = nil
+
+	// Create C LatLng for the vertex
+	cVertex := C.LatLng{
+		lat: C.double(vertex.Lat),
+		lng: C.double(vertex.Lng),
+	}
+
+	// Call C function
+	cResult := C.addLinkedCoordC(cLoop, &cVertex)
+
+	// Check what C did
+	returnsCoord = (cResult != nil)
+	if cResult != nil {
+		defer C.free(unsafe.Pointer(cResult))
+		setsFirst = (wasEmpty && cLoop.first == cResult) || (!wasEmpty && cLoop.first == cExisting)
+		setsLast = (cLoop.last == cResult)
+		linksCoords = (loopHadCoord && cExisting != nil && cExisting.next == cResult)
+		vertexMatches = (float64(cResult.vertex.lat) == vertex.Lat && float64(cResult.vertex.lng) == vertex.Lng)
 	}
 	
 	return
