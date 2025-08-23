@@ -6,9 +6,11 @@ package c2go
 #include <stdint.h>
 #include "h3api.h"
 #include "linkedGeo.h"
+#include "bbox.h"
 // Prototypes for the original C helpers in linkedGeo.c
 int countLinkedCoords(LinkedGeoLoop* loop);
 int countLinkedLoops(LinkedGeoPolygon* polygon);
+void bboxFromLinkedGeoLoopC(const LinkedGeoLoop *loop, BBox *bbox);
 */
 import "C"
 import "unsafe"
@@ -103,4 +105,57 @@ func countLinkedLoopsC(polygon *LinkedGeoPolygon) int {
 	C.free(unsafe.Pointer(cPolygon))
 
 	return result
+}
+
+// bboxFromLinkedGeoLoopC wraps the C bboxFromLinkedGeoLoop function for parity testing.
+func bboxFromLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox) {
+	// Create a minimal C LinkedGeoLoop for testing
+	var firstNode *C.LinkedLatLng
+	var currentGoCoord = loop.First
+	var prevCNode *C.LinkedLatLng
+
+	// Build the C linked list from Go linked list
+	for currentGoCoord != nil {
+		cNode := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
+		cNode.vertex.lat = C.double(currentGoCoord.Vertex.Lat)
+		cNode.vertex.lng = C.double(currentGoCoord.Vertex.Lng)
+		cNode.next = nil
+
+		if firstNode == nil {
+			firstNode = cNode
+		} else {
+			prevCNode.next = cNode
+		}
+
+		prevCNode = cNode
+		currentGoCoord = currentGoCoord.Next
+	}
+
+	// Create C LinkedGeoLoop
+	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+	cLoop.first = firstNode
+	cLoop.last = prevCNode
+	cLoop.next = nil
+
+	// Create C BBox for result
+	cBbox := (*C.BBox)(C.malloc(C.size_t(C.sizeof_BBox)))
+
+	// Call C function
+	C.bboxFromLinkedGeoLoopC(cLoop, cBbox)
+
+	// Convert C BBox back to Go BBox
+	bbox.North = float64(cBbox.north)
+	bbox.South = float64(cBbox.south)
+	bbox.East = float64(cBbox.east)
+	bbox.West = float64(cBbox.west)
+
+	// Clean up C memory
+	currentCNode := firstNode
+	for currentCNode != nil {
+		nextNode := currentCNode.next
+		C.free(unsafe.Pointer(currentCNode))
+		currentCNode = nextNode
+	}
+	C.free(unsafe.Pointer(cLoop))
+	C.free(unsafe.Pointer(cBbox))
 }
