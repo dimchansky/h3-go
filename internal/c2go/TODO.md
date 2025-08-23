@@ -273,7 +273,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [x] `_hasAny7UptoRes` — DONE (Go port + C parity)
   - [x] `_hasDeletedSubsequence` — DONE (Go port + C parity)
   - [x] `_hasGoodTopBits` — DONE (Go port + C parity)
-  - [ ] `_hashVertex` — TODO: needs C→Go port + parity test
+  - [x] `_hashVertex` — DONE (Go port + C parity)
   - [ ] `_hexRadiusKm` — TODO: needs C→Go port + parity test
   - [x] `_ijkNormalizeCouldOverflow` — DONE (Go port + C parity)
   - [x] `_incrementResDigit` — DONE: iterators__incrementResDigit.go with parity test
