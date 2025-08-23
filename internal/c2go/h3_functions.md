@@ -18,7 +18,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] gridRing
 - [ ] gridRingUnsafe
 - [x] isPentagon
-- [ ] latLngToCell
+- [x] latLngToCell
 - [ ] maxGridDiskSize
 - [ ] maxGridRingSize
 - [ ] maxPolygonToCellsSize
@@ -60,7 +60,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] isPentagon
 - [x] isResClassIII
 - [x] isValidCell
-- [ ] latLngToCell
+- [x] latLngToCell
 - [ ] maxFaceCount
 - [x] pentagonCount
 - [x] stringToH3
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 24
-- **Remaining:** 54
+- **Completed:** 26
+- **Remaining:** 52
 
 ## Notes
 

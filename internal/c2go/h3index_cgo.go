@@ -270,3 +270,42 @@ func cellToLatLngC(h H3Index, g *LatLng) uint32 {
 func isValidCellC(h H3Index) int {
 	return int(C.isValidCell(C.H3Index(h)))
 }
+
+// latLngToCellC calls the original C implementation.
+func latLngToCellC(g *LatLng, res int, out *H3Index) uint32 {
+	var cg C.LatLng
+	cg.lat = C.double(g.Lat)
+	cg.lng = C.double(g.Lng)
+
+	var cOut C.H3Index
+	err := C.latLngToCell(&cg, C.int(res), &cOut)
+
+	*out = H3Index(cOut)
+	return uint32(err)
+}
+
+// debugGeoToFaceIjkC calls the original C _geoToFaceIjk implementation.
+func debugGeoToFaceIjkC(g *LatLng, res int, fijk *FaceIJK) {
+	var cg C.LatLng
+	cg.lat = C.double(g.Lat)
+	cg.lng = C.double(g.Lng)
+
+	var cfijk C.FaceIJK
+	C._geoToFaceIjk(&cg, C.int(res), &cfijk)
+
+	fijk.Face = int(cfijk.face)
+	fijk.Coord.I = int(cfijk.coord.i)
+	fijk.Coord.J = int(cfijk.coord.j)
+	fijk.Coord.K = int(cfijk.coord.k)
+}
+
+// debugFaceIjkToH3C calls the original C _faceIjkToH3 implementation.
+func debugFaceIjkToH3C(fijk *FaceIJK, res int) H3Index {
+	var cfijk C.FaceIJK
+	cfijk.face = C.int(fijk.Face)
+	cfijk.coord.i = C.int(fijk.Coord.I)
+	cfijk.coord.j = C.int(fijk.Coord.J)
+	cfijk.coord.k = C.int(fijk.Coord.K)
+
+	return H3Index(C._faceIjkToH3(&cfijk, C.int(res)))
+}

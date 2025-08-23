@@ -38,6 +38,7 @@ const (
 	// Base cell constants
 	INVALID_BASE_CELL = 127
 	INVALID_ROTATIONS = -1
+	MAX_FACE_COORD    = 2
 
 	// Modes
 	H3_CELL_MODE         = 1
