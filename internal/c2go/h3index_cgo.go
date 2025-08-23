@@ -240,3 +240,28 @@ func _h3ToFaceIjkWithInitializedFijkC(h H3Index, fijk *FaceIJK) int {
 
 	return result
 }
+
+// _h3ToFaceIjkC calls the original C implementation.
+func _h3ToFaceIjkC(h H3Index, fijk *FaceIJK) uint32 {
+	var cFijk C.FaceIJK
+	err := C._h3ToFaceIjk(C.H3Index(h), &cFijk)
+
+	// Update the Go struct with results
+	fijk.Face = int(cFijk.face)
+	fijk.Coord.I = int(cFijk.coord.i)
+	fijk.Coord.J = int(cFijk.coord.j)
+	fijk.Coord.K = int(cFijk.coord.k)
+
+	return uint32(err)
+}
+
+// cellToLatLngC calls the original C implementation.
+func cellToLatLngC(h H3Index, g *LatLng) uint32 {
+	var cg C.LatLng
+	err := C.cellToLatLng(C.H3Index(h), &cg)
+
+	g.Lat = float64(cg.lat)
+	g.Lng = float64(cg.lng)
+
+	return uint32(err)
+}

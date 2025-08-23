@@ -6,7 +6,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 - [ ] cellsToLinkedMultiPolygon
 - [ ] cellToBoundary
-- [ ] cellToLatLng
+- [x] cellToLatLng
 - [ ] destroyLinkedMultiPolygon
 - [ ] getNumCells
 - [ ] gridDisk
@@ -47,7 +47,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] cellToChildPos
 - [ ] cellToChildren
 - [x] cellToChildrenSize
-- [ ] cellToLatLng
+- [x] cellToLatLng
 - [x] cellToParent
 - [x] childPosToCell
 - [ ] compactCells
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 21
-- **Remaining:** 57
+- **Completed:** 23
+- **Remaining:** 55
 
 ## Notes
 
