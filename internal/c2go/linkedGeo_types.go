@@ -12,3 +12,10 @@ type LinkedGeoLoop struct {
 	Last  *LinkedLatLng
 	Next  *LinkedGeoLoop
 }
+
+// LinkedGeoPolygon mirrors the C struct used in h3api.h - a polygon node in a linked geo structure
+type LinkedGeoPolygon struct {
+	First *LinkedGeoLoop
+	Last  *LinkedGeoLoop
+	Next  *LinkedGeoPolygon
+}

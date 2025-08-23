@@ -297,7 +297,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `cellToBBox` — TODO: needs C→Go port + parity test
   - [ ] `cellToLocalIjk` — TODO: needs C→Go port + parity test
   - [x] `countLinkedCoords` — DONE (Go port + C parity)
-  - [ ] `countLinkedLoops` — TODO: needs C→Go port + parity test
+  - [x] `countLinkedLoops` — DONE (Go port + C parity)
   - [ ] `countLinkedPolygons` — TODO: needs C→Go port + parity test
   - [x] `cubeRound` — DONE (Go port + C parity)
   - [ ] `destroyLinkedGeoLoop` — TODO: needs C→Go port + parity test
