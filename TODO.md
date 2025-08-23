@@ -193,3 +193,6 @@ All code compiles and tests pass. The foundation is solid for implementing geome
 - DONE: `_ijkNormalize`, `_unitIjkToDigit`, `_neighbor`, `_ijkRotate60cw`, `_ijkRotate60ccw`, `_ijkScale`, `_ijkAdd`, `_ijkSub`, `_ijkDistance`, `ijkToCube`, `cubeToIjk`, `_ijkToHex2d`, `_hex2dToCoordIJK`, `_upAp7`, `_upAp7r`, `_downAp7`, `_downAp7r`, `_downAp3`, `_downAp3r`, `ijkToIj`, `_ijkNormalizeCouldOverflow`, `ijToIjk` with comprehensive parity tests
 
 **coordijk.c is now complete** - all major functions have been ported with full parity testing. Added H3Error type system and overflow checking for safe coordinate transformations.
+
+**Recent C-to-Go conversions (baseCells.c):**
+- DONE: `_faceIjkToBaseCell`, `_faceIjkToBaseCellCCWrot60`, `_getBaseCellNeighbor`, `_getBaseCellDirection` with comprehensive parity tests and lookup tables

@@ -157,7 +157,7 @@ func _unitIjkToDigitC(ijk *CoordIJK) int {
 
 // _neighborC calls the original C implementation for applying a direction to IJK coordinates.
 // Bridges to coordijk.c::_neighbor.
-func _neighborC(ijk *CoordIJK, digit int) CoordIJK {
+func _neighborC(ijk *CoordIJK, digit Direction) CoordIJK {
 	var cc C.CoordIJK
 	cc.i = C.int(ijk.I)
 	cc.j = C.int(ijk.J)
@@ -168,14 +168,14 @@ func _neighborC(ijk *CoordIJK, digit int) CoordIJK {
 
 // _rotate60ccwC calls the original C implementation for rotating a direction 60° counter-clockwise.
 // Bridges to coordijk.c::_rotate60ccw.
-func _rotate60ccwC(digit int) int {
-	return int(C._rotate60ccw(C.Direction(digit)))
+func _rotate60ccwC(digit Direction) Direction {
+	return Direction(C._rotate60ccw(C.Direction(digit)))
 }
 
 // _rotate60cwC calls the original C implementation for rotating a direction 60° clockwise.
 // Bridges to coordijk.c::_rotate60cw.
-func _rotate60cwC(digit int) int {
-	return int(C._rotate60cw(C.Direction(digit)))
+func _rotate60cwC(digit Direction) Direction {
+	return Direction(C._rotate60cw(C.Direction(digit)))
 }
 
 // ijkToCubeC calls the original C implementation for converting IJK to cube coordinates.

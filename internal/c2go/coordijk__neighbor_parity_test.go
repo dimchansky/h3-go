@@ -8,7 +8,7 @@ func Test_neighbor_parity(t *testing.T) {
 	tests := []struct {
 		name  string
 		coord CoordIJK
-		digit int
+		digit Direction
 	}{
 		// Test with origin and all valid directions
 		{"origin center", CoordIJK{0, 0, 0}, CENTER_DIGIT},
@@ -93,7 +93,7 @@ func Test_neighbor_parity(t *testing.T) {
 
 	// Test invalid directions don't modify coordinates
 	t.Run("invalid_directions_no_change", func(t *testing.T) {
-		invalidDigits := []int{-1, NUM_DIGITS, NUM_DIGITS + 1, 10, -5}
+		invalidDigits := []Direction{-1, NUM_DIGITS, NUM_DIGITS + 1, 10, -5}
 		testCoord := CoordIJK{3, 1, 4}
 
 		for _, digit := range invalidDigits {

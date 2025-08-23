@@ -64,3 +64,13 @@ func _faceIjkToBaseCellCCWrot60C(h *FaceIJK) int {
 	cFijk.coord.k = C.int(h.Coord.K)
 	return int(C._faceIjkToBaseCellCCWrot60(&cFijk))
 }
+
+// _getBaseCellNeighborC calls the original C helper _getBaseCellNeighbor.
+func _getBaseCellNeighborC(baseCell int, dir Direction) int {
+	return int(C._getBaseCellNeighbor(C.int(baseCell), C.Direction(dir)))
+}
+
+// _getBaseCellDirectionC calls the original C helper _getBaseCellDirection.
+func _getBaseCellDirectionC(originBaseCell int, neighboringBaseCell int) Direction {
+	return Direction(C._getBaseCellDirection(C.int(originBaseCell), C.int(neighboringBaseCell)))
+}

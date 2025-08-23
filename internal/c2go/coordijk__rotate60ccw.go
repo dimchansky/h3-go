@@ -2,7 +2,7 @@ package c2go
 
 // _rotate60ccw rotates a direction digit 60 degrees counter-clockwise.
 // Mirrors H3's coordijk.c::_rotate60ccw behavior.
-func _rotate60ccw(digit int) int {
+func _rotate60ccw(digit Direction) Direction {
 	switch digit {
 	case K_AXES_DIGIT:
 		return IK_AXES_DIGIT

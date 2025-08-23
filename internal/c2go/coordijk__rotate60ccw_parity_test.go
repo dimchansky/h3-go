@@ -7,7 +7,7 @@ import "testing"
 func Test_rotate60ccw_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		digit int
+		digit Direction
 	}{
 		// Valid direction rotations (counter-clockwise)
 		{"K -> IK", K_AXES_DIGIT},
@@ -44,7 +44,7 @@ func Test_rotate60ccw_parity(t *testing.T) {
 
 	// Test that 6 rotations return to original
 	t.Run("six_rotations", func(t *testing.T) {
-		validDigits := []int{K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT}
+		validDigits := []Direction{K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT}
 
 		for _, original := range validDigits {
 			digit := original
@@ -61,7 +61,7 @@ func Test_rotate60ccw_parity(t *testing.T) {
 
 	// Test that it's the inverse of clockwise rotation
 	t.Run("inverse_of_clockwise", func(t *testing.T) {
-		validDigits := []int{K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT}
+		validDigits := []Direction{K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT}
 
 		for _, digit := range validDigits {
 			// Apply counter-clockwise then clockwise

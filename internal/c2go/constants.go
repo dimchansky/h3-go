@@ -78,18 +78,21 @@ const (
 	H3_INIT uint64 = 35184372088831
 )
 
+// Direction represents H3 directions/digits (from coordijk.h)
+type Direction int
+
 // Direction enum (from coordijk.h)
 const (
-	CENTER_DIGIT           = 0
-	K_AXES_DIGIT           = 1
-	J_AXES_DIGIT           = 2
-	JK_AXES_DIGIT          = J_AXES_DIGIT | K_AXES_DIGIT // 3
-	I_AXES_DIGIT           = 4
-	IK_AXES_DIGIT          = I_AXES_DIGIT | K_AXES_DIGIT // 5
-	IJ_AXES_DIGIT          = I_AXES_DIGIT | J_AXES_DIGIT // 6
-	INVALID_DIGIT          = 7
-	NUM_DIGITS             = INVALID_DIGIT
-	PENTAGON_SKIPPED_DIGIT = K_AXES_DIGIT
+	CENTER_DIGIT           Direction = 0
+	K_AXES_DIGIT           Direction = 1
+	J_AXES_DIGIT           Direction = 2
+	JK_AXES_DIGIT          Direction = J_AXES_DIGIT | K_AXES_DIGIT // 3
+	I_AXES_DIGIT           Direction = 4
+	IK_AXES_DIGIT          Direction = I_AXES_DIGIT | K_AXES_DIGIT // 5
+	IJ_AXES_DIGIT          Direction = I_AXES_DIGIT | J_AXES_DIGIT // 6
+	INVALID_DIGIT          Direction = 7
+	NUM_DIGITS             Direction = INVALID_DIGIT
+	PENTAGON_SKIPPED_DIGIT Direction = K_AXES_DIGIT
 )
 
 // UNIT_VECS mirrors coordijk.h::UNIT_VECS - CoordIJK unit vectors corresponding to the 7 H3 digits.

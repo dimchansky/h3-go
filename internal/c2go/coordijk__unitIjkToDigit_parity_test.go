@@ -41,7 +41,7 @@ func Test_unitIjkToDigit_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Call C implementation
-			gotC := _unitIjkToDigitC(&tt.coord)
+			gotC := Direction(_unitIjkToDigitC(&tt.coord))
 
 			// Call Go implementation
 			gotGo := _unitIjkToDigit(&tt.coord)
@@ -59,7 +59,7 @@ func Test_unitIjkToDigit_parity(t *testing.T) {
 		for digit := CENTER_DIGIT; digit < NUM_DIGITS; digit++ {
 			coord := UNIT_VECS[digit]
 
-			gotC := _unitIjkToDigitC(&coord)
+			gotC := Direction(_unitIjkToDigitC(&coord))
 			gotGo := _unitIjkToDigit(&coord)
 
 			if gotGo != gotC {

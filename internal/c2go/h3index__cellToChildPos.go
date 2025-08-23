@@ -24,7 +24,7 @@ func cellToChildPos(child H3Index, parentRes int) (int64, H3Error) {
 			parent = p
 			parentIsPentagon = isPentagon(parent) != 0
 
-			rawDigit := getIndexDigit(child, res)
+			rawDigit := Direction(getIndexDigit(child, res))
 			if rawDigit == INVALID_DIGIT || (parentIsPentagon && rawDigit == K_AXES_DIGIT) {
 				return 0, H3Error(5) // E_CELL_INVALID = 5 per H3ErrorDescriptions
 			}
@@ -45,7 +45,7 @@ func cellToChildPos(child H3Index, parentRes int) (int64, H3Error) {
 		}
 	} else {
 		for res := childRes; res > parentRes; res-- {
-			digit := getIndexDigit(child, res)
+			digit := Direction(getIndexDigit(child, res))
 			if digit == INVALID_DIGIT {
 				return 0, H3Error(5) // E_CELL_INVALID
 			}
