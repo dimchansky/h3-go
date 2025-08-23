@@ -22,3 +22,13 @@ LinkedGeoPolygon* addNewLinkedPolygonC(LinkedGeoPolygon *polygon) {
     return addNewLinkedPolygon(polygon);
 }
 
+// Wrapper for addLinkedLoop
+LinkedGeoLoop* addLinkedLoopC(LinkedGeoPolygon *polygon, LinkedGeoLoop *loop) {
+    return addLinkedLoop(polygon, loop);
+}
+
+// Wrapper for addNewLinkedLoop
+LinkedGeoLoop* addNewLinkedLoopC(LinkedGeoPolygon *polygon) {
+    return addNewLinkedLoop(polygon);
+}
+

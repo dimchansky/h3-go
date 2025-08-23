@@ -14,6 +14,8 @@ void bboxFromLinkedGeoLoopC(const LinkedGeoLoop *loop, BBox *bbox);
 bool pointInsideLinkedGeoLoopC(const LinkedGeoLoop *loop, const BBox *bbox, const LatLng *coord);
 bool isClockwiseLinkedGeoLoopC(const LinkedGeoLoop *loop);
 LinkedGeoPolygon* addNewLinkedPolygonC(LinkedGeoPolygon *polygon);
+LinkedGeoLoop* addLinkedLoopC(LinkedGeoPolygon *polygon, LinkedGeoLoop *loop);
+LinkedGeoLoop* addNewLinkedLoopC(LinkedGeoPolygon *polygon);
 */
 import "C"
 import "unsafe"
@@ -285,9 +287,92 @@ func addNewLinkedPolygonC(polygon *LinkedGeoPolygon) *LinkedGeoPolygon {
 		Next:  nil,
 	}
 
-	// Clean up C memory
-	C.free(unsafe.Pointer(cResult))
+	// Clean up C memory (don't free cResult - it's managed by the C function)
+	// Free the allocated cResult and cPolygon since they were allocated by C function
+	if cResult != nil {
+		C.free(unsafe.Pointer(cResult))
+	}
 	C.free(unsafe.Pointer(cPolygon))
 
 	return goResult
+}
+
+// addLinkedLoopC wraps the C addLinkedLoop function for parity testing.
+// Returns true if C function behaves as expected
+func addLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (returnsLoop bool, setsFirst bool, setsLast bool, linksLoops bool) {
+	// Create C structures to test behavior
+	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
+	defer C.free(unsafe.Pointer(cPolygon))
+	
+	var cExisting *C.LinkedGeoLoop
+	if polygonHadLoop {
+		// Create a dummy C loop for existing first
+		cExisting = (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+		defer C.free(unsafe.Pointer(cExisting))
+		cExisting.first = nil
+		cExisting.last = nil
+		cExisting.next = nil
+		cPolygon.first = cExisting
+		cPolygon.last = cExisting
+	} else {
+		cPolygon.first = nil
+		cPolygon.last = nil
+	}
+	cPolygon.next = nil
+
+	// Create C LinkedGeoLoop for the new loop
+	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+	defer C.free(unsafe.Pointer(cLoop))
+	cLoop.first = nil
+	cLoop.last = nil
+	cLoop.next = nil
+
+	// Call C function
+	cResult := C.addLinkedLoopC(cPolygon, cLoop)
+
+	// Check what C did
+	returnsLoop = (cResult == cLoop)
+	setsFirst = (wasEmpty && cPolygon.first == cLoop) || (!wasEmpty && cPolygon.first == cExisting)
+	setsLast = (cPolygon.last == cLoop)
+	linksLoops = (polygonHadLoop && cExisting != nil && cExisting.next == cLoop)
+	
+	return
+}
+
+// addNewLinkedLoopC wraps the C addNewLinkedLoop function for parity testing.
+// Returns information about C function behavior
+func addNewLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (createsLoop bool, setsFirst bool, setsLast bool, linksLoops bool) {
+	// Create C structures to test behavior
+	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
+	defer C.free(unsafe.Pointer(cPolygon))
+	
+	var cExisting *C.LinkedGeoLoop
+	if polygonHadLoop {
+		// Create a dummy C loop for existing first
+		cExisting = (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+		defer C.free(unsafe.Pointer(cExisting))
+		cExisting.first = nil
+		cExisting.last = nil
+		cExisting.next = nil
+		cPolygon.first = cExisting
+		cPolygon.last = cExisting
+	} else {
+		cPolygon.first = nil
+		cPolygon.last = nil
+	}
+	cPolygon.next = nil
+
+	// Call C function
+	cResult := C.addNewLinkedLoopC(cPolygon)
+
+	// Check what C did
+	createsLoop = (cResult != nil)
+	if cResult != nil {
+		defer C.free(unsafe.Pointer(cResult))
+		setsFirst = (wasEmpty && cPolygon.first == cResult) || (!wasEmpty && cPolygon.first == cExisting)
+		setsLast = (cPolygon.last == cResult)
+		linksLoops = (polygonHadLoop && cExisting != nil && cExisting.next == cResult)
+	}
+	
+	return
 }
