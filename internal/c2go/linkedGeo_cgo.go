@@ -11,6 +11,8 @@ package c2go
 int countLinkedCoords(LinkedGeoLoop* loop);
 int countLinkedLoops(LinkedGeoPolygon* polygon);
 void bboxFromLinkedGeoLoopC(const LinkedGeoLoop *loop, BBox *bbox);
+bool pointInsideLinkedGeoLoopC(const LinkedGeoLoop *loop, const BBox *bbox, const LatLng *coord);
+bool isClockwiseLinkedGeoLoopC(const LinkedGeoLoop *loop);
 */
 import "C"
 import "unsafe"
@@ -158,4 +160,108 @@ func bboxFromLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox) {
 	}
 	C.free(unsafe.Pointer(cLoop))
 	C.free(unsafe.Pointer(cBbox))
+}
+
+// pointInsideLinkedGeoLoopC wraps the C pointInsideLinkedGeoLoop function for parity testing.
+func pointInsideLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bool {
+	// Create a minimal C LinkedGeoLoop for testing
+	var firstNode *C.LinkedLatLng
+	var currentGoCoord = loop.First
+	var prevCNode *C.LinkedLatLng
+
+	// Build the C linked list from Go linked list
+	for currentGoCoord != nil {
+		cNode := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
+		cNode.vertex.lat = C.double(currentGoCoord.Vertex.Lat)
+		cNode.vertex.lng = C.double(currentGoCoord.Vertex.Lng)
+		cNode.next = nil
+
+		if firstNode == nil {
+			firstNode = cNode
+		} else {
+			prevCNode.next = cNode
+		}
+
+		prevCNode = cNode
+		currentGoCoord = currentGoCoord.Next
+	}
+
+	// Create C LinkedGeoLoop
+	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+	cLoop.first = firstNode
+	cLoop.last = prevCNode
+	cLoop.next = nil
+
+	// Create C BBox
+	cBbox := (*C.BBox)(C.malloc(C.size_t(C.sizeof_BBox)))
+	cBbox.north = C.double(bbox.North)
+	cBbox.south = C.double(bbox.South)
+	cBbox.east = C.double(bbox.East)
+	cBbox.west = C.double(bbox.West)
+
+	// Create C LatLng
+	cCoord := (*C.LatLng)(C.malloc(C.size_t(C.sizeof_LatLng)))
+	cCoord.lat = C.double(coord.Lat)
+	cCoord.lng = C.double(coord.Lng)
+
+	// Call C function
+	result := bool(C.pointInsideLinkedGeoLoopC(cLoop, cBbox, cCoord))
+
+	// Clean up C memory
+	currentCNode := firstNode
+	for currentCNode != nil {
+		nextNode := currentCNode.next
+		C.free(unsafe.Pointer(currentCNode))
+		currentCNode = nextNode
+	}
+	C.free(unsafe.Pointer(cLoop))
+	C.free(unsafe.Pointer(cBbox))
+	C.free(unsafe.Pointer(cCoord))
+
+	return result
+}
+
+// isClockwiseLinkedGeoLoopC wraps the C isClockwiseLinkedGeoLoop function for parity testing.
+func isClockwiseLinkedGeoLoopC(loop *LinkedGeoLoop) bool {
+	// Create a minimal C LinkedGeoLoop for testing
+	var firstNode *C.LinkedLatLng
+	var currentGoCoord = loop.First
+	var prevCNode *C.LinkedLatLng
+
+	// Build the C linked list from Go linked list
+	for currentGoCoord != nil {
+		cNode := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
+		cNode.vertex.lat = C.double(currentGoCoord.Vertex.Lat)
+		cNode.vertex.lng = C.double(currentGoCoord.Vertex.Lng)
+		cNode.next = nil
+
+		if firstNode == nil {
+			firstNode = cNode
+		} else {
+			prevCNode.next = cNode
+		}
+
+		prevCNode = cNode
+		currentGoCoord = currentGoCoord.Next
+	}
+
+	// Create C LinkedGeoLoop
+	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+	cLoop.first = firstNode
+	cLoop.last = prevCNode
+	cLoop.next = nil
+
+	// Call C function
+	result := bool(C.isClockwiseLinkedGeoLoopC(cLoop))
+
+	// Clean up C memory
+	currentCNode := firstNode
+	for currentCNode != nil {
+		nextNode := currentCNode.next
+		C.free(unsafe.Pointer(currentCNode))
+		currentCNode = nextNode
+	}
+	C.free(unsafe.Pointer(cLoop))
+
+	return result
 }
