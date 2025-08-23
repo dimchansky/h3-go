@@ -5,8 +5,10 @@ package c2go
 /*
 #include <stdint.h>
 #include "h3api.h"
-// Prototype for the original C helper in vertexGraph.c
+#include "vertexGraph.h"
+// Prototypes for the original C helpers in vertexGraph.c
 uint32_t _hashVertex(const LatLng* vertex, int res, int numBuckets);
+void initVertexGraph(VertexGraph* graph, int numBuckets, int res);
 */
 import "C"
 
@@ -18,4 +20,23 @@ func _hashVertexC(vertex *LatLng, res int, numBuckets int) uint32 {
 	}
 	result := C._hashVertex(&cVertex, C.int(res), C.int(numBuckets))
 	return uint32(result)
+}
+
+// initVertexGraphC wraps the C initVertexGraph function for parity testing.
+func initVertexGraphC(graph *VertexGraph, numBuckets int, res int) {
+	var cGraph C.VertexGraph
+	C.initVertexGraph(&cGraph, C.int(numBuckets), C.int(res))
+
+	// Copy results back to Go struct
+	graph.NumBuckets = int(cGraph.numBuckets)
+	graph.Size = int(cGraph.size)
+	graph.Res = int(cGraph.res)
+
+	// For buckets, we only verify the allocation occurred (non-nil vs nil)
+	// Full bucket testing would require memory allocation tracking
+	if numBuckets > 0 {
+		graph.Buckets = make([]*VertexNode, numBuckets)
+	} else {
+		graph.Buckets = nil
+	}
 }

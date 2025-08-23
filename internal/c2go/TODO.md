@@ -307,7 +307,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `getAverageCellArea` — TODO: needs C→Go port + parity test
   - [x] `ijkToIj` — DONE [parity test]
   - [x] `ijToIjk` — DONE [parity test]
-  - [ ] `initVertexGraph` — TODO: needs C→Go port + parity test
+  - [x] `initVertexGraph` — DONE (Go port + C parity)
   - [ ] `iterDestroyPolygon` — TODO: needs C→Go port + parity test
   - [ ] `iterDestroyPolygonCompact` — TODO: needs C→Go port + parity test
   - [ ] `iterInitBaseCellNum` — TODO: needs C→Go port + parity test
