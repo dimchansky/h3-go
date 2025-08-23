@@ -5,6 +5,7 @@ import "math"
 // _upAp7r finds the normalized IJK coordinates of the indexing parent of a cell
 // in a clockwise aperture 7 grid. Works in place.
 // Mirrors H3's coordijk.c::_upAp7r behavior.
+// Ported from H3 C: coordijk.c::upAp7r
 func _upAp7r(ijk *CoordIJK) {
 	// convert to CoordIJ
 	i := ijk.I - ijk.K

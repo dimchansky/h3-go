@@ -6,7 +6,7 @@ package c2go
 func _hasAny7UptoRes(h H3Index, res int) bool {
 	// Shift to zero out digits beyond resolution
 	shift := 3 * (15 - res)
-	
+
 	// Mirror C behavior exactly - no bounds checking on shift
 	if shift < 0 {
 		// For res > 15, shift becomes negative
@@ -14,15 +14,15 @@ func _hasAny7UptoRes(h H3Index, res int) bool {
 		// The C implementation would check all digits including unused ones
 		return false
 	}
-	
+
 	if shift >= 64 {
 		// Large positive shift zeros everything in C
 		return false
 	}
-	
+
 	h >>= shift
 	h <<= shift
 	h = (h & H3_DIGIT_CHECK_MHI & (^h - H3_DIGIT_CHECK_MLO))
-	
+
 	return h != 0
 }

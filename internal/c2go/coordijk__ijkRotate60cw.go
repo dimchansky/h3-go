@@ -2,6 +2,7 @@ package c2go
 
 // _ijkRotate60cw rotates IJK coordinates 60 degrees clockwise.
 // Mirrors H3's coordijk.c::_ijkRotate60cw behavior.
+// Ported from H3 C: coordijk.c::ijkRotate60cw
 func _ijkRotate60cw(ijk *CoordIJK) {
 	// unit vector rotations
 	iVec := CoordIJK{I: 1, J: 0, K: 1}

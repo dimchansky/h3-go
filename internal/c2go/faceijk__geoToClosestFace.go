@@ -3,6 +3,7 @@ package c2go
 // _geoToClosestFace determines the icosahedral face and squared euclidean distance
 // from a lat/lng point to its closest icosahedral face center.
 // Mirrors static _geoToClosestFace in faceijk.c
+// Ported from H3 C: faceijk.c::geoToClosestFace
 func _geoToClosestFace(g *LatLng, face *int, sqd *float64) {
 	var v3d Vec3d
 	_geoToVec3d(g, &v3d)

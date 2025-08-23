@@ -2,6 +2,7 @@ package c2go
 
 // bboxNormalization determines longitude normalization for two bboxes.
 // Mirrors H3's bbox.c::bboxNormalization behavior.
+// Ported from H3 C: bbox.c::bboxNormalization
 func bboxNormalization(a, b *BBox, aNorm, bNorm *LongitudeNormalization) {
 	aIsTrans := bboxIsTransmeridian(a)
 	bIsTrans := bboxIsTransmeridian(b)

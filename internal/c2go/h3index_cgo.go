@@ -182,7 +182,6 @@ func firstOneIndexC(h H3Index) int {
 	return int(C.first_one_index_c(C.H3Index(h)))
 }
 
-
 // hasGoodTopBitsC calls the original C implementation.
 func hasGoodTopBitsC(h H3Index) bool {
 	return C.has_good_top_bits_c(C.H3Index(h)) != 0

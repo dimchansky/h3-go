@@ -7,7 +7,7 @@ const (
 	// Used to efficiently check for invalid digits (7) without looping.
 	// Pattern: 100100100100100100100100100100100100100100100 (binary)
 	H3_DIGIT_CHECK_MHI = 0b100100100100100100100100100100100100100100100
-	
+
 	// MLO is MHI shifted right by 2 bits, used in the digit validation algorithm.
 	H3_DIGIT_CHECK_MLO = H3_DIGIT_CHECK_MHI >> 2
 )

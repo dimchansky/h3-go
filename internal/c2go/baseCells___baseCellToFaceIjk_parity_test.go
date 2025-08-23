@@ -16,7 +16,7 @@ func Test_baseCellToFaceIjk_parity(t *testing.T) {
 		{"base_cell_1", 1},
 		{"base_cell_2", 2},
 		{"base_cell_3", 3},
-		{"base_cell_4", 4},   // pentagon
+		{"base_cell_4", 4}, // pentagon
 		{"base_cell_5", 5},
 		{"base_cell_6", 6},
 		{"base_cell_7", 7},
@@ -147,7 +147,7 @@ func Test_baseCellToFaceIjk_parity(t *testing.T) {
 				goResult.Coord.I != cResult.Coord.I ||
 				goResult.Coord.J != cResult.Coord.J ||
 				goResult.Coord.K != cResult.Coord.K {
-				t.Errorf("_baseCellToFaceIjk(%d): Go=%+v, C=%+v", 
+				t.Errorf("_baseCellToFaceIjk(%d): Go=%+v, C=%+v",
 					tt.baseCell, goResult, cResult)
 			}
 		})

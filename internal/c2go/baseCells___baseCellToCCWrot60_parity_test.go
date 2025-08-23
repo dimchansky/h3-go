@@ -63,7 +63,7 @@ func Test_baseCellToCCWrot60_parity(t *testing.T) {
 			cResult := _baseCellToCCWrot60C(tt.baseCell, tt.face)
 
 			if goResult != cResult {
-				t.Errorf("_baseCellToCCWrot60(%d, %d): Go=%d, C=%d", 
+				t.Errorf("_baseCellToCCWrot60(%d, %d): Go=%d, C=%d",
 					tt.baseCell, tt.face, goResult, cResult)
 			}
 		})
@@ -79,7 +79,7 @@ func Test_baseCellToCCWrot60_all_valid_combinations(t *testing.T) {
 				cResult := _baseCellToCCWrot60C(baseCell, face)
 
 				if goResult != cResult {
-					t.Errorf("_baseCellToCCWrot60(%d, %d): Go=%d, C=%d", 
+					t.Errorf("_baseCellToCCWrot60(%d, %d): Go=%d, C=%d",
 						baseCell, face, goResult, cResult)
 				}
 			})

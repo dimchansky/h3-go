@@ -2,6 +2,7 @@ package c2go
 
 // _getBaseCellDirection returns the direction from the origin base cell to the neighbor.
 // Returns INVALID_DIGIT if the base cells are not neighbors.
+// Ported from H3 C: baseCells.c::_getBaseCellDirection
 func _getBaseCellDirection(originBaseCell int, neighboringBaseCell int) Direction {
 	for dir := CENTER_DIGIT; dir < NUM_DIGITS; dir++ {
 		testBaseCell := _getBaseCellNeighbor(originBaseCell, dir)

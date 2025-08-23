@@ -4,6 +4,7 @@ import "math"
 
 // pointInsideGeoLoop determines if coord is inside loop, using bbox for fast rejection.
 // Ported from polygonAlgos.h::pointInside (GeoLoop variant).
+// Ported from H3 C: polygon.c::pointInsideGeoLoop
 func pointInsideGeoLoop(loop []LatLng, bbox *BBox, coord *LatLng) bool {
 	if !bboxContains(bbox, coord) {
 		return false

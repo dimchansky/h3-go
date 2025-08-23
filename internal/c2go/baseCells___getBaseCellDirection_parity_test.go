@@ -20,7 +20,7 @@ func Test_getBaseCellDirection_parity(t *testing.T) {
 		{"base_0_to_5", 0, 5},
 		{"base_0_to_8", 0, 8},
 		{"base_0_to_0", 0, 0}, // Self reference (CENTER_DIGIT)
-		
+
 		{"base_1_to_0", 1, 0},
 		{"base_1_to_2", 1, 2},
 		{"base_1_to_3", 1, 3},
@@ -28,13 +28,13 @@ func Test_getBaseCellDirection_parity(t *testing.T) {
 		{"base_1_to_7", 1, 7},
 		{"base_1_to_9", 1, 9},
 		{"base_1_to_1", 1, 1}, // Self reference
-		
+
 		// Test non-neighboring base cells (should return INVALID_DIGIT)
 		{"base_0_to_10", 0, 10}, // Not neighbors
 		{"base_0_to_50", 0, 50}, // Not neighbors
 		{"base_1_to_25", 1, 25}, // Not neighbors
 		{"base_5_to_99", 5, 99}, // Not neighbors
-		
+
 		// Test pentagon base cells
 		{"pentagon_4_to_0", 4, 0},
 		{"pentagon_4_to_3", 4, 3},
@@ -42,7 +42,7 @@ func Test_getBaseCellDirection_parity(t *testing.T) {
 		{"pentagon_4_to_12", 4, 12},
 		{"pentagon_4_to_15", 4, 15},
 		{"pentagon_4_to_4", 4, 4}, // Self reference
-		
+
 		// Test some edge cases
 		{"base_121_to_113", 121, 113},
 		{"base_121_to_116", 121, 116},
@@ -75,12 +75,12 @@ func Test_getBaseCellDirection_comprehensive(t *testing.T) {
 				// If there's a valid neighbor, the direction lookup should work
 				foundDir := _getBaseCellDirection(baseCell, neighbor)
 				cFoundDir := _getBaseCellDirectionC(baseCell, neighbor)
-				
+
 				if foundDir != cFoundDir {
 					t.Errorf("_getBaseCellDirection(baseCell=%d, neighbor=%d): Go=%d, C=%d",
 						baseCell, neighbor, foundDir, cFoundDir)
 				}
-				
+
 				// The found direction should match the original direction
 				if foundDir != dir {
 					t.Errorf("Direction mismatch: baseCell=%d, expected_dir=%d, found_dir=%d, neighbor=%d",
@@ -102,16 +102,16 @@ func Test_getBaseCellDirection_invalid_cases(t *testing.T) {
 		{10, 90},  // Far apart
 		{50, 121}, // Far apart
 	}
-	
+
 	for _, tc := range testCases {
 		goResult := _getBaseCellDirection(tc.origin, tc.neighbor)
 		cResult := _getBaseCellDirectionC(tc.origin, tc.neighbor)
-		
+
 		if goResult != cResult {
 			t.Errorf("_getBaseCellDirection(%d, %d): Go=%d, C=%d",
 				tc.origin, tc.neighbor, goResult, cResult)
 		}
-		
+
 		// Both should return INVALID_DIGIT
 		if goResult != INVALID_DIGIT {
 			t.Errorf("Expected INVALID_DIGIT for non-neighbors %d->%d, got %d",

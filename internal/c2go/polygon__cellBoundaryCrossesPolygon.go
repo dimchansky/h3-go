@@ -2,6 +2,7 @@ package c2go
 
 // cellBoundaryCrossesPolygon reports whether any part of a cell boundary crosses a polygon.
 // Ported from polygon.c::cellBoundaryCrossesPolygon
+// Ported from H3 C: polygon.c::cellBoundaryCrossesPolygon
 func cellBoundaryCrossesPolygon(poly GeoPolygon, bboxes []BBox, boundary *CellBoundary, boundaryBBox *BBox) bool {
 	if cellBoundaryCrossesGeoLoop(poly.Geoloop, &bboxes[0], boundary, boundaryBBox) {
 		return true

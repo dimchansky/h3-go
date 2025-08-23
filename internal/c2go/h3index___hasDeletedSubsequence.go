@@ -10,7 +10,7 @@ func _hasDeletedSubsequence(h H3Index, baseCell int) bool {
 		// Keep only the lower 45 bits (15 digits × 3 bits each)
 		h <<= 19
 		h >>= 19
-		
+
 		if h == 0 {
 			return false // all zeros: res 15 pentagon
 		}

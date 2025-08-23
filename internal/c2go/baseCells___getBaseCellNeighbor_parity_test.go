@@ -20,7 +20,7 @@ func Test_getBaseCellNeighbor_parity(t *testing.T) {
 		{"base_0_ik", 0, IK_AXES_DIGIT},
 		{"base_0_i", 0, I_AXES_DIGIT},
 		{"base_0_ij", 0, IJ_AXES_DIGIT},
-		
+
 		{"base_1_center", 1, CENTER_DIGIT},
 		{"base_1_j", 1, J_AXES_DIGIT},
 		{"base_1_jk", 1, JK_AXES_DIGIT},
@@ -37,7 +37,7 @@ func Test_getBaseCellNeighbor_parity(t *testing.T) {
 		{"pentagon_4_ik", 4, IK_AXES_DIGIT},
 		{"pentagon_4_i", 4, I_AXES_DIGIT},
 		{"pentagon_4_ij", 4, IJ_AXES_DIGIT},
-		
+
 		{"pentagon_14_center", 14, CENTER_DIGIT},
 		{"pentagon_14_j", 14, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
 		{"pentagon_14_jk", 14, JK_AXES_DIGIT},
@@ -45,16 +45,16 @@ func Test_getBaseCellNeighbor_parity(t *testing.T) {
 		{"pentagon_14_ik", 14, IK_AXES_DIGIT},
 		{"pentagon_14_i", 14, I_AXES_DIGIT},
 		{"pentagon_14_ij", 14, IJ_AXES_DIGIT},
-		
+
 		// Test other pentagon base cells
-		{"pentagon_24_j", 24, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
-		{"pentagon_38_j", 38, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
-		{"pentagon_49_j", 49, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
-		{"pentagon_58_j", 58, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
-		{"pentagon_63_j", 63, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
-		{"pentagon_72_j", 72, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
-		{"pentagon_83_j", 83, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
-		{"pentagon_97_j", 97, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
+		{"pentagon_24_j", 24, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
+		{"pentagon_38_j", 38, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
+		{"pentagon_49_j", 49, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
+		{"pentagon_58_j", 58, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
+		{"pentagon_63_j", 63, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
+		{"pentagon_72_j", 72, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
+		{"pentagon_83_j", 83, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
+		{"pentagon_97_j", 97, J_AXES_DIGIT},   // Should return INVALID_BASE_CELL
 		{"pentagon_107_j", 107, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
 		{"pentagon_117_j", 117, J_AXES_DIGIT}, // Should return INVALID_BASE_CELL
 

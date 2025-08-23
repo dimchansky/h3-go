@@ -1,4 +1,3 @@
-
 package c2go
 
 // BaseCellRotation represents base cell at a given ijk and required rotations into its system
@@ -10,7 +9,7 @@ type BaseCellRotation struct {
 // faceIjkBaseCells mirrors the static faceIjkBaseCells array from baseCells.c
 // This is a 4D lookup table: [face][i][j][k] -> BaseCellRotation
 var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
-	{// face 0
+	{ // face 0
 		{
 			// i 0
 			{{16, 0}, {18, 0}, {24, 0}}, // j 0
@@ -19,9 +18,9 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 		},
 		{
 			// i 1
-			{{8, 0}, {5, 5}, {10, 5}},    // j 0
-			{{22, 0}, {16, 0}, {18, 0}},  // j 1
-			{{41, 1}, {33, 0}, {30, 0}},  // j 2
+			{{8, 0}, {5, 5}, {10, 5}},   // j 0
+			{{22, 0}, {16, 0}, {18, 0}}, // j 1
+			{{41, 1}, {33, 0}, {30, 0}}, // j 2
 		},
 		{
 			// i 2
@@ -30,12 +29,12 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{31, 1}, {22, 0}, {16, 0}}, // j 2
 		},
 	},
-	{// face 1
+	{ // face 1
 		{
 			// i 0
-			{{2, 0}, {6, 0}, {14, 0}},    // j 0
-			{{10, 0}, {11, 0}, {17, 3}},  // j 1
-			{{24, 1}, {23, 3}, {25, 3}},  // j 2
+			{{2, 0}, {6, 0}, {14, 0}},   // j 0
+			{{10, 0}, {11, 0}, {17, 3}}, // j 1
+			{{24, 1}, {23, 3}, {25, 3}}, // j 2
 		},
 		{
 			// i 1
@@ -50,7 +49,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{16, 1}, {5, 0}, {2, 0}}, // j 2
 		},
 	},
-	{// face 2
+	{ // face 2
 		{
 			// i 0
 			{{7, 0}, {21, 0}, {38, 0}},  // j 0
@@ -70,7 +69,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{2, 1}, {1, 0}, {7, 0}},   // j 2
 		},
 	},
-	{// face 3
+	{ // face 3
 		{
 			// i 0
 			{{26, 0}, {42, 0}, {58, 0}}, // j 0
@@ -90,7 +89,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{7, 1}, {13, 0}, {26, 0}}, // j 2
 		},
 	},
-	{// face 4
+	{ // face 4
 		{
 			// i 0
 			{{31, 0}, {41, 0}, {49, 0}}, // j 0
@@ -110,7 +109,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{26, 1}, {28, 0}, {31, 0}}, // j 2
 		},
 	},
-	{// face 5
+	{ // face 5
 		{
 			// i 0
 			{{50, 0}, {48, 0}, {49, 3}}, // j 0
@@ -130,7 +129,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{57, 1}, {52, 3}, {50, 0}}, // j 2
 		},
 	},
-	{// face 6
+	{ // face 6
 		{
 			// i 0
 			{{25, 0}, {23, 0}, {24, 3}}, // j 0
@@ -150,7 +149,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{46, 3}, {35, 3}, {25, 0}}, // j 2
 		},
 	},
-	{// face 7
+	{ // face 7
 		{
 			// i 0
 			{{36, 0}, {20, 0}, {14, 3}}, // j 0
@@ -170,7 +169,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{71, 3}, {54, 3}, {36, 0}}, // j 2
 		},
 	},
-	{// face 8
+	{ // face 8
 		{
 			// i 0
 			{{64, 0}, {47, 0}, {38, 3}}, // j 0
@@ -190,7 +189,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{96, 3}, {82, 3}, {64, 0}}, // j 2
 		},
 	},
-	{// face 9
+	{ // face 9
 		{
 			// i 0
 			{{75, 0}, {65, 0}, {58, 3}}, // j 0
@@ -210,7 +209,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{85, 3}, {81, 3}, {75, 0}},   // j 2
 		},
 	},
-	{// face 10
+	{ // face 10
 		{
 			// i 0
 			{{57, 0}, {59, 0}, {63, 3}}, // j 0
@@ -230,7 +229,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{50, 3}, {52, 0}, {57, 0}}, // j 2
 		},
 	},
-	{// face 11
+	{ // face 11
 		{
 			// i 0
 			{{46, 0}, {60, 0}, {72, 3}}, // j 0
@@ -250,12 +249,12 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{25, 3}, {35, 0}, {46, 0}}, // j 2
 		},
 	},
-	{// face 12
+	{ // face 12
 		{
 			// i 0
-			{{71, 0}, {89, 0}, {97, 3}},   // j 0
-			{{73, 0}, {91, 3}, {103, 3}},  // j 1
-			{{72, 3}, {88, 3}, {105, 3}},  // j 2
+			{{71, 0}, {89, 0}, {97, 3}},  // j 0
+			{{73, 0}, {91, 3}, {103, 3}}, // j 1
+			{{72, 3}, {88, 3}, {105, 3}}, // j 2
 		},
 		{
 			// i 1
@@ -270,7 +269,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{36, 3}, {54, 0}, {71, 0}}, // j 2
 		},
 	},
-	{// face 13
+	{ // face 13
 		{
 			// i 0
 			{{96, 0}, {104, 0}, {107, 3}}, // j 0
@@ -290,12 +289,12 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{64, 3}, {82, 0}, {96, 0}}, // j 2
 		},
 	},
-	{// face 14
+	{ // face 14
 		{
 			// i 0
-			{{85, 0}, {87, 0}, {83, 3}},     // j 0
-			{{101, 0}, {102, 3}, {100, 3}},  // j 1
-			{{107, 3}, {112, 3}, {114, 3}},  // j 2
+			{{85, 0}, {87, 0}, {83, 3}},    // j 0
+			{{101, 0}, {102, 3}, {100, 3}}, // j 1
+			{{107, 3}, {112, 3}, {114, 3}}, // j 2
 		},
 		{
 			// i 1
@@ -310,7 +309,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{75, 3}, {81, 0}, {85, 0}}, // j 2
 		},
 	},
-	{// face 15
+	{ // face 15
 		{
 			// i 0
 			{{95, 0}, {92, 0}, {83, 0}}, // j 0
@@ -330,7 +329,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{90, 1}, {93, 1}, {95, 0}},    // j 2
 		},
 	},
-	{// face 16
+	{ // face 16
 		{
 			// i 0
 			{{90, 0}, {77, 0}, {63, 0}}, // j 0
@@ -350,7 +349,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{105, 1}, {99, 1}, {90, 0}},  // j 2
 		},
 	},
-	{// face 17
+	{ // face 17
 		{
 			// i 0
 			{{105, 0}, {88, 0}, {72, 0}}, // j 0
@@ -359,18 +358,18 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 		},
 		{
 			// i 1
-			{{113, 0}, {99, 0}, {80, 5}},   // j 0
-			{{116, 1}, {105, 0}, {88, 0}},  // j 1
-			{{111, 1}, {103, 0}, {91, 0}},  // j 2
+			{{113, 0}, {99, 0}, {80, 5}},  // j 0
+			{{116, 1}, {105, 0}, {88, 0}}, // j 1
+			{{111, 1}, {103, 0}, {91, 0}}, // j 2
 		},
 		{
 			// i 2
-			{{117, 2}, {106, 5}, {90, 5}}, // j 0
-			{{121, 1}, {113, 0}, {99, 0}}, // j 1
+			{{117, 2}, {106, 5}, {90, 5}},  // j 0
+			{{121, 1}, {113, 0}, {99, 0}},  // j 1
 			{{119, 1}, {116, 1}, {105, 0}}, // j 2
 		},
 	},
-	{// face 18
+	{ // face 18
 		{
 			// i 0
 			{{119, 0}, {111, 0}, {97, 0}}, // j 0
@@ -390,7 +389,7 @@ var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 			{{114, 1}, {120, 1}, {119, 0}}, // j 2
 		},
 	},
-	{// face 19
+	{ // face 19
 		{
 			// i 0
 			{{114, 0}, {112, 0}, {107, 0}}, // j 0

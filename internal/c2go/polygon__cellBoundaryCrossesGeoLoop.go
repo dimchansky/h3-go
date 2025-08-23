@@ -2,6 +2,7 @@ package c2go
 
 // cellBoundaryCrossesGeoLoop reports whether any segment of the boundary crosses the loop.
 // Ported from polygon.c::cellBoundaryCrossesGeoLoop
+// Ported from H3 C: polygon.c::cellBoundaryCrossesGeoLoop
 func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellBoundary, boundaryBBox *BBox) bool {
 	if !bboxOverlapsBBox(loopBBox, boundaryBBox) {
 		return false

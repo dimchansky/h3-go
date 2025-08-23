@@ -35,7 +35,7 @@ func Test_addInt32sOverflows_parity(t *testing.T) {
 		{"large positive sum", INT32_MAX - 100, 200},
 		{"medium positive overflow", 1000000000, 1500000000},
 
-		// Overflow cases - negative overflow  
+		// Overflow cases - negative overflow
 		{"min minus 1", INT32_MIN, -1},
 		{"min plus min", INT32_MIN, INT32_MIN},
 		{"large negative sum", INT32_MIN + 100, -200},
@@ -72,7 +72,7 @@ func Test_addInt32sOverflows_parity(t *testing.T) {
 			if gotGo != gotC {
 				t.Errorf("addInt32sOverflows(%d, %d) mismatch: Go=%v != C=%v",
 					tt.a, tt.b, gotGo, gotC)
-				
+
 				// Show the actual sum for debugging (if it fits in int64)
 				sum := int64(tt.a) + int64(tt.b)
 				wouldOverflow := sum > int64(INT32_MAX) || sum < int64(INT32_MIN)
@@ -101,7 +101,7 @@ func Test_addInt32sOverflows_parity(t *testing.T) {
 				t.Errorf("Go addInt32sOverflows not commutative: (%d,%d)=%v != (%d,%d)=%v",
 					tc.a, tc.b, result1Go, tc.b, tc.a, result2Go)
 			}
-			
+
 			if result1C != result2C {
 				t.Errorf("C addInt32sOverflows not commutative: (%d,%d)=%v != (%d,%d)=%v",
 					tc.a, tc.b, result1C, tc.b, tc.a, result2C)
@@ -123,7 +123,7 @@ func Test_subInt32sOverflows_parity(t *testing.T) {
 		{"mixed small", 5, -3},
 		{"mixed small reverse", -5, 3},
 
-		// Edge cases around zero  
+		// Edge cases around zero
 		{"positive zero", 1, 0},
 		{"negative zero", -1, 0},
 		{"zero positive", 0, 1},
@@ -142,7 +142,7 @@ func Test_subInt32sOverflows_parity(t *testing.T) {
 		{"medium pos minus neg overflow", 1000000000, -1000000000},
 
 		// Overflow cases - negative overflow (a - b where b is positive)
-		{"min minus max", INT32_MIN, INT32_MAX}, 
+		{"min minus max", INT32_MIN, INT32_MAX},
 		{"min minus large positive", INT32_MIN, 1000},
 		{"negative minus large positive", -1000000000, 1500000000},
 		{"medium neg minus pos overflow", -1000000000, 1000000000},
@@ -155,7 +155,7 @@ func Test_subInt32sOverflows_parity(t *testing.T) {
 
 		// Random test cases with known outcomes
 		{"known safe 1", 123456789, 23456789},
-		{"known safe 2", -123456789, -23456789},  
+		{"known safe 2", -123456789, -23456789},
 		{"known safe 3", 123456789, -23456789},
 		{"known safe 4", -123456789, 23456789},
 
@@ -184,8 +184,8 @@ func Test_subInt32sOverflows_parity(t *testing.T) {
 			if gotGo != gotC {
 				t.Errorf("subInt32sOverflows(%d, %d) mismatch: Go=%v != C=%v",
 					tt.a, tt.b, gotGo, gotC)
-				
-				// Show the actual difference for debugging (if it fits in int64)  
+
+				// Show the actual difference for debugging (if it fits in int64)
 				diff := int64(tt.a) - int64(tt.b)
 				wouldOverflow := diff > int64(INT32_MAX) || diff < int64(INT32_MIN)
 				t.Logf("  Actual diff as int64: %d, would overflow int32: %v", diff, wouldOverflow)

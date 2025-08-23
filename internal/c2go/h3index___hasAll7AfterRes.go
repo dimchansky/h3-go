@@ -10,11 +10,11 @@ func _hasAll7AfterRes(h H3Index, res int) bool {
 		if shift >= 64 {
 			return true // No digits to check beyond resolution 15
 		}
-		
+
 		h = ^h
 		h <<= shift
 		h >>= shift
-		
+
 		return h == 0
 	}
 	return true

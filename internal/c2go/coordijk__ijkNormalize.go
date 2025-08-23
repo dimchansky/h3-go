@@ -2,6 +2,7 @@ package c2go
 
 // _ijkNormalize normalizes IJK coordinates by removing negative values.
 // Mirrors H3's coordijk.c::_ijkNormalize behavior.
+// Ported from H3 C: coordijk.c::ijkNormalize
 func _ijkNormalize(c *CoordIJK) {
 	// remove any negative values
 	if c.I < 0 {

@@ -4,6 +4,7 @@ import "math"
 
 // bboxFromGeoLoop computes a bounding box for a loop of coordinates.
 // Mirrors H3's polygon.c::bboxFromGeoLoop behavior.
+// Ported from H3 C: polygon.c::bboxFromGeoLoop
 func bboxFromGeoLoop(loop []LatLng, bbox *BBox) {
 	if len(loop) == 0 {
 		*bbox = BBox{}
