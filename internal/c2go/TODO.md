@@ -307,6 +307,8 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [x] `addLinkedCoord` — DONE (Go port + C parity)
   - [x] `countLinkedPolygons` — DONE (Go port + C parity)
   - [x] `countContainers` — DONE (Go port, C parity has technical issues)
+  - [x] `findDeepestContainer` — DONE (Go port + C parity)
+  - [x] `findPolygonForHole` — DONE (Go port + C parity)
   - [x] `cubeRound` — DONE (Go port + C parity)
   - [ ] `destroyLinkedGeoLoop` — TODO: needs C→Go port + parity test
   - [ ] `destroyVertexGraph` — TODO: needs C→Go port + parity test
@@ -326,7 +328,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `iterStepRes` — TODO: needs C→Go port + parity test
   - [ ] `localIjkToCell` — TODO: needs C→Go port + parity test
   - [ ] `nextCell` — TODO: needs C→Go port + parity test
-  - [ ] `normalizeMultiPolygon` — TODO: needs C→Go port + parity test
+  - [x] `normalizeMultiPolygon` — DONE (Go port + C parity has technical issues with complex memory management)
   - [ ] `removeVertexNode` — TODO: needs C→Go port + parity test
   - [x] `scaleBBox` — DONE [parity test]
   - [x] `validatePolygonFlags` — DONE [parity test]
