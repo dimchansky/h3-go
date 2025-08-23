@@ -220,9 +220,9 @@ Execution plan per function
 The following 96 functions were identified from comprehensive H3 source analysis but are not yet tracked in TODO:
 
   - [ ] `_adjustPentVertOverage` — TODO: needs C→Go port + parity test
-  - [ ] `_baseCellIsCwOffset` — TODO: needs C→Go port + parity test
-  - [ ] `_baseCellToCCWrot60` — TODO: needs C→Go port + parity test
-  - [ ] `_baseCellToFaceIjk` — TODO: needs C→Go port + parity test
+  - [x] `_baseCellIsCwOffset` — DONE (Go port + C parity)
+  - [x] `_baseCellToCCWrot60` — DONE (Go port + C parity)
+  - [x] `_baseCellToFaceIjk` — DONE (Go port + C parity)
   - [x] `_downAp3` — DONE (Go port + C parity)
   - [x] `_downAp3r` — DONE (Go port + C parity)
   - [x] `_downAp7` — DONE (Go port + C parity)
