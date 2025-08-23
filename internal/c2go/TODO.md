@@ -289,7 +289,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [x] `bboxContains` — DONE (Go port + C parity)
   - [x] `bboxContainsBBox` — DONE (Go port + C parity)
   - [x] `bboxEquals` — DONE (Go port + C parity)
-  - [ ] `bboxesFromGeoPolygon` — TODO: needs C→Go port + parity test
+  - [x] `bboxesFromGeoPolygon` — DONE: polygon__bboxesFromGeoPolygon.go with parity test
   - [ ] `bboxHexEstimate` — TODO: needs C→Go port + parity test
   - [x] `bboxIsTransmeridian` — DONE (Go port + C parity)
   - [x] `bboxOverlapsBBox` — DONE (Go port + C parity)

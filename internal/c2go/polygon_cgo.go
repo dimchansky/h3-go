@@ -7,6 +7,9 @@ package c2go
 #include <stdbool.h>
 #include "h3api.h"
 #include "polygon.h"
+
+// Prototype for bboxesFromGeoPolygon
+extern void bboxesFromGeoPolygon(const GeoPolygon* polygon, BBox* bboxes);
 */
 import "C"
 import "unsafe"
@@ -273,5 +276,24 @@ func cellBoundaryCrossesPolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBo
 		return true
 	} else {
 		return false
+	}
+}
+
+// bboxesFromGeoPolygonC calls the original C implementation.
+func bboxesFromGeoPolygonC(polygon *GeoPolygon, bboxes []BBox) {
+	// Convert polygon to C struct
+	cp, freePoly := toCGeoPolygon(*polygon)
+	defer freePoly()
+
+	// Convert bboxes array to C
+	cbboxes := make([]C.BBox, len(bboxes))
+	C.bboxesFromGeoPolygon(&cp, &cbboxes[0])
+
+	// Convert back to Go structs
+	for i := 0; i < len(bboxes); i++ {
+		bboxes[i].North = float64(cbboxes[i].north)
+		bboxes[i].South = float64(cbboxes[i].south)
+		bboxes[i].East = float64(cbboxes[i].east)
+		bboxes[i].West = float64(cbboxes[i].west)
 	}
 }
