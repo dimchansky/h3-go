@@ -10,6 +10,7 @@ package c2go
 // Prototypes for the original C helpers in linkedGeo.c
 int countLinkedCoords(LinkedGeoLoop* loop);
 int countLinkedLoops(LinkedGeoPolygon* polygon);
+int countLinkedPolygonsC(LinkedGeoPolygon* polygon);
 void bboxFromLinkedGeoLoopC(const LinkedGeoLoop *loop, BBox *bbox);
 bool pointInsideLinkedGeoLoopC(const LinkedGeoLoop *loop, const BBox *bbox, const LatLng *coord);
 bool isClockwiseLinkedGeoLoopC(const LinkedGeoLoop *loop);
@@ -63,6 +64,48 @@ func countLinkedCoordsC(loop *LinkedGeoLoop) int {
 	}
 	C.free(unsafe.Pointer(cLoop))
 
+	return result
+}
+
+// countLinkedPolygonsC wraps the C countLinkedPolygons function for parity testing.
+func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int {
+	// Create C structures to mirror the Go linked list
+	if polygon == nil {
+		return int(C.countLinkedPolygonsC(nil))
+	}
+	
+	// Build the C linked list from Go linked list
+	var firstCPolygon *C.LinkedGeoPolygon
+	var prevCPolygon *C.LinkedGeoPolygon
+	currentGoPolygon := polygon
+	
+	for currentGoPolygon != nil {
+		cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
+		cPolygon.first = nil
+		cPolygon.last = nil
+		cPolygon.next = nil
+		
+		if firstCPolygon == nil {
+			firstCPolygon = cPolygon
+		} else {
+			prevCPolygon.next = cPolygon
+		}
+		
+		prevCPolygon = cPolygon
+		currentGoPolygon = currentGoPolygon.Next
+	}
+	
+	// Call C function
+	result := int(C.countLinkedPolygonsC(firstCPolygon))
+	
+	// Clean up C memory
+	currentCPolygon := firstCPolygon
+	for currentCPolygon != nil {
+		nextPolygon := currentCPolygon.next
+		C.free(unsafe.Pointer(currentCPolygon))
+		currentCPolygon = nextPolygon
+	}
+	
 	return result
 }
 

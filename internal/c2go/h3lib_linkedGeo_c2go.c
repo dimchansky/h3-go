@@ -37,3 +37,8 @@ LinkedLatLng* addLinkedCoordC(LinkedGeoLoop *loop, const LatLng *vertex) {
     return addLinkedCoord(loop, vertex);
 }
 
+// Wrapper for countLinkedPolygons
+int countLinkedPolygonsC(LinkedGeoPolygon *polygon) {
+    return countLinkedPolygons(polygon);
+}
+
