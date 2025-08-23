@@ -309,3 +309,11 @@ func debugFaceIjkToH3C(fijk *FaceIJK, res int) H3Index {
 
 	return H3Index(C._faceIjkToH3(&cfijk, C.int(res)))
 }
+
+// maxFaceCountC calls the original C implementation.
+func maxFaceCountC(h H3Index, out *int) uint32 {
+	var cOut C.int
+	err := C.maxFaceCount(C.H3Index(h), &cOut)
+	*out = int(cOut)
+	return uint32(err)
+}
