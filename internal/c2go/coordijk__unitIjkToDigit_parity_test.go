@@ -1,4 +1,4 @@
-//go:build c2go
+//go:build cgo
 
 package c2go
 
