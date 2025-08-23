@@ -17,6 +17,7 @@ Iteration Workflow (standard operating procedure)
 - Select target: pick a small, self-contained C function (or a tight cluster) from the planned list.
 - Prepare interop: if the C function is not exported or uses structs, add minimal cgo helpers to call it directly (use C structs like C.LatLng/C.BBox, etc.); avoid splitting scalars.
 - Transpile: implement a faithful Go port in `internal/c2go/<cfile>__<function>.go`, mirroring names/signatures (unexported) and behavior (NO build tag for pure Go).
+- Document: follow established comment style with function description, technical details, and `// Ported from H3 C: <file>::<function>` attribution line.
 - Parity test: add `internal/c2go/<cfile>__<function>_parity_test.go` with `//go:build cgo` that compares Go vs C output; use tight, justified tolerances for floats and safe bool handling.
 - Sanity run: `make test-c2go` and ensure all parity tests pass.
 - Format code: run `make fix-fmt` prior to committing.
@@ -28,6 +29,19 @@ Build Tag Rules
 - **CGO interop files** (`*_cgo.go`): Must have `//go:build cgo` as first line
 - **Parity test files** (`*_parity_test.go`): Must have `//go:build cgo` as first line
 - This ensures pure Go code is always available while CGO dependencies are isolated
+
+Comment Style Requirements
+- **Function description**: Brief summary of what the function does
+- **Technical details**: Include important implementation notes, algorithm explanations, or edge case handling
+- **Source attribution**: Must include `// Ported from H3 C: <file>::<function>` line
+- **Example format**:
+  ```go
+  // _functionName calculates something important.
+  // Additional technical details about the implementation.
+  // Ported from H3 C: fileName.c::_functionName
+  func _functionName(params) returnType {
+  ```
+- **Constants**: Should be declared in `<cfile>_constants.go` files, not inline
 
 Interop helper note
 - When performing Go→C struct conversions in `*_cgo.go`, prefer creating small helper functions to convert common types (e.g., `toCGeoLoop`, `toCGeoPolygon`, `toCBBox`). This avoids duplication when multiple functions need the same transformation and makes memory management (malloc/free) clearer and safer.
@@ -250,9 +264,9 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `_h3RotatePent60cw` — TODO: needs C→Go port + parity test
   - [ ] `_h3ToFaceIjk` — TODO: needs C→Go port + parity test
   - [ ] `_h3ToFaceIjkWithInitializedFijk` — TODO: needs C→Go port + parity test
-  - [ ] `_hasAll7AfterRes` — TODO: needs C→Go port + parity test
-  - [ ] `_hasAny7UptoRes` — TODO: needs C→Go port + parity test
-  - [ ] `_hasDeletedSubsequence` — TODO: needs C→Go port + parity test
+  - [x] `_hasAll7AfterRes` — DONE (Go port + C parity)
+  - [x] `_hasAny7UptoRes` — DONE (Go port + C parity)
+  - [x] `_hasDeletedSubsequence` — DONE (Go port + C parity)
   - [x] `_hasGoodTopBits` — DONE (Go port + C parity)
   - [ ] `_hashVertex` — TODO: needs C→Go port + parity test
   - [ ] `_hexRadiusKm` — TODO: needs C→Go port + parity test

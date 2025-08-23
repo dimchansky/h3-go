@@ -27,6 +27,9 @@ static inline H3Index make_direct_child_c(H3Index h, int cellNumber) { return ma
 extern int has_child_at_res_c(H3Index h, int childRes);
 extern int first_one_index_c(H3Index h);
 extern int has_good_top_bits_c(H3Index h);
+extern int has_any_7_upto_res_c(H3Index h, int res);
+extern int has_all_7_after_res_c(H3Index h, int res);
+extern int has_deleted_subsequence_c(H3Index h, int baseCell);
 */
 import "C"
 
@@ -183,4 +186,19 @@ func firstOneIndexC(h H3Index) int {
 // hasGoodTopBitsC calls the original C implementation.
 func hasGoodTopBitsC(h H3Index) bool {
 	return C.has_good_top_bits_c(C.H3Index(h)) != 0
+}
+
+// hasAny7UptoResC calls the original C implementation.
+func hasAny7UptoResC(h H3Index, res int) bool {
+	return C.has_any_7_upto_res_c(C.H3Index(h), C.int(res)) != 0
+}
+
+// hasAll7AfterResC calls the original C implementation.
+func hasAll7AfterResC(h H3Index, res int) bool {
+	return C.has_all_7_after_res_c(C.H3Index(h), C.int(res)) != 0
+}
+
+// hasDeletedSubsequenceC calls the original C implementation.
+func hasDeletedSubsequenceC(h H3Index, baseCell int) bool {
+	return C.has_deleted_subsequence_c(C.H3Index(h), C.int(baseCell)) != 0
 }
