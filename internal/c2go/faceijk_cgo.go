@@ -109,3 +109,29 @@ func _adjustOverageClassIIC(fijk *FaceIJK, res int, pentLeading4 int, substrate 
 
 	return Overage(result)
 }
+
+// _faceIjkToVertsC calls the original C implementation.
+func _faceIjkToVertsC(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
+	var cFijk C.FaceIJK
+	cFijk.face = C.int(fijk.Face)
+	cFijk.coord.i = C.int(fijk.Coord.I)
+	cFijk.coord.j = C.int(fijk.Coord.J)
+	cFijk.coord.k = C.int(fijk.Coord.K)
+
+	var cRes C.int = C.int(*res)
+
+	// Create C array for output
+	var cVerts [6]C.FaceIJK
+	C._faceIjkToVerts(&cFijk, &cRes, &cVerts[0])
+
+	// Update resolution
+	*res = int(cRes)
+
+	// Copy results back to Go slice
+	for i := 0; i < 6; i++ {
+		fijkVerts[i].Face = int(cVerts[i].face)
+		fijkVerts[i].Coord.I = int(cVerts[i].coord.i)
+		fijkVerts[i].Coord.J = int(cVerts[i].coord.j)
+		fijkVerts[i].Coord.K = int(cVerts[i].coord.k)
+	}
+}
