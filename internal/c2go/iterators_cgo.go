@@ -26,6 +26,9 @@ static IterCellsChildren nullIterWrapper(void) {
     iter._skipDigit = -1;
     return iter;
 }
+
+// Forward declaration for _iterInitParent function
+extern void _iterInitParent(H3Index h, int childRes, IterCellsChildren *iter);
 */
 import "C"
 
@@ -51,4 +54,13 @@ func nullIterC() IterCellsChildren {
 		ParentRes: int(citer._parentRes),
 		SkipDigit: int(citer._skipDigit),
 	}
+}
+
+// iterInitParentC calls the original C _iterInitParent function.
+func iterInitParentC(h H3Index, childRes int, iter *IterCellsChildren) {
+	var citer C.IterCellsChildren
+	C._iterInitParent(C.H3Index(h), C.int(childRes), &citer)
+	iter.H = H3Index(citer.h)
+	iter.ParentRes = int(citer._parentRes)
+	iter.SkipDigit = int(citer._skipDigit)
 }

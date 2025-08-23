@@ -277,7 +277,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `_hexRadiusKm` — TODO: needs C→Go port + parity test
   - [x] `_ijkNormalizeCouldOverflow` — DONE (Go port + C parity)
   - [x] `_incrementResDigit` — DONE: iterators__incrementResDigit.go with parity test
-  - [ ] `_iterInitParent` — TODO: needs C→Go port + parity test
+  - [x] `_iterInitParent` — DONE: iterators__iterInitParent.go with parity test
   - [x] `_null_iter` — DONE: iterators__null_iter.go with parity test
   - [x] `_upAp7` — DONE (Go port + C parity)
   - [x] `_upAp7Checked` — DONE (Go port + C parity)  
