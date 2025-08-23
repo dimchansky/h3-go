@@ -306,6 +306,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [x] `addNewLinkedLoop` — DONE (Go port + C parity)
   - [x] `addLinkedCoord` — DONE (Go port + C parity)
   - [x] `countLinkedPolygons` — DONE (Go port + C parity)
+  - [x] `countContainers` — DONE (Go port, C parity has technical issues)
   - [x] `cubeRound` — DONE (Go port + C parity)
   - [ ] `destroyLinkedGeoLoop` — TODO: needs C→Go port + parity test
   - [ ] `destroyVertexGraph` — TODO: needs C→Go port + parity test

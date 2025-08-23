@@ -42,3 +42,18 @@ int countLinkedPolygonsC(LinkedGeoPolygon *polygon) {
     return countLinkedPolygons(polygon);
 }
 
+// Implementation of countContainers (copied from linkedGeo.c static function)
+int countContainersC(const LinkedGeoLoop *loop,
+                     const LinkedGeoPolygon **polygons,
+                     const BBox **bboxes, int polygonCount) {
+    int containerCount = 0;
+    for (int i = 0; i < polygonCount; i++) {
+        if (loop != polygons[i]->first &&
+            pointInsideLinkedGeoLoop(polygons[i]->first, bboxes[i],
+                                     &loop->first->vertex)) {
+            containerCount++;
+        }
+    }
+    return containerCount;
+}
+
