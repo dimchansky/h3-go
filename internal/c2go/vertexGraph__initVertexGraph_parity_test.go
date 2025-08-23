@@ -9,8 +9,8 @@ import (
 func Test_initVertexGraph_parity(t *testing.T) {
 	testCases := []struct {
 		name       string
-		numBuckets int
-		res        int
+		numBuckets int32
+		res        int32
 	}{
 		{
 			name:       "zero buckets",
@@ -75,7 +75,7 @@ func Test_initVertexGraph_parity(t *testing.T) {
 				if goGraph.Buckets == nil {
 					t.Error("Go: Buckets should not be nil for numBuckets > 0")
 				}
-				if len(goGraph.Buckets) != tc.numBuckets {
+				if len(goGraph.Buckets) != int(tc.numBuckets) {
 					t.Errorf("Go: Buckets length mismatch: expected %d, got %d", tc.numBuckets, len(goGraph.Buckets))
 				}
 				if cGraph.Buckets == nil {

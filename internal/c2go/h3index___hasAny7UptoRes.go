@@ -3,7 +3,7 @@ package c2go
 // _hasAny7UptoRes checks if any digit from 1 to `res` is 7 (INVALID_DIGIT).
 // Uses efficient bit manipulation to check for invalid digits without looping.
 // Ported from H3 C: h3Index.c::_hasAny7UptoRes
-func _hasAny7UptoRes(h H3Index, res int) bool {
+func _hasAny7UptoRes(h H3Index, res int32) bool {
 	// Shift to zero out digits beyond resolution
 	shift := 3 * (15 - res)
 

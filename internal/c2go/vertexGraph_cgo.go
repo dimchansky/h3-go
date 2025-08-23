@@ -13,7 +13,7 @@ void initVertexGraph(VertexGraph* graph, int numBuckets, int res);
 import "C"
 
 // _hashVertexC wraps the C _hashVertex function for parity testing.
-func _hashVertexC(vertex *LatLng, res int, numBuckets int) uint32 {
+func _hashVertexC(vertex *LatLng, res int32, numBuckets int32) uint32 {
 	cVertex := C.LatLng{
 		lat: C.double(vertex.Lat),
 		lng: C.double(vertex.Lng),
@@ -23,14 +23,14 @@ func _hashVertexC(vertex *LatLng, res int, numBuckets int) uint32 {
 }
 
 // initVertexGraphC wraps the C initVertexGraph function for parity testing.
-func initVertexGraphC(graph *VertexGraph, numBuckets int, res int) {
+func initVertexGraphC(graph *VertexGraph, numBuckets int32, res int32) {
 	var cGraph C.VertexGraph
 	C.initVertexGraph(&cGraph, C.int(numBuckets), C.int(res))
 
 	// Copy results back to Go struct
-	graph.NumBuckets = int(cGraph.numBuckets)
-	graph.Size = int(cGraph.size)
-	graph.Res = int(cGraph.res)
+	graph.NumBuckets = int32(cGraph.numBuckets)
+	graph.Size = int32(cGraph.size)
+	graph.Res = int32(cGraph.res)
 
 	// For buckets, we only verify the allocation occurred (non-nil vs nil)
 	// Full bucket testing would require memory allocation tracking

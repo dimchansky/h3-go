@@ -10,7 +10,7 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 	tests := []struct {
 		name          string
 		setupPolygons func() *LinkedGeoPolygon
-		expectedCount int
+		expectedCount int32
 	}{
 		{
 			name: "nil polygon",

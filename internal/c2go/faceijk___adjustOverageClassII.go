@@ -4,7 +4,7 @@ package c2go
 // This handles coordinate transformations when IJK coordinates exceed the face boundary.
 // Returns the overage status: NO_OVERAGE, FACE_EDGE, or NEW_FACE.
 // Ported from H3 C: faceijk.c::_adjustOverageClassII
-func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate bool) Overage {
+func _adjustOverageClassII(fijk *FaceIJK, res int32, pentLeading4 bool, substrate bool) Overage {
 	overage := NO_OVERAGE
 	ijk := &fijk.Coord
 
@@ -46,7 +46,7 @@ func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate 
 		fijk.Face = fijkOrient.Face
 
 		// Rotate and translate for adjacent face
-		for i := 0; i < fijkOrient.CcwRot60; i++ {
+		for i := int32(0); i < fijkOrient.CcwRot60; i++ {
 			_ijkRotate60ccw(ijk)
 		}
 

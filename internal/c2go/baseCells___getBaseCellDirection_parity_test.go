@@ -9,8 +9,8 @@ import (
 func Test_getBaseCellDirection_parity(t *testing.T) {
 	tests := []struct {
 		name                string
-		originBaseCell      int
-		neighboringBaseCell int
+		originBaseCell      int32
+		neighboringBaseCell int32
 	}{
 		// Test neighboring base cells
 		{"base_0_to_1", 0, 1},
@@ -68,7 +68,7 @@ func Test_getBaseCellDirection_parity(t *testing.T) {
 
 func Test_getBaseCellDirection_comprehensive(t *testing.T) {
 	// Test that direction lookup is consistent with neighbor lookup
-	for baseCell := 0; baseCell < NUM_BASE_CELLS; baseCell++ {
+	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
 		for dir := CENTER_DIGIT; dir < NUM_DIGITS; dir++ {
 			neighbor := _getBaseCellNeighbor(baseCell, dir)
 			if neighbor != INVALID_BASE_CELL {
@@ -94,8 +94,8 @@ func Test_getBaseCellDirection_comprehensive(t *testing.T) {
 func Test_getBaseCellDirection_invalid_cases(t *testing.T) {
 	// Test cases where base cells are not neighbors
 	testCases := []struct {
-		origin   int
-		neighbor int
+		origin   int32
+		neighbor int32
 	}{
 		{0, 50},   // Far apart
 		{1, 100},  // Far apart

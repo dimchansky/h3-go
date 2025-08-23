@@ -10,7 +10,7 @@ type VertexNode struct {
 // VertexGraph mirrors the C struct used in vertexGraph.h
 type VertexGraph struct {
 	Buckets    []*VertexNode
-	NumBuckets int
-	Size       int
-	Res        int
+	NumBuckets int32
+	Size       int32
+	Res        int32
 }

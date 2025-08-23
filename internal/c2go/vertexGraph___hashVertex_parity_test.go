@@ -10,8 +10,8 @@ func Test_hashVertex_parity(t *testing.T) {
 	testCases := []struct {
 		name       string
 		vertex     LatLng
-		res        int
-		numBuckets int
+		res        int32
+		numBuckets int32
 	}{
 		{
 			name:       "basic hash",

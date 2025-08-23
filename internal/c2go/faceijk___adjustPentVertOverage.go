@@ -4,7 +4,7 @@ package c2go
 // icosahedral face. This is a specialized wrapper around _adjustOverageClassII
 // that handles pentagon vertices specifically.
 // Ported from H3 C: faceijk.c::_adjustPentVertOverage
-func _adjustPentVertOverage(fijk *FaceIJK, res int) Overage {
+func _adjustPentVertOverage(fijk *FaceIJK, res int32) Overage {
 	var overage Overage
 
 	// do-while loop: execute at least once, continue while overage == NEW_FACE

@@ -10,7 +10,7 @@ func Test_countLinkedLoops_parity(t *testing.T) {
 	testCases := []struct {
 		name    string
 		polygon *LinkedGeoPolygon
-		count   int
+		count   int32
 	}{
 		{
 			name: "empty polygon",
@@ -79,7 +79,7 @@ func Test_countLinkedLoops_parity(t *testing.T) {
 }
 
 // Helper function to create a test polygon with specified number of loops
-func createTestPolygon(numLoops int) *LinkedGeoPolygon {
+func createTestPolygon(numLoops int32) *LinkedGeoPolygon {
 	if numLoops == 0 {
 		return &LinkedGeoPolygon{First: nil, Last: nil, Next: nil}
 	}
@@ -91,7 +91,7 @@ func createTestPolygon(numLoops int) *LinkedGeoPolygon {
 	}
 
 	current := first
-	for i := 1; i < numLoops; i++ {
+	for i := int32(1); i < numLoops; i++ {
 		next := &LinkedGeoLoop{
 			First: nil,
 			Last:  nil,

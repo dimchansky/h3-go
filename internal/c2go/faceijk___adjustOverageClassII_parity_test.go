@@ -10,7 +10,7 @@ func TestAdjustOverageClassIIParity(t *testing.T) {
 	testCases := []struct {
 		name         string
 		fijk         FaceIJK
-		res          int
+		res          int32
 		pentLeading4 bool
 		substrate    bool
 	}{
@@ -60,11 +60,11 @@ func TestAdjustOverageClassIIParity(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test Go implementation
 			goFijk := tc.fijk
-			pentLeading4Int := 0
+			pentLeading4Int := int32(0)
 			if tc.pentLeading4 {
 				pentLeading4Int = 1
 			}
-			substrateInt := 0
+			substrateInt := int32(0)
 			if tc.substrate {
 				substrateInt = 1
 			}

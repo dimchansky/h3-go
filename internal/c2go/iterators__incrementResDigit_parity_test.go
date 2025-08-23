@@ -10,7 +10,7 @@ func Test_incrementResDigit_parity(t *testing.T) {
 	tests := []struct {
 		name    string
 		h3Index H3Index
-		res     int
+		res     int32
 	}{
 		{
 			"increment_at_res_15",
@@ -84,7 +84,7 @@ func Test_incrementResDigit_parity(t *testing.T) {
 	// Test deterministic behavior
 	t.Run("deterministic", func(t *testing.T) {
 		h3Index := H3Index(0x85283473fffffff)
-		res := 10
+		res := int32(10)
 
 		h1 := h3Index
 		h2 := h3Index

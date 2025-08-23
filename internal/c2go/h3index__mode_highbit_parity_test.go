@@ -11,7 +11,7 @@ func Test_h3index_mode_highbit_ParityWithC(t *testing.T) {
 		if getMode(h) != getModeC(h) {
 			t.Fatalf("getMode mismatch for %x", uint64(h))
 		}
-		for v := 0; v <= 15; v++ {
+		for v := int32(0); v <= 15; v++ {
 			goH := setMode(h, v)
 			cH := setModeC(h, v)
 			if goH != cH {
@@ -24,7 +24,7 @@ func Test_h3index_mode_highbit_ParityWithC(t *testing.T) {
 		if getHighBit(h) != getHighBitC(h) {
 			t.Fatalf("getHighBit mismatch for %x", uint64(h))
 		}
-		for v := 0; v <= 1; v++ {
+		for v := int32(0); v <= 1; v++ {
 			goH := setHighBit(h, v)
 			cH := setHighBitC(h, v)
 			if goH != cH {

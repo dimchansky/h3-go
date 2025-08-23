@@ -11,7 +11,7 @@ func Test_h3ToFaceIjkWithInitializedFijk_Parity(t *testing.T) {
 	testCases := []struct {
 		name    string
 		h       H3Index
-		face    int
+		face    int32
 		i, j, k int32
 	}{
 		{"base cell 0, res 0", 0x8001fffffffffff, 0, 0, 0, 0},

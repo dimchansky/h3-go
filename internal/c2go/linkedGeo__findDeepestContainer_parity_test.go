@@ -67,19 +67,19 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		setupTest     func() ([]*LinkedGeoPolygon, []*BBox, int) // returns polygons, bboxes, expected index
+		setupTest     func() ([]*LinkedGeoPolygon, []*BBox, int32) // returns polygons, bboxes, expected index
 		expectedIndex int
 	}{
 		{
 			name: "empty polygons array",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
 				return []*LinkedGeoPolygon{}, []*BBox{}, -1 // -1 indicates nil expected
 			},
 			expectedIndex: -1,
 		},
 		{
 			name: "single polygon",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
 				polygon := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1),
 				}
@@ -93,7 +93,7 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 		},
 		{
 			name: "two nested polygons - outer and inner",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
 				// Larger outer polygon
 				outerPolygon := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1), // Large outer square
@@ -117,7 +117,7 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 		},
 		{
 			name: "three nested polygons - find the most deeply nested",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
 				// Create three nested polygons: large, medium, small
 				largePolygon := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1), // Largest
@@ -149,7 +149,7 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 		},
 		{
 			name: "non-nested polygons - return first",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
 				// Two separate polygons that don't contain each other
 				polygon1 := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.05), // Left side
@@ -190,7 +190,7 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 
 			// Check expected result
 			var expected *LinkedGeoPolygon
-			if expectedIndex >= 0 && expectedIndex < len(polygons) {
+			if expectedIndex >= 0 && int(expectedIndex) < len(polygons) {
 				expected = polygons[expectedIndex]
 			}
 

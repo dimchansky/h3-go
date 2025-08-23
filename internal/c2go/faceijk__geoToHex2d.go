@@ -5,7 +5,7 @@ import "math"
 // _geoToHex2d converts geographic coordinates to 2D hex coordinates on a specified face.
 // Mirrors _geoToHex2d in faceijk.c
 // Ported from H3 C: faceijk.c::geoToHex2d
-func _geoToHex2d(g *LatLng, res int, face *int, v *Vec2d) {
+func _geoToHex2d(g *LatLng, res int32, face *int32, v *Vec2d) {
 	// determine the icosahedron face
 	var sqd float64
 	_geoToClosestFace(g, face, &sqd)
@@ -33,7 +33,7 @@ func _geoToHex2d(g *LatLng, res int, face *int, v *Vec2d) {
 
 	// scale for current resolution length u
 	r *= INV_RES0_U_GNOMONIC
-	for i := 0; i < res; i++ {
+	for i := int32(0); i < res; i++ {
 		r *= M_SQRT7
 	}
 

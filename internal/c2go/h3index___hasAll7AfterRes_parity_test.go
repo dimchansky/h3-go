@@ -8,7 +8,7 @@ func Test_hasAll7AfterRes_parity(t *testing.T) {
 	tests := []struct {
 		name string
 		h    H3Index
-		res  int
+		res  int32
 	}{
 		// Valid H3 indexes with proper 7s after resolution
 		{"valid h3 res 9", 0x8a1fb46622dffff, 9},
@@ -54,7 +54,7 @@ func Test_hasAll7AfterRes_parity(t *testing.T) {
 		h := H3Index(0x8a1fb46622dffff)
 
 		testCases := []struct {
-			res  int
+			res  int32
 			name string
 		}{
 			{-1, "negative"},
@@ -77,7 +77,7 @@ func Test_hasAll7AfterRes_parity(t *testing.T) {
 	t.Run("all_resolutions", func(t *testing.T) {
 		h := H3Index(0x8a1fb46622dffff)
 
-		for res := 0; res <= 15; res++ {
+		for res := int32(0); res <= 15; res++ {
 			gotC := hasAll7AfterResC(h, res)
 			gotGo := _hasAll7AfterRes(h, res)
 

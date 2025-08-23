@@ -8,7 +8,7 @@ func Test_geoToHex2d_ParityWithC(t *testing.T) {
 	testCases := []struct {
 		name string
 		geo  LatLng
-		res  int
+		res  int32
 	}{
 		{"equator_prime", LatLng{0.0, 0.0}, 0},
 		{"equator_prime_res5", LatLng{0.0, 0.0}, 5},
@@ -32,7 +32,7 @@ func Test_geoToHex2d_ParityWithC(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			var goFace, cFace int
+			var goFace, cFace int32
 			var goVec, cVec Vec2d
 
 			// Test Go implementation

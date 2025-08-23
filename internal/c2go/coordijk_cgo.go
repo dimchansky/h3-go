@@ -69,7 +69,7 @@ func _ijkSubC(h1, h2 *CoordIJK) CoordIJK {
 
 // _setIJKC calls the original C implementation for setting IJK coordinates.
 // Bridges to coordijk.c::_setIJK.
-func _setIJKC(i, j, k int) CoordIJK {
+func _setIJKC(i, j, k int32) CoordIJK {
 	var cijk C.CoordIJK
 	C._setIJK(&cijk, C.int(i), C.int(j), C.int(k))
 	return CoordIJK{I: int32(cijk.i), J: int32(cijk.j), K: int32(cijk.k)}
@@ -112,7 +112,7 @@ func _ijkNormalizeC(c *CoordIJK) CoordIJK {
 
 // ijkDistanceC calls the original C implementation for computing IJK distance.
 // Bridges to coordijk.c::ijkDistance.
-func ijkDistanceC(c1, c2 *CoordIJK) int {
+func ijkDistanceC(c1, c2 *CoordIJK) int32 {
 	var cc1, cc2 C.CoordIJK
 	cc1.i = C.int(c1.I)
 	cc1.j = C.int(c1.J)
@@ -120,7 +120,7 @@ func ijkDistanceC(c1, c2 *CoordIJK) int {
 	cc2.i = C.int(c2.I)
 	cc2.j = C.int(c2.J)
 	cc2.k = C.int(c2.K)
-	return int(C.ijkDistance(&cc1, &cc2))
+	return int32(C.ijkDistance(&cc1, &cc2))
 }
 
 // _ijkRotate60ccwC calls the original C implementation for rotating IJK coordinates 60° counter-clockwise.
@@ -147,12 +147,12 @@ func _ijkRotate60cwC(c *CoordIJK) CoordIJK {
 
 // _unitIjkToDigitC calls the original C implementation for converting unit IJK to digit.
 // Bridges to coordijk.c::_unitIjkToDigit.
-func _unitIjkToDigitC(ijk *CoordIJK) int {
+func _unitIjkToDigitC(ijk *CoordIJK) int32 {
 	var cc C.CoordIJK
 	cc.i = C.int(ijk.I)
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
-	return int(C._unitIjkToDigit(&cc))
+	return int32(C._unitIjkToDigit(&cc))
 }
 
 // _neighborC calls the original C implementation for applying a direction to IJK coordinates.

@@ -9,6 +9,6 @@ import (
 // Simple hash: Take the sum of the lat and lng with a precision level
 // determined by the resolution, converted to int, modulo bucket count.
 // Ported from H3 C: vertexGraph.c::_hashVertex
-func _hashVertex(vertex *LatLng, res int, numBuckets int) uint32 {
+func _hashVertex(vertex *LatLng, res int32, numBuckets int32) uint32 {
 	return uint32(math.Mod(math.Abs((vertex.Lat+vertex.Lng)*math.Pow(10, float64(15-res))), float64(numBuckets)))
 }

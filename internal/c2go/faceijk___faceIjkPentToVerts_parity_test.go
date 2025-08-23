@@ -10,7 +10,7 @@ func Test_faceIjkPentToVerts_parity(t *testing.T) {
 	tests := []struct {
 		name string
 		fijk FaceIJK
-		res  int
+		res  int32
 	}{
 		{
 			name: "pentagon face 0 res 0",
@@ -107,8 +107,8 @@ func Test_faceIjkPentToVerts_resolutionModification(t *testing.T) {
 	classIIITests := []struct {
 		name    string
 		fijk    FaceIJK
-		initRes int
-		wantRes int
+		initRes int32
+		wantRes int32
 	}{
 		{
 			name:    "res 1 class III -> res 2",
@@ -148,7 +148,7 @@ func Test_faceIjkPentToVerts_resolutionModification(t *testing.T) {
 	classIITests := []struct {
 		name    string
 		fijk    FaceIJK
-		initRes int
+		initRes int32
 	}{
 		{
 			name:    "res 0 class II unchanged",

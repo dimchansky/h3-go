@@ -21,7 +21,7 @@ func Test_geoToClosestFace_ParityWithC(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		var goFace, cFace int
+		var goFace, cFace int32
 		var goSqd, cSqd float64
 
 		// Test Go implementation

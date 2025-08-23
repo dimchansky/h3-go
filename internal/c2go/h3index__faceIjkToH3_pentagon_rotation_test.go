@@ -13,7 +13,7 @@ func Test_h3index_faceIjkToH3_PentagonRotation_ParityWithC(t *testing.T) {
 	// rotation bug where Go returned 0x8f745c4dbb49490 but C returned 0x8f754e64992d6d8
 	testCases := []struct {
 		lat, lng float64
-		res      int
+		res      int32
 		desc     string
 	}{
 		{0.0, 0.0, 15, "origin at high resolution"},

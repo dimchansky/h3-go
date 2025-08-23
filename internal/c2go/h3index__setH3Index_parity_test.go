@@ -6,9 +6,9 @@ import "testing"
 
 func Test_h3index_setH3Index_ParityWithC(t *testing.T) {
 	cases := []struct {
-		res  int
-		base int
-		init int
+		res  int32
+		base int32
+		init int32
 	}{
 		{0, 0, 0},
 		{1, 1, 7},

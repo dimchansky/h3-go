@@ -4,7 +4,7 @@ package c2go
 // the children of a given parent cell at a given resolution. This function
 // sets up the iterator state for stepping through all child cells.
 // Ported from H3 C: iterators.c::_iterInitParent
-func iterInitParent(h H3Index, childRes int, iter *IterCellsChildren) {
+func iterInitParent(h H3Index, childRes int32, iter *IterCellsChildren) {
 	iter.ParentRes = getResolution(h)
 
 	if childRes < iter.ParentRes || childRes > MAX_H3_RES || h == 0 {

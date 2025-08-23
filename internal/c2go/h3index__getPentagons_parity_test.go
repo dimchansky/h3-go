@@ -5,7 +5,7 @@ package c2go
 import "testing"
 
 func Test_h3index_getPentagons_ParityWithC(t *testing.T) {
-	for _, res := range []int{0, 1, 5, 10, 15, -1, 16} {
+	for _, res := range []int32{0, 1, 5, 10, 15, -1, 16} {
 		// Use dst-buffer with insufficient capacity first
 		var dst []H3Index
 		goOut, goErr := getPentagons(dst, res)

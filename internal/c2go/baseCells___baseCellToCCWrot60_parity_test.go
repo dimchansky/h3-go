@@ -9,8 +9,8 @@ import (
 func Test_baseCellToCCWrot60_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		baseCell int
-		face     int
+		baseCell int32
+		face     int32
 	}{
 		// Test edge cases
 		{"invalid_face_negative", 0, -1},
@@ -72,8 +72,8 @@ func Test_baseCellToCCWrot60_parity(t *testing.T) {
 
 func Test_baseCellToCCWrot60_all_valid_combinations(t *testing.T) {
 	// Test all base cells against all faces to ensure comprehensive coverage
-	for baseCell := 0; baseCell < NUM_BASE_CELLS; baseCell++ {
-		for face := 0; face < NUM_ICOSA_FACES; face++ {
+	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
+		for face := int32(0); face < NUM_ICOSA_FACES; face++ {
 			t.Run("", func(t *testing.T) {
 				goResult := _baseCellToCCWrot60(baseCell, face)
 				cResult := _baseCellToCCWrot60C(baseCell, face)

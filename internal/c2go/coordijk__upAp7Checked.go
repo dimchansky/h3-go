@@ -12,8 +12,8 @@ import "math"
 // Ported from H3 C: coordijk.c::upAp7Checked
 func _upAp7Checked(ijk *CoordIJK) H3Error {
 	// Doesn't need to be checked because i, j, and k must all be non-negative
-	i := int32(ijk.I - ijk.K)
-	j := int32(ijk.J - ijk.K)
+	i := ijk.I - ijk.K
+	j := ijk.J - ijk.K
 
 	// <0 is checked because the input must all be non-negative, but some
 	// negative inputs are used in unit tests to exercise the below.

@@ -5,7 +5,7 @@ package c2go
 // This function supports both Class II and Class III resolutions.
 // Note: This function may modify the resolution value for Class III cells.
 // Ported from H3 C: faceijk.c::_faceIjkToVerts
-func _faceIjkToVerts(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
+func _faceIjkToVerts(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK) {
 	// the vertexes of an origin-centered cell in a Class II resolution on a
 	// substrate grid with aperture sequence 33r. The aperture 3 gets us the
 	// vertices, and the 3r gets us back to Class II.

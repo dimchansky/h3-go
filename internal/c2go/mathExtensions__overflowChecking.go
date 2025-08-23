@@ -5,9 +5,9 @@ package c2go
 // Ported from H3 C: mathExtensions.h::addInt32sOverflows
 func addInt32sOverflows(a, b int32) bool {
 	if a > 0 {
-		return INT32_MAX-int32(a) < int32(b)
+		return INT32_MAX-int32(a) < b
 	} else {
-		return INT32_MIN-int32(a) > int32(b)
+		return INT32_MIN-int32(a) > b
 	}
 }
 
@@ -16,8 +16,8 @@ func addInt32sOverflows(a, b int32) bool {
 // Ported from H3 C: mathExtensions.h::subInt32sOverflows
 func subInt32sOverflows(a, b int32) bool {
 	if a >= 0 {
-		return INT32_MIN+int32(a) >= int32(b)
+		return INT32_MIN+int32(a) >= b
 	} else {
-		return INT32_MAX+int32(a)+1 < int32(b)
+		return INT32_MAX+int32(a)+1 < b
 	}
 }

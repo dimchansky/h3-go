@@ -8,7 +8,7 @@ import "math"
 func _hex2dToCoordIJK(v *Vec2d, h *CoordIJK) {
 	var a1, a2 float64
 	var x1, x2 float64
-	var m1, m2 int
+	var m1, m2 int32
 	var r1, r2 float64
 
 	// quantize into the ij system and then normalize
@@ -22,8 +22,8 @@ func _hex2dToCoordIJK(v *Vec2d, h *CoordIJK) {
 	x1 = a1 + x2/2.0
 
 	// check if we have the center of a hex
-	m1 = int(x1)
-	m2 = int(x2)
+	m1 = int32(x1)
+	m2 = int32(x2)
 
 	// otherwise round correctly
 	r1 = x1 - float64(m1)

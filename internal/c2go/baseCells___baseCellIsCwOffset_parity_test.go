@@ -9,8 +9,8 @@ import (
 func Test_baseCellIsCwOffset_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		baseCell int
-		testFace int
+		baseCell int32
+		testFace int32
 	}{
 		// Pentagon base cells with their clockwise offset faces
 		{"pentagon_4_face_neg1", 4, -1}, // Expected from C data
@@ -95,9 +95,9 @@ func Test_baseCellIsCwOffset_parity(t *testing.T) {
 
 func Test_baseCellIsCwOffset_all_base_cells(t *testing.T) {
 	// Test all base cells with a range of face values
-	testFaces := []int{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 100}
+	testFaces := []int32{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 100}
 
-	for baseCell := 0; baseCell < NUM_BASE_CELLS; baseCell++ {
+	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
 		for _, testFace := range testFaces {
 			t.Run("", func(t *testing.T) {
 				goResult := _baseCellIsCwOffset(baseCell, testFace)

@@ -36,7 +36,7 @@ static inline int adjust_pent_vert_overage_c(FaceIJK* fijk, int res) {
 import "C"
 
 // _geoToClosestFaceC calls the original C implementation.
-func _geoToClosestFaceC(g *LatLng, face *int, sqd *float64) {
+func _geoToClosestFaceC(g *LatLng, face *int32, sqd *float64) {
 	var cg C.LatLng
 	cg.lat = C.double(g.Lat)
 	cg.lng = C.double(g.Lng)
@@ -46,12 +46,12 @@ func _geoToClosestFaceC(g *LatLng, face *int, sqd *float64) {
 
 	C.geo_to_closest_face_c(&cg, &cface, &csqd)
 
-	*face = int(cface)
+	*face = int32(cface)
 	*sqd = float64(csqd)
 }
 
 // _geoToHex2dC calls the original C implementation.
-func _geoToHex2dC(g *LatLng, res int, face *int, v *Vec2d) {
+func _geoToHex2dC(g *LatLng, res int32, face *int32, v *Vec2d) {
 	var cg C.LatLng
 	cg.lat = C.double(g.Lat)
 	cg.lng = C.double(g.Lng)
@@ -61,13 +61,13 @@ func _geoToHex2dC(g *LatLng, res int, face *int, v *Vec2d) {
 
 	C.geo_to_hex2d_c(&cg, C.int(res), &cface, &cv)
 
-	*face = int(cface)
+	*face = int32(cface)
 	v.X = float64(cv.x)
 	v.Y = float64(cv.y)
 }
 
 // _hex2dToGeoC calls the original C implementation.
-func _hex2dToGeoC(v *Vec2d, face int, res int, substrate int, g *LatLng) {
+func _hex2dToGeoC(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
 	var cv C.Vec2d
 	cv.x = C.double(v.X)
 	cv.y = C.double(v.Y)
@@ -81,7 +81,7 @@ func _hex2dToGeoC(v *Vec2d, face int, res int, substrate int, g *LatLng) {
 }
 
 // _faceIjkToGeoC calls the original C implementation.
-func _faceIjkToGeoC(h *FaceIJK, res int, g *LatLng) {
+func _faceIjkToGeoC(h *FaceIJK, res int32, g *LatLng) {
 	var ch C.FaceIJK
 	ch.face = C.int(h.Face)
 	ch.coord.i = C.int(h.Coord.I)
@@ -97,17 +97,17 @@ func _faceIjkToGeoC(h *FaceIJK, res int, g *LatLng) {
 }
 
 // _adjustOverageClassIIC calls the original C implementation.
-func _adjustOverageClassIIC(fijk *FaceIJK, res int, pentLeading4 int, substrate int) Overage {
+func _adjustOverageClassIIC(fijk *FaceIJK, res int32, pentLeading4 int32, substrate int32) Overage {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
 	cFijk.coord.j = C.int(fijk.Coord.J)
 	cFijk.coord.k = C.int(fijk.Coord.K)
 
-	result := int(C._adjustOverageClassII(&cFijk, C.int(res), C.int(pentLeading4), C.int(substrate)))
+	result := int32(C._adjustOverageClassII(&cFijk, C.int(res), C.int(pentLeading4), C.int(substrate)))
 
 	// Update the Go struct with results
-	fijk.Face = int(cFijk.face)
+	fijk.Face = int32(cFijk.face)
 	fijk.Coord.I = int32(cFijk.coord.i)
 	fijk.Coord.J = int32(cFijk.coord.j)
 	fijk.Coord.K = int32(cFijk.coord.k)
@@ -116,7 +116,7 @@ func _adjustOverageClassIIC(fijk *FaceIJK, res int, pentLeading4 int, substrate 
 }
 
 // _faceIjkToVertsC calls the original C implementation.
-func _faceIjkToVertsC(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
+func _faceIjkToVertsC(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK) {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
@@ -130,11 +130,11 @@ func _faceIjkToVertsC(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
 	C._faceIjkToVerts(&cFijk, &cRes, &cVerts[0])
 
 	// Update resolution
-	*res = int(cRes)
+	*res = int32(cRes)
 
 	// Copy results back to Go slice
 	for i := 0; i < 6; i++ {
-		fijkVerts[i].Face = int(cVerts[i].face)
+		fijkVerts[i].Face = int32(cVerts[i].face)
 		fijkVerts[i].Coord.I = int32(cVerts[i].coord.i)
 		fijkVerts[i].Coord.J = int32(cVerts[i].coord.j)
 		fijkVerts[i].Coord.K = int32(cVerts[i].coord.k)
@@ -142,7 +142,7 @@ func _faceIjkToVertsC(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
 }
 
 // _faceIjkPentToVertsC calls the original C implementation.
-func _faceIjkPentToVertsC(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
+func _faceIjkPentToVertsC(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK) {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
@@ -156,11 +156,11 @@ func _faceIjkPentToVertsC(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
 	C._faceIjkPentToVerts(&cFijk, &cRes, &cVerts[0])
 
 	// Update resolution
-	*res = int(cRes)
+	*res = int32(cRes)
 
 	// Copy results back to Go slice
 	for i := 0; i < 5; i++ {
-		fijkVerts[i].Face = int(cVerts[i].face)
+		fijkVerts[i].Face = int32(cVerts[i].face)
 		fijkVerts[i].Coord.I = int32(cVerts[i].coord.i)
 		fijkVerts[i].Coord.J = int32(cVerts[i].coord.j)
 		fijkVerts[i].Coord.K = int32(cVerts[i].coord.k)
@@ -168,17 +168,17 @@ func _faceIjkPentToVertsC(fijk *FaceIJK, res *int, fijkVerts []FaceIJK) {
 }
 
 // _adjustPentVertOverageC calls the original C implementation.
-func _adjustPentVertOverageC(fijk *FaceIJK, res int) Overage {
+func _adjustPentVertOverageC(fijk *FaceIJK, res int32) Overage {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
 	cFijk.coord.j = C.int(fijk.Coord.J)
 	cFijk.coord.k = C.int(fijk.Coord.K)
 
-	result := int(C.adjust_pent_vert_overage_c(&cFijk, C.int(res)))
+	result := int32(C.adjust_pent_vert_overage_c(&cFijk, C.int(res)))
 
 	// Update the Go struct with results
-	fijk.Face = int(cFijk.face)
+	fijk.Face = int32(cFijk.face)
 	fijk.Coord.I = int32(cFijk.coord.i)
 	fijk.Coord.J = int32(cFijk.coord.j)
 	fijk.Coord.K = int32(cFijk.coord.k)

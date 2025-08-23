@@ -83,7 +83,7 @@ const (
 )
 
 // Direction represents H3 directions/digits (from coordijk.h)
-type Direction int
+type Direction int32
 
 // Direction enum (from coordijk.h)
 const (

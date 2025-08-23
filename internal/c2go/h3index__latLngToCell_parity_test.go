@@ -7,7 +7,7 @@ import "testing"
 func Test_h3index_latLngToCell_ParityWithC(t *testing.T) {
 	testCases := []struct {
 		lat, lng float64
-		res      int
+		res      int32
 	}{
 		// Basic test cases
 		{37.775938728915946, -122.41795063018799, 9},
@@ -63,7 +63,7 @@ func Test_h3index_latLngToCell_ParityWithC(t *testing.T) {
 func Test_h3index_latLngToCell_ErrorCases_ParityWithC(t *testing.T) {
 	errorCases := []struct {
 		lat, lng float64
-		res      int
+		res      int32
 		desc     string
 	}{
 		// Invalid resolution

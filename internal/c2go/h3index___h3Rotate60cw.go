@@ -5,9 +5,9 @@ package c2go
 // Ported from H3 C: h3Index.c::_h3Rotate60cw
 func _h3Rotate60cw(h H3Index) H3Index {
 	res := getResolution(h)
-	for r := 1; r <= res; r++ {
+	for r := int32(1); r <= res; r++ {
 		oldDigit := getIndexDigit(h, r)
-		h = setIndexDigit(h, r, int(_rotate60cw(Direction(oldDigit))))
+		h = setIndexDigit(h, r, int32(_rotate60cw(Direction(oldDigit))))
 	}
 	return h
 }

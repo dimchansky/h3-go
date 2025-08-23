@@ -32,8 +32,8 @@ func Test_h3index_maxFaceCount_ParityWithC(t *testing.T) {
 	}
 
 	for _, h3 := range testCases {
-		var goOut int
-		var cOut int
+		var goOut int32
+		var cOut int32
 
 		goErr := maxFaceCount(h3, &goOut)
 		cErr := maxFaceCountC(h3, &cOut)
@@ -54,7 +54,7 @@ func Test_h3index_maxFaceCount_ParityWithC(t *testing.T) {
 
 			// Check consistency with isPentagon
 			isPent := isPentagon(h3)
-			expectedCount := 2
+			expectedCount := int32(2)
 			if isPent {
 				expectedCount = 5
 			}
@@ -74,8 +74,8 @@ func Test_h3index_maxFaceCount_InvalidIndex_ParityWithC(t *testing.T) {
 	}
 
 	for _, h3 := range invalidIndices {
-		var goOut int
-		var cOut int
+		var goOut int32
+		var cOut int32
 
 		goErr := maxFaceCount(h3, &goOut)
 		cErr := maxFaceCountC(h3, &cOut)

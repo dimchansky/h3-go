@@ -9,7 +9,7 @@ import (
 func Test_baseCellToFaceIjk_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		baseCell int
+		baseCell int32
 	}{
 		// Test all base cells 0-121
 		{"base_cell_0", 0},

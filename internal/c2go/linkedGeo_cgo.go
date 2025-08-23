@@ -27,7 +27,7 @@ import "C"
 import "unsafe"
 
 // countLinkedCoordsC wraps the C countLinkedCoords function for parity testing.
-func countLinkedCoordsC(loop *LinkedGeoLoop) int {
+func countLinkedCoordsC(loop *LinkedGeoLoop) int32 {
 	// Create a minimal C LinkedGeoLoop for testing
 	var firstNode *C.LinkedLatLng
 	var currentGoCoord = loop.First
@@ -57,7 +57,7 @@ func countLinkedCoordsC(loop *LinkedGeoLoop) int {
 	cLoop.next = nil
 
 	// Call C function
-	result := int(C.countLinkedCoords(cLoop))
+	result := int32(C.countLinkedCoords(cLoop))
 
 	// Clean up C memory
 	currentCNode := firstNode
@@ -72,10 +72,10 @@ func countLinkedCoordsC(loop *LinkedGeoLoop) int {
 }
 
 // countLinkedPolygonsC wraps the C countLinkedPolygons function for parity testing.
-func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int {
+func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int32 {
 	// Create C structures to mirror the Go linked list
 	if polygon == nil {
-		return int(C.countLinkedPolygonsC(nil))
+		return int32(C.countLinkedPolygonsC(nil))
 	}
 
 	// Build the C linked list from Go linked list
@@ -100,7 +100,7 @@ func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int {
 	}
 
 	// Call C function
-	result := int(C.countLinkedPolygonsC(firstCPolygon))
+	result := int32(C.countLinkedPolygonsC(firstCPolygon))
 
 	// Clean up C memory
 	currentCPolygon := firstCPolygon
@@ -114,7 +114,7 @@ func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int {
 }
 
 // countLinkedLoopsC wraps the C countLinkedLoops function for parity testing.
-func countLinkedLoopsC(polygon *LinkedGeoPolygon) int {
+func countLinkedLoopsC(polygon *LinkedGeoPolygon) int32 {
 	// Create a minimal C LinkedGeoPolygon for testing
 	var firstLoop *C.LinkedGeoLoop
 	var currentGoLoop = polygon.First
@@ -146,7 +146,7 @@ func countLinkedLoopsC(polygon *LinkedGeoPolygon) int {
 	cPolygon.next = nil
 
 	// Call C function
-	result := int(C.countLinkedLoops(cPolygon))
+	result := int32(C.countLinkedLoops(cPolygon))
 
 	// Clean up C memory
 	currentCLoop := firstLoop
@@ -471,7 +471,7 @@ func addLinkedCoordC(wasEmpty bool, loopHadCoord bool, vertex LatLng) (returnsCo
 }
 
 // countContainersC wraps the C countContainers function for parity testing.
-func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes []*BBox) int {
+func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes []*BBox) int32 {
 	if len(polygons) != len(bboxes) {
 		panic("countContainersC: polygons and bboxes must have same length")
 	}
@@ -589,7 +589,7 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 	}
 
 	// Call C function
-	result := int(C.countContainersC(cLoop, cPolygons, cBboxes, C.int(polygonCount)))
+	result := int32(C.countContainersC(cLoop, cPolygons, cBboxes, C.int(polygonCount)))
 
 	// Clean up allocated polygons and bboxes
 	for i := 0; i < polygonCount; i++ {

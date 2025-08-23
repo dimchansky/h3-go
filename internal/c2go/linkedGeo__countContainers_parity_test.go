@@ -68,7 +68,7 @@ func Test_countContainers_parity(t *testing.T) {
 	tests := []struct {
 		name          string
 		setupTest     func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox)
-		expectedCount int
+		expectedCount int32
 	}{
 		{
 			name: "empty polygons array",

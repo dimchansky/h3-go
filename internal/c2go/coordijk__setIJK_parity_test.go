@@ -19,7 +19,7 @@ func Test_setIJK_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Call C implementation
-			gotC := _setIJKC(int(tt.i), int(tt.j), int(tt.k))
+			gotC := _setIJKC(tt.i, tt.j, tt.k)
 
 			// Call Go implementation
 			var gotGo CoordIJK

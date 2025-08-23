@@ -8,7 +8,7 @@ func getRes0Cells(out []H3Index) H3Error {
 		return E_FAILED // Need exactly NUM_BASE_CELLS slots
 	}
 
-	for bc := 0; bc < NUM_BASE_CELLS; bc++ {
+	for bc := int32(0); bc < NUM_BASE_CELLS; bc++ {
 		baseCell := H3Index(H3_INIT)
 		baseCell = setMode(baseCell, H3_CELL_MODE)
 		baseCell = H3Index(setBaseCell(uint64(baseCell), bc))
@@ -18,7 +18,7 @@ func getRes0Cells(out []H3Index) H3Error {
 }
 
 // setBaseCell sets the base cell number in an H3 index (port of H3_SET_BASE_CELL)
-func setBaseCell(h uint64, baseCell int) uint64 {
+func setBaseCell(h uint64, baseCell int32) uint64 {
 	h &^= H3_BC_MASK
 	h |= (uint64(baseCell) & 127) << H3_BC_OFFSET
 	return h

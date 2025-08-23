@@ -36,10 +36,10 @@ func Test_h3RotatePent60cw_parity(t *testing.T) {
 
 func Test_h3RotatePent60cw_all_pentagon_base_cells(t *testing.T) {
 	// Test all pentagon base cells at different resolutions
-	pentagonBaseCells := []int{4, 14, 24, 38, 49, 58, 63, 72, 82, 83, 97, 107, 117}
+	pentagonBaseCells := []int32{4, 14, 24, 38, 49, 58, 63, 72, 82, 83, 97, 107, 117}
 
 	for _, baseCell := range pentagonBaseCells {
-		for res := 0; res <= 5; res++ { // Test lower resolutions to keep tests fast
+		for res := int32(0); res <= 5; res++ { // Test lower resolutions to keep tests fast
 			t.Run(fmt.Sprintf("baseCell_%d_res_%d", baseCell, res), func(t *testing.T) {
 				// Create an index for this base cell and resolution
 				var h H3Index

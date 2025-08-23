@@ -10,7 +10,7 @@ func Test_iterInitParent_parity(t *testing.T) {
 	tests := []struct {
 		name     string
 		h        H3Index
-		childRes int
+		childRes int32
 	}{
 		{
 			"valid_parent_to_child",
@@ -80,7 +80,7 @@ func Test_iterInitParent_parity(t *testing.T) {
 	// Test deterministic behavior
 	t.Run("deterministic", func(t *testing.T) {
 		h := H3Index(0x85283473fffffff)
-		childRes := 7
+		childRes := int32(7)
 
 		var iter1, iter2 IterCellsChildren
 		iterInitParent(h, childRes, &iter1)

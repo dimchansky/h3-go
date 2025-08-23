@@ -7,7 +7,7 @@ import "testing"
 func Test_faceijk_faceIjkToVerts_ParityWithC(t *testing.T) {
 	testCases := []struct {
 		fijk FaceIJK
-		res  int
+		res  int32
 		desc string
 	}{
 		// Class II resolutions
@@ -79,8 +79,8 @@ func Test_faceijk_faceIjkToVerts_ParityWithC(t *testing.T) {
 func Test_faceijk_faceIjkToVerts_ResolutionModification_ParityWithC(t *testing.T) {
 	// Test that Class III resolutions get modified correctly
 	classIIICases := []struct {
-		originalRes int
-		expectedRes int
+		originalRes int32
+		expectedRes int32
 		desc        string
 	}{
 		{1, 2, "res 1 -> 2"},
@@ -123,7 +123,7 @@ func Test_faceijk_faceIjkToVerts_ResolutionModification_ParityWithC(t *testing.T
 
 func Test_faceijk_faceIjkToVerts_ClassII_NoResolutionChange_ParityWithC(t *testing.T) {
 	// Test that Class II resolutions don't get modified
-	classIICases := []int{0, 2, 4, 6, 8, 10, 12, 14}
+	classIICases := []int32{0, 2, 4, 6, 8, 10, 12, 14}
 	baseFijk := FaceIJK{Face: 5, Coord: CoordIJK{I: 50, J: 100, K: 75}}
 
 	for _, originalRes := range classIICases {

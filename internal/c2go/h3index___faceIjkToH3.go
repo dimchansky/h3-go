@@ -2,7 +2,7 @@ package c2go
 
 // _faceIjkToH3 converts a FaceIJK address to an H3Index.
 // Ported from H3 C: h3Index.c::_faceIjkToH3
-func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
+func _faceIjkToH3(fijk *FaceIJK, res int32) H3Index {
 	// initialize the index
 	h := H3Index(H3_INIT)
 	h = setMode(h, H3_CELL_MODE)
@@ -52,7 +52,7 @@ func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
 		_ijkSub(&lastIJK, &lastCenter, &diff)
 		_ijkNormalize(&diff)
 
-		h = setIndexDigit(h, r+1, int(_unitIjkToDigit(&diff)))
+		h = setIndexDigit(h, r+1, int32(_unitIjkToDigit(&diff)))
 	}
 
 	// fijkBC should now hold the IJK of the base cell in the
@@ -73,7 +73,7 @@ func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
 	numRots := _faceIjkToBaseCellCCWrot60(&fijkBC)
 	if _isBaseCellPentagon(baseCell) {
 		// force rotation out of missing k-axes sub-sequence
-		if _h3LeadingNonZeroDigit(h) == int(K_AXES_DIGIT) {
+		if _h3LeadingNonZeroDigit(h) == int32(K_AXES_DIGIT) {
 			// check for a cw/ccw offset face; default is ccw
 			if _baseCellIsCwOffset(baseCell, fijkBC.Face) {
 				h = _h3Rotate60cw(h)
@@ -81,11 +81,11 @@ func _faceIjkToH3(fijk *FaceIJK, res int) H3Index {
 				h = _h3Rotate60ccw(h)
 			}
 		}
-		for i := 0; i < numRots; i++ {
+		for i := int32(0); i < numRots; i++ {
 			h = _h3RotatePent60ccw(h)
 		}
 	} else {
-		for i := 0; i < numRots; i++ {
+		for i := int32(0); i < numRots; i++ {
 			h = _h3Rotate60ccw(h)
 		}
 	}

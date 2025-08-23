@@ -8,7 +8,7 @@ func Test_h3index_cellToCenterChild_ParityWithC(t *testing.T) {
 	hs := []H3Index{0x8928308280fffff, 0x821c07fffffffff}
 	for _, h := range hs {
 		baseRes := getResolution(h)
-		cases := []int{baseRes - 1, baseRes, baseRes + 1, 15, 16}
+		cases := []int32{baseRes - 1, baseRes, baseRes + 1, 15, 16}
 		for _, childRes := range cases {
 			goOut, goErr := cellToCenterChild(h, childRes)
 			cOut, cErr := cellToCenterChildC(h, childRes)

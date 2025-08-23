@@ -3,7 +3,7 @@ package c2go
 // _zeroIndexDigits clears index digits from start to end (inclusive).
 // This mirrors the C helper _zeroIndexDigits.
 // Ported from H3 C: h3Index.c::_zeroIndexDigits
-func _zeroIndexDigits(h H3Index, start, end int) H3Index {
+func _zeroIndexDigits(h H3Index, start, end int32) H3Index {
 	if start > end {
 		return h
 	}

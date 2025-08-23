@@ -8,7 +8,7 @@ func Test_hasDeletedSubsequence_parity(t *testing.T) {
 	tests := []struct {
 		name     string
 		h        H3Index
-		baseCell int
+		baseCell int32
 	}{
 		// Pentagon base cells (4, 14, 24, 38, 49, 58, 63, 72, 83, 97, 107, 117)
 		{"pentagon 4", 0x8201fffffffffff, 4},
@@ -60,7 +60,7 @@ func Test_hasDeletedSubsequence_parity(t *testing.T) {
 
 	// Test all pentagon base cells
 	t.Run("all_pentagon_base_cells", func(t *testing.T) {
-		pentagons := []int{4, 14, 24, 38, 49, 58, 63, 72, 83, 97, 107, 117}
+		pentagons := []int32{4, 14, 24, 38, 49, 58, 63, 72, 83, 97, 107, 117}
 		h := H3Index(0x8201fffffffffff)
 
 		for _, baseCell := range pentagons {
@@ -76,9 +76,9 @@ func Test_hasDeletedSubsequence_parity(t *testing.T) {
 	// Test all non-pentagon base cells (should return false)
 	t.Run("all_non_pentagon_base_cells", func(t *testing.T) {
 		h := H3Index(0x8001fffffffffff)
-		pentagons := map[int]bool{4: true, 14: true, 24: true, 38: true, 49: true, 58: true, 63: true, 72: true, 83: true, 97: true, 107: true, 117: true}
+		pentagons := map[int32]bool{4: true, 14: true, 24: true, 38: true, 49: true, 58: true, 63: true, 72: true, 83: true, 97: true, 107: true, 117: true}
 
-		for baseCell := 0; baseCell < 122; baseCell++ {
+		for baseCell := int32(0); baseCell < 122; baseCell++ {
 			if !pentagons[baseCell] {
 				gotC := hasDeletedSubsequenceC(h, baseCell)
 				gotGo := _hasDeletedSubsequence(h, baseCell)

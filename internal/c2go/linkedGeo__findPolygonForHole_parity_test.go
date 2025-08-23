@@ -86,12 +86,12 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		setupTest     func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) // returns hole, polygons, bboxes, expected index
+		setupTest     func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) // returns hole, polygons, bboxes, expected index
 		expectedIndex int
 	}{
 		{
 			name: "no polygons",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
 				hole := createSquareLoop(0.04, 0.04, 0.02)
 				return hole, []*LinkedGeoPolygon{}, []*BBox{}, -1
 			},
@@ -99,7 +99,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 		},
 		{
 			name: "nil hole",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
 				polygon := &LinkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1),
 				}
@@ -113,7 +113,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 		},
 		{
 			name: "hole with nil first coordinate",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
 				hole := &LinkedGeoLoop{
 					First: nil,
 					Last:  nil,
@@ -132,7 +132,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 		},
 		{
 			name: "hole not inside any polygon",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
 				// Hole far from any polygon
 				hole := createSquareLoop(10, 10, 0.02)
 
@@ -149,7 +149,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 		},
 		{
 			name: "hole inside single polygon",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
 				// Small hole inside polygon
 				hole := createSquareLoop(0.04, 0.04, 0.02)
 
@@ -166,7 +166,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 		},
 		{
 			name: "hole inside multiple nested polygons - find most deeply nested",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
 				// Small hole at center
 				hole := createSquareLoop(0.045, 0.045, 0.01)
 
@@ -199,7 +199,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 		},
 		{
 			name: "hole inside some but not all polygons",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int) {
+			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
 				// Hole positioned to be inside polygon1 and polygon2 but not polygon3
 				hole := createSquareLoop(0.025, 0.025, 0.01)
 
@@ -252,7 +252,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 
 			// Check expected result
 			var expected *LinkedGeoPolygon
-			if expectedIndex >= 0 && expectedIndex < len(polygons) {
+			if expectedIndex >= 0 && int(expectedIndex) < len(polygons) {
 				expected = polygons[expectedIndex]
 			}
 

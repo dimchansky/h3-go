@@ -69,7 +69,7 @@ func Test_faceIjkToBaseCell_all_faces(t *testing.T) {
 			for j := 0; j <= 2; j++ {
 				for k := 0; k <= 2; k++ {
 					h := FaceIJK{
-						Face:  face,
+						Face:  int32(face),
 						Coord: CoordIJK{I: int32(i), J: int32(j), K: int32(k)},
 					}
 

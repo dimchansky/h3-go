@@ -11,9 +11,9 @@ const (
 
 // FaceOrientIJK contains information to transform into an adjacent face IJK system
 type FaceOrientIJK struct {
-	Face      int      // face number
+	Face      int32    // face number
 	Translate CoordIJK // res 0 translation relative to primary face
-	CcwRot60  int      // number of 60 degree ccw rotations relative to primary face
+	CcwRot60  int32    // number of 60 degree ccw rotations relative to primary face
 }
 
 // Quadrant direction constants for faceNeighbors table

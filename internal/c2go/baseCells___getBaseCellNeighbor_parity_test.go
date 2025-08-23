@@ -9,7 +9,7 @@ import (
 func Test_getBaseCellNeighbor_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		baseCell int
+		baseCell int32
 		dir      Direction
 	}{
 		// Test regular base cells (non-pentagon)
@@ -79,7 +79,7 @@ func Test_getBaseCellNeighbor_parity(t *testing.T) {
 
 func Test_getBaseCellNeighbor_all_combinations(t *testing.T) {
 	// Test all valid base cells with all directions
-	for baseCell := 0; baseCell < NUM_BASE_CELLS; baseCell++ {
+	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
 		for dir := CENTER_DIGIT; dir < NUM_DIGITS; dir++ {
 			goResult := _getBaseCellNeighbor(baseCell, dir)
 			cResult := _getBaseCellNeighborC(baseCell, dir)

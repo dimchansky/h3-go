@@ -5,7 +5,7 @@ package c2go
 import "testing"
 
 func Test_h3index_isResolutionClassIII_ParityWithC(t *testing.T) {
-	for res := -1; res <= 20; res++ {
+	for res := int32(-1); res <= 20; res++ {
 		goVal := isResolutionClassIII(res)
 		cVal := isResolutionClassIIIC(res)
 		// Convert both to boolean semantics for comparison

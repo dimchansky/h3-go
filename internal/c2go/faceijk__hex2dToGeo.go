@@ -5,7 +5,7 @@ import "math"
 // _hex2dToGeo converts 2D hexagonal coordinates to geographic coordinates.
 // Mirrors _hex2dToGeo in faceijk.c
 // Ported from H3 C: faceijk.c::hex2dToGeo
-func _hex2dToGeo(v *Vec2d, face int, res int, substrate int, g *LatLng) {
+func _hex2dToGeo(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
 	// calculate (r, theta) in hex2d
 	r := _v2dMag(v)
 
@@ -17,7 +17,7 @@ func _hex2dToGeo(v *Vec2d, face int, res int, substrate int, g *LatLng) {
 	theta := math.Atan2(v.Y, v.X)
 
 	// scale for current resolution length u
-	for i := 0; i < res; i++ {
+	for i := int32(0); i < res; i++ {
 		r *= M_RSQRT7
 	}
 

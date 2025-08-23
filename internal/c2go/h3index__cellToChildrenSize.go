@@ -3,7 +3,7 @@ package c2go
 // cellToChildrenSize returns the exact number of children for a cell at a given child resolution.
 // Returns (count, err) with H3Error parity codes.
 // Ported from H3 C: h3Index.c::cellToChildrenSize
-func cellToChildrenSize(h H3Index, childRes int) (int64, H3Error) {
+func cellToChildrenSize(h H3Index, childRes int32) (int64, H3Error) {
 	if !_hasChildAtRes(h, childRes) {
 		return 0, E_RES_DOMAIN
 	}

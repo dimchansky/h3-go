@@ -29,13 +29,13 @@ func findDeepestContainer(polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedG
 	// Find the innermost polygon by taking the one with the most containers
 	// in the list.
 	if polygonCount > 1 {
-		max := -1
+		maxCnt := int32(-1)
 		for i := 0; i < polygonCount; i++ {
 			// Count how many containers this polygon has
 			count := countContainers(polygons[i].First, polygons, bboxes)
-			if count > max {
+			if count > maxCnt {
 				parent = polygons[i]
-				max = count
+				maxCnt = count
 			}
 		}
 	}

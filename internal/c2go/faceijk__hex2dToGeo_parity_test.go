@@ -8,9 +8,9 @@ func Test_hex2dToGeo_ParityWithC(t *testing.T) {
 	testCases := []struct {
 		name      string
 		vec       Vec2d
-		face      int
-		res       int
-		substrate int
+		face      int32
+		res       int32
+		substrate int32
 	}{
 		{"origin_face0_res0", Vec2d{0.0, 0.0}, 0, 0, 0},
 		{"origin_face5_res0", Vec2d{0.0, 0.0}, 5, 0, 0},
@@ -75,7 +75,7 @@ func Test_hex2dToGeo_RoundTripConsistency(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// geo -> hex2d -> geo
-			var face int
+			var face int32
 			var hex2d Vec2d
 			var result LatLng
 

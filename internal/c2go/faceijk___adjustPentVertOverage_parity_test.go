@@ -13,7 +13,7 @@ func Test_adjustPentVertOverage_parity(t *testing.T) {
 	tests := []struct {
 		name string
 		fijk FaceIJK
-		res  int
+		res  int32
 	}{
 		{
 			name: "no overage case face 0",

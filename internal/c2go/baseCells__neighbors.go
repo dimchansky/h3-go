@@ -5,7 +5,7 @@ package c2go
 // in each of the 7 IJK directions (CENTER, J, JK, K, IK, I, IJ).
 // INVALID_BASE_CELL indicates no neighbor in that direction.
 // Ported from H3 C: baseCells.c::baseCellNeighbors
-var baseCellNeighbors = [NUM_BASE_CELLS][7]int{
+var baseCellNeighbors = [NUM_BASE_CELLS][7]int32{
 	{0, 1, 5, 2, 4, 3, 8},                             // base cell 0
 	{1, 7, 6, 9, 0, 3, 2},                             // base cell 1
 	{2, 6, 10, 11, 0, 1, 5},                           // base cell 2

@@ -10,7 +10,7 @@ func Test_countLinkedCoords_parity(t *testing.T) {
 	testCases := []struct {
 		name  string
 		loop  *LinkedGeoLoop
-		count int
+		count int32
 	}{
 		{
 			name: "empty loop",

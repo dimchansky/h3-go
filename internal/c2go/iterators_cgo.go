@@ -35,12 +35,12 @@ import "C"
 // IterCellsChildren mirrors the C IterCellsChildren struct for iterator state.
 type IterCellsChildren struct {
 	H         H3Index // Current H3 index
-	ParentRes int     // Parent resolution
-	SkipDigit int     // Skip digit for pentagons
+	ParentRes int32   // Parent resolution
+	SkipDigit int32   // Skip digit for pentagons
 }
 
 // incrementResDigitC calls the C wrapper for _incrementResDigit.
-func incrementResDigitC(h *H3Index, res int) {
+func incrementResDigitC(h *H3Index, res int32) {
 	ch := C.H3Index(*h)
 	C.incrementResDigitWrapper(&ch, C.int(res))
 	*h = H3Index(ch)
@@ -51,16 +51,16 @@ func nullIterC() IterCellsChildren {
 	citer := C.nullIterWrapper()
 	return IterCellsChildren{
 		H:         H3Index(citer.h),
-		ParentRes: int(citer._parentRes),
-		SkipDigit: int(citer._skipDigit),
+		ParentRes: int32(citer._parentRes),
+		SkipDigit: int32(citer._skipDigit),
 	}
 }
 
 // iterInitParentC calls the original C _iterInitParent function.
-func iterInitParentC(h H3Index, childRes int, iter *IterCellsChildren) {
+func iterInitParentC(h H3Index, childRes int32, iter *IterCellsChildren) {
 	var citer C.IterCellsChildren
 	C._iterInitParent(C.H3Index(h), C.int(childRes), &citer)
 	iter.H = H3Index(citer.h)
-	iter.ParentRes = int(citer._parentRes)
-	iter.SkipDigit = int(citer._skipDigit)
+	iter.ParentRes = int32(citer._parentRes)
+	iter.SkipDigit = int32(citer._skipDigit)
 }

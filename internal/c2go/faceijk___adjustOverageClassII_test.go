@@ -22,11 +22,11 @@ func Test_adjustOverageClassII_CriticalDifference(t *testing.T) {
 		expectedOverageC: NO_OVERAGE,                                                           // C returns 0 (NO_OVERAGE)
 	}
 
-	res := 3
+	res := int32(3)
 	pentLeading4Go := false
 	substrateGo := true
-	pentLeading4C := 0
-	substrateC := 1
+	pentLeading4C := int32(0)
+	substrateC := int32(1)
 
 	t.Run(testCase.name, func(t *testing.T) {
 		// Test Go implementation
@@ -46,7 +46,7 @@ func Test_adjustOverageClassII_CriticalDifference(t *testing.T) {
 
 		// Check what C actually returns
 		if overageC != testCase.expectedOverageC {
-			t.Errorf("C overage unexpected: expected %d, got %d", int(testCase.expectedOverageC), int(overageC))
+			t.Errorf("C overage unexpected: expected %d, got %d", int32(testCase.expectedOverageC), int32(overageC))
 		}
 		if fijkC != testCase.expectedC {
 			t.Errorf("C result unexpected: expected Face=%d Coord={%d,%d,%d}, got Face=%d Coord={%d,%d,%d}",
@@ -57,7 +57,7 @@ func Test_adjustOverageClassII_CriticalDifference(t *testing.T) {
 		// Compare Go vs C - this is the critical difference
 		if overageC != overageGo {
 			t.Logf("*** CRITICAL DIFFERENCE CONFIRMED! ***")
-			t.Logf("C overage: %d, Go overage: %d", int(overageC), int(overageGo))
+			t.Logf("C overage: %d, Go overage: %d", int32(overageC), int32(overageGo))
 		}
 		if fijkC != fijkGo {
 			t.Logf("*** COORDINATE DIFFERENCE CONFIRMED! ***")

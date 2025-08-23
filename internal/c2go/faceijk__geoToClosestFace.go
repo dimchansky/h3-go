@@ -4,7 +4,7 @@ package c2go
 // from a lat/lng point to its closest icosahedral face center.
 // Mirrors static _geoToClosestFace in faceijk.c
 // Ported from H3 C: faceijk.c::geoToClosestFace
-func _geoToClosestFace(g *LatLng, face *int, sqd *float64) {
+func _geoToClosestFace(g *LatLng, face *int32, sqd *float64) {
 	var v3d Vec3d
 	_geoToVec3d(g, &v3d)
 
@@ -13,7 +13,7 @@ func _geoToClosestFace(g *LatLng, face *int, sqd *float64) {
 	// The distance between two farthest points is 2.0, therefore the square of
 	// the distance between two points should always be less or equal than 4.0 .
 	*sqd = 5.0
-	for f := 0; f < NUM_ICOSA_FACES; f++ {
+	for f := int32(0); f < NUM_ICOSA_FACES; f++ {
 		sqdT := _pointSquareDist(&faceCenterPoint[f], &v3d)
 		if sqdT < *sqd {
 			*face = f

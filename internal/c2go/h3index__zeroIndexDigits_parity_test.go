@@ -15,8 +15,8 @@ func Test_h3index_zeroIndexDigits_ParityWithC(t *testing.T) {
 		}
 	}
 	// Boundaries and typical ranges
-	starts := []int{0, 1, 5, 15}
-	ends := []int{0, 1, 5, 15, 16}
+	starts := []int32{0, 1, 5, 15}
+	ends := []int32{0, 1, 5, 15, 16}
 	for _, h := range hs {
 		for _, s := range starts {
 			for _, e := range ends {

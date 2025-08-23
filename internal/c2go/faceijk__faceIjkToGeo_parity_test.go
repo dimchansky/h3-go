@@ -8,7 +8,7 @@ func Test_faceIjkToGeo_ParityWithC(t *testing.T) {
 	testCases := []struct {
 		name    string
 		faceIjk FaceIJK
-		res     int
+		res     int32
 	}{
 		// Face centers (origin coordinates)
 		{"face0_origin_res0", FaceIJK{0, CoordIJK{0, 0, 0}}, 0},
@@ -93,7 +93,7 @@ func Test_faceIjkToGeo_ParityWithC(t *testing.T) {
 
 // Test that face centers match the known values
 func Test_faceIjkToGeo_FaceCenters(t *testing.T) {
-	for face := 0; face < NUM_ICOSA_FACES; face++ {
+	for face := int32(0); face < NUM_ICOSA_FACES; face++ {
 		t.Run("face_"+string(rune('0'+face)), func(t *testing.T) {
 			var result LatLng
 			faceijk := FaceIJK{face, CoordIJK{0, 0, 0}}

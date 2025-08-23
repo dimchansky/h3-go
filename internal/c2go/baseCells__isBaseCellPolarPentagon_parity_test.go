@@ -5,7 +5,7 @@ package c2go
 import "testing"
 
 func Test_isBaseCellPolarPentagon_ParityWithC(t *testing.T) {
-	testCases := []int{
+	testCases := []int32{
 		// All base cells 0-121
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 		10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
