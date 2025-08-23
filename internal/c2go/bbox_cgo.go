@@ -8,6 +8,9 @@ package c2go
 #include "h3api.h"
 #include "latLng.h"
 #include "bbox.h"
+
+// Prototype for scaleBBox
+extern void scaleBBox(BBox* bbox, double scale);
 */
 import "C"
 
@@ -94,4 +97,15 @@ func bboxContainsBBoxC(a, b BBox) bool {
 	} else {
 		return false
 	}
+}
+
+// scaleBBoxC calls the original C implementation.
+func scaleBBoxC(bbox *BBox, scale float64) {
+	cb := toCBBox(*bbox)
+	C.scaleBBox(&cb, C.double(scale))
+	// Convert back to Go struct
+	bbox.North = float64(cb.north)
+	bbox.South = float64(cb.south)
+	bbox.East = float64(cb.east)
+	bbox.West = float64(cb.west)
 }

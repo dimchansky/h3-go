@@ -320,7 +320,7 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `nextCell` — TODO: needs C→Go port + parity test
   - [ ] `normalizeMultiPolygon` — TODO: needs C→Go port + parity test
   - [ ] `removeVertexNode` — TODO: needs C→Go port + parity test
-  - [ ] `scaleBBox` — TODO: needs C→Go port + parity test
+  - [x] `scaleBBox` — DONE [parity test]
   - [ ] `validatePolygonFlags` — TODO: needs C→Go port + parity test
   - [ ] `vertexNumForDirection` — TODO: needs C→Go port + parity test
   - [ ] `vertexRotations` — TODO: needs C→Go port + parity test
