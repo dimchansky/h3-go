@@ -24,7 +24,7 @@ func _geoToHex2d(g *LatLng, res int, face *int, v *Vec2d) {
 		_posAngleRads(_geoAzimuthRads(&faceCenterGeo[*face], g)))
 
 	// adjust theta for Class III (odd resolutions)
-	if isResolutionClassIII(res) != 0 {
+	if isResolutionClassIII(res) {
 		theta = _posAngleRads(theta - M_AP7_ROT_RADS)
 	}
 

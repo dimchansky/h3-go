@@ -1,5 +1,6 @@
 package c2go
 
-// isResolutionClassIII returns 1 if res is a Class III grid (odd), else 0.
+// isResolutionClassIII returns true if res is a Class III grid (odd), else false.
 // Ported from H3 C: h3Index.c::isResolutionClassIII
-func isResolutionClassIII(res int) int { return res % 2 }
+// Note: C version returns res % 2, but we return proper boolean for Go idiomaticity
+func isResolutionClassIII(res int) bool { return res%2 != 0 }

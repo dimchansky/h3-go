@@ -34,7 +34,7 @@ func _h3ToFaceIjk(h H3Index, fijk *FaceIJK) H3Error {
 
 	// if we're in Class III, drop into the next finer Class II grid
 	res := getResolution(h)
-	if isResolutionClassIII(res) != 0 {
+	if isResolutionClassIII(res) {
 		// Class III
 		_downAp7r(&fijk.Coord)
 		res++

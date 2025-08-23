@@ -17,7 +17,7 @@ func _h3ToFaceIjkWithInitializedFijk(h H3Index, fijk *FaceIJK) int {
 	}
 
 	for r := 1; r <= res; r++ {
-		if isResolutionClassIII(r) != 0 {
+		if isResolutionClassIII(r) {
 			// Class III == rotate ccw
 			_downAp7(ijk)
 		} else {

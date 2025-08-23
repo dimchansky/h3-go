@@ -24,7 +24,7 @@ func _hex2dToGeo(v *Vec2d, face int, res int, substrate int, g *LatLng) {
 	// scale accordingly if this is a substrate grid
 	if substrate != 0 {
 		r *= M_ONETHIRD
-		if isResolutionClassIII(res) != 0 {
+		if isResolutionClassIII(res) {
 			r *= M_RSQRT7
 		}
 	}
@@ -36,7 +36,7 @@ func _hex2dToGeo(v *Vec2d, face int, res int, substrate int, g *LatLng) {
 
 	// adjust theta for Class III
 	// if a substrate grid, then it's already been adjusted for Class III
-	if substrate == 0 && isResolutionClassIII(res) != 0 {
+	if substrate == 0 && isResolutionClassIII(res) {
 		theta = _posAngleRads(theta + M_AP7_ROT_RADS)
 	}
 

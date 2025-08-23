@@ -21,8 +21,13 @@ func Test_h3index_isResClassIII_ParityWithC(t *testing.T) {
 			h := setResolutionForTest(b, res)
 			goVal := isResClassIII(h)
 			cVal := isResClassIIIC(h)
-			if goVal != cVal {
-				t.Fatalf("isResClassIII mismatch for res=%d base=%x: go=%d c=%d", res, uint64(b), goVal, cVal)
+			// Convert bool to int for comparison
+			goInt := 0
+			if goVal {
+				goInt = 1
+			}
+			if goInt != cVal {
+				t.Fatalf("isResClassIII mismatch for res=%d base=%x: go=%t (%d) c=%d", res, uint64(b), goVal, goInt, cVal)
 			}
 		}
 	}
