@@ -7,7 +7,7 @@ import "testing"
 func Test_setIJK_parity(t *testing.T) {
 	tests := []struct {
 		name    string
-		i, j, k int
+		i, j, k int32
 	}{
 		{"zeros", 0, 0, 0},
 		{"positive", 1, 2, 3},
@@ -19,7 +19,7 @@ func Test_setIJK_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Call C implementation
-			gotC := _setIJKC(tt.i, tt.j, tt.k)
+			gotC := _setIJKC(int(tt.i), int(tt.j), int(tt.k))
 
 			// Call Go implementation
 			var gotGo CoordIJK

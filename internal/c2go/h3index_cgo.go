@@ -234,9 +234,9 @@ func _h3ToFaceIjkWithInitializedFijkC(h H3Index, fijk *FaceIJK) int {
 
 	// Update the Go struct with results
 	fijk.Face = int(cFijk.face)
-	fijk.Coord.I = int(cFijk.coord.i)
-	fijk.Coord.J = int(cFijk.coord.j)
-	fijk.Coord.K = int(cFijk.coord.k)
+	fijk.Coord.I = int32(cFijk.coord.i)
+	fijk.Coord.J = int32(cFijk.coord.j)
+	fijk.Coord.K = int32(cFijk.coord.k)
 
 	return result
 }
@@ -248,9 +248,9 @@ func _h3ToFaceIjkC(h H3Index, fijk *FaceIJK) uint32 {
 
 	// Update the Go struct with results
 	fijk.Face = int(cFijk.face)
-	fijk.Coord.I = int(cFijk.coord.i)
-	fijk.Coord.J = int(cFijk.coord.j)
-	fijk.Coord.K = int(cFijk.coord.k)
+	fijk.Coord.I = int32(cFijk.coord.i)
+	fijk.Coord.J = int32(cFijk.coord.j)
+	fijk.Coord.K = int32(cFijk.coord.k)
 
 	return uint32(err)
 }
@@ -294,9 +294,9 @@ func debugGeoToFaceIjkC(g *LatLng, res int, fijk *FaceIJK) {
 	C._geoToFaceIjk(&cg, C.int(res), &cfijk)
 
 	fijk.Face = int(cfijk.face)
-	fijk.Coord.I = int(cfijk.coord.i)
-	fijk.Coord.J = int(cfijk.coord.j)
-	fijk.Coord.K = int(cfijk.coord.k)
+	fijk.Coord.I = int32(cfijk.coord.i)
+	fijk.Coord.J = int32(cfijk.coord.j)
+	fijk.Coord.K = int32(cfijk.coord.k)
 }
 
 // debugFaceIjkToH3C calls the original C _faceIjkToH3 implementation.

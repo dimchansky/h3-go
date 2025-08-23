@@ -10,8 +10,8 @@ func _upAp7(ijk *CoordIJK) {
 	// convert to CoordIJ
 	i := ijk.I - ijk.K
 	j := ijk.J - ijk.K
-	ijk.I = int(math.Round((3*float64(i) - float64(j)) * M_ONESEVENTH))
-	ijk.J = int(math.Round((float64(i) + 2*float64(j)) * M_ONESEVENTH))
+	ijk.I = int32(math.Round((3*float64(i) - float64(j)) * M_ONESEVENTH))
+	ijk.J = int32(math.Round((float64(i) + 2*float64(j)) * M_ONESEVENTH))
 	ijk.K = 0
 	_ijkNormalize(ijk)
 }

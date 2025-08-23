@@ -70,7 +70,7 @@ func Test_faceIjkToBaseCellCCWrot60_all_faces(t *testing.T) {
 				for k := 0; k <= 2; k++ {
 					h := FaceIJK{
 						Face:  face,
-						Coord: CoordIJK{I: i, J: j, K: k},
+						Coord: CoordIJK{I: int32(i), J: int32(j), K: int32(k)},
 					}
 
 					goResult := _faceIjkToBaseCellCCWrot60(&h)

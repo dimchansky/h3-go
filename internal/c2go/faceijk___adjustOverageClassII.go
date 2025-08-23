@@ -9,7 +9,7 @@ func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate 
 	ijk := &fijk.Coord
 
 	// Get the maximum dimension value; scale if a substrate grid
-	maxDim := maxDimByCIIres[res]
+	maxDim := int32(maxDimByCIIres[res])
 	if substrate {
 		maxDim *= 3
 	}
@@ -51,7 +51,7 @@ func _adjustOverageClassII(fijk *FaceIJK, res int, pentLeading4 bool, substrate 
 		}
 
 		transVec := fijkOrient.Translate
-		unitScale := unitScaleByCIIres[res]
+		unitScale := int32(unitScaleByCIIres[res])
 		if substrate {
 			unitScale *= 3
 		}

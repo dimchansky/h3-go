@@ -50,7 +50,7 @@ func _ijkAddC(h1, h2 *CoordIJK) CoordIJK {
 	ch2.j = C.int(h2.J)
 	ch2.k = C.int(h2.K)
 	C._ijkAdd(&ch1, &ch2, &sum)
-	return CoordIJK{I: int(sum.i), J: int(sum.j), K: int(sum.k)}
+	return CoordIJK{I: int32(sum.i), J: int32(sum.j), K: int32(sum.k)}
 }
 
 // _ijkSubC calls the original C implementation for subtracting IJK coordinates.
@@ -64,7 +64,7 @@ func _ijkSubC(h1, h2 *CoordIJK) CoordIJK {
 	ch2.j = C.int(h2.J)
 	ch2.k = C.int(h2.K)
 	C._ijkSub(&ch1, &ch2, &diff)
-	return CoordIJK{I: int(diff.i), J: int(diff.j), K: int(diff.k)}
+	return CoordIJK{I: int32(diff.i), J: int32(diff.j), K: int32(diff.k)}
 }
 
 // _setIJKC calls the original C implementation for setting IJK coordinates.
@@ -72,7 +72,7 @@ func _ijkSubC(h1, h2 *CoordIJK) CoordIJK {
 func _setIJKC(i, j, k int) CoordIJK {
 	var cijk C.CoordIJK
 	C._setIJK(&cijk, C.int(i), C.int(j), C.int(k))
-	return CoordIJK{I: int(cijk.i), J: int(cijk.j), K: int(cijk.k)}
+	return CoordIJK{I: int32(cijk.i), J: int32(cijk.j), K: int32(cijk.k)}
 }
 
 // _ijkMatchesC calls the original C implementation for comparing IJK coordinates.
@@ -90,13 +90,13 @@ func _ijkMatchesC(c1, c2 *CoordIJK) bool {
 
 // _ijkScaleC calls the original C implementation for scaling IJK coordinates.
 // Bridges to coordijk.c::_ijkScale.
-func _ijkScaleC(c *CoordIJK, factor int) CoordIJK {
+func _ijkScaleC(c *CoordIJK, factor int32) CoordIJK {
 	var cc C.CoordIJK
 	cc.i = C.int(c.I)
 	cc.j = C.int(c.J)
 	cc.k = C.int(c.K)
 	C._ijkScale(&cc, C.int(factor))
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _ijkNormalizeC calls the original C implementation for normalizing IJK coordinates.
@@ -107,7 +107,7 @@ func _ijkNormalizeC(c *CoordIJK) CoordIJK {
 	cc.j = C.int(c.J)
 	cc.k = C.int(c.K)
 	C._ijkNormalize(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // ijkDistanceC calls the original C implementation for computing IJK distance.
@@ -131,7 +131,7 @@ func _ijkRotate60ccwC(c *CoordIJK) CoordIJK {
 	cc.j = C.int(c.J)
 	cc.k = C.int(c.K)
 	C._ijkRotate60ccw(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _ijkRotate60cwC calls the original C implementation for rotating IJK coordinates 60° clockwise.
@@ -142,7 +142,7 @@ func _ijkRotate60cwC(c *CoordIJK) CoordIJK {
 	cc.j = C.int(c.J)
 	cc.k = C.int(c.K)
 	C._ijkRotate60cw(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _unitIjkToDigitC calls the original C implementation for converting unit IJK to digit.
@@ -163,7 +163,7 @@ func _neighborC(ijk *CoordIJK, digit Direction) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C._neighbor(&cc, C.Direction(digit))
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _rotate60ccwC calls the original C implementation for rotating a direction 60° counter-clockwise.
@@ -186,7 +186,7 @@ func ijkToCubeC(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C.ijkToCube(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // cubeToIjkC calls the original C implementation for converting cube to IJK coordinates.
@@ -197,7 +197,7 @@ func cubeToIjkC(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C.cubeToIjk(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _ijkToHex2dC calls the original C implementation for converting IJK to 2D hex coordinates.
@@ -220,7 +220,7 @@ func _hex2dToCoordIJKC(v *Vec2d) CoordIJK {
 	cv.x = C.double(v.X)
 	cv.y = C.double(v.Y)
 	C._hex2dToCoordIJK(&cv, &cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _upAp7C calls the original C implementation for aperture 7 up transformation.
@@ -231,7 +231,7 @@ func _upAp7C(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C._upAp7(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _upAp7rC calls the original C implementation for aperture 7 up (clockwise) transformation.
@@ -242,7 +242,7 @@ func _upAp7rC(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C._upAp7r(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _downAp7C calls the original C implementation for aperture 7 down transformation.
@@ -253,7 +253,7 @@ func _downAp7C(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C._downAp7(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _downAp7rC calls the original C implementation for aperture 7 down (clockwise) transformation.
@@ -264,7 +264,7 @@ func _downAp7rC(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C._downAp7r(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _downAp3C calls the original C implementation for aperture 3 down transformation.
@@ -275,7 +275,7 @@ func _downAp3C(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C._downAp3(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // _downAp3rC calls the original C implementation for aperture 3 down (clockwise) transformation.
@@ -286,7 +286,7 @@ func _downAp3rC(ijk *CoordIJK) CoordIJK {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	C._downAp3r(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}
 }
 
 // ijkToIjC calls the original C implementation to convert IJK to IJ coordinates.
@@ -298,7 +298,7 @@ func ijkToIjC(ijk *CoordIJK) CoordIJ {
 	cc.k = C.int(ijk.K)
 	var cij C.CoordIJ
 	C.ijkToIj(&cc, &cij)
-	return CoordIJ{I: int(cij.i), J: int(cij.j)}
+	return CoordIJ{I: int32(cij.i), J: int32(cij.j)}
 }
 
 // _ijkNormalizeCouldOverflowC calls the original C implementation to check for overflow.
@@ -319,7 +319,7 @@ func ijToIjkC(ij *CoordIJ) (CoordIJK, H3Error) {
 	cij.j = C.int(ij.J)
 	var cc C.CoordIJK
 	err := C.ijToIjk(&cij, &cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}, H3Error(err)
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}, H3Error(err)
 }
 
 // _upAp7CheckedC calls the original C implementation for aperture 7 up transformation with overflow checking.
@@ -330,7 +330,7 @@ func _upAp7CheckedC(ijk *CoordIJK) (CoordIJK, H3Error) {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	err := C._upAp7Checked(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}, H3Error(err)
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}, H3Error(err)
 }
 
 // _upAp7rCheckedC calls the original C implementation for aperture 7 up (clockwise) transformation with overflow checking.
@@ -341,5 +341,5 @@ func _upAp7rCheckedC(ijk *CoordIJK) (CoordIJK, H3Error) {
 	cc.j = C.int(ijk.J)
 	cc.k = C.int(ijk.K)
 	err := C._upAp7rChecked(&cc)
-	return CoordIJK{I: int(cc.i), J: int(cc.j), K: int(cc.k)}, H3Error(err)
+	return CoordIJK{I: int32(cc.i), J: int32(cc.j), K: int32(cc.k)}, H3Error(err)
 }

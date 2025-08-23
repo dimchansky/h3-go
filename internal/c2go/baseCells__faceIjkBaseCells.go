@@ -2,8 +2,8 @@ package c2go
 
 // BaseCellRotation represents base cell at a given ijk and required rotations into its system
 type BaseCellRotation struct {
-	BaseCell int // base cell number
-	CcwRot60 int // number of ccw 60 degree rotations relative to current face
+	BaseCell int32 // base cell number (matches C int)
+	CcwRot60 int32 // number of ccw 60 degree rotations relative to current face (matches C int)
 }
 
 // faceIjkBaseCells mirrors the static faceIjkBaseCells array from baseCells.c

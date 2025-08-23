@@ -169,11 +169,11 @@ func cellBoundaryCrossesGeoLoopC(geoloop GeoLoop, loopBBox BBox, boundary CellBo
 	var cb C.CellBoundary
 	n := boundary.NumVerts
 	if n > 0 {
-		if n > int(C.MAX_CELL_BNDRY_VERTS) {
-			n = int(C.MAX_CELL_BNDRY_VERTS)
+		if n > int32(C.MAX_CELL_BNDRY_VERTS) {
+			n = int32(C.MAX_CELL_BNDRY_VERTS)
 		}
 		cb.numVerts = C.int(n)
-		for i := 0; i < n; i++ {
+		for i := int32(0); i < n; i++ {
 			cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
 			cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
 		}
@@ -217,11 +217,11 @@ func cellBoundaryInsidePolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBou
 	var cb C.CellBoundary
 	n := boundary.NumVerts
 	if n > 0 {
-		if n > int(C.MAX_CELL_BNDRY_VERTS) {
-			n = int(C.MAX_CELL_BNDRY_VERTS)
+		if n > int32(C.MAX_CELL_BNDRY_VERTS) {
+			n = int32(C.MAX_CELL_BNDRY_VERTS)
 		}
 		cb.numVerts = C.int(n)
-		for i := 0; i < n; i++ {
+		for i := int32(0); i < n; i++ {
 			cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
 			cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
 		}
@@ -263,11 +263,11 @@ func cellBoundaryCrossesPolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBo
 	var cb C.CellBoundary
 	n := boundary.NumVerts
 	if n > 0 {
-		if n > int(C.MAX_CELL_BNDRY_VERTS) {
-			n = int(C.MAX_CELL_BNDRY_VERTS)
+		if n > int32(C.MAX_CELL_BNDRY_VERTS) {
+			n = int32(C.MAX_CELL_BNDRY_VERTS)
 		}
 		cb.numVerts = C.int(n)
-		for i := 0; i < n; i++ {
+		for i := int32(0); i < n; i++ {
 			cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
 			cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
 		}

@@ -12,7 +12,7 @@ func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellB
 	// Normalize boundary longitudes
 	normalBoundary := CellBoundary{NumVerts: boundary.NumVerts, Verts: make([]LatLng, boundary.NumVerts)}
 	copy(normalBoundary.Verts, boundary.Verts)
-	for i := 0; i < normalBoundary.NumVerts; i++ {
+	for i := int32(0); i < normalBoundary.NumVerts; i++ {
 		normalBoundary.Verts[i].Lng = normalizeLng(normalBoundary.Verts[i].Lng, boundNorm)
 	}
 	normalBoundaryBBox := BBox{
@@ -34,7 +34,7 @@ func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellB
 			(loop1.Lng >= normalBoundaryBBox.East && loop2.Lng >= normalBoundaryBBox.East) {
 			continue
 		}
-		for j := 0; j < normalBoundary.NumVerts; j++ {
+		for j := int32(0); j < normalBoundary.NumVerts; j++ {
 			a := normalBoundary.Verts[j]
 			b := normalBoundary.Verts[(j+1)%normalBoundary.NumVerts]
 			if lineCrossesLine(&loop1, &loop2, &a, &b) {

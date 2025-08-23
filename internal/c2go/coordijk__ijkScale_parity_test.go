@@ -8,7 +8,7 @@ func Test_ijkScale_parity(t *testing.T) {
 	tests := []struct {
 		name   string
 		coord  CoordIJK
-		factor int
+		factor int32
 	}{
 		{"zeros", CoordIJK{0, 0, 0}, 5},
 		{"positive scale positive", CoordIJK{1, 2, 3}, 2},

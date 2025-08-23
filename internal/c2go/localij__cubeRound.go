@@ -23,7 +23,7 @@ func cubeRound(i, j, k float64, ijk *CoordIJK) {
 		rk = -ri - rj
 	}
 
-	ijk.I = ri
-	ijk.J = rj
-	ijk.K = rk
+	ijk.I = int32(ri)
+	ijk.J = int32(rj)
+	ijk.K = int32(rk)
 }

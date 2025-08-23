@@ -2,14 +2,16 @@ package c2go
 
 // CoordIJK represents IJK hexagon coordinates.
 // Each axis is spaced 120 degrees apart.
+// Uses int32 to match H3 C implementation exactly (including overflow behavior).
 type CoordIJK struct {
-	I int // i component
-	J int // j component
-	K int // k component
+	I int32 // i component
+	J int32 // j component
+	K int32 // k component
 }
 
 // CoordIJ represents IJ coordinates (axial coordinates).
+// Uses int32 to match H3 C implementation exactly (including overflow behavior).
 type CoordIJ struct {
-	I int // i component
-	J int // j component
+	I int32 // i component
+	J int32 // j component
 }

@@ -6,5 +6,5 @@ package c2go
 // Valid ijk+ lookup coordinates are from (0, 0, 0) to (2, 2, 2).
 // Ported from H3 C: baseCells.c::_faceIjkToBaseCell
 func _faceIjkToBaseCell(h *FaceIJK) int {
-	return faceIjkBaseCells[h.Face][h.Coord.I][h.Coord.J][h.Coord.K].BaseCell
+	return int(faceIjkBaseCells[h.Face][h.Coord.I][h.Coord.J][h.Coord.K].BaseCell)
 }

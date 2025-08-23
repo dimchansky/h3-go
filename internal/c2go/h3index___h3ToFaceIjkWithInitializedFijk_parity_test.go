@@ -12,7 +12,7 @@ func Test_h3ToFaceIjkWithInitializedFijk_Parity(t *testing.T) {
 		name    string
 		h       H3Index
 		face    int
-		i, j, k int
+		i, j, k int32
 	}{
 		{"base cell 0, res 0", 0x8001fffffffffff, 0, 0, 0, 0},
 		{"base cell 1, res 1", 0x81083ffffffffff, 0, 0, 0, 0},

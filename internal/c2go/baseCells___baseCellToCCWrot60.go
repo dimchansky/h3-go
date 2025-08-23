@@ -19,8 +19,8 @@ func _baseCellToCCWrot60(baseCell int, face int) int {
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
 			for k := 0; k < 3; k++ {
-				if faceIjkBaseCells[face][i][j][k].BaseCell == baseCell {
-					return faceIjkBaseCells[face][i][j][k].CcwRot60
+				if faceIjkBaseCells[face][i][j][k].BaseCell == int32(baseCell) {
+					return int(faceIjkBaseCells[face][i][j][k].CcwRot60)
 				}
 			}
 		}

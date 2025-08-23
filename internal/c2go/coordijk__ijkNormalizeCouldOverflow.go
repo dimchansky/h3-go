@@ -6,7 +6,7 @@ package c2go
 // Ported from H3 C: coordijk.c::ijkNormalizeCouldOverflow
 func _ijkNormalizeCouldOverflow(ijk *CoordIJK) bool {
 	// Check for the possibility of overflow
-	var max, min int
+	var max, min int32
 	if ijk.I > ijk.J {
 		max = ijk.I
 		min = ijk.J
@@ -20,16 +20,16 @@ func _ijkNormalizeCouldOverflow(ijk *CoordIJK) bool {
 		// than max. If min is positive, then max is also positive, and a
 		// positive signed integer minus another positive signed integer will
 		// not overflow.
-		if addInt32sOverflows(int32(max), int32(min)) {
+		if addInt32sOverflows(max, min) {
 			// max + min would overflow
 			return true
 		}
-		if subInt32sOverflows(0, int32(min)) {
+		if subInt32sOverflows(0, min) {
 			// 0 - INT32_MIN would overflow
 			return true
 		}
 		// Also check for max - min overflow (which happens when min is negative)
-		if subInt32sOverflows(int32(max), int32(min)) {
+		if subInt32sOverflows(max, min) {
 			return true
 		}
 	}

@@ -32,45 +32,45 @@ func _hex2dToCoordIJK(v *Vec2d, h *CoordIJK) {
 	if r1 < 0.5 {
 		if r1 < 1.0/3.0 {
 			if r2 < (1.0+r1)/2.0 {
-				h.I = m1
-				h.J = m2
+				h.I = int32(m1)
+				h.J = int32(m2)
 			} else {
-				h.I = m1
-				h.J = m2 + 1
+				h.I = int32(m1)
+				h.J = int32(m2 + 1)
 			}
 		} else {
 			if r2 < (1.0 - r1) {
-				h.J = m2
+				h.J = int32(m2)
 			} else {
-				h.J = m2 + 1
+				h.J = int32(m2 + 1)
 			}
 
 			if (1.0-r1) <= r2 && r2 < (2.0*r1) {
-				h.I = m1 + 1
+				h.I = int32(m1 + 1)
 			} else {
-				h.I = m1
+				h.I = int32(m1)
 			}
 		}
 	} else {
 		if r1 < 2.0/3.0 {
 			if r2 < (1.0 - r1) {
-				h.J = m2
+				h.J = int32(m2)
 			} else {
-				h.J = m2 + 1
+				h.J = int32(m2 + 1)
 			}
 
 			if (2.0*r1-1.0) < r2 && r2 < (1.0-r1) {
-				h.I = m1
+				h.I = int32(m1)
 			} else {
-				h.I = m1 + 1
+				h.I = int32(m1 + 1)
 			}
 		} else {
 			if r2 < (r1 / 2.0) {
-				h.I = m1 + 1
-				h.J = m2
+				h.I = int32(m1 + 1)
+				h.J = int32(m2)
 			} else {
-				h.I = m1 + 1
-				h.J = m2 + 1
+				h.I = int32(m1 + 1)
+				h.J = int32(m2 + 1)
 			}
 		}
 	}
@@ -81,11 +81,11 @@ func _hex2dToCoordIJK(v *Vec2d, h *CoordIJK) {
 		if (h.J % 2) == 0 { // even
 			axisi := int64(h.J / 2)
 			diff := int64(h.I) - axisi
-			h.I = int(int64(h.I) - 2*diff)
+			h.I = int32(int64(h.I) - 2*diff)
 		} else {
 			axisi := int64((h.J + 1) / 2)
 			diff := int64(h.I) - axisi
-			h.I = int(int64(h.I) - (2*diff + 1))
+			h.I = int32(int64(h.I) - (2*diff + 1))
 		}
 	}
 

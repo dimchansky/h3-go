@@ -39,8 +39,8 @@ func _upAp7Checked(ijk *CoordIJK) H3Error {
 		}
 	}
 
-	ijk.I = int(math.Round(float64(i*3-j) * M_ONESEVENTH))
-	ijk.J = int(math.Round(float64(i+j*2) * M_ONESEVENTH))
+	ijk.I = int32(math.Round(float64(i*3-j) * M_ONESEVENTH))
+	ijk.J = int32(math.Round(float64(i+j*2) * M_ONESEVENTH))
 	ijk.K = 0
 
 	// Expected not to be reachable, because max + min or max - min would need

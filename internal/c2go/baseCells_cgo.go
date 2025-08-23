@@ -28,9 +28,9 @@ func _baseCellToFaceIjkC(baseCell int) FaceIJK {
 	return FaceIJK{
 		Face: int(h.face),
 		Coord: CoordIJK{
-			I: int(h.coord.i),
-			J: int(h.coord.j),
-			K: int(h.coord.k),
+			I: int32(h.coord.i),
+			J: int32(h.coord.j),
+			K: int32(h.coord.k),
 		},
 	}
 }
