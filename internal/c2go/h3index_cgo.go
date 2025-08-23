@@ -265,3 +265,8 @@ func cellToLatLngC(h H3Index, g *LatLng) uint32 {
 
 	return uint32(err)
 }
+
+// isValidCellC calls the original C implementation.
+func isValidCellC(h H3Index) int {
+	return int(C.isValidCell(C.H3Index(h)))
+}

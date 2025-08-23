@@ -59,7 +59,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] h3ToString
 - [x] isPentagon
 - [x] isResClassIII
-- [ ] isValidCell
+- [x] isValidCell
 - [ ] latLngToCell
 - [ ] maxFaceCount
 - [x] pentagonCount
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 23
-- **Remaining:** 55
+- **Completed:** 24
+- **Remaining:** 54
 
 ## Notes
 
