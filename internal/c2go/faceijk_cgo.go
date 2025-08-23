@@ -90,3 +90,22 @@ func _faceIjkToGeoC(h *FaceIJK, res int, g *LatLng) {
 	g.Lat = float64(cg.lat)
 	g.Lng = float64(cg.lng)
 }
+
+// _adjustOverageClassIIC calls the original C implementation.
+func _adjustOverageClassIIC(fijk *FaceIJK, res int, pentLeading4 int, substrate int) Overage {
+	var cFijk C.FaceIJK
+	cFijk.face = C.int(fijk.Face)
+	cFijk.coord.i = C.int(fijk.Coord.I)
+	cFijk.coord.j = C.int(fijk.Coord.J)
+	cFijk.coord.k = C.int(fijk.Coord.K)
+
+	result := int(C._adjustOverageClassII(&cFijk, C.int(res), C.int(pentLeading4), C.int(substrate)))
+
+	// Update the Go struct with results
+	fijk.Face = int(cFijk.face)
+	fijk.Coord.I = int(cFijk.coord.i)
+	fijk.Coord.J = int(cFijk.coord.j)
+	fijk.Coord.K = int(cFijk.coord.k)
+
+	return Overage(result)
+}
