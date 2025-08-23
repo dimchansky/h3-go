@@ -24,6 +24,11 @@ Iteration Workflow (standard operating procedure)
 - Update tracker: update this TODO to mark the function DONE and list the next planned items (do this BEFORE each commit).
 - Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and TODO update.
 
+Source Reference
+- Local H3 C source code available at: `testref/h3-4.3.0/src/h3lib/lib/*.c`
+- When porting C code, reference the local sources directly for accurate implementation
+- Port as closely as possible to the C implementation, preserving algorithm details and edge cases
+
 Build Tag Rules
 - **Pure Go implementations** (`<cfile>__<function>.go`): NO build tags
 - **CGO interop files** (`*_cgo.go`): Must have `//go:build cgo` as first line
@@ -300,8 +305,8 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `directionForNeighbor` — TODO: needs C→Go port + parity test
   - [ ] `directionForVertexNum` — TODO: needs C→Go port + parity test
   - [ ] `getAverageCellArea` — TODO: needs C→Go port + parity test
-  - [ ] `ijkToIj` — TODO: needs C→Go port + parity test
-  - [ ] `ijToIjk` — TODO: needs C→Go port + parity test
+  - [x] `ijkToIj` — DONE [parity test]
+  - [x] `ijToIjk` — DONE [parity test]
   - [ ] `initVertexGraph` — TODO: needs C→Go port + parity test
   - [ ] `iterDestroyPolygon` — TODO: needs C→Go port + parity test
   - [ ] `iterDestroyPolygonCompact` — TODO: needs C→Go port + parity test
