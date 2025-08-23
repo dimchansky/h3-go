@@ -25,7 +25,7 @@ func childPosToCell(childPos int64, parent H3Index, childRes int) (H3Index, H3Er
 	x |= (uint64(childRes) & 15) << H3_RES_OFFSET
 	child = H3Index(x)
 
-	if isPentagon(parent) != 0 {
+	if isPentagon(parent) {
 		inPent := true
 		for res := 1; res <= resOffset; res++ {
 			resWidth := _ipow(7, int64(resOffset-res))

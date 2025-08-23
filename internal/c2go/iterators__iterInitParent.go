@@ -16,7 +16,7 @@ func iterInitParent(h H3Index, childRes int, iter *IterCellsChildren) {
 	// Set resolution (inline H3_SET_RESOLUTION)
 	iter.H = H3Index((uint64(iter.H) &^ H3_RES_MASK) | (uint64(childRes)&15)<<H3_RES_OFFSET)
 
-	if isPentagon(iter.H) != 0 {
+	if isPentagon(iter.H) {
 		// The skip digit skips `1` for pentagons.
 		// The "_skipDigit" moves to the left as we count up from the
 		// child resolution to the parent resolution.
