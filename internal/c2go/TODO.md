@@ -253,13 +253,13 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [ ] `_faceIjkToH3` — TODO: needs C→Go port + parity test
   - [ ] `_faceIjkToVerts` — TODO: needs C→Go port + parity test
   - [x] `_firstOneIndex` — DONE (Go port + C parity)
-  - [ ] `_geoToFaceIjk` — TODO: needs C→Go port + parity test
+  - [x] `_geoToFaceIjk` — DONE (Go port + C parity)
   - [x] `_getBaseCellDirection` — DONE (Go port + C parity)
   - [x] `_getBaseCellNeighbor` — DONE (Go port + C parity)
-  - [ ] `_getResDigit` — TODO: needs C→Go port + parity test
+  - [x] `_getResDigit` — DONE (Go port + C parity)
   - [ ] `_gridRingInternal` — TODO: needs C→Go port + parity test
-  - [ ] `_h3Rotate60ccw` — TODO: needs C→Go port + parity test
-  - [ ] `_h3Rotate60cw` — TODO: needs C→Go port + parity test
+  - [x] `_h3Rotate60ccw` — DONE (Go port + C parity)
+  - [x] `_h3Rotate60cw` — DONE (Go port + C parity)
   - [ ] `_h3RotatePent60ccw` — TODO: needs C→Go port + parity test
   - [ ] `_h3RotatePent60cw` — TODO: needs C→Go port + parity test
   - [ ] `_h3ToFaceIjk` — TODO: needs C→Go port + parity test
@@ -279,22 +279,22 @@ The following 96 functions were identified from comprehensive H3 source analysis
   - [x] `_upAp7r` — DONE (Go port + C parity)
   - [x] `_upAp7rChecked` — DONE (Go port + C parity)
   - [ ] `_vertexGraphToLinkedGeo` — TODO: needs C→Go port + parity test
-  - [ ] `baseCellNumToCell` — TODO: needs C→Go port + parity test
-  - [ ] `bboxCenter` — TODO: needs C→Go port + parity test
-  - [ ] `bboxContains` — TODO: needs C→Go port + parity test
-  - [ ] `bboxContainsBBox` — TODO: needs C→Go port + parity test
-  - [ ] `bboxEquals` — TODO: needs C→Go port + parity test
+  - [x] `baseCellNumToCell` — DONE (Go port + C parity)
+  - [x] `bboxCenter` — DONE (Go port + C parity)
+  - [x] `bboxContains` — DONE (Go port + C parity)
+  - [x] `bboxContainsBBox` — DONE (Go port + C parity)
+  - [x] `bboxEquals` — DONE (Go port + C parity)
   - [ ] `bboxesFromGeoPolygon` — TODO: needs C→Go port + parity test
   - [ ] `bboxHexEstimate` — TODO: needs C→Go port + parity test
-  - [ ] `bboxIsTransmeridian` — TODO: needs C→Go port + parity test
-  - [ ] `bboxOverlapsBBox` — TODO: needs C→Go port + parity test
+  - [x] `bboxIsTransmeridian` — DONE (Go port + C parity)
+  - [x] `bboxOverlapsBBox` — DONE (Go port + C parity)
   - [ ] `bboxToCellBoundary` — TODO: needs C→Go port + parity test
   - [ ] `cellToBBox` — TODO: needs C→Go port + parity test
   - [ ] `cellToLocalIjk` — TODO: needs C→Go port + parity test
   - [ ] `countLinkedCoords` — TODO: needs C→Go port + parity test
   - [ ] `countLinkedLoops` — TODO: needs C→Go port + parity test
   - [ ] `countLinkedPolygons` — TODO: needs C→Go port + parity test
-  - [ ] `cubeRound` — TODO: needs C→Go port + parity test
+  - [x] `cubeRound` — DONE (Go port + C parity)
   - [ ] `destroyLinkedGeoLoop` — TODO: needs C→Go port + parity test
   - [ ] `destroyVertexGraph` — TODO: needs C→Go port + parity test
   - [ ] `directionForNeighbor` — TODO: needs C→Go port + parity test

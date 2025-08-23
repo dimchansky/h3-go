@@ -201,3 +201,13 @@ func hasAll7AfterResC(h H3Index, res int) bool {
 func hasDeletedSubsequenceC(h H3Index, baseCell int) bool {
 	return C.has_deleted_subsequence_c(C.H3Index(h), C.int(baseCell)) != 0
 }
+
+// h3Rotate60ccwC calls the original C implementation.
+func h3Rotate60ccwC(h H3Index) H3Index {
+	return H3Index(C._h3Rotate60ccw(C.H3Index(h)))
+}
+
+// h3Rotate60cwC calls the original C implementation.
+func h3Rotate60cwC(h H3Index) H3Index {
+	return H3Index(C._h3Rotate60cw(C.H3Index(h)))
+}

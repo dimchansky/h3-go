@@ -76,7 +76,7 @@ const (
 
 	// H3_INIT: mode=cell, res=0, base cell=0, digits all 7
 	H3_INIT uint64 = 35184372088831
-	
+
 	// H3_NULL represents the null H3 index
 	H3_NULL H3Index = 0
 )
