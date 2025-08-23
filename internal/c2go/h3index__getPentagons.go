@@ -17,7 +17,7 @@ func getPentagons(dst []H3Index, res int) ([]H3Index, H3Error) {
 	}
 	i := 0
 	for bc := 0; bc < NUM_BASE_CELLS; bc++ {
-		if _isBaseCellPentagon(bc) != 0 {
+		if _isBaseCellPentagon(bc) {
 			var p H3Index
 			setH3Index(&p, res, bc, 0)
 			out[i] = p

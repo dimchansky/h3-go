@@ -17,5 +17,5 @@ func cellToChildrenSize(h H3Index, childRes int) (int64, H3Error) {
 
 // Ported from H3 C: h3Index.c::isPentagon
 func isPentagonGo(h H3Index) bool {
-	return _isBaseCellPentagon(getBaseCellNumber(h)) != 0 && _h3LeadingNonZeroDigit(h) == 0
+	return _isBaseCellPentagon(getBaseCellNumber(h)) && _h3LeadingNonZeroDigit(h) == 0
 }

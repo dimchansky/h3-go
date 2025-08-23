@@ -1,14 +1,11 @@
 package c2go
 
-// _isBaseCellPentagon returns 1 if the base cell is a pentagon, else 0.
+// _isBaseCellPentagon returns true if the base cell is a pentagon, else false.
 // Ported from baseCells.c::_isBaseCellPentagon using the local lookup table.
 // Ported from H3 C: baseCells.c::isBaseCellPentagon
-func _isBaseCellPentagon(baseCell int) int {
+func _isBaseCellPentagon(baseCell int) bool {
 	if baseCell < 0 || baseCell >= len(isBaseCellPentagonArr) {
-		return 0
+		return false
 	}
-	if isBaseCellPentagonArr[baseCell] {
-		return 1
-	}
-	return 0
+	return isBaseCellPentagonArr[baseCell]
 }

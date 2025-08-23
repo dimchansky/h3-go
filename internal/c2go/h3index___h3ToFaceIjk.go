@@ -17,7 +17,7 @@ func _h3ToFaceIjk(h H3Index, fijk *FaceIJK) H3Error {
 
 	// adjust for the pentagonal missing sequence; all of sub-sequence 5 needs
 	// to be adjusted (and some of sub-sequence 4 below)
-	if _isBaseCellPentagon(baseCell) == 1 && _h3LeadingNonZeroDigit(h) == 5 {
+	if _isBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == 5 {
 		h = _h3Rotate60cw(h)
 	}
 
@@ -42,11 +42,11 @@ func _h3ToFaceIjk(h H3Index, fijk *FaceIJK) H3Error {
 
 	// adjust for overage if needed
 	// a pentagon base cell with a leading 4 digit requires special handling
-	pentLeading4 := (_isBaseCellPentagon(baseCell) == 1 && _h3LeadingNonZeroDigit(h) == 4)
+	pentLeading4 := (_isBaseCellPentagon(baseCell) && _h3LeadingNonZeroDigit(h) == 4)
 	if _adjustOverageClassII(fijk, res, pentLeading4, false) != NO_OVERAGE {
 		// if the base cell is a pentagon we have the potential for secondary
 		// overages
-		if _isBaseCellPentagon(baseCell) == 1 {
+		if _isBaseCellPentagon(baseCell) {
 			for _adjustOverageClassII(fijk, res, false, false) != NO_OVERAGE {
 				continue
 			}
