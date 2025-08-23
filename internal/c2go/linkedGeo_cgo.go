@@ -19,6 +19,7 @@ LinkedGeoLoop* addLinkedLoopC(LinkedGeoPolygon *polygon, LinkedGeoLoop *loop);
 LinkedGeoLoop* addNewLinkedLoopC(LinkedGeoPolygon *polygon);
 LinkedLatLng* addLinkedCoordC(LinkedGeoLoop *loop, const LatLng *vertex);
 int countContainersC(const LinkedGeoLoop *loop, const LinkedGeoPolygon **polygons, const BBox **bboxes, int polygonCount);
+const LinkedGeoPolygon* findDeepestContainerC(const LinkedGeoPolygon **polygons, const BBox **bboxes, int polygonCount);
 */
 import "C"
 import "unsafe"
@@ -74,31 +75,31 @@ func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int {
 	if polygon == nil {
 		return int(C.countLinkedPolygonsC(nil))
 	}
-	
+
 	// Build the C linked list from Go linked list
 	var firstCPolygon *C.LinkedGeoPolygon
 	var prevCPolygon *C.LinkedGeoPolygon
 	currentGoPolygon := polygon
-	
+
 	for currentGoPolygon != nil {
 		cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 		cPolygon.first = nil
 		cPolygon.last = nil
 		cPolygon.next = nil
-		
+
 		if firstCPolygon == nil {
 			firstCPolygon = cPolygon
 		} else {
 			prevCPolygon.next = cPolygon
 		}
-		
+
 		prevCPolygon = cPolygon
 		currentGoPolygon = currentGoPolygon.Next
 	}
-	
+
 	// Call C function
 	result := int(C.countLinkedPolygonsC(firstCPolygon))
-	
+
 	// Clean up C memory
 	currentCPolygon := firstCPolygon
 	for currentCPolygon != nil {
@@ -106,7 +107,7 @@ func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int {
 		C.free(unsafe.Pointer(currentCPolygon))
 		currentCPolygon = nextPolygon
 	}
-	
+
 	return result
 }
 
@@ -348,7 +349,7 @@ func addLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (returnsLoop bool, setsF
 	// Create C structures to test behavior
 	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 	defer C.free(unsafe.Pointer(cPolygon))
-	
+
 	var cExisting *C.LinkedGeoLoop
 	if polygonHadLoop {
 		// Create a dummy C loop for existing first
@@ -380,7 +381,7 @@ func addLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (returnsLoop bool, setsF
 	setsFirst = (wasEmpty && cPolygon.first == cLoop) || (!wasEmpty && cPolygon.first == cExisting)
 	setsLast = (cPolygon.last == cLoop)
 	linksLoops = (polygonHadLoop && cExisting != nil && cExisting.next == cLoop)
-	
+
 	return
 }
 
@@ -390,7 +391,7 @@ func addNewLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (createsLoop bool, se
 	// Create C structures to test behavior
 	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 	defer C.free(unsafe.Pointer(cPolygon))
-	
+
 	var cExisting *C.LinkedGeoLoop
 	if polygonHadLoop {
 		// Create a dummy C loop for existing first
@@ -418,7 +419,7 @@ func addNewLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (createsLoop bool, se
 		setsLast = (cPolygon.last == cResult)
 		linksLoops = (polygonHadLoop && cExisting != nil && cExisting.next == cResult)
 	}
-	
+
 	return
 }
 
@@ -428,7 +429,7 @@ func addLinkedCoordC(wasEmpty bool, loopHadCoord bool, vertex LatLng) (returnsCo
 	// Create C structures to test behavior
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	defer C.free(unsafe.Pointer(cLoop))
-	
+
 	var cExisting *C.LinkedLatLng
 	if loopHadCoord {
 		// Create a dummy coordinate for existing first
@@ -463,7 +464,7 @@ func addLinkedCoordC(wasEmpty bool, loopHadCoord bool, vertex LatLng) (returnsCo
 		linksCoords = (loopHadCoord && cExisting != nil && cExisting.next == cResult)
 		vertexMatches = (float64(cResult.vertex.lat) == vertex.Lat && float64(cResult.vertex.lng) == vertex.Lng)
 	}
-	
+
 	return
 }
 
@@ -472,25 +473,25 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 	if len(polygons) != len(bboxes) {
 		panic("countContainersC: polygons and bboxes must have same length")
 	}
-	
+
 	polygonCount := len(polygons)
 	if polygonCount == 0 {
 		return 0
 	}
-	
+
 	// Early return if loop is nil or has no coordinates - can't be contained
 	if loop == nil || loop.First == nil {
 		return 0
 	}
-	
+
 	// Convert Go loop to C loop
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	defer C.free(unsafe.Pointer(cLoop))
-	
+
 	// Build the complete C linked list from Go linked list
 	var firstCCoord *C.LinkedLatLng
 	var prevCCoord *C.LinkedLatLng
-	
+
 	currentGoCoord := loop.First
 	for currentGoCoord != nil {
 		cCoord := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
@@ -498,7 +499,7 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 		cCoord.vertex.lat = C.double(currentGoCoord.Vertex.Lat)
 		cCoord.vertex.lng = C.double(currentGoCoord.Vertex.Lng)
 		cCoord.next = nil
-		
+
 		if firstCCoord == nil {
 			firstCCoord = cCoord
 		} else {
@@ -507,40 +508,40 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 		prevCCoord = cCoord
 		currentGoCoord = currentGoCoord.Next
 	}
-	
+
 	cLoop.first = firstCCoord
 	cLoop.last = prevCCoord
 	cLoop.next = nil
-	
+
 	// Create arrays of C polygons and bboxes
 	ptrSize := unsafe.Sizeof(uintptr(0))
 	cPolygons := (**C.LinkedGeoPolygon)(C.malloc(C.size_t(uintptr(polygonCount) * ptrSize)))
 	defer C.free(unsafe.Pointer(cPolygons))
-	
+
 	cBboxes := (**C.BBox)(C.malloc(C.size_t(uintptr(polygonCount) * ptrSize)))
 	defer C.free(unsafe.Pointer(cBboxes))
-	
+
 	// Array to track allocated memory for cleanup
 	allocatedPolygons := make([]*C.LinkedGeoPolygon, polygonCount)
 	allocatedBboxes := make([]*C.BBox, polygonCount)
 	allocatedLoops := make([][]*C.LinkedGeoLoop, polygonCount)
 	allocatedCoords := make([][]*C.LinkedLatLng, polygonCount)
-	
+
 	// Convert Go polygons and bboxes to C
 	for i := 0; i < polygonCount; i++ {
 		// Create C polygon
 		cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 		allocatedPolygons[i] = cPolygon
-		
+
 		// Create first loop if exists
 		if polygons[i] != nil && polygons[i].First != nil {
 			cFirstLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 			allocatedLoops[i] = append(allocatedLoops[i], cFirstLoop)
-			
+
 			// Build complete coordinate list for this polygon's first loop
 			var firstLoopCoord *C.LinkedLatLng
 			var prevLoopCoord *C.LinkedLatLng
-			
+
 			currentGoLoopCoord := polygons[i].First.First
 			for currentGoLoopCoord != nil {
 				cLoopCoord := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
@@ -548,7 +549,7 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 				cLoopCoord.vertex.lat = C.double(currentGoLoopCoord.Vertex.Lat)
 				cLoopCoord.vertex.lng = C.double(currentGoLoopCoord.Vertex.Lng)
 				cLoopCoord.next = nil
-				
+
 				if firstLoopCoord == nil {
 					firstLoopCoord = cLoopCoord
 				} else {
@@ -557,7 +558,7 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 				prevLoopCoord = cLoopCoord
 				currentGoLoopCoord = currentGoLoopCoord.Next
 			}
-			
+
 			cFirstLoop.first = firstLoopCoord
 			cFirstLoop.last = prevLoopCoord
 			cFirstLoop.next = nil
@@ -567,10 +568,10 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 		}
 		cPolygon.last = cPolygon.first
 		cPolygon.next = nil
-		
+
 		// Set polygon pointer in array
 		*(**C.LinkedGeoPolygon)(unsafe.Pointer(uintptr(unsafe.Pointer(cPolygons)) + uintptr(i)*unsafe.Sizeof(uintptr(0)))) = cPolygon
-		
+
 		// Create C bbox
 		cBbox := (*C.BBox)(C.malloc(C.size_t(C.sizeof_BBox)))
 		allocatedBboxes[i] = cBbox
@@ -580,14 +581,14 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 			cBbox.east = C.double(bboxes[i].East)
 			cBbox.west = C.double(bboxes[i].West)
 		}
-		
+
 		// Set bbox pointer in array
 		*(**C.BBox)(unsafe.Pointer(uintptr(unsafe.Pointer(cBboxes)) + uintptr(i)*unsafe.Sizeof(uintptr(0)))) = cBbox
 	}
-	
+
 	// Call C function
 	result := int(C.countContainersC(cLoop, cPolygons, cBboxes, C.int(polygonCount)))
-	
+
 	// Clean up allocated polygons and bboxes
 	for i := 0; i < polygonCount; i++ {
 		if allocatedPolygons[i] != nil {
@@ -605,6 +606,125 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 			C.free(unsafe.Pointer(cCoord))
 		}
 	}
-	
+
+	return result
+}
+
+// findDeepestContainerC wraps the C findDeepestContainer function for parity testing.
+func findDeepestContainerC(polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon {
+	if len(polygons) != len(bboxes) {
+		panic("findDeepestContainerC: polygons and bboxes must have same length")
+	}
+
+	polygonCount := len(polygons)
+	if polygonCount == 0 {
+		return nil
+	}
+
+	// Create arrays of C polygons and bboxes
+	ptrSize := unsafe.Sizeof(uintptr(0))
+	cPolygons := (**C.LinkedGeoPolygon)(C.malloc(C.size_t(uintptr(polygonCount) * ptrSize)))
+	defer C.free(unsafe.Pointer(cPolygons))
+
+	cBboxes := (**C.BBox)(C.malloc(C.size_t(uintptr(polygonCount) * ptrSize)))
+	defer C.free(unsafe.Pointer(cBboxes))
+
+	// Array to track allocated memory for cleanup
+	allocatedPolygons := make([]*C.LinkedGeoPolygon, polygonCount)
+	allocatedBboxes := make([]*C.BBox, polygonCount)
+	allocatedLoops := make([][]*C.LinkedGeoLoop, polygonCount)
+	allocatedCoords := make([][]*C.LinkedLatLng, polygonCount)
+
+	// Convert Go polygons and bboxes to C
+	for i := 0; i < polygonCount; i++ {
+		// Create C polygon
+		cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
+		allocatedPolygons[i] = cPolygon
+
+		// Create first loop if exists
+		if polygons[i] != nil && polygons[i].First != nil {
+			cFirstLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+			allocatedLoops[i] = append(allocatedLoops[i], cFirstLoop)
+
+			// Build complete coordinate list for this polygon's first loop
+			var firstLoopCoord *C.LinkedLatLng
+			var prevLoopCoord *C.LinkedLatLng
+
+			currentGoLoopCoord := polygons[i].First.First
+			for currentGoLoopCoord != nil {
+				cLoopCoord := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
+				allocatedCoords[i] = append(allocatedCoords[i], cLoopCoord)
+				cLoopCoord.vertex.lat = C.double(currentGoLoopCoord.Vertex.Lat)
+				cLoopCoord.vertex.lng = C.double(currentGoLoopCoord.Vertex.Lng)
+				cLoopCoord.next = nil
+
+				if firstLoopCoord == nil {
+					firstLoopCoord = cLoopCoord
+				} else {
+					prevLoopCoord.next = cLoopCoord
+				}
+				prevLoopCoord = cLoopCoord
+				currentGoLoopCoord = currentGoLoopCoord.Next
+			}
+
+			cFirstLoop.first = firstLoopCoord
+			cFirstLoop.last = prevLoopCoord
+			cFirstLoop.next = nil
+			cPolygon.first = cFirstLoop
+		} else {
+			cPolygon.first = nil
+		}
+		cPolygon.last = cPolygon.first
+		cPolygon.next = nil
+
+		// Set polygon pointer in array
+		*(**C.LinkedGeoPolygon)(unsafe.Pointer(uintptr(unsafe.Pointer(cPolygons)) + uintptr(i)*unsafe.Sizeof(uintptr(0)))) = cPolygon
+
+		// Create C bbox
+		cBbox := (*C.BBox)(C.malloc(C.size_t(C.sizeof_BBox)))
+		allocatedBboxes[i] = cBbox
+		if bboxes[i] != nil {
+			cBbox.north = C.double(bboxes[i].North)
+			cBbox.south = C.double(bboxes[i].South)
+			cBbox.east = C.double(bboxes[i].East)
+			cBbox.west = C.double(bboxes[i].West)
+		}
+
+		// Set bbox pointer in array
+		*(**C.BBox)(unsafe.Pointer(uintptr(unsafe.Pointer(cBboxes)) + uintptr(i)*unsafe.Sizeof(uintptr(0)))) = cBbox
+	}
+
+	// Call C function
+	cResult := C.findDeepestContainerC(cPolygons, cBboxes, C.int(polygonCount))
+
+	// Find which Go polygon corresponds to the C result
+	var result *LinkedGeoPolygon
+	if cResult != nil {
+		for i := 0; i < polygonCount; i++ {
+			if allocatedPolygons[i] == cResult {
+				result = polygons[i]
+				break
+			}
+		}
+	}
+
+	// Clean up allocated polygons and bboxes
+	for i := 0; i < polygonCount; i++ {
+		if allocatedPolygons[i] != nil {
+			C.free(unsafe.Pointer(allocatedPolygons[i]))
+		}
+		if allocatedBboxes[i] != nil {
+			C.free(unsafe.Pointer(allocatedBboxes[i]))
+		}
+		// Clean up loops
+		for _, cLoop := range allocatedLoops[i] {
+			C.free(unsafe.Pointer(cLoop))
+		}
+		// Clean up coordinates
+		for _, cCoord := range allocatedCoords[i] {
+			C.free(unsafe.Pointer(cCoord))
+		}
+	}
+
 	return result
 }

@@ -49,3 +49,9 @@ int countContainersC(const LinkedGeoLoop *loop,
     return countContainers(loop, polygons, bboxes, polygonCount);
 }
 
+// Wrapper for findDeepestContainer
+const LinkedGeoPolygon* findDeepestContainerC(const LinkedGeoPolygon **polygons,
+                                               const BBox **bboxes, int polygonCount) {
+    return findDeepestContainer(polygons, bboxes, polygonCount);
+}
+
