@@ -221,3 +221,22 @@ func h3RotatePent60ccwC(h H3Index) H3Index {
 func h3RotatePent60cwC(h H3Index) H3Index {
 	return H3Index(C._h3RotatePent60cw(C.H3Index(h)))
 }
+
+// _h3ToFaceIjkWithInitializedFijkC calls the original C implementation.
+func _h3ToFaceIjkWithInitializedFijkC(h H3Index, fijk *FaceIJK) int {
+	var cFijk C.FaceIJK
+	cFijk.face = C.int(fijk.Face)
+	cFijk.coord.i = C.int(fijk.Coord.I)
+	cFijk.coord.j = C.int(fijk.Coord.J)
+	cFijk.coord.k = C.int(fijk.Coord.K)
+
+	result := int(C._h3ToFaceIjkWithInitializedFijk(C.H3Index(h), &cFijk))
+
+	// Update the Go struct with results
+	fijk.Face = int(cFijk.face)
+	fijk.Coord.I = int(cFijk.coord.i)
+	fijk.Coord.J = int(cFijk.coord.j)
+	fijk.Coord.K = int(cFijk.coord.k)
+
+	return result
+}

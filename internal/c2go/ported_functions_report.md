@@ -73,7 +73,7 @@ These are primarily internal/static functions used to build the public API.
 - geoToHex2d
 - hex2dToGeo
 
-## h3Index.c (38 functions)
+## h3Index.c (39 functions)
 
 - _firstOneIndex
 - _getResDigit
@@ -82,6 +82,7 @@ These are primarily internal/static functions used to build the public API.
 - _h3Rotate60cw
 - _h3RotatePent60ccw
 - _h3RotatePent60cw
+- _h3ToFaceIjkWithInitializedFijk
 - _hasAll7AfterRes
 - _hasAny7UptoRes
 - _hasChildAtRes
@@ -195,7 +196,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 147**
+**Total ported internal functions: 148**
 
 ---
 
