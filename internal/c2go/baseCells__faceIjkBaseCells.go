@@ -8,6 +8,7 @@ type BaseCellRotation struct {
 
 // faceIjkBaseCells mirrors the static faceIjkBaseCells array from baseCells.c
 // This is a 4D lookup table: [face][i][j][k] -> BaseCellRotation
+// Ported from H3 C: baseCells.c::faceIjkBaseCells
 var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
 	{ // face 0
 		{

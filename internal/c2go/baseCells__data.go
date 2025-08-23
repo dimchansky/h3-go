@@ -10,6 +10,7 @@ type BaseCellData struct {
 
 // baseCellData mirrors the BaseCellData array from baseCells.c
 // Resolution 0 base cell data lookup table
+// Ported from H3 C: baseCells.c::baseCellData
 var baseCellData = [NUM_BASE_CELLS]BaseCellData{
 	{FaceIJK{1, CoordIJK{1, 0, 0}}, false, [2]int{0, 0}},   // base cell 0
 	{FaceIJK{2, CoordIJK{1, 1, 0}}, false, [2]int{0, 0}},   // base cell 1

@@ -1,6 +1,7 @@
 package c2go
 
 // getReservedBits returns the 3 reserved bits (port of H3_GET_RESERVED_BITS).
+// Ported from H3 C: h3Index.c::getReservedBits
 func getReservedBits(h H3Index) int {
 	const H3_RESERVED_OFFSET = 56
 	const H3_RESERVED_MASK = uint64(7) << H3_RESERVED_OFFSET
@@ -9,6 +10,7 @@ func getReservedBits(h H3Index) int {
 
 // setReservedBits sets the 3 reserved bits (port of H3_SET_RESERVED_BITS).
 // Note: setting to non-zero may produce invalid indexes.
+// Ported from H3 C: h3Index.c::setReservedBits
 func setReservedBits(h H3Index, v int) H3Index {
 	const H3_RESERVED_OFFSET = 56
 	const H3_RESERVED_MASK = uint64(7) << H3_RESERVED_OFFSET
