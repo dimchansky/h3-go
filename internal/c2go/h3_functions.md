@@ -8,7 +8,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] cellToBoundary
 - [x] cellToLatLng
 - [ ] destroyLinkedMultiPolygon
-- [ ] getNumCells
+- [x] getNumCells
 - [ ] gridDisk
 - [ ] gridDiskDistances
 - [ ] gridDiskDistancesSafe
@@ -81,7 +81,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] getHexagonAreaAvgM2
 - [ ] getHexagonEdgeLengthAvgKm
 - [ ] getHexagonEdgeLengthAvgM
-- [ ] getNumCells
+- [x] getNumCells
 - [x] greatCircleDistanceKm
 - [x] greatCircleDistanceM
 - [x] greatCircleDistanceRads
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 38
-- **Remaining:** 40
+- **Completed:** 40
+- **Remaining:** 38
 
 ## Notes
 

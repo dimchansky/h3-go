@@ -188,3 +188,10 @@ func cellAreaM2C(cell H3Index) (float64, H3Error) {
 	err := H3Error(C.cellAreaM2(C.H3Index(cell), &out))
 	return float64(out), err
 }
+
+// getNumCellsC calls the original C implementation.
+func getNumCellsC(res int32) (int64, H3Error) {
+	var out C.int64_t
+	err := H3Error(C.getNumCells(C.int(res), &out))
+	return int64(out), err
+}
