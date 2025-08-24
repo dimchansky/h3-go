@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_vec3d__pointSquareDist_Parity(t *testing.T) {
+func Test_vec3d_pointSquareDist_Parity(t *testing.T) {
 	rng := rand.New(rand.NewSource(7))
 	cases := []struct{ a, b Vec3d }{
 		{Vec3d{0, 0, 0}, Vec3d{0, 0, 0}},
