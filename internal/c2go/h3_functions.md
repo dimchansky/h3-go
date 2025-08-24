@@ -88,8 +88,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 ## localij.c (5 functions)
 
-- [ ] cellToLocalIj
-- [ ] localIjToCell
+- [x] cellToLocalIj
+- [x] localIjToCell
 - [ ] gridDistance
 - [ ] gridPathCells
 - [ ] gridPathCellsSize
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 63
-- **Remaining:** 15
+- **Completed:** 65
+- **Remaining:** 13
 
 ## Notes
 

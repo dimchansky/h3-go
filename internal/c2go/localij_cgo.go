@@ -16,6 +16,14 @@ static H3Error cellToLocalIjk_c_wrapper(H3Index origin, H3Index h3, CoordIJK* ou
 static H3Error localIjkToCell_c_wrapper(H3Index origin, const CoordIJK* ijk, H3Index* out) {
     return localIjkToCell(origin, ijk, out);
 }
+
+static H3Error cellToLocalIj_c_wrapper(H3Index origin, H3Index index, uint32_t mode, CoordIJ* out) {
+    return cellToLocalIj(origin, index, mode, out);
+}
+
+static H3Error localIjToCell_c_wrapper(H3Index origin, const CoordIJ* ij, uint32_t mode, H3Index* out) {
+    return localIjToCell(origin, ij, mode, out);
+}
 */
 import "C"
 
@@ -45,6 +53,37 @@ func _localIjkToCellC(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 	cIJK.k = C.int(ijk.K)
 
 	err := C.localIjkToCell_c_wrapper(C.H3Index(origin), &cIJK, &cOut)
+
+	// Convert C result to Go
+	*out = H3Index(cOut)
+
+	return H3Error(err)
+}
+
+// _cellToLocalIjC wraps the C cellToLocalIj function.
+// Provides direct access to the C implementation for parity testing.
+func _cellToLocalIjC(origin H3Index, index H3Index, mode uint32, out *CoordIJ) H3Error {
+	var cOut C.CoordIJ
+	err := C.cellToLocalIj_c_wrapper(C.H3Index(origin), C.H3Index(index), C.uint32_t(mode), &cOut)
+
+	// Convert C result to Go
+	out.I = int32(cOut.i)
+	out.J = int32(cOut.j)
+
+	return H3Error(err)
+}
+
+// _localIjToCellC wraps the C localIjToCell function.
+// Provides direct access to the C implementation for parity testing.
+func _localIjToCellC(origin H3Index, ij *CoordIJ, mode uint32, out *H3Index) H3Error {
+	var cIJ C.CoordIJ
+	var cOut C.H3Index
+
+	// Convert Go to C
+	cIJ.i = C.int(ij.I)
+	cIJ.j = C.int(ij.J)
+
+	err := C.localIjToCell_c_wrapper(C.H3Index(origin), &cIJ, C.uint32_t(mode), &cOut)
 
 	// Convert C result to Go
 	*out = H3Index(cOut)

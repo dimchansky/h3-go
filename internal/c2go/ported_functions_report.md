@@ -206,15 +206,17 @@ These are primarily internal/static functions used to build the public API.
 - findPolygonForHole
 - normalizeMultiPolygon
 
-## localij.c (8 functions)
+## localij.c (10 functions)
 
 - FAILED_DIRECTIONS
 - PENTAGON_ROTATIONS
 - PENTAGON_ROTATIONS_REVERSE
 - PENTAGON_ROTATIONS_REVERSE_NONPOLAR
 - PENTAGON_ROTATIONS_REVERSE_POLAR
+- cellToLocalIj
 - cellToLocalIjk
 - cubeRound
+- localIjToCell
 - localIjkToCell
 
 ## mathExtensions.c (1 functions)
@@ -272,7 +274,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 215**
+**Total ported internal functions: 217**
 
 ---
 
