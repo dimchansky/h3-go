@@ -60,3 +60,17 @@ var vertexNumToDirectionHex = [NUM_HEX_VERTS]Direction{
 var vertexNumToDirectionPent = [NUM_PENT_VERTS]Direction{
 	IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT,
 }
+
+// directions in CCW order.
+// Ported from H3 C: vertex.c::DIRECTIONS
+var directions = [NUM_HEX_VERTS]Direction{
+	J_AXES_DIGIT, JK_AXES_DIGIT, K_AXES_DIGIT,
+	IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT,
+}
+
+// revNeighborDirectionsHex reverse direction from neighbor in each direction,
+// given as an index into DIRECTIONS to facilitate rotation.
+// Ported from H3 C: vertex.c::revNeighborDirectionsHex
+var revNeighborDirectionsHex = [NUM_DIGITS]int32{
+	int32(INVALID_DIGIT), 5, 3, 4, 1, 0, 2,
+}

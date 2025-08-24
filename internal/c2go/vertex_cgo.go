@@ -30,3 +30,10 @@ func vertexNumForDirectionC(origin H3Index, direction Direction) int32 {
 func directionForVertexNumC(origin H3Index, vertexNum int32) Direction {
 	return Direction(C.directionForVertexNum(C.H3Index(origin), C.int(vertexNum)))
 }
+
+// cellToVertexC wraps the C cellToVertex function.
+func cellToVertexC(cell H3Index, vertexNum int32) (H3Index, H3Error) {
+	var out C.H3Index
+	err := H3Error(C.cellToVertex(C.H3Index(cell), C.int(vertexNum), &out))
+	return H3Index(out), err
+}
