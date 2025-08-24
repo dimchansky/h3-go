@@ -8,13 +8,8 @@ package c2go
 #include "h3api.h"
 #include "vertex.h"
 
-// The vertexRotations function is static in vertex.c, so we need to include the implementation
-#include "vertex.c"
-
-// Wrapper to access the static function
-static inline H3Error vertexRotations_wrapper(H3Index cell, int *out) {
-    return vertexRotations(cell, out);
-}
+// External wrapper to access the static vertexRotations function
+extern H3Error vertexRotations_wrapper(H3Index cell, int *out);
 */
 import "C"
 
@@ -24,4 +19,9 @@ func vertexRotationsC(cell H3Index, out *int32) H3Error {
 	err := H3Error(C.vertexRotations_wrapper(C.H3Index(cell), &cOut))
 	*out = int32(cOut)
 	return err
+}
+
+// vertexNumForDirectionC wraps the C vertexNumForDirection function.
+func vertexNumForDirectionC(origin H3Index, direction Direction) int32 {
+	return int32(C.vertexNumForDirection(C.H3Index(origin), C.Direction(direction)))
 }

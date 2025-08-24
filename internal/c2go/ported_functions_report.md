@@ -230,9 +230,12 @@ These are primarily internal/static functions used to build the public API.
 - _square
 - pointSquareDist
 
-## vertex.c (2 functions)
+## vertex.c (5 functions)
 
+- directionToVertexNumHex
+- directionToVertexNumPent
 - pentagonDirectionFaces
+- vertexNumForDirection
 - vertexRotations
 
 ## vertexGraph.c (2 functions)
@@ -240,7 +243,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 183**
+**Total ported internal functions: 186**
 
 ---
 
