@@ -21,6 +21,11 @@ static H3Error getDirectedEdgeOrigin_c_wrapper(H3Index edge, H3Index *out) {
 static int isValidDirectedEdge_c_wrapper(H3Index edge) {
     return isValidDirectedEdge(edge);
 }
+
+// Wrapper function to call originToDirectedEdges
+static H3Error originToDirectedEdges_c_wrapper(H3Index origin, H3Index *edges) {
+    return originToDirectedEdges(origin, edges);
+}
 */
 import "C"
 
@@ -34,4 +39,16 @@ func getDirectedEdgeOriginC(edge H3Index) (H3Index, H3Error) {
 // isValidDirectedEdgeC calls the original C implementation.
 func isValidDirectedEdgeC(edge H3Index) bool {
 	return C.isValidDirectedEdge_c_wrapper(C.H3Index(edge)) != 0
+}
+
+// originToDirectedEdgesC calls the original C implementation.
+func originToDirectedEdgesC(origin H3Index, edges []H3Index) H3Error {
+	// Convert to C array
+	cEdges := make([]C.H3Index, 6)
+	err := H3Error(C.originToDirectedEdges_c_wrapper(C.H3Index(origin), &cEdges[0]))
+	// Copy back to Go slice
+	for i := 0; i < 6; i++ {
+		edges[i] = H3Index(cEdges[i])
+	}
+	return err
 }
