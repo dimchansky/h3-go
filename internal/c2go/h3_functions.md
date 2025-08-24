@@ -11,7 +11,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] getNumCells
 - [x] gridDisk
 - [x] gridDiskDistances
-- [ ] gridDiskDistancesSafe
+- [x] gridDiskDistancesSafe
 - [x] gridDiskDistancesUnsafe
 - [ ] gridDisksUnsafe
 - [ ] gridDiskUnsafe
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 68
-- **Remaining:** 10
+- **Completed:** 69
+- **Remaining:** 9
 
 ## Notes
 

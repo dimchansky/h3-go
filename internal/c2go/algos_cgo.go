@@ -45,6 +45,11 @@ static H3Error gridDiskDistances_c_wrapper(H3Index origin, int k, H3Index *out, 
 static H3Error gridDisk_c_wrapper(H3Index origin, int k, H3Index *out) {
     return gridDisk(origin, k, out);
 }
+
+// Wrapper function to call gridDiskDistancesSafe
+static H3Error gridDiskDistancesSafe_c_wrapper(H3Index origin, int k, H3Index *out, int *distances) {
+    return gridDiskDistancesSafe(origin, k, out, distances);
+}
 */
 import "C"
 
@@ -125,5 +130,22 @@ func gridDiskC(origin H3Index, k int32, out []H3Index) H3Error {
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
+	))
+}
+
+// gridDiskDistancesSafeC calls the original C implementation.
+func gridDiskDistancesSafeC(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+	if len(out) == 0 {
+		return E_FAILED
+	}
+	var distPtr *C.int
+	if len(distances) > 0 {
+		distPtr = (*C.int)(&distances[0])
+	}
+	return H3Error(C.gridDiskDistancesSafe_c_wrapper(
+		C.H3Index(origin),
+		C.int(k),
+		(*C.H3Index)(&out[0]),
+		distPtr,
 	))
 }
