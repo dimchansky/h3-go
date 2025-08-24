@@ -202,3 +202,17 @@ func edgeLengthRadsC(edge H3Index) (float64, H3Error) {
 	err := H3Error(C.edgeLengthRads(C.H3Index(edge), &length))
 	return float64(length), err
 }
+
+// edgeLengthKmC calls the original C implementation.
+func edgeLengthKmC(edge H3Index) (float64, H3Error) {
+	var length C.double
+	err := H3Error(C.edgeLengthKm(C.H3Index(edge), &length))
+	return float64(length), err
+}
+
+// edgeLengthMC calls the original C implementation.
+func edgeLengthMC(edge H3Index) (float64, H3Error) {
+	var length C.double
+	err := H3Error(C.edgeLengthM(C.H3Index(edge), &length))
+	return float64(length), err
+}
