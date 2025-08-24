@@ -9,10 +9,10 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] cellToLatLng
 - [ ] destroyLinkedMultiPolygon
 - [x] getNumCells
-- [ ] gridDisk
+- [x] gridDisk
 - [x] gridDiskDistances
 - [ ] gridDiskDistancesSafe
-- [x] gridDiskDistancesUnsafe
+- [ ] gridDiskDistancesUnsafe
 - [ ] gridDisksUnsafe
 - [ ] gridDiskUnsafe
 - [ ] gridRing

@@ -10,8 +10,8 @@ These are primarily internal/static functions used to build the public API.
 - NEXT_RING_DIRECTION
 - _gridDiskDistancesInternal
 - directionForNeighbor
+- gridDisk
 - gridDiskDistances
-- gridDiskDistancesUnsafe
 - h3NeighborRotations
 - maxGridDiskSize
 
