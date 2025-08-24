@@ -37,3 +37,15 @@ func cellToVertexC(cell H3Index, vertexNum int32) (H3Index, H3Error) {
 	err := H3Error(C.cellToVertex(C.H3Index(cell), C.int(vertexNum), &out))
 	return H3Index(out), err
 }
+
+// cellToVertexesC wraps the C cellToVertexes function.
+func cellToVertexesC(cell H3Index, vertexes *[6]H3Index) H3Error {
+	var cVertexes [6]C.H3Index
+	err := H3Error(C.cellToVertexes(C.H3Index(cell), &cVertexes[0]))
+	if err == E_SUCCESS {
+		for i := 0; i < 6; i++ {
+			(*vertexes)[i] = H3Index(cVertexes[i])
+		}
+	}
+	return err
+}
