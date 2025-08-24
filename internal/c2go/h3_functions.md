@@ -29,7 +29,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] getRes0Cells
 - [x] res0CellCount
 
-## directedEdge.c (12 functions)
+## directedEdge.c (8 functions)
 
 - [ ] areNeighborCells
 - [ ] cellsToDirectedEdge
@@ -103,7 +103,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 ## Summary
 
-**Total Functions:** 86
+**Total Functions:** 82
 - **Completed:** 38
 - **Remaining:** 40
 
