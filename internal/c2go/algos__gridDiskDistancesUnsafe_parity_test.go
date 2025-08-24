@@ -148,4 +148,3 @@ func Test_gridDiskDistancesUnsafe_parity(t *testing.T) {
 		}
 	})
 }
-

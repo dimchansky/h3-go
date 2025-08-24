@@ -87,4 +87,3 @@ func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances [
 	}
 	return E_SUCCESS
 }
-

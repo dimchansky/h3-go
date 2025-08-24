@@ -10,7 +10,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] destroyLinkedMultiPolygon
 - [x] getNumCells
 - [ ] gridDisk
-- [ ] gridDiskDistances
+- [x] gridDiskDistances
 - [ ] gridDiskDistancesSafe
 - [x] gridDiskDistancesUnsafe
 - [ ] gridDisksUnsafe
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 53
-- **Remaining:** 25
+- **Completed:** 54
+- **Remaining:** 24
 
 ## Notes
 

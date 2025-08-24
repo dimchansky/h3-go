@@ -26,4 +26,3 @@ func maxGridDiskSize(k int32, out *int64) H3Error {
 	*out = 3*int64(k)*(int64(k)+1) + 1
 	return E_SUCCESS
 }
-
