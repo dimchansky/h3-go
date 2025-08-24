@@ -440,3 +440,38 @@ func uncompactCellsSizeC(compactedSet []H3Index, numCompacted int64, res int32) 
 
 	return int64(out), uint32(err)
 }
+
+// uncompactCellsC calls the original C implementation.
+func uncompactCellsC(compactedSet []H3Index, numCompacted int64, outSet []H3Index, numOut int64, res int32) uint32 {
+	if numCompacted == 0 {
+		return uint32(C.E_SUCCESS)
+	}
+	if len(compactedSet) < int(numCompacted) || len(outSet) < int(numOut) {
+		return uint32(C.E_FAILED)
+	}
+
+	// Allocate C arrays
+	cCompactedSet := (*C.H3Index)(C.malloc(C.size_t(numCompacted) * C.size_t(C.sizeof_H3Index)))
+	defer C.free(unsafe.Pointer(cCompactedSet))
+	cOutSet := (*C.H3Index)(C.malloc(C.size_t(numOut) * C.size_t(C.sizeof_H3Index)))
+	defer C.free(unsafe.Pointer(cOutSet))
+
+	// Copy Go slice to C array
+	compactedSlice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cCompactedSet))[:numCompacted:numCompacted]
+	for i := int64(0); i < numCompacted; i++ {
+		compactedSlice[i] = C.H3Index(compactedSet[i])
+	}
+
+	// Call C function
+	err := C.uncompactCells(cCompactedSet, C.int64_t(numCompacted), cOutSet, C.int64_t(numOut), C.int(res))
+
+	if err == 0 {
+		// Copy results back to Go slice
+		outSlice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cOutSet))[:numOut:numOut]
+		for i := int64(0); i < numOut; i++ {
+			outSet[i] = H3Index(outSlice[i])
+		}
+	}
+
+	return uint32(err)
+}

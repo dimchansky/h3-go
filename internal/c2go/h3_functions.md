@@ -64,7 +64,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] maxFaceCount
 - [x] pentagonCount
 - [x] stringToH3
-- [ ] uncompactCells
+- [x] uncompactCells
 - [x] uncompactCellsSize
 
 ## latLng.c (19 functions)
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 34
-- **Remaining:** 44
+- **Completed:** 35
+- **Remaining:** 43
 
 ## Notes
 
