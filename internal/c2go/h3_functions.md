@@ -69,7 +69,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 ## latLng.c (19 functions)
 
-- [ ] cellAreaKm2
+- [x] cellAreaKm2
 - [ ] cellAreaM2
 - [x] cellAreaRads2
 - [x] degsToRads
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 36
-- **Remaining:** 42
+- **Completed:** 37
+- **Remaining:** 41
 
 ## Notes
 

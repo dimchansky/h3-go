@@ -174,3 +174,10 @@ func cellAreaRads2C(cell H3Index) (float64, H3Error) {
 	err := H3Error(C.cellAreaRads2(C.H3Index(cell), &out))
 	return float64(out), err
 }
+
+// cellAreaKm2C calls the original C implementation.
+func cellAreaKm2C(cell H3Index) (float64, H3Error) {
+	var out C.double
+	err := H3Error(C.cellAreaKm2(C.H3Index(cell), &out))
+	return float64(out), err
+}
