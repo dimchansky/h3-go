@@ -414,3 +414,29 @@ func compactCellsC(h3Set []H3Index, compactedSet []H3Index, numHexes int64) uint
 
 	return uint32(err)
 }
+
+// uncompactCellsSizeC calls the original C implementation.
+func uncompactCellsSizeC(compactedSet []H3Index, numCompacted int64, res int32) (int64, uint32) {
+	if numCompacted == 0 {
+		return 0, uint32(C.E_SUCCESS)
+	}
+	if len(compactedSet) < int(numCompacted) {
+		return 0, uint32(C.E_FAILED)
+	}
+
+	// Allocate C array
+	cCompactedSet := (*C.H3Index)(C.malloc(C.size_t(numCompacted) * C.size_t(C.sizeof_H3Index)))
+	defer C.free(unsafe.Pointer(cCompactedSet))
+
+	// Copy Go slice to C array
+	compactedSlice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cCompactedSet))[:numCompacted:numCompacted]
+	for i := int64(0); i < numCompacted; i++ {
+		compactedSlice[i] = C.H3Index(compactedSet[i])
+	}
+
+	// Call C function
+	var out C.int64_t
+	err := C.uncompactCellsSize(cCompactedSet, C.int64_t(numCompacted), C.int(res), &out)
+
+	return int64(out), uint32(err)
+}
