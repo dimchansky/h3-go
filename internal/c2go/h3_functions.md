@@ -12,7 +12,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] gridDisk
 - [x] gridDiskDistances
 - [ ] gridDiskDistancesSafe
-- [ ] gridDiskDistancesUnsafe
+- [x] gridDiskDistancesUnsafe
 - [ ] gridDisksUnsafe
 - [ ] gridDiskUnsafe
 - [ ] gridRing
@@ -31,7 +31,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 ## directedEdge.c (8 functions)
 
-- [ ] areNeighborCells
+- [x] areNeighborCells
 - [x] cellsToDirectedEdge
 - [x] directedEdgeToBoundary
 - [x] directedEdgeToCells
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 54
-- **Remaining:** 24
+- **Completed:** 56
+- **Remaining:** 22
 
 ## Notes
 

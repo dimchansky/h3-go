@@ -46,6 +46,11 @@ static H3Error directedEdgeToCells_c_wrapper(H3Index edge, H3Index *originDestin
 static H3Error cellsToDirectedEdge_c_wrapper(H3Index origin, H3Index destination, H3Index *out) {
     return cellsToDirectedEdge(origin, destination, out);
 }
+
+// Wrapper function to call areNeighborCells
+static H3Error areNeighborCells_c_wrapper(H3Index origin, H3Index destination, int *out) {
+    return areNeighborCells(origin, destination, out);
+}
 */
 import "C"
 
@@ -124,4 +129,11 @@ func cellsToDirectedEdgeC(origin, destination H3Index) (H3Index, H3Error) {
 	var out C.H3Index
 	err := H3Error(C.cellsToDirectedEdge_c_wrapper(C.H3Index(origin), C.H3Index(destination), &out))
 	return H3Index(out), err
+}
+
+// areNeighborCellsC calls the original C implementation.
+func areNeighborCellsC(origin, destination H3Index) (bool, H3Error) {
+	var out C.int
+	err := H3Error(C.areNeighborCells_c_wrapper(C.H3Index(origin), C.H3Index(destination), &out))
+	return out != 0, err
 }

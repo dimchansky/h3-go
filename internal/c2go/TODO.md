@@ -16,9 +16,9 @@ Signature mirroring (C pointers → Go pointers)
 Iteration Workflow (standard operating procedure)
 - Select target: pick a small, self-contained C function (or a tight cluster) from the planned list.
 - Prepare interop: if the C function is not exported or uses structs, add minimal cgo helpers to call it directly (use C structs like C.LatLng/C.BBox, etc.); avoid splitting scalars.
-- Transpile: implement a faithful Go port in `internal/c2go/<cfile>__<function>.go`, mirroring names/signatures (unexported) and behavior (NO build tag for pure Go).
+- Transpile: implement a faithful Go port in `internal/c2go/<cfile>_<function>.go`, mirroring names/signatures (unexported) and behavior (NO build tag for pure Go).
 - Document: follow established comment style with function description, technical details, and `// Ported from H3 C: <file>::<function>` attribution line.
-- Parity test: add `internal/c2go/<cfile>__<function>_parity_test.go` with `//go:build cgo` that compares Go vs C output; use tight, justified tolerances for floats and safe bool handling.
+- Parity test: add `internal/c2go/<cfile>_<function>_parity_test.go` with `//go:build cgo` that compares Go vs C output; use tight, justified tolerances for floats and safe bool handling.
 - Sanity run: `make test-c2go` and ensure all parity tests pass.
   - Run all tests: `make test-c2go`
   - Run specific test: `make test-c2go TEST=Test_functionName_parity`
@@ -41,7 +41,7 @@ Type Mapping Rules (C to Go)
 - **Rationale**: H3 C library uses 32-bit integers which can overflow differently than Go's platform-dependent `int` (typically 64-bit), leading to infinite loops or incorrect behavior in coordinate calculations
 
 Build Tag Rules
-- **Pure Go implementations** (`<cfile>__<function>.go`): NO build tags
+- **Pure Go implementations** (`<cfile>_<function>.go`): NO build tags
 - **CGO interop files** (`*_cgo.go`): Must have `//go:build cgo` as first line
 - **Parity test files** (`*_parity_test.go`): Must have `//go:build cgo` as first line
 - This ensures pure Go code is always available while CGO dependencies are isolated
@@ -101,13 +101,13 @@ Use the automated reports to identify the next functions to implement:
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls using C structs (C.BBox/C.LatLng/GeoLoop); avoid scalar params.
-- Implement faithful Go ports in `<cfile>__<function>.go` with same unexported names.
-- Add `<cfile>__<function>_parity_test.go` with realistic tolerances; compare bools directly.
+- Implement faithful Go ports in `<cfile>_<function>.go` with same unexported names.
+- Add `<cfile>_<function>_parity_test.go` with realistic tolerances; compare bools directly.
 Conventions
-- One function per Go file: `<cfile>__<function>.go`
+- One function per Go file: `<cfile>_<function>.go`
 - cgo interop per C module: `<cfile>_cgo.go` (build tag `cgo && c2go`), includes `"<cfile>.c"` by name only.
 - C wrappers named distinctly (e.g., `_ipow_c_wrapper`), Go helpers mirror with a `C` suffix (e.g., `_ipowC`).
-- Parity tests named `<cfile>__<function>_parity_test.go` with `//go:build c2go`. Reserve `<cfile>__<function>_test.go` for plain-Go tests later.
+- Parity tests named `<cfile>_<function>_parity_test.go` with `//go:build c2go`. Reserve `<cfile>_<function>_test.go` for plain-Go tests later.
 - Do not hardcode H3 version in code; include directories provided via `CGO_CPPFLAGS` in `make test-c2go` with `H3VER`.
 
 Issue encountered: linking large C modules (resolved)
@@ -154,8 +154,8 @@ Note on C bool interop (cgo)
 
 Execution plan per function
 - Extend `<cfile>_cgo.go` with direct calls to the original C functions using C structs where applicable (no scalar explosion; use C.LatLng / C.Vec2d).
-- Implement the Go port in `<cfile>__<function>.go` (faithful translation; same unexported name where possible).
-- Add parity test `<cfile>__<function>_parity_test.go` under `//go:build c2go` with tight but realistic tolerances.
+- Implement the Go port in `<cfile>_<function>.go` (faithful translation; same unexported name where possible).
+- Add parity test `<cfile>_<function>_parity_test.go` under `//go:build c2go` with tight but realistic tolerances.
 - If C returns `bool`, prefer `<stdbool.h>` and compare `!= 0`. If toolchain warns, route through a tiny C helper returning `int`.
 
 ## Commit Message Guidelines
