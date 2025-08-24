@@ -41,10 +41,10 @@ func TestSetBaseCellParity(t *testing.T) {
 	for bc := int32(0); bc < NUM_BASE_CELLS; bc++ {
 		h := H3Index(H3_INIT)
 		h = setMode(h, H3_CELL_MODE)
-		h = H3Index(setBaseCell(uint64(h), bc))
+		h = setBaseCell(h, bc)
 
 		// Verify the base cell was set correctly by extracting it
-		extractedBC := int32((uint64(h) & H3_BC_MASK) >> H3_BC_OFFSET)
+		extractedBC := getBaseCellNumber(h)
 		if extractedBC != bc {
 			t.Errorf("Base cell %d: expected %d, got %d", bc, bc, extractedBC)
 		}

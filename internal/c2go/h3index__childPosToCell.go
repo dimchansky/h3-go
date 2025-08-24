@@ -20,10 +20,7 @@ func childPosToCell(childPos int64, parent H3Index, childRes int32) (H3Index, H3
 	idx := childPos
 
 	// Set resolution to childRes
-	x := uint64(child)
-	x &^= H3_RES_MASK
-	x |= (uint64(childRes) & 15) << H3_RES_OFFSET
-	child = H3Index(x)
+	child = setResolution(child, childRes)
 
 	if isPentagon(parent) {
 		inPent := true

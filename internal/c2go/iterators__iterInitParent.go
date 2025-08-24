@@ -13,8 +13,8 @@ func iterInitParent(h H3Index, childRes int32, iter *IterCellsChildren) {
 	}
 
 	iter.H = _zeroIndexDigits(h, iter.ParentRes+1, childRes)
-	// Set resolution (inline H3_SET_RESOLUTION)
-	iter.H = H3Index((uint64(iter.H) &^ H3_RES_MASK) | (uint64(childRes)&15)<<H3_RES_OFFSET)
+	// Set resolution
+	iter.H = setResolution(iter.H, childRes)
 
 	if isPentagon(iter.H) {
 		// The skip digit skips `1` for pentagons.

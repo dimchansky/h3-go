@@ -6,11 +6,8 @@ func _faceIjkToH3(fijk *FaceIJK, res int32) H3Index {
 	// initialize the index
 	h := H3Index(H3_INIT)
 	h = setMode(h, H3_CELL_MODE)
-	// Set resolution (inline H3_SET_RESOLUTION)
-	x := uint64(h)
-	x &^= H3_RES_MASK
-	x |= (uint64(res) & 15) << H3_RES_OFFSET
-	h = H3Index(x)
+	// Set resolution
+	h = setResolution(h, res)
 
 	// check for res 0/base cell
 	if res == 0 {
@@ -20,7 +17,7 @@ func _faceIjkToH3(fijk *FaceIJK, res int32) H3Index {
 			return H3_NULL
 		}
 
-		h = H3Index(setBaseCell(uint64(h), _faceIjkToBaseCell(fijk)))
+		h = setBaseCell(h, _faceIjkToBaseCell(fijk))
 		return h
 	}
 
@@ -66,7 +63,7 @@ func _faceIjkToH3(fijk *FaceIJK, res int32) H3Index {
 
 	// lookup the correct base cell
 	baseCell := _faceIjkToBaseCell(&fijkBC)
-	h = H3Index(setBaseCell(uint64(h), baseCell))
+	h = setBaseCell(h, baseCell)
 
 	// rotate if necessary to get canonical base cell orientation
 	// for this base cell

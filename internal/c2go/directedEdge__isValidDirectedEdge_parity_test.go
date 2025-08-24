@@ -99,8 +99,8 @@ func Test_isValidDirectedEdge_pentagon_edges_parity(t *testing.T) {
 	for _, baseCell := range pentagonBaseCells {
 		// Create a simple pentagon cell at resolution 1
 		pentagon := setMode(H3Index(0), H3_CELL_MODE)
-		pentagon = H3Index(setBaseCell(uint64(pentagon), baseCell))
-		pentagon = setResolutionForTest(pentagon, 1)
+		pentagon = setBaseCell(pentagon, baseCell)
+		pentagon = setResolution(pentagon, 1)
 
 		// Test all directions
 		for direction := int32(1); direction <= 6; direction++ {
