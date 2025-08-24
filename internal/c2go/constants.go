@@ -27,6 +27,10 @@ const (
 	// Earth radius (km)
 	EARTH_RADIUS_KM = 6371.007180918475
 
+	// Epsilon constants from latLng.h
+	EPSILON_DEG = .000000001             // epsilon of ~0.1mm in degrees
+	EPSILON_RAD = EPSILON_DEG * M_PI_180 // epsilon of ~0.1mm in radians
+
 	// Resolution and topology
 	MAX_H3_RES      = 15
 	NUM_ICOSA_FACES = 20

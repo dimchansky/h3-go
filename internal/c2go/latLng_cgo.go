@@ -167,3 +167,10 @@ func geoAlmostEqualC(a, b LatLng) bool {
 	cb.lng = C.double(b.Lng)
 	return C.h3_bool_to_int(C.geoAlmostEqual(&ca, &cb)) != 0
 }
+
+// cellAreaRads2C calls the original C implementation.
+func cellAreaRads2C(cell H3Index) (float64, H3Error) {
+	var out C.double
+	err := H3Error(C.cellAreaRads2(C.H3Index(cell), &out))
+	return float64(out), err
+}

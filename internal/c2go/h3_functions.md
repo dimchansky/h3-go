@@ -71,7 +71,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 - [ ] cellAreaKm2
 - [ ] cellAreaM2
-- [ ] cellAreaRads2
+- [x] cellAreaRads2
 - [x] degsToRads
 - [x] radsToDegs
 - [ ] edgeLengthKm
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 35
-- **Remaining:** 43
+- **Completed:** 36
+- **Remaining:** 42
 
 ## Notes
 
