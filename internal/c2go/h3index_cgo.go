@@ -317,3 +317,21 @@ func maxFaceCountC(h H3Index, out *int32) uint32 {
 	*out = int32(cOut)
 	return uint32(err)
 }
+
+// getIcosahedronFacesC calls the original C implementation.
+func getIcosahedronFacesC(h H3Index, out []int32) uint32 {
+	if len(out) == 0 {
+		return uint32(C.E_FAILED)
+	}
+	cOut := (*C.int)(C.malloc(C.size_t(len(out)) * C.size_t(C.sizeof_int)))
+	defer C.free(unsafe.Pointer(cOut))
+	err := C.getIcosahedronFaces(C.H3Index(h), cOut)
+	if err == 0 {
+		// Copy results back to Go slice
+		slice := (*[1 << 30]C.int)(unsafe.Pointer(cOut))[:len(out):len(out)]
+		for i := range out {
+			out[i] = int32(slice[i])
+		}
+	}
+	return uint32(err)
+}

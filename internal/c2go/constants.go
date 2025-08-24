@@ -40,6 +40,9 @@ const (
 	INVALID_ROTATIONS = -1
 	MAX_FACE_COORD    = 2
 
+	// Face constants
+	INVALID_FACE = -1
+
 	// Modes
 	H3_CELL_MODE         = 1
 	H3_DIRECTEDEDGE_MODE = 2
