@@ -379,3 +379,38 @@ func cellToBoundaryC(h H3Index, cb *CellBoundary) uint32 {
 
 	return uint32(err)
 }
+
+// compactCellsC calls the original C implementation.
+func compactCellsC(h3Set []H3Index, compactedSet []H3Index, numHexes int64) uint32 {
+	if numHexes == 0 {
+		return uint32(C.E_SUCCESS)
+	}
+	if len(h3Set) < int(numHexes) || len(compactedSet) < int(numHexes) {
+		return uint32(C.E_FAILED)
+	}
+
+	// Allocate C arrays
+	cH3Set := (*C.H3Index)(C.malloc(C.size_t(numHexes) * C.size_t(C.sizeof_H3Index)))
+	defer C.free(unsafe.Pointer(cH3Set))
+	cCompactedSet := (*C.H3Index)(C.malloc(C.size_t(numHexes) * C.size_t(C.sizeof_H3Index)))
+	defer C.free(unsafe.Pointer(cCompactedSet))
+
+	// Copy Go slice to C array
+	h3Slice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cH3Set))[:numHexes:numHexes]
+	for i := int64(0); i < numHexes; i++ {
+		h3Slice[i] = C.H3Index(h3Set[i])
+	}
+
+	// Call C function
+	err := C.compactCells(cH3Set, cCompactedSet, C.int64_t(numHexes))
+
+	if err == 0 {
+		// Copy results back to Go slice
+		compactedSlice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cCompactedSet))[:numHexes:numHexes]
+		for i := int64(0); i < numHexes; i++ {
+			compactedSet[i] = H3Index(compactedSlice[i])
+		}
+	}
+
+	return uint32(err)
+}

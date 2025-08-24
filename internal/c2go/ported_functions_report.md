@@ -83,7 +83,7 @@ These are primarily internal/static functions used to build the public API.
 - maxDimByCIIres
 - unitScaleByCIIres
 
-## h3Index.c (49 functions)
+## h3Index.c (50 functions)
 
 - _faceIjkToH3
 - _firstOneIndex
@@ -109,6 +109,7 @@ These are primarily internal/static functions used to build the public API.
 - cellToLatLng
 - cellToParent
 - childPosToCell
+- compactCells
 - describeH3Error
 - getBaseCellNumber
 - getHighBit
@@ -217,7 +218,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 169**
+**Total ported internal functions: 170**
 
 ---
 

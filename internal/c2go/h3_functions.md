@@ -50,7 +50,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] cellToLatLng
 - [x] cellToParent
 - [x] childPosToCell
-- [ ] compactCells
+- [x] compactCells
 - [x] describeH3Error
 - [x] getBaseCellNumber
 - [x] getIcosahedronFaces
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 32
-- **Remaining:** 46
+- **Completed:** 33
+- **Remaining:** 45
 
 ## Notes
 
