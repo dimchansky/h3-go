@@ -24,6 +24,8 @@ Iteration Workflow (standard operating procedure)
   - Run specific test: `make test-c2go TEST=Test_functionName_parity`
   - Verbose mode: `make test-c2go VERBOSE=1`
   - Specific test + verbose: `make test-c2go TEST=Test_functionName_parity VERBOSE=1`
+  - Custom timeout: `make test-c2go TIMEOUT=30s`
+  - All options combined: `make test-c2go TEST=Test_functionName_parity VERBOSE=1 TIMEOUT=30s`
 - Format code: run `make fix-fmt` prior to committing.
 - Update status: run `./scripts/update-h3-status.sh` to update implementation tracking reports.
 - Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and status update.
@@ -133,13 +135,18 @@ When a parity test fails or you encounter unexpected behavior:
    make test-c2go TEST=Test_functionName_parity VERBOSE=1
    ```
 
-2. **Common debugging approaches**:
+2. **If tests hang or take too long, use custom timeout**:
+   ```bash
+   make test-c2go TEST=Test_functionName_parity VERBOSE=1 TIMEOUT=30s
+   ```
+
+3. **Common debugging approaches**:
    - Add `t.Logf()` statements to print intermediate values
    - Compare Go vs C outputs step by step
    - Check for integer overflow differences (use int32 for C int)
    - Verify struct field types match C definitions exactly
 
-3. **Never use direct `go test` commands** - always use the Makefile to ensure proper CGO environment setup
+4. **Never use direct `go test` commands** - always use the Makefile to ensure proper CGO environment setup
 
 Note on C bool interop (cgo)
 - Preferred: include `<stdbool.h>` and compare C.bool return values directly to `0` in Go (`C.fn(...) != 0`). This is valid because `_Bool` is an integer type in C99.

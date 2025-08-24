@@ -64,3 +64,15 @@ func iterInitParentC(h H3Index, childRes int32, iter *IterCellsChildren) {
 	iter.ParentRes = int32(citer._parentRes)
 	iter.SkipDigit = int32(citer._skipDigit)
 }
+
+// iterStepChildC calls the original C iterStepChild function.
+func iterStepChildC(iter *IterCellsChildren) {
+	var citer C.IterCellsChildren
+	citer.h = C.H3Index(iter.H)
+	citer._parentRes = C.int(iter.ParentRes)
+	citer._skipDigit = C.int(iter.SkipDigit)
+	C.iterStepChild(&citer)
+	iter.H = H3Index(citer.h)
+	iter.ParentRes = int32(citer._parentRes)
+	iter.SkipDigit = int32(citer._skipDigit)
+}

@@ -55,15 +55,17 @@ test-oracle: ref
 test-all: test test-oracle
 
 # Run c2go parity tests (require cgo). Uses local GOCACHE to avoid sandboxed home cache writes.
-# Usage: make test-c2go [TEST=TestName] [VERBOSE=1]
+# Usage: make test-c2go [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration]
 # Examples:
-#   make test-c2go                              # Run all tests
+#   make test-c2go                              # Run all tests (10s timeout)
 #   make test-c2go TEST=Test_getIcosahedronFaces  # Run specific test
 #   make test-c2go VERBOSE=1                    # Run all tests in verbose mode
 #   make test-c2go TEST=Test_getIcosahedronFaces VERBOSE=1  # Run specific test verbosely
+#   make test-c2go TIMEOUT=30s                  # Run all tests with 30s timeout
 H3VER ?= 4.3.0
 TEST ?=
 VERBOSE ?=
+TIMEOUT ?= 10s
 test-c2go:
 	@if [ -n "$(TEST)" ]; then \
 		echo "Running c2go parity test: $(TEST) (requires cgo)..."; \
@@ -83,12 +85,13 @@ test-c2go:
 	if [ -n "$(VERBOSE)" ]; then VERBOSE_FLAG="-v"; fi; \
 	TEST_FLAG=""; \
 	if [ -n "$(TEST)" ]; then TEST_FLAG="-run=$(TEST)"; fi; \
+	TIMEOUT_FLAG="-timeout=$(TIMEOUT)"; \
 	GOCACHE=$(PWD)/.gocache \
 	CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
 	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
 	CGO_LDFLAGS="-Wl,-dead_strip" \
-	go test $$VERBOSE_FLAG $$TEST_FLAG -tags="c2go" ./internal/c2go || { \
+	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG -tags="c2go" ./internal/c2go || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
 		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \

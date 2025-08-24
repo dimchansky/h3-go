@@ -335,3 +335,21 @@ func getIcosahedronFacesC(h H3Index, out []int32) uint32 {
 	}
 	return uint32(err)
 }
+
+// cellToChildrenC calls the original C implementation.
+func cellToChildrenC(h H3Index, childRes int32, children []H3Index) uint32 {
+	if len(children) == 0 {
+		return uint32(C.E_FAILED)
+	}
+	cChildren := (*C.H3Index)(C.malloc(C.size_t(len(children)) * C.size_t(C.sizeof_H3Index)))
+	defer C.free(unsafe.Pointer(cChildren))
+	err := C.cellToChildren(C.H3Index(h), C.int(childRes), cChildren)
+	if err == 0 {
+		// Copy results back to Go slice
+		slice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cChildren))[:len(children):len(children)]
+		for i := range children {
+			children[i] = H3Index(slice[i])
+		}
+	}
+	return uint32(err)
+}

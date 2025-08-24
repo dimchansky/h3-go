@@ -45,7 +45,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] cellToBoundary
 - [x] cellToCenterChild
 - [x] cellToChildPos
-- [ ] cellToChildren
+- [x] cellToChildren
 - [x] cellToChildrenSize
 - [x] cellToLatLng
 - [x] cellToParent
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 29
-- **Remaining:** 49
+- **Completed:** 30
+- **Remaining:** 48
 
 ## Notes
 
