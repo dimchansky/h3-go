@@ -353,3 +353,29 @@ func cellToChildrenC(h H3Index, childRes int32, children []H3Index) uint32 {
 	}
 	return uint32(err)
 }
+
+// cellToBoundaryC calls the original C implementation.
+func cellToBoundaryC(h H3Index, cb *CellBoundary) uint32 {
+	var cCb C.CellBoundary
+	cCb.numVerts = 0
+
+	err := C.cellToBoundary(C.H3Index(h), &cCb)
+
+	if err == 0 {
+		// Copy results back to Go struct
+		cb.NumVerts = int32(cCb.numVerts)
+
+		// Ensure Go slice has enough capacity
+		if len(cb.Verts) < int(cb.NumVerts) {
+			cb.Verts = make([]LatLng, cb.NumVerts)
+		}
+
+		// Copy vertices from C to Go
+		for i := int32(0); i < cb.NumVerts; i++ {
+			cb.Verts[i].Lat = float64(cCb.verts[i].lat)
+			cb.Verts[i].Lng = float64(cCb.verts[i].lng)
+		}
+	}
+
+	return uint32(err)
+}

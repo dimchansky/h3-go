@@ -5,7 +5,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## algos.c (19 functions)
 
 - [ ] cellsToLinkedMultiPolygon
-- [ ] cellToBoundary
+- [x] cellToBoundary
 - [x] cellToLatLng
 - [ ] destroyLinkedMultiPolygon
 - [ ] getNumCells
@@ -42,7 +42,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 ## h3Index.c (22+ functions)
 
-- [ ] cellToBoundary
+- [x] cellToBoundary
 - [x] cellToCenterChild
 - [x] cellToChildPos
 - [x] cellToChildren
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 30
-- **Remaining:** 48
+- **Completed:** 32
+- **Remaining:** 46
 
 ## Notes
 
