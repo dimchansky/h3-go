@@ -158,6 +158,24 @@ Execution plan per function
 - Add parity test `<cfile>__<function>_parity_test.go` under `//go:build c2go` with tight but realistic tolerances.
 - If C returns `bool`, prefer `<stdbool.h>` and compare `!= 0`. If toolchain warns, route through a tiny C helper returning `int`.
 
+## Commit Message Guidelines
+
+When creating commits for ported functions:
+- Focus on the technical implementation and testing status
+- Use descriptive prefixes like `internal/c2go:`, `vertex:`, `faceijk:` etc.
+- Do NOT include Claude Code or Co-Authored-By references in commit messages
+- Keep messages concise but informative about what was ported
+
+Example commit message format:
+```
+internal/c2go: port vertexRotations function with parity
+
+- Add vertex_constants.go with PentagonDirectionFaces lookup table
+- Implement vertex__vertexRotations.go matching C logic exactly
+- Create comprehensive parity tests covering edge cases
+- All tests pass, verifying behavioral equivalence with H3 C v4.3.0
+```
+
 ## Update Status After Implementation
 
 After completing function implementations, always run:
