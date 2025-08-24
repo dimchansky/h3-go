@@ -41,6 +41,11 @@ static H3Error directedEdgeToBoundary_c_wrapper(H3Index edge, CellBoundary *cb) 
 static H3Error directedEdgeToCells_c_wrapper(H3Index edge, H3Index *originDestination) {
     return directedEdgeToCells(edge, originDestination);
 }
+
+// Wrapper function to call cellsToDirectedEdge
+static H3Error cellsToDirectedEdge_c_wrapper(H3Index origin, H3Index destination, H3Index *out) {
+    return cellsToDirectedEdge(origin, destination, out);
+}
 */
 import "C"
 
@@ -112,4 +117,11 @@ func directedEdgeToCellsC(edge H3Index, originDestination []H3Index) H3Error {
 		originDestination[1] = H3Index(cCells[1])
 	}
 	return err
+}
+
+// cellsToDirectedEdgeC calls the original C implementation.
+func cellsToDirectedEdgeC(origin, destination H3Index) (H3Index, H3Error) {
+	var out C.H3Index
+	err := H3Error(C.cellsToDirectedEdge_c_wrapper(C.H3Index(origin), C.H3Index(destination), &out))
+	return H3Index(out), err
 }
