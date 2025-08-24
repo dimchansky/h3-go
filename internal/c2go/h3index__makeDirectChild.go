@@ -6,13 +6,8 @@ package c2go
 func makeDirectChild(h H3Index, cellNumber int32) H3Index {
 	childRes := getResolution(h) + 1
 	// Set resolution to childRes
-	const resOffset = 52
-	const resMask = uint64(15) << resOffset
-	x := uint64(h)
-	x &^= resMask
-	x |= (uint64(childRes) & 15) << resOffset
-	out := H3Index(x)
+	h = setResolution(h, childRes)
 	// Set the digit at childRes
-	out = setIndexDigit(out, childRes, cellNumber)
-	return out
+	h = setIndexDigit(h, childRes, cellNumber)
+	return h
 }

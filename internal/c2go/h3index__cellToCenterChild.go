@@ -11,10 +11,6 @@ func cellToCenterChild(h H3Index, childRes int32) (H3Index, H3Error) {
 	// Zero digits from parentRes+1..childRes
 	h = _zeroIndexDigits(h, parentRes+1, childRes)
 	// Set resolution to childRes
-	const resOffset = 52
-	const resMask = uint64(15) << resOffset
-	x := uint64(h)
-	x &^= resMask
-	x |= (uint64(childRes) & 15) << resOffset
-	return H3Index(x), E_SUCCESS
+	h = setResolution(h, childRes)
+	return h, E_SUCCESS
 }

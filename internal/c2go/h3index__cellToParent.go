@@ -13,12 +13,7 @@ func cellToParent(h H3Index, parentRes int32) (H3Index, H3Error) {
 		return h, E_SUCCESS
 	}
 	// Set resolution to parentRes
-	const resOffset = 52
-	const resMask = uint64(15) << resOffset
-	x := uint64(h)
-	x &^= resMask
-	x |= (uint64(parentRes) & 15) << resOffset
-	parentH := H3Index(x)
+	parentH := setResolution(h, parentRes)
 	// Set digits above parentRes to 7
 	for i := parentRes + 1; i <= childRes; i++ {
 		parentH = setIndexDigit(parentH, i, int32(H3_DIGIT_MASK))
