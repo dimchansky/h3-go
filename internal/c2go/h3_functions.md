@@ -90,9 +90,9 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 - [x] cellToLocalIj
 - [x] localIjToCell
-- [ ] gridDistance
+- [x] gridDistance
 - [ ] gridPathCells
-- [ ] gridPathCellsSize
+- [x] gridPathCellsSize
 
 ## vertex.c (7 functions)
 
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 65
-- **Remaining:** 13
+- **Completed:** 67
+- **Remaining:** 11
 
 ## Notes
 
