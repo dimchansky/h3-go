@@ -21,8 +21,8 @@ Iteration Workflow (standard operating procedure)
 - Parity test: add `internal/c2go/<cfile>__<function>_parity_test.go` with `//go:build cgo` that compares Go vs C output; use tight, justified tolerances for floats and safe bool handling.
 - Sanity run: `make test-c2go` and ensure all parity tests pass.
 - Format code: run `make fix-fmt` prior to committing.
-- Update tracker: update this TODO to mark the function DONE and list the next planned items (do this BEFORE each commit).
-- Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and TODO update.
+- Update status: run `./scripts/update-h3-status.sh` to update implementation tracking reports.
+- Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and status update.
 
 Source Reference
 - Local H3 C source code available at: `testref/h3-4.3.0/src/h3lib/lib/*.c`

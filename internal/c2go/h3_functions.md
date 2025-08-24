@@ -53,7 +53,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] compactCells
 - [x] describeH3Error
 - [x] getBaseCellNumber
-- [ ] getIcosahedronFaces
+- [x] getIcosahedronFaces
 - [x] getPentagons
 - [x] getResolution
 - [x] h3ToString
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 86
-- **Completed:** 28
-- **Remaining:** 50
+- **Completed:** 29
+- **Remaining:** 49
 
 ## Notes
 
