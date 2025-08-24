@@ -37,7 +37,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] directedEdgeToCells
 - [ ] getDirectedEdgeDestination
 - [x] getDirectedEdgeOrigin
-- [ ] isValidDirectedEdge
+- [x] isValidDirectedEdge
 - [ ] originToDirectedEdges
 
 ## h3Index.c (22+ functions)
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 41
-- **Remaining:** 37
+- **Completed:** 42
+- **Remaining:** 36
 
 ## Notes
 
