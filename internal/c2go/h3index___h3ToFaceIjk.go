@@ -4,7 +4,7 @@ package c2go
 // This handles coordinate transformations and overage adjustments.
 // Ported from H3 C: h3Index.c::_h3ToFaceIjk
 func _h3ToFaceIjk(h H3Index, fijk *FaceIJK) H3Error {
-	baseCell := getBaseCellNumber(h)
+	baseCell := getBaseCell(h)
 	if baseCell < 0 || baseCell >= NUM_BASE_CELLS {
 		// Base cells less than zero can not be represented in an index
 		// To prevent reading uninitialized memory, we zero the output.

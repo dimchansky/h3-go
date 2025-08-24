@@ -3,7 +3,7 @@ package c2go
 // _ijkNormalizeCouldOverflow returns true if _ijkNormalize with the given input
 // could have a signed integer overflow. Assumes k is set to 0.
 // Mirrors H3's coordijk.c::_ijkNormalizeCouldOverflow behavior.
-// Ported from H3 C: coordijk.c::ijkNormalizeCouldOverflow
+// Ported from H3 C: coordijk.c::_ijkNormalizeCouldOverflow
 func _ijkNormalizeCouldOverflow(ijk *CoordIJK) bool {
 	// Check for the possibility of overflow
 	var max, min int32

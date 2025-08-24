@@ -44,7 +44,7 @@ func TestSetBaseCellParity(t *testing.T) {
 		h = setBaseCell(h, bc)
 
 		// Verify the base cell was set correctly by extracting it
-		extractedBC := getBaseCellNumber(h)
+		extractedBC := getBaseCell(h)
 		if extractedBC != bc {
 			t.Errorf("Base cell %d: expected %d, got %d", bc, bc, extractedBC)
 		}

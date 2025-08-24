@@ -10,7 +10,7 @@ func vertexRotations(cell H3Index, out *int32) H3Error {
 	if err != E_SUCCESS {
 		return err
 	}
-	baseCell := getBaseCellNumber(cell)
+	baseCell := getBaseCell(cell)
 	cellLeadingDigit := _h3LeadingNonZeroDigit(cell)
 
 	// get the base cell face

@@ -10,7 +10,7 @@ func _h3ToFaceIjkWithInitializedFijk(h H3Index, fijk *FaceIJK) int32 {
 
 	// Center base cell hierarchy is entirely on this face
 	possibleOverage := int32(1)
-	if !_isBaseCellPentagon(getBaseCellNumber(h)) &&
+	if !_isBaseCellPentagon(getBaseCell(h)) &&
 		(res == 0 ||
 			(fijk.Coord.I == 0 && fijk.Coord.J == 0 && fijk.Coord.K == 0)) {
 		possibleOverage = 0

@@ -25,13 +25,13 @@ These are primarily internal/static functions used to build the public API.
 - _faceIjkToBaseCellCCWrot60
 - _getBaseCellDirection
 - _getBaseCellNeighbor
+- _isBaseCellPentagon
 - _isBaseCellPolarPentagon
 - baseCellData
 - baseCellNeighbor60CCWRots
 - baseCellNeighbors
 - faceIjkBaseCells
 - getRes0Cells
-- isBaseCellPentagon
 - res0CellCount
 
 ## bbox.c (10 functions)
@@ -49,34 +49,34 @@ These are primarily internal/static functions used to build the public API.
 
 ## coordijk.c (28 functions)
 
+- _downAp3
+- _downAp3r
+- _downAp7
+- _downAp7r
+- _hex2dToCoordIJK
+- _ijkAdd
+- _ijkMatches
+- _ijkNormalize
+- _ijkNormalizeCouldOverflow
+- _ijkRotate60ccw
+- _ijkRotate60cw
+- _ijkScale
+- _ijkSub
+- _ijkToHex2d
+- _neighbor
+- _rotate60ccw
 - _rotate60cw
+- _setIJK
+- _unitIjkToDigit
+- _upAp7
+- _upAp7Checked
+- _upAp7r
+- _upAp7rChecked
 - cubeToIjk
-- downAp3
-- downAp3r
-- downAp7
-- downAp7r
-- hex2dToCoordIJK
 - ijToIjk
-- ijkAdd
 - ijkDistance
-- ijkMatches
-- ijkNormalize
-- ijkNormalizeCouldOverflow
-- ijkRotate60ccw
-- ijkRotate60cw
-- ijkScale
-- ijkSub
 - ijkToCube
-- ijkToHex2d
 - ijkToIj
-- neighbor
-- rotate60ccw
-- setIJK
-- unitIjkToDigit
-- upAp7
-- upAp7Checked
-- upAp7r
-- upAp7rChecked
 
 ## directedEdge.c (8 functions)
 
@@ -98,20 +98,20 @@ These are primarily internal/static functions used to build the public API.
 - _faceIjkToCellBoundary
 - _faceIjkToGeo
 - _faceIjkToVerts
+- _geoToClosestFace
 - _geoToFaceIjk
+- _geoToHex2d
+- _hex2dToGeo
 - adjacentFaceDir
 - faceNeighbors
-- geoToClosestFace
-- geoToHex2d
-- hex2dToGeo
 - maxDimByCIIres
 - unitScaleByCIIres
 
-## h3Index.c (52 functions)
+## h3Index.c (43 functions)
 
+- H3_GET_BASE_CELL
 - _faceIjkToH3
 - _firstOneIndex
-- _getResDigit
 - _h3LeadingNonZeroDigit
 - _h3Rotate60ccw
 - _h3Rotate60cw
@@ -135,13 +135,8 @@ These are primarily internal/static functions used to build the public API.
 - childPosToCell
 - compactCells
 - describeH3Error
-- getBaseCellNumber
-- getHighBit
 - getIcosahedronFaces
-- getIndexDigit
-- getMode
 - getPentagons
-- getReservedBits
 - getResolution
 - h3ToString
 - isPentagon
@@ -153,10 +148,6 @@ These are primarily internal/static functions used to build the public API.
 - maxFaceCount
 - pentagonCount
 - setH3Index
-- setHighBit
-- setIndexDigit
-- setMode
-- setReservedBits
 - stringToH3
 - uncompactCells
 - uncompactCellsSize
@@ -173,6 +164,7 @@ These are primarily internal/static functions used to build the public API.
 
 - _geoAzDistanceRads
 - _geoAzimuthRads
+- _posAngleRads
 - _setGeoRads
 - cellAreaKm2
 - cellAreaM2
@@ -188,7 +180,6 @@ These are primarily internal/static functions used to build the public API.
 - greatCircleDistanceM
 - greatCircleDistanceRads
 - normalizeLng
-- posAngleRads
 - radsToDegs
 - setGeoDegs
 - triangleArea
@@ -214,7 +205,7 @@ These are primarily internal/static functions used to build the public API.
 
 ## mathExtensions.c (1 functions)
 
-- ipow
+- _ipow
 
 ## polyfill.c (1 functions)
 
@@ -235,18 +226,19 @@ These are primarily internal/static functions used to build the public API.
 ## vec2d.c (3 functions)
 
 - _v2dAlmostEquals
+- _v2dIntersect
 - _v2dMag
-- v2dIntersect
 
 ## vec3d.c (3 functions)
 
 - _geoToVec3d
+- _pointSquareDist
 - _square
-- pointSquareDist
 
-## vertex.c (14 functions)
+## vertex.c (15 functions)
 
 - DIRECTIONS
+- DIRECTION_INDEX_OFFSET
 - cellToVertex
 - cellToVertexes
 - directionForVertexNum
@@ -266,7 +258,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 209**
+**Total ported internal functions: 201**
 
 ---
 

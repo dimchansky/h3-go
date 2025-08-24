@@ -33,7 +33,7 @@ func isValidCell(h H3Index) bool {
 	res := getResolution(h)
 
 	// Get base cell number and check that it is valid.
-	bc := getBaseCellNumber(h)
+	bc := getBaseCell(h)
 	if bc >= NUM_BASE_CELLS {
 		return false
 	}

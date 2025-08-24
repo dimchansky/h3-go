@@ -1,18 +1,18 @@
 package c2go
 
 // PentagonDirectionFaces is a table entry for direction-to-face mapping for pentagons.
-// Ported from H3 C: vertex.c
+// Ported from H3 C: vertex.h::PentagonDirectionFaces
 type PentagonDirectionFaces struct {
 	baseCell int32
 	faces    [5]int32
 }
 
 // DIRECTION_INDEX_OFFSET is used to convert directions to pentagon face indices.
-// Ported from H3 C: vertex.c
+// Ported from H3 C: vertex.c::DIRECTION_INDEX_OFFSET
 const DIRECTION_INDEX_OFFSET = 2
 
 // INVALID_VERTEX_NUM represents an invalid vertex number.
-// Ported from H3 C: vertex.h
+// Ported from H3 C: vertex.h::INVALID_VERTEX_NUM
 const INVALID_VERTEX_NUM = -1
 
 // pentagonDirectionFaces is a table of direction-to-face mapping for each pentagon.

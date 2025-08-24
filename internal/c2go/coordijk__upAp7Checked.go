@@ -9,7 +9,7 @@ import "math"
 // Assumes ijk is IJK+ coordinates (no negative numbers).
 //
 // Mirrors H3's coordijk.c::_upAp7Checked behavior.
-// Ported from H3 C: coordijk.c::upAp7Checked
+// Ported from H3 C: coordijk.c::_upAp7Checked
 func _upAp7Checked(ijk *CoordIJK) H3Error {
 	// Doesn't need to be checked because i, j, and k must all be non-negative
 	i := ijk.I - ijk.K

@@ -26,7 +26,7 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 	}
 
 	newRotations := int32(0)
-	oldBaseCell := int32(getBaseCellNumber(current))
+	oldBaseCell := int32(getBaseCell(current))
 	if oldBaseCell < 0 || oldBaseCell >= NUM_BASE_CELLS {
 		// Base cells less than zero can not be represented in an index
 		return E_CELL_INVALID
@@ -40,7 +40,7 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 			current = setBaseCell(current, baseCellNeighbors[oldBaseCell][dir])
 			newRotations = int32(baseCellNeighbor60CCWRots[oldBaseCell][dir])
 
-			if getBaseCellNumber(current) == INVALID_BASE_CELL {
+			if getBaseCell(current) == INVALID_BASE_CELL {
 				// Adjust for the deleted k vertex at the base cell level.
 				// This edge actually borders a different neighbor.
 				current = setBaseCell(current, baseCellNeighbors[oldBaseCell][IK_AXES_DIGIT])
@@ -77,7 +77,7 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 		}
 	}
 
-	newBaseCell := int32(getBaseCellNumber(current))
+	newBaseCell := int32(getBaseCell(current))
 	if _isBaseCellPentagon(newBaseCell) {
 		alreadyAdjustedKSubsequence := false
 

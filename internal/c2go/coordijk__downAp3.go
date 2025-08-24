@@ -3,7 +3,7 @@ package c2go
 // _downAp3 finds the center of the hex at the next finer aperture 3
 // counter-clockwise resolution. Works in place.
 // Mirrors H3's coordijk.c::_downAp3 behavior.
-// Ported from H3 C: coordijk.c::downAp3
+// Ported from H3 C: coordijk.c::_downAp3
 func _downAp3(ijk *CoordIJK) {
 	// res r unit vectors in res r+1
 	iVec := CoordIJK{2, 0, 1}

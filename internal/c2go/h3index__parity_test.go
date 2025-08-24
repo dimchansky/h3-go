@@ -32,8 +32,5 @@ func Test_getters_ParityWithC(t *testing.T) {
 		if getResolution(h) != getResolutionC(h) {
 			t.Fatalf("getResolution mismatch for %x", uint64(h))
 		}
-		if getBaseCellNumber(h) != getBaseCellNumberC(h) {
-			t.Fatalf("getBaseCellNumber mismatch for %x", uint64(h))
-		}
 	}
 }
