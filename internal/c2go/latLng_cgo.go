@@ -195,3 +195,10 @@ func getNumCellsC(res int32) (int64, H3Error) {
 	err := H3Error(C.getNumCells(C.int(res), &out))
 	return int64(out), err
 }
+
+// edgeLengthRadsC calls the original C implementation.
+func edgeLengthRadsC(edge H3Index) (float64, H3Error) {
+	var length C.double
+	err := H3Error(C.edgeLengthRads(C.H3Index(edge), &length))
+	return float64(length), err
+}
