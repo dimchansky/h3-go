@@ -32,6 +32,10 @@ static H3Error gridDistance_c_wrapper(H3Index origin, H3Index index, int64_t* ou
 static H3Error gridPathCellsSize_c_wrapper(H3Index start, H3Index end, int64_t* size) {
     return gridPathCellsSize(start, end, size);
 }
+
+static H3Error gridPathCells_c_wrapper(H3Index start, H3Index end, H3Index* out) {
+    return gridPathCells(start, end, out);
+}
 */
 import "C"
 
@@ -119,6 +123,21 @@ func _gridPathCellsSizeC(start H3Index, end H3Index, size *int64) H3Error {
 
 	// Convert C result to Go
 	*size = int64(cSize)
+
+	return H3Error(err)
+}
+
+// _gridPathCellsC wraps the C gridPathCells function.
+// Provides direct access to the C implementation for parity testing.
+func _gridPathCellsC(start H3Index, end H3Index, out []H3Index) H3Error {
+	if len(out) == 0 {
+		return E_SUCCESS
+	}
+
+	// Allocate C array
+	cOut := (*C.H3Index)(&out[0])
+
+	err := C.gridPathCells_c_wrapper(C.H3Index(start), C.H3Index(end), cOut)
 
 	return H3Error(err)
 }

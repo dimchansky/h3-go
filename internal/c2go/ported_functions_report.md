@@ -206,7 +206,7 @@ These are primarily internal/static functions used to build the public API.
 - findPolygonForHole
 - normalizeMultiPolygon
 
-## localij.c (12 functions)
+## localij.c (13 functions)
 
 - FAILED_DIRECTIONS
 - PENTAGON_ROTATIONS
@@ -217,6 +217,7 @@ These are primarily internal/static functions used to build the public API.
 - cellToLocalIjk
 - cubeRound
 - gridDistance
+- gridPathCells
 - gridPathCellsSize
 - localIjToCell
 - localIjkToCell
@@ -276,7 +277,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 219**
+**Total ported internal functions: 220**
 
 ---
 
