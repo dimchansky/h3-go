@@ -36,6 +36,11 @@ static H3Error getDirectedEdgeDestination_c_wrapper(H3Index edge, H3Index *out) 
 static H3Error directedEdgeToBoundary_c_wrapper(H3Index edge, CellBoundary *cb) {
     return directedEdgeToBoundary(edge, cb);
 }
+
+// Wrapper function to call directedEdgeToCells
+static H3Error directedEdgeToCells_c_wrapper(H3Index edge, H3Index *originDestination) {
+    return directedEdgeToCells(edge, originDestination);
+}
 */
 import "C"
 
@@ -93,5 +98,18 @@ func directedEdgeToBoundaryC(edge H3Index, cb *CellBoundary) H3Error {
 		}
 	}
 
+	return err
+}
+
+// directedEdgeToCellsC calls the original C implementation.
+func directedEdgeToCellsC(edge H3Index, originDestination []H3Index) H3Error {
+	// Convert to C array
+	var cCells [2]C.H3Index
+	err := H3Error(C.directedEdgeToCells_c_wrapper(C.H3Index(edge), &cCells[0]))
+	// Copy back to Go slice
+	if err == E_SUCCESS {
+		originDestination[0] = H3Index(cCells[0])
+		originDestination[1] = H3Index(cCells[1])
+	}
 	return err
 }

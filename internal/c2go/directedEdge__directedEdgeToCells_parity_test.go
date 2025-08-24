@@ -1,0 +1,128 @@
+//go:build cgo
+
+package c2go
+
+import (
+	"testing"
+)
+
+func Test_directedEdgeToCells_parity(t *testing.T) {
+	tests := []struct {
+		name string
+		edge H3Index
+	}{
+		// Valid directed edge cases - constructed from valid cell indices
+		// Mode=2 (directed edge), with direction in reserved bits (1-6)
+		{"valid_edge_dir1", H3Index(0x2001fffffffffff)}, // mode=2, direction=1
+		{"valid_edge_dir2", H3Index(0x2002fffffffffff)}, // mode=2, direction=2
+		{"valid_edge_dir3", H3Index(0x2003fffffffffff)}, // mode=2, direction=3
+		{"valid_edge_dir6", H3Index(0x2006fffffffffff)}, // mode=2, direction=6
+
+		// Edge with different resolution patterns
+		{"valid_edge_res5", H3Index(0x2501ffffffffff)},     // mode=2, direction=1
+		{"valid_edge_simple", H3Index(0x2101000000000000)}, // mode=2, direction=1
+
+		// Invalid cases
+		{"invalid_mode_cell", H3Index(0x1001fffffffffff)},  // mode=1 (cell), should fail
+		{"invalid_mode_0", H3Index(0x0001fffffffffff)},     // mode=0, should fail
+		{"invalid_mode_3", H3Index(0x3001fffffffffff)},     // mode=3, should fail
+		{"invalid_reserved_0", H3Index(0x2000fffffffffff)}, // mode=2 but direction=0, should fail
+		{"invalid_reserved_7", H3Index(0x2007fffffffffff)}, // mode=2 but direction=7, should fail
+
+		// Edge cases
+		{"zero_index", H3Index(0x0)},
+		{"max_uint64", H3Index(0xffffffffffffffff)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Get C implementation result
+			cCells := make([]H3Index, 2)
+			cErr := directedEdgeToCellsC(tt.edge, cCells)
+
+			// Get Go implementation result
+			goCells := make([]H3Index, 2)
+			goErr := directedEdgeToCells(tt.edge, goCells)
+
+			// Compare errors
+			if cErr != goErr {
+				t.Errorf("Error mismatch: C=%v, Go=%v", cErr, goErr)
+				return
+			}
+
+			// If there was an error, we're done
+			if cErr != E_SUCCESS {
+				return
+			}
+
+			// Compare origin cells (index 0)
+			if cCells[0] != goCells[0] {
+				t.Errorf("Origin cell mismatch: C=0x%x, Go=0x%x", cCells[0], goCells[0])
+			}
+
+			// Compare destination cells (index 1)
+			if cCells[1] != goCells[1] {
+				t.Errorf("Destination cell mismatch: C=0x%x, Go=0x%x", cCells[1], goCells[1])
+			}
+		})
+	}
+}
+
+func Test_directedEdgeToCells_constructed_edges_parity(t *testing.T) {
+	// Test with some constructed directed edges based on known valid cells
+	validCells := []H3Index{
+		H3Index(0x8001fffffffffff), // Simple res=0 cell
+		H3Index(0x8101fffffffffff), // Simple res=1 cell
+		H3Index(0x8201fffffffffff), // Simple res=2 cell
+		H3Index(0x8301fffffffffff), // Simple res=3 cell
+	}
+
+	// Valid directions for directed edges (1-6)
+	validDirections := []int32{1, 2, 3, 4, 5, 6}
+
+	for _, cell := range validCells {
+		for _, direction := range validDirections {
+			// Construct a directed edge from this cell
+			edge := setMode(cell, H3_DIRECTEDEDGE_MODE)
+			edge = setReservedBits(edge, direction)
+
+			t.Run("constructed_edge", func(t *testing.T) {
+				// Get C implementation result
+				cCells := make([]H3Index, 2)
+				cErr := directedEdgeToCellsC(edge, cCells)
+
+				// Get Go implementation result
+				goCells := make([]H3Index, 2)
+				goErr := directedEdgeToCells(edge, goCells)
+
+				// Compare errors
+				if cErr != goErr {
+					t.Errorf("Error mismatch for edge 0x%x: C=%v, Go=%v", edge, cErr, goErr)
+					return
+				}
+
+				// If there was an error, we're done
+				if cErr != E_SUCCESS {
+					return
+				}
+
+				// Compare cells
+				if cCells[0] != goCells[0] {
+					t.Errorf("Origin cell mismatch for edge 0x%x: C=0x%x, Go=0x%x", edge, cCells[0], goCells[0])
+				}
+
+				if cCells[1] != goCells[1] {
+					t.Errorf("Destination cell mismatch for edge 0x%x: C=0x%x, Go=0x%x", edge, cCells[1], goCells[1])
+				}
+
+				// The origin should be the original cell (with cell mode and cleared reserved bits)
+				expectedOrigin := setMode(cell, H3_CELL_MODE)
+				expectedOrigin = setReservedBits(expectedOrigin, 0)
+
+				if goCells[0] != expectedOrigin {
+					t.Errorf("Origin doesn't match expected cell: got=0x%x, expected=0x%x", goCells[0], expectedOrigin)
+				}
+			})
+		}
+	}
+}

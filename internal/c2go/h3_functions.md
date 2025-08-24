@@ -34,7 +34,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] areNeighborCells
 - [ ] cellsToDirectedEdge
 - [x] directedEdgeToBoundary
-- [ ] directedEdgeToCells
+- [x] directedEdgeToCells
 - [x] getDirectedEdgeDestination
 - [x] getDirectedEdgeOrigin
 - [x] isValidDirectedEdge
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 49
-- **Remaining:** 29
+- **Completed:** 50
+- **Remaining:** 28
 
 ## Notes
 

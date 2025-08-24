@@ -70,9 +70,10 @@ These are primarily internal/static functions used to build the public API.
 - upAp7r
 - upAp7rChecked
 
-## directedEdge.c (5 functions)
+## directedEdge.c (6 functions)
 
 - directedEdgeToBoundary
+- directedEdgeToCells
 - getDirectedEdgeDestination
 - getDirectedEdgeOrigin
 - isValidDirectedEdge
@@ -254,7 +255,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 197**
+**Total ported internal functions: 198**
 
 ---
 
