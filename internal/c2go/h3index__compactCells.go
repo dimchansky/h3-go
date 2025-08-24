@@ -36,11 +36,6 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 		res = getResolution(remainingHexes[0])
 		parentRes := res - 1
 
-		// Clear hash set array
-		for i := int64(0); i < numHexes; i++ {
-			hashSetArray[i] = 0
-		}
-
 		// If parentRes is less than zero, we've compacted all the way up to the
 		// base cells. Time to process the remaining cells.
 		if parentRes >= 0 {
@@ -156,6 +151,7 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 					// the compactableHexes array
 					loc := int64(parent % H3Index(numRemainingHexes))
 					loopCount := int64(0)
+					// Equivalent to C do-while loop
 					for {
 						if loopCount > numRemainingHexes {
 							// This case should not be possible because at most
@@ -174,6 +170,7 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 							loc = (loc + 1) % numRemainingHexes
 						}
 						loopCount++
+						// Exit condition: equivalent to C do-while condition
 						if hashSetArray[loc] == parent {
 							break
 						}
@@ -187,6 +184,10 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 		}
 
 		// Set up for the next loop
+		// Clear hash set array (matches C: memset(hashSetArray, 0, numHexes * sizeof(H3Index)))
+		for i := int64(0); i < numHexes; i++ {
+			hashSetArray[i] = 0
+		}
 		compactedSetOffset += uncompactableCount
 		copy(remainingHexes, compactableHexes[:compactableCount])
 		numRemainingHexes = compactableCount
