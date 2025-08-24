@@ -38,6 +38,9 @@ import "unsafe"
 // getResolutionC calls the original C implementation.
 func getResolutionC(h H3Index) int32 { return int32(C.getResolution(C.H3Index(h))) }
 
+// getBaseCellNumberC calls the original C implementation.
+func getBaseCellNumberC(h H3Index) int32 { return int32(C.getBaseCellNumber(C.H3Index(h))) }
+
 // stringToH3C calls the original C implementation.
 func stringToH3C(s string) (H3Index, uint32) {
 	cs := C.CString(s)
