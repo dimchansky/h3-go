@@ -161,7 +161,7 @@ These are primarily internal/static functions used to build the public API.
 - _null_iter
 - iterStepChild
 
-## latLng.c (24 functions)
+## latLng.c (28 functions)
 
 - _geoAzDistanceRads
 - _geoAzimuthRads
@@ -178,6 +178,10 @@ These are primarily internal/static functions used to build the public API.
 - edgeLengthRads
 - geoAlmostEqual
 - geoAlmostEqualThreshold
+- getHexagonAreaAvgKm2
+- getHexagonAreaAvgM2
+- getHexagonEdgeLengthAvgKm
+- getHexagonEdgeLengthAvgM
 - getNumCells
 - greatCircleDistanceKm
 - greatCircleDistanceM
@@ -261,7 +265,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 204**
+**Total ported internal functions: 208**
 
 ---
 

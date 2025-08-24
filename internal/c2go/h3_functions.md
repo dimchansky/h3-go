@@ -77,10 +77,10 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] edgeLengthKm
 - [x] edgeLengthM
 - [x] edgeLengthRads
-- [ ] getHexagonAreaAvgKm2
-- [ ] getHexagonAreaAvgM2
-- [ ] getHexagonEdgeLengthAvgKm
-- [ ] getHexagonEdgeLengthAvgM
+- [x] getHexagonAreaAvgKm2
+- [x] getHexagonAreaAvgM2
+- [x] getHexagonEdgeLengthAvgKm
+- [x] getHexagonEdgeLengthAvgM
 - [x] getNumCells
 - [x] greatCircleDistanceKm
 - [x] greatCircleDistanceM
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 59
-- **Remaining:** 19
+- **Completed:** 63
+- **Remaining:** 15
 
 ## Notes
 

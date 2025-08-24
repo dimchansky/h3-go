@@ -216,3 +216,31 @@ func edgeLengthMC(edge H3Index) (float64, H3Error) {
 	err := H3Error(C.edgeLengthM(C.H3Index(edge), &length))
 	return float64(length), err
 }
+
+// getHexagonAreaAvgKm2C calls the original C implementation.
+func getHexagonAreaAvgKm2C(res int32) (float64, H3Error) {
+	var out C.double
+	err := H3Error(C.getHexagonAreaAvgKm2(C.int(res), &out))
+	return float64(out), err
+}
+
+// getHexagonAreaAvgM2C calls the original C implementation.
+func getHexagonAreaAvgM2C(res int32) (float64, H3Error) {
+	var out C.double
+	err := H3Error(C.getHexagonAreaAvgM2(C.int(res), &out))
+	return float64(out), err
+}
+
+// getHexagonEdgeLengthAvgKmC calls the original C implementation.
+func getHexagonEdgeLengthAvgKmC(res int32) (float64, H3Error) {
+	var out C.double
+	err := H3Error(C.getHexagonEdgeLengthAvgKm(C.int(res), &out))
+	return float64(out), err
+}
+
+// getHexagonEdgeLengthAvgMC calls the original C implementation.
+func getHexagonEdgeLengthAvgMC(res int32) (float64, H3Error) {
+	var out C.double
+	err := H3Error(C.getHexagonEdgeLengthAvgM(C.int(res), &out))
+	return float64(out), err
+}
