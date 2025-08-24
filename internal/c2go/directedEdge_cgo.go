@@ -31,6 +31,11 @@ static H3Error originToDirectedEdges_c_wrapper(H3Index origin, H3Index *edges) {
 static H3Error getDirectedEdgeDestination_c_wrapper(H3Index edge, H3Index *out) {
     return getDirectedEdgeDestination(edge, out);
 }
+
+// Wrapper function to call directedEdgeToBoundary
+static H3Error directedEdgeToBoundary_c_wrapper(H3Index edge, CellBoundary *cb) {
+    return directedEdgeToBoundary(edge, cb);
+}
 */
 import "C"
 
@@ -63,4 +68,30 @@ func getDirectedEdgeDestinationC(edge H3Index) (H3Index, H3Error) {
 	var out C.H3Index
 	err := H3Error(C.getDirectedEdgeDestination_c_wrapper(C.H3Index(edge), &out))
 	return H3Index(out), err
+}
+
+// directedEdgeToBoundaryC calls the original C implementation.
+func directedEdgeToBoundaryC(edge H3Index, cb *CellBoundary) H3Error {
+	var cCb C.CellBoundary
+	cCb.numVerts = 0
+
+	err := H3Error(C.directedEdgeToBoundary_c_wrapper(C.H3Index(edge), &cCb))
+
+	if err == E_SUCCESS {
+		// Copy results back to Go struct
+		cb.NumVerts = int32(cCb.numVerts)
+
+		// Ensure Go slice has enough capacity
+		if len(cb.Verts) < int(cb.NumVerts) {
+			cb.Verts = make([]LatLng, cb.NumVerts)
+		}
+
+		// Copy vertices from C to Go
+		for i := int32(0); i < cb.NumVerts; i++ {
+			cb.Verts[i].Lat = float64(cCb.verts[i].lat)
+			cb.Verts[i].Lng = float64(cCb.verts[i].lng)
+		}
+	}
+
+	return err
 }
