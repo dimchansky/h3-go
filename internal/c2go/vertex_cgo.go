@@ -49,3 +49,19 @@ func cellToVertexesC(cell H3Index, vertexes *[6]H3Index) H3Error {
 	}
 	return err
 }
+
+// vertexToLatLngC wraps the C vertexToLatLng function.
+func vertexToLatLngC(vertex H3Index, coord *LatLng) H3Error {
+	var cCoord C.LatLng
+	err := H3Error(C.vertexToLatLng(C.H3Index(vertex), &cCoord))
+	if err == E_SUCCESS {
+		coord.Lat = float64(cCoord.lat)
+		coord.Lng = float64(cCoord.lng)
+	}
+	return err
+}
+
+// isValidVertexC wraps the C isValidVertex function.
+func isValidVertexC(vertex H3Index) bool {
+	return C.isValidVertex(C.H3Index(vertex)) != 0
+}

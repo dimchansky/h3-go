@@ -98,14 +98,14 @@ This document tracks the porting status of all H3 C public functions exported vi
 
 - [x] cellToVertex
 - [x] cellToVertexes
-- [ ] isValidVertex
-- [ ] vertexToLatLng
+- [x] isValidVertex
+- [x] vertexToLatLng
 
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 46
-- **Remaining:** 32
+- **Completed:** 48
+- **Remaining:** 30
 
 ## Notes
 
