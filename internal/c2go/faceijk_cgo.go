@@ -37,6 +37,11 @@ static inline int adjust_pent_vert_overage_c(FaceIJK* fijk, int res) {
 static inline void face_ijk_to_cell_boundary_c(const FaceIJK* h, int res, int start, int length, CellBoundary* g) {
     _faceIjkToCellBoundary(h, res, start, length, g);
 }
+
+// Inline C helper to call _faceIjkPentToCellBoundary
+static inline void face_ijk_pent_to_cell_boundary_c(const FaceIJK* h, int res, int start, int length, CellBoundary* g) {
+    _faceIjkPentToCellBoundary(h, res, start, length, g);
+}
 */
 import "C"
 
@@ -204,6 +209,35 @@ func _faceIjkToCellBoundaryC(h *FaceIJK, res int32, start int32, length int32, g
 	cg.numVerts = 0
 
 	C.face_ijk_to_cell_boundary_c(&ch, C.int(res), C.int(start), C.int(length), &cg)
+
+	// Copy results back to Go struct
+	g.NumVerts = int32(cg.numVerts)
+
+	// Ensure Go slice has enough capacity
+	if len(g.Verts) < int(g.NumVerts) {
+		g.Verts = make([]LatLng, g.NumVerts)
+	}
+
+	// Copy vertices from C to Go
+	for i := int32(0); i < g.NumVerts; i++ {
+		g.Verts[i].Lat = float64(cg.verts[i].lat)
+		g.Verts[i].Lng = float64(cg.verts[i].lng)
+	}
+}
+
+// _faceIjkPentToCellBoundaryC calls the original C implementation.
+func _faceIjkPentToCellBoundaryC(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary) {
+	var ch C.FaceIJK
+	ch.face = C.int(h.Face)
+	ch.coord.i = C.int(h.Coord.I)
+	ch.coord.j = C.int(h.Coord.J)
+	ch.coord.k = C.int(h.Coord.K)
+
+	var cg C.CellBoundary
+	// Initialize C CellBoundary
+	cg.numVerts = 0
+
+	C.face_ijk_pent_to_cell_boundary_c(&ch, C.int(res), C.int(start), C.int(length), &cg)
 
 	// Copy results back to Go struct
 	g.NumVerts = int32(cg.numVerts)

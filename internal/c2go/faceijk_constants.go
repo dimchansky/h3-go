@@ -25,7 +25,7 @@ const (
 
 // maxDimByCIIres provides maximum dimension value for each Class II resolution
 // Ported from H3 C: faceijk.c::maxDimByCIIres
-var maxDimByCIIres = [17]int{
+var maxDimByCIIres = [17]int32{
 	2,        // res  0
 	-1,       // res  1
 	14,       // res  2
@@ -47,7 +47,7 @@ var maxDimByCIIres = [17]int{
 
 // unitScaleByCIIres provides unit scale for each Class II resolution
 // Ported from H3 C: faceijk.c::unitScaleByCIIres
-var unitScaleByCIIres = [17]int{
+var unitScaleByCIIres = [17]int32{
 	1,       // res  0
 	-1,      // res  1
 	7,       // res  2

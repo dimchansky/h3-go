@@ -65,10 +65,11 @@ These are primarily internal/static functions used to build the public API.
 - upAp7r
 - upAp7rChecked
 
-## faceijk.c (14 functions)
+## faceijk.c (15 functions)
 
 - _adjustOverageClassII
 - _adjustPentVertOverage
+- _faceIjkPentToCellBoundary
 - _faceIjkPentToVerts
 - _faceIjkToCellBoundary
 - _faceIjkToGeo
@@ -215,7 +216,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 167**
+**Total ported internal functions: 168**
 
 ---
 
