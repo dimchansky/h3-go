@@ -25,3 +25,8 @@ func vertexRotationsC(cell H3Index, out *int32) H3Error {
 func vertexNumForDirectionC(origin H3Index, direction Direction) int32 {
 	return int32(C.vertexNumForDirection(C.H3Index(origin), C.Direction(direction)))
 }
+
+// directionForVertexNumC wraps the C directionForVertexNum function.
+func directionForVertexNumC(origin H3Index, vertexNum int32) Direction {
+	return Direction(C.directionForVertexNum(C.H3Index(origin), C.int(vertexNum)))
+}

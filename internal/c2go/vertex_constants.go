@@ -47,3 +47,16 @@ var directionToVertexNumHex = [NUM_DIGITS]int32{
 var directionToVertexNumPent = [NUM_DIGITS]int32{
 	int32(INVALID_DIGIT), int32(INVALID_DIGIT), 1, 2, 4, 3, 0,
 }
+
+// vertexNumToDirectionHex maps hexagon vertex numbers to directions (same face).
+// Ported from H3 C: vertex.c::vertexNumToDirectionHex
+var vertexNumToDirectionHex = [NUM_HEX_VERTS]Direction{
+	IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT,
+	K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT,
+}
+
+// vertexNumToDirectionPent maps pentagon vertex numbers to directions (same face).
+// Ported from H3 C: vertex.c::vertexNumToDirectionPent
+var vertexNumToDirectionPent = [NUM_PENT_VERTS]Direction{
+	IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT,
+}
