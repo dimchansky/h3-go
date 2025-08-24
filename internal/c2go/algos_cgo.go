@@ -19,6 +19,12 @@ static H3Error h3NeighborRotations_c_wrapper(H3Index origin, Direction dir, int 
 static Direction directionForNeighbor_c_wrapper(H3Index origin, H3Index destination) {
     return directionForNeighbor(origin, destination);
 }
+
+// Wrapper function to call _gridDiskDistancesInternal
+static H3Error _gridDiskDistancesInternal_c_wrapper(H3Index origin, int k, H3Index *out,
+                                                    int *distances, int64_t maxIdx, int curK) {
+    return _gridDiskDistancesInternal(origin, k, out, distances, maxIdx, curK);
+}
 */
 import "C"
 
@@ -34,4 +40,19 @@ func h3NeighborRotationsC(origin H3Index, dir Direction, rotations *int32) (H3In
 // directionForNeighborC calls the original C implementation.
 func directionForNeighborC(origin H3Index, destination H3Index) Direction {
 	return Direction(C.directionForNeighbor_c_wrapper(C.H3Index(origin), C.H3Index(destination)))
+}
+
+// _gridDiskDistancesInternalC calls the original C implementation.
+func _gridDiskDistancesInternalC(origin H3Index, k int32, out []H3Index, distances []int32, maxIdx int64, curK int32) H3Error {
+	if len(out) == 0 || len(distances) == 0 {
+		return E_FAILED
+	}
+	return H3Error(C._gridDiskDistancesInternal_c_wrapper(
+		C.H3Index(origin),
+		C.int(k),
+		(*C.H3Index)(&out[0]),
+		(*C.int)(&distances[0]),
+		C.int64_t(maxIdx),
+		C.int(curK),
+	))
 }
