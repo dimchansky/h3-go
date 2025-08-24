@@ -20,6 +20,10 @@ Iteration Workflow (standard operating procedure)
 - Document: follow established comment style with function description, technical details, and `// Ported from H3 C: <file>::<function>` attribution line.
 - Parity test: add `internal/c2go/<cfile>__<function>_parity_test.go` with `//go:build cgo` that compares Go vs C output; use tight, justified tolerances for floats and safe bool handling.
 - Sanity run: `make test-c2go` and ensure all parity tests pass.
+  - Run all tests: `make test-c2go`
+  - Run specific test: `make test-c2go TEST=Test_functionName_parity`
+  - Verbose mode: `make test-c2go VERBOSE=1`
+  - Specific test + verbose: `make test-c2go TEST=Test_functionName_parity VERBOSE=1`
 - Format code: run `make fix-fmt` prior to committing.
 - Update status: run `./scripts/update-h3-status.sh` to update implementation tracking reports.
 - Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and status update.
@@ -119,6 +123,23 @@ Guideline going forward when a C function links in extra deps
 - Ensure each original C file is compiled in its own shim to avoid static symbol redefinitions across modules.
 - If link still fails due to further deps, add shims for those modules too (one TU per module).
 - Keep the Go interop file (`<cfile>_cgo.go`) limited to declaring wrappers that forward to C; never copy C logic.
+
+## Debugging Test Failures
+
+When a parity test fails or you encounter unexpected behavior:
+
+1. **Run the specific failing test in verbose mode**:
+   ```bash
+   make test-c2go TEST=Test_functionName_parity VERBOSE=1
+   ```
+
+2. **Common debugging approaches**:
+   - Add `t.Logf()` statements to print intermediate values
+   - Compare Go vs C outputs step by step
+   - Check for integer overflow differences (use int32 for C int)
+   - Verify struct field types match C definitions exactly
+
+3. **Never use direct `go test` commands** - always use the Makefile to ensure proper CGO environment setup
 
 Note on C bool interop (cgo)
 - Preferred: include `<stdbool.h>` and compare C.bool return values directly to `0` in Go (`C.fn(...) != 0`). This is valid because `_Bool` is an integer type in C99.

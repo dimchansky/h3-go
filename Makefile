@@ -55,9 +55,21 @@ test-oracle: ref
 test-all: test test-oracle
 
 # Run c2go parity tests (require cgo). Uses local GOCACHE to avoid sandboxed home cache writes.
+# Usage: make test-c2go [TEST=TestName] [VERBOSE=1]
+# Examples:
+#   make test-c2go                              # Run all tests
+#   make test-c2go TEST=Test_getIcosahedronFaces  # Run specific test
+#   make test-c2go VERBOSE=1                    # Run all tests in verbose mode
+#   make test-c2go TEST=Test_getIcosahedronFaces VERBOSE=1  # Run specific test verbosely
 H3VER ?= 4.3.0
+TEST ?=
+VERBOSE ?=
 test-c2go:
-	@echo "Running c2go parity tests (requires cgo)..."
+	@if [ -n "$(TEST)" ]; then \
+		echo "Running c2go parity test: $(TEST) (requires cgo)..."; \
+	else \
+		echo "Running c2go parity tests (requires cgo)..."; \
+	fi
 	@# Prefer clang from Xcode CLT if available
 	@CC=$$(command -v xcrun >/dev/null 2>&1 && xcrun --find clang || true); \
 	CXX=$$(command -v xcrun >/dev/null 2>&1 && xcrun --find clang++ || true); \
@@ -67,12 +79,16 @@ test-c2go:
 		echo "H3 C sources not found at $$INC_BASE. Run 'make ref' or set H3VER=..."; \
 		exit 1; \
 	fi; \
+	VERBOSE_FLAG=""; \
+	if [ -n "$(VERBOSE)" ]; then VERBOSE_FLAG="-v"; fi; \
+	TEST_FLAG=""; \
+	if [ -n "$(TEST)" ]; then TEST_FLAG="-run=$(TEST)"; fi; \
 	GOCACHE=$(PWD)/.gocache \
 	CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
 	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
 	CGO_LDFLAGS="-Wl,-dead_strip" \
-	go test -tags="c2go" ./internal/c2go || { \
+	go test $$VERBOSE_FLAG $$TEST_FLAG -tags="c2go" ./internal/c2go || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
 		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \
