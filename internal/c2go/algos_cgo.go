@@ -25,6 +25,16 @@ static H3Error _gridDiskDistancesInternal_c_wrapper(H3Index origin, int k, H3Ind
                                                     int *distances, int64_t maxIdx, int curK) {
     return _gridDiskDistancesInternal(origin, k, out, distances, maxIdx, curK);
 }
+
+// Wrapper function to call maxGridDiskSize
+static H3Error maxGridDiskSize_c_wrapper(int k, int64_t *out) {
+    return maxGridDiskSize(k, out);
+}
+
+// Wrapper function to call gridDiskDistancesUnsafe
+static H3Error gridDiskDistancesUnsafe_c_wrapper(H3Index origin, int k, H3Index *out, int *distances) {
+    return gridDiskDistancesUnsafe(origin, k, out, distances);
+}
 */
 import "C"
 
@@ -54,5 +64,27 @@ func _gridDiskDistancesInternalC(origin H3Index, k int32, out []H3Index, distanc
 		(*C.int)(&distances[0]),
 		C.int64_t(maxIdx),
 		C.int(curK),
+	))
+}
+
+// maxGridDiskSizeC calls the original C implementation.
+func maxGridDiskSizeC(k int32, out *int64) H3Error {
+	return H3Error(C.maxGridDiskSize_c_wrapper(C.int(k), (*C.int64_t)(out)))
+}
+
+// gridDiskDistancesUnsafeC calls the original C implementation.
+func gridDiskDistancesUnsafeC(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+	if len(out) == 0 {
+		return E_FAILED
+	}
+	var distPtr *C.int
+	if len(distances) > 0 {
+		distPtr = (*C.int)(&distances[0])
+	}
+	return H3Error(C.gridDiskDistancesUnsafe_c_wrapper(
+		C.H3Index(origin),
+		C.int(k),
+		(*C.H3Index)(&out[0]),
+		distPtr,
 	))
 }

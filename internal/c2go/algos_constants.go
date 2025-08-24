@@ -23,3 +23,8 @@ var DIRECTIONS = [6]Direction{
 // Direction used for traversing to the next outward hexagonal ring.
 // Ported from H3 C: algos.c::NEXT_RING_DIRECTION
 const NEXT_RING_DIRECTION = I_AXES_DIGIT
+
+// k value which will encompass all cells at resolution 15.
+// This is the largest possible k in the H3 grid system.
+// Ported from H3 C: algos.c::K_ALL_CELLS_AT_RES_15
+const K_ALL_CELLS_AT_RES_15 = 13780510

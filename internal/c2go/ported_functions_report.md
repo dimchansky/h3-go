@@ -3,13 +3,16 @@
 This report lists all H3 C functions that have been ported to Go in the internal/c2go package.
 These are primarily internal/static functions used to build the public API.
 
-## algos.c (5 functions)
+## algos.c (8 functions)
 
 - DIRECTIONS
+- K_ALL_CELLS_AT_RES_15
 - NEXT_RING_DIRECTION
 - _gridDiskDistancesInternal
 - directionForNeighbor
+- gridDiskDistancesUnsafe
 - h3NeighborRotations
+- maxGridDiskSize
 
 ## baseCells.c (15 functions)
 
@@ -259,7 +262,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 202**
+**Total ported internal functions: 205**
 
 ---
 

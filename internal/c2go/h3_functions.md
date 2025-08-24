@@ -12,14 +12,14 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [ ] gridDisk
 - [ ] gridDiskDistances
 - [ ] gridDiskDistancesSafe
-- [ ] gridDiskDistancesUnsafe
+- [x] gridDiskDistancesUnsafe
 - [ ] gridDisksUnsafe
 - [ ] gridDiskUnsafe
 - [ ] gridRing
 - [ ] gridRingUnsafe
 - [x] isPentagon
 - [x] latLngToCell
-- [ ] maxGridDiskSize
+- [x] maxGridDiskSize
 - [ ] maxGridRingSize
 - [ ] maxPolygonToCellsSize
 - [ ] polygonToCells
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 51
-- **Remaining:** 27
+- **Completed:** 53
+- **Remaining:** 25
 
 ## Notes
 
