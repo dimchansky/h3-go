@@ -105,6 +105,11 @@ void _vertexGraphToLinkedGeo(VertexGraph *graph, LinkedGeoPolygon *out);
 static void _vertexGraphToLinkedGeo_c_wrapper(VertexGraph *graph, LinkedGeoPolygon *out) {
     _vertexGraphToLinkedGeo(graph, out);
 }
+
+// Wrapper function to call h3SetToVertexGraph
+static H3Error h3SetToVertexGraph_c_wrapper(const H3Index *h3Set, const int numHexes, VertexGraph *graph) {
+    return h3SetToVertexGraph(h3Set, numHexes, graph);
+}
 */
 import "C"
 
@@ -328,4 +333,16 @@ func polygonToCellsC(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3In
 // The parity test will focus on specific behavior verification.
 func _vertexGraphToLinkedGeoC(graph *C.VertexGraph, out *C.LinkedGeoPolygon) {
 	C._vertexGraphToLinkedGeo_c_wrapper(graph, out)
+}
+
+// h3SetToVertexGraphC calls the original C implementation.
+func h3SetToVertexGraphC(h3Set []H3Index, graph *C.VertexGraph) H3Error {
+	if len(h3Set) == 0 {
+		return E_SUCCESS
+	}
+	return H3Error(C.h3SetToVertexGraph_c_wrapper(
+		(*C.H3Index)(&h3Set[0]),
+		C.int(len(h3Set)),
+		graph,
+	))
 }
