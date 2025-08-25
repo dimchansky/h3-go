@@ -23,6 +23,7 @@ const LinkedGeoPolygon* findDeepestContainerC(const LinkedGeoPolygon **polygons,
 const LinkedGeoPolygon* findPolygonForHoleC(const LinkedGeoLoop *loop, const LinkedGeoPolygon *polygon, const BBox *bboxes, int polygonCount);
 H3Error normalizeMultiPolygon(LinkedGeoPolygon *root);
 void destroyLinkedGeoLoopC(LinkedGeoLoop *loop);
+void destroyLinkedMultiPolygon(LinkedGeoPolygon *polygon);
 */
 import "C"
 import "unsafe"
@@ -1037,4 +1038,115 @@ func destroyLinkedGeoLoopC(loop *LinkedGeoLoop) {
 
 	// Free the loop structure itself (since the C function doesn't free it)
 	C.free(unsafe.Pointer(cLoop))
+}
+
+// destroyLinkedMultiPolygonC wraps the C destroyLinkedMultiPolygon function for parity testing.
+func destroyLinkedMultiPolygonC(polygon *LinkedGeoPolygon) {
+	if polygon == nil {
+		// The C function handles NULL pointers, but it would likely segfault
+		C.destroyLinkedMultiPolygon(nil)
+		return
+	}
+
+	// Convert Go LinkedGeoPolygon to C structure
+	// Note: This function must create the complete structure because it will be destroyed
+
+	// Keep track of allocated memory - the C function will free most of this
+	var allocatedPolygons []*C.LinkedGeoPolygon
+	var allocatedLoops []*C.LinkedGeoLoop
+	var allocatedCoords []*C.LinkedLatLng
+
+	// Helper function to convert Go LinkedGeoLoop to C LinkedGeoLoop
+	convertLoop := func(goLoop *LinkedGeoLoop) *C.LinkedGeoLoop {
+		if goLoop == nil {
+			return nil
+		}
+
+		cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+		allocatedLoops = append(allocatedLoops, cLoop)
+
+		// Convert coordinates
+		var firstCCoord *C.LinkedLatLng
+		var prevCCoord *C.LinkedLatLng
+
+		currentGoCoord := goLoop.First
+		for currentGoCoord != nil {
+			cCoord := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
+			allocatedCoords = append(allocatedCoords, cCoord)
+
+			cCoord.vertex.lat = C.double(currentGoCoord.Vertex.Lat)
+			cCoord.vertex.lng = C.double(currentGoCoord.Vertex.Lng)
+			cCoord.next = nil
+
+			if firstCCoord == nil {
+				firstCCoord = cCoord
+				cLoop.first = cCoord
+			} else {
+				prevCCoord.next = cCoord
+			}
+
+			prevCCoord = cCoord
+			currentGoCoord = currentGoCoord.Next
+		}
+
+		cLoop.last = prevCCoord
+		cLoop.next = nil
+
+		return cLoop
+	}
+
+	// Convert Go polygons to C polygons
+	var firstCPolygon *C.LinkedGeoPolygon
+	var prevCPolygon *C.LinkedGeoPolygon
+	currentGoPolygon := polygon
+
+	for currentGoPolygon != nil {
+		cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
+		allocatedPolygons = append(allocatedPolygons, cPolygon)
+
+		// Convert loops for this polygon
+		var firstCLoop *C.LinkedGeoLoop
+		var prevCLoop *C.LinkedGeoLoop
+		currentGoLoop := currentGoPolygon.First
+
+		for currentGoLoop != nil {
+			cLoop := convertLoop(currentGoLoop)
+			if cLoop != nil {
+				if firstCLoop == nil {
+					firstCLoop = cLoop
+				} else {
+					prevCLoop.next = cLoop
+				}
+				prevCLoop = cLoop
+			}
+			currentGoLoop = currentGoLoop.Next
+		}
+
+		cPolygon.first = firstCLoop
+		cPolygon.last = prevCLoop
+		cPolygon.next = nil
+
+		// Link polygons
+		if firstCPolygon == nil {
+			firstCPolygon = cPolygon
+		} else {
+			prevCPolygon.next = cPolygon
+		}
+		prevCPolygon = cPolygon
+
+		currentGoPolygon = currentGoPolygon.Next
+	}
+
+	// Call the C function - this will free most of the allocated memory
+	// The C function frees all linked lists and loops but preserves the input polygon structure
+	C.destroyLinkedMultiPolygon(firstCPolygon)
+
+	// The C function frees everything except the input polygon itself
+	// Since we allocated firstCPolygon, we need to free it
+	// But the C function should have already freed the rest
+	if firstCPolygon != nil {
+		// According to C function comment: "The caller is responsible for freeing memory allocated to input polygon struct."
+		// So we need to free the first polygon
+		C.free(unsafe.Pointer(firstCPolygon))
+	}
 }

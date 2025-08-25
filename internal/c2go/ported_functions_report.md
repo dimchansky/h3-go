@@ -209,7 +209,7 @@ These are primarily internal/static functions used to build the public API.
 - triangleArea
 - triangleEdgeLengthsToArea
 
-## linkedGeo.c (12 functions)
+## linkedGeo.c (13 functions)
 
 - addLinkedCoord
 - addLinkedLoop
@@ -220,6 +220,7 @@ These are primarily internal/static functions used to build the public API.
 - countLinkedLoops
 - countLinkedPolygons
 - destroyLinkedGeoLoop
+- destroyLinkedMultiPolygon
 - findDeepestContainer
 - findPolygonForHole
 - normalizeMultiPolygon
@@ -302,7 +303,7 @@ These are primarily internal/static functions used to build the public API.
 - initVertexGraph
 - removeVertexNode
 
-**Total ported internal functions: 245**
+**Total ported internal functions: 246**
 
 ---
 
