@@ -13,6 +13,7 @@ VertexNode* addVertexNode(VertexGraph* graph, const LatLng* fromVtx, const LatLn
 int removeVertexNode(VertexGraph* graph, VertexNode* node);
 VertexNode* firstVertexNode(const VertexGraph* graph);
 VertexNode* findNodeForEdge(const VertexGraph* graph, const LatLng* fromVtx, const LatLng* toVtx);
+VertexNode* findNodeForVertex(const VertexGraph* graph, const LatLng* fromVtx);
 */
 import "C"
 import "unsafe"
@@ -258,4 +259,11 @@ func findNodeForEdgeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *Verte
 	}
 
 	return nil
+}
+
+// findNodeForVertexC wraps the C findNodeForVertex function for parity testing.
+func findNodeForVertexC(graph *VertexGraph, fromVtx *LatLng) *VertexNode {
+	// findNodeForVertex is just a wrapper around findNodeForEdge with toVtx=nil
+	// So we can reuse the existing findNodeForEdgeC implementation
+	return findNodeForEdgeC(graph, fromVtx, nil)
 }
