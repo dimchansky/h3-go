@@ -14,7 +14,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] gridDiskDistancesSafe
 - [x] gridDiskDistancesUnsafe
 - [ ] gridDisksUnsafe
-- [ ] gridDiskUnsafe
+- [x] gridDiskUnsafe
 - [x] gridRing
 - [x] gridRingUnsafe
 - [x] isPentagon
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 72
-- **Remaining:** 6
+- **Completed:** 73
+- **Remaining:** 5
 
 ## Notes
 
