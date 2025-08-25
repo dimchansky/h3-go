@@ -9,6 +9,7 @@ package c2go
 #include <stdbool.h>
 #include "h3api.h"
 #include "algos.h"
+#include "vertexGraph.h"
 
 // Wrapper function to call h3NeighborRotations
 static H3Error h3NeighborRotations_c_wrapper(H3Index origin, Direction dir, int *rotations, H3Index *out) {
@@ -95,6 +96,14 @@ static H3Error maxPolygonToCellsSize_c_wrapper(const GeoPolygon *geoPolygon, int
 // Wrapper function to call polygonToCells
 static H3Error polygonToCells_c_wrapper(const GeoPolygon *geoPolygon, int res, uint32_t flags, H3Index *out) {
     return polygonToCells(geoPolygon, res, flags, out);
+}
+
+// Forward declaration for _vertexGraphToLinkedGeo
+void _vertexGraphToLinkedGeo(VertexGraph *graph, LinkedGeoPolygon *out);
+
+// Wrapper function to call _vertexGraphToLinkedGeo
+static void _vertexGraphToLinkedGeo_c_wrapper(VertexGraph *graph, LinkedGeoPolygon *out) {
+    _vertexGraphToLinkedGeo(graph, out);
 }
 */
 import "C"
@@ -312,4 +321,11 @@ func polygonToCellsC(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3In
 		C.uint32_t(flags),
 		(*C.H3Index)(&out[0]),
 	))
+}
+
+// _vertexGraphToLinkedGeoC calls the original C implementation.
+// This function is complex to test due to the need to convert entire graph structures.
+// The parity test will focus on specific behavior verification.
+func _vertexGraphToLinkedGeoC(graph *C.VertexGraph, out *C.LinkedGeoPolygon) {
+	C._vertexGraphToLinkedGeo_c_wrapper(graph, out)
 }
