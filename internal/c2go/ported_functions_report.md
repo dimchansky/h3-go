@@ -41,7 +41,7 @@ These are primarily internal/static functions used to build the public API.
 - getRes0Cells
 - res0CellCount
 
-## bbox.c (12 functions)
+## bbox.c (13 functions)
 
 - _hexRadiusKm
 - bboxCenter
@@ -49,6 +49,7 @@ These are primarily internal/static functions used to build the public API.
 - bboxContainsBBox
 - bboxEquals
 - bboxHeightRads
+- bboxHexEstimate
 - bboxIsTransmeridian
 - bboxNormalization
 - bboxOverlapsBBox
@@ -286,7 +287,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 229**
+**Total ported internal functions: 230**
 
 ---
 

@@ -17,6 +17,9 @@ extern double _hexRadiusKm(H3Index h3Index);
 
 // Prototype for lineHexEstimate
 extern H3Error lineHexEstimate(const LatLng* origin, const LatLng* destination, int res, int64_t* out);
+
+// Prototype for bboxHexEstimate
+extern H3Error bboxHexEstimate(const BBox* bbox, int res, int64_t* out);
 */
 import "C"
 
@@ -133,6 +136,15 @@ func lineHexEstimateC(origin *LatLng, destination *LatLng, res int32, out *int64
 
 	var cOut C.int64_t
 	err := C.lineHexEstimate(&cOrigin, &cDest, C.int(res), &cOut)
+	*out = int64(cOut)
+	return H3Error(err)
+}
+
+// bboxHexEstimateC calls the original C implementation.
+func bboxHexEstimateC(bbox *BBox, res int32, out *int64) H3Error {
+	cb := toCBBox(*bbox)
+	var cOut C.int64_t
+	err := C.bboxHexEstimate(&cb, C.int(res), &cOut)
 	*out = int64(cOut)
 	return H3Error(err)
 }
