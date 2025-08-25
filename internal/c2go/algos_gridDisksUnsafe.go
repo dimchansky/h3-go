@@ -9,7 +9,7 @@ func gridDisksUnsafe(h3Set []H3Index, k int32, out []H3Index) H3Error {
 	if len(h3Set) == 0 || len(out) == 0 {
 		return E_FAILED
 	}
-	
+
 	length := int32(len(h3Set))
 	var segmentSize int64
 	err := maxGridDiskSize(k, &segmentSize)

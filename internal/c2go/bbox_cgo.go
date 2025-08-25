@@ -11,6 +11,12 @@ package c2go
 
 // Prototype for scaleBBox
 extern void scaleBBox(BBox* bbox, double scale);
+
+// Prototype for _hexRadiusKm
+extern double _hexRadiusKm(H3Index h3Index);
+
+// Prototype for lineHexEstimate
+extern H3Error lineHexEstimate(const LatLng* origin, const LatLng* destination, int res, int64_t* out);
 */
 import "C"
 
@@ -108,4 +114,25 @@ func scaleBBoxC(bbox *BBox, scale float64) {
 	bbox.South = float64(cb.south)
 	bbox.East = float64(cb.east)
 	bbox.West = float64(cb.west)
+}
+
+// _hexRadiusKmC calls the original C implementation.
+func _hexRadiusKmC(h3Index H3Index) float64 {
+	return float64(C._hexRadiusKm(C.H3Index(h3Index)))
+}
+
+// lineHexEstimateC calls the original C implementation.
+func lineHexEstimateC(origin *LatLng, destination *LatLng, res int32, out *int64) H3Error {
+	var cOrigin C.LatLng
+	cOrigin.lat = C.double(origin.Lat)
+	cOrigin.lng = C.double(origin.Lng)
+
+	var cDest C.LatLng
+	cDest.lat = C.double(destination.Lat)
+	cDest.lng = C.double(destination.Lng)
+
+	var cOut C.int64_t
+	err := C.lineHexEstimate(&cOrigin, &cDest, C.int(res), &cOut)
+	*out = int64(cOut)
+	return H3Error(err)
 }

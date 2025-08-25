@@ -41,8 +41,9 @@ These are primarily internal/static functions used to build the public API.
 - getRes0Cells
 - res0CellCount
 
-## bbox.c (10 functions)
+## bbox.c (12 functions)
 
+- _hexRadiusKm
 - bboxCenter
 - bboxContains
 - bboxContainsBBox
@@ -52,6 +53,7 @@ These are primarily internal/static functions used to build the public API.
 - bboxNormalization
 - bboxOverlapsBBox
 - bboxWidthRads
+- lineHexEstimate
 - scaleBBox
 
 ## coordijk.c (28 functions)
@@ -284,7 +286,7 @@ These are primarily internal/static functions used to build the public API.
 - _hashVertex
 - initVertexGraph
 
-**Total ported internal functions: 227**
+**Total ported internal functions: 229**
 
 ---
 
