@@ -75,6 +75,11 @@ static H3Error _gridRingInternal_c_wrapper(H3Index origin, int k, H3Index *out) 
 static H3Error gridRing_c_wrapper(H3Index origin, int k, H3Index *out) {
     return gridRing(origin, k, out);
 }
+
+// Wrapper function to call gridDisksUnsafe
+static H3Error gridDisksUnsafe_c_wrapper(H3Index *h3Set, int length, int k, H3Index *out) {
+    return gridDisksUnsafe(h3Set, length, k, out);
+}
 */
 import "C"
 
@@ -223,6 +228,19 @@ func gridRingC(origin H3Index, k int32, out []H3Index) H3Error {
 	}
 	return H3Error(C.gridRing_c_wrapper(
 		C.H3Index(origin),
+		C.int(k),
+		(*C.H3Index)(&out[0]),
+	))
+}
+
+// gridDisksUnsafeC calls the original C implementation.
+func gridDisksUnsafeC(h3Set []H3Index, k int32, out []H3Index) H3Error {
+	if len(h3Set) == 0 || len(out) == 0 {
+		return E_FAILED
+	}
+	return H3Error(C.gridDisksUnsafe_c_wrapper(
+		(*C.H3Index)(&h3Set[0]),
+		C.int(len(h3Set)),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
 	))
