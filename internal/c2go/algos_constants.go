@@ -28,3 +28,10 @@ const NEXT_RING_DIRECTION = I_AXES_DIGIT
 // This is the largest possible k in the H3 grid system.
 // Ported from H3 C: algos.c::K_ALL_CELLS_AT_RES_15
 const K_ALL_CELLS_AT_RES_15 = 13780510
+
+// Buffer size for polygon to cells estimation.
+// When the polygon is very small, near an icosahedron edge and is an odd
+// resolution, the line tracing needs an extra buffer than the estimator
+// function provides.
+// Ported from H3 C: algos.c::POLYGON_TO_CELLS_BUFFER
+const POLYGON_TO_CELLS_BUFFER = 12

@@ -86,6 +86,11 @@ static H3Error _getEdgeHexagons_c_wrapper(const GeoLoop *geoloop, int64_t numHex
                                            int64_t *numSearchHexes, H3Index *search, H3Index *found) {
     return _getEdgeHexagons(geoloop, numHexagons, res, numSearchHexes, search, found);
 }
+
+// Wrapper function to call maxPolygonToCellsSize
+static H3Error maxPolygonToCellsSize_c_wrapper(const GeoPolygon *geoPolygon, int res, uint32_t flags, int64_t *out) {
+    return maxPolygonToCellsSize(geoPolygon, res, flags, out);
+}
 */
 import "C"
 
@@ -272,4 +277,17 @@ func _getEdgeHexagonsC(geoloop []LatLng, numHexagons int64, res int32, numSearch
 	))
 	*numSearchHexes = int64(cNumSearchHexes)
 	return err
+}
+
+// maxPolygonToCellsSizeC calls the original C implementation.
+func maxPolygonToCellsSizeC(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) H3Error {
+	cGeoPolygon, freeFn := toCGeoPolygon(*geoPolygon)
+	defer freeFn()
+
+	return H3Error(C.maxPolygonToCellsSize_c_wrapper(
+		&cGeoPolygon,
+		C.int(res),
+		C.uint32_t(flags),
+		(*C.int64_t)(out),
+	))
 }
