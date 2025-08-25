@@ -55,6 +55,11 @@ static H3Error gridDiskDistancesSafe_c_wrapper(H3Index origin, int k, H3Index *o
 static H3Error maxGridRingSize_c_wrapper(int k, int64_t *out) {
     return maxGridRingSize(k, out);
 }
+
+// Wrapper function to call gridRingUnsafe
+static H3Error gridRingUnsafe_c_wrapper(H3Index origin, int k, H3Index *out) {
+    return gridRingUnsafe(origin, k, out);
+}
 */
 import "C"
 
@@ -158,4 +163,16 @@ func gridDiskDistancesSafeC(origin H3Index, k int32, out []H3Index, distances []
 // maxGridRingSizeC calls the original C implementation.
 func maxGridRingSizeC(k int32, out *int64) H3Error {
 	return H3Error(C.maxGridRingSize_c_wrapper(C.int(k), (*C.int64_t)(out)))
+}
+
+// gridRingUnsafeC calls the original C implementation.
+func gridRingUnsafeC(origin H3Index, k int32, out []H3Index) H3Error {
+	if len(out) == 0 {
+		return E_FAILED
+	}
+	return H3Error(C.gridRingUnsafe_c_wrapper(
+		C.H3Index(origin),
+		C.int(k),
+		(*C.H3Index)(&out[0]),
+	))
 }
