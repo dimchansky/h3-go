@@ -22,7 +22,7 @@ This document tracks the porting status of all H3 C public functions exported vi
 - [x] maxGridDiskSize
 - [x] maxGridRingSize
 - [x] maxPolygonToCellsSize
-- [ ] polygonToCells
+- [x] polygonToCells
 
 ## baseCells.c (2 functions)
 
@@ -104,8 +104,8 @@ This document tracks the porting status of all H3 C public functions exported vi
 ## Summary
 
 **Total Functions:** 82
-- **Completed:** 75
-- **Remaining:** 3
+- **Completed:** 76
+- **Remaining:** 2
 
 ## Notes
 

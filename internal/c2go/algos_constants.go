@@ -29,6 +29,11 @@ const NEXT_RING_DIRECTION = I_AXES_DIGIT
 // Ported from H3 C: algos.c::K_ALL_CELLS_AT_RES_15
 const K_ALL_CELLS_AT_RES_15 = 13780510
 
+// Maximum number of cells in a ring (including center cell).
+// This is 7 cells: the center cell plus up to 6 neighbors.
+// Ported from H3 C: algos.c::MAX_ONE_RING_SIZE
+const MAX_ONE_RING_SIZE = 7
+
 // Buffer size for polygon to cells estimation.
 // When the polygon is very small, near an icosahedron edge and is an odd
 // resolution, the line tracing needs an extra buffer than the estimator
