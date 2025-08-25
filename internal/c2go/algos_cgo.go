@@ -110,6 +110,11 @@ static void _vertexGraphToLinkedGeo_c_wrapper(VertexGraph *graph, LinkedGeoPolyg
 static H3Error h3SetToVertexGraph_c_wrapper(const H3Index *h3Set, const int numHexes, VertexGraph *graph) {
     return h3SetToVertexGraph(h3Set, numHexes, graph);
 }
+
+// Wrapper function to call cellsToLinkedMultiPolygon
+static H3Error cellsToLinkedMultiPolygon_c_wrapper(const H3Index *h3Set, const int numHexes, LinkedGeoPolygon *out) {
+    return cellsToLinkedMultiPolygon(h3Set, numHexes, out);
+}
 */
 import "C"
 
@@ -344,5 +349,17 @@ func h3SetToVertexGraphC(h3Set []H3Index, graph *C.VertexGraph) H3Error {
 		(*C.H3Index)(&h3Set[0]),
 		C.int(len(h3Set)),
 		graph,
+	))
+}
+
+// cellsToLinkedMultiPolygonC calls the original C implementation.
+func cellsToLinkedMultiPolygonC(h3Set []H3Index, out *C.LinkedGeoPolygon) H3Error {
+	if len(h3Set) == 0 {
+		return E_SUCCESS
+	}
+	return H3Error(C.cellsToLinkedMultiPolygon_c_wrapper(
+		(*C.H3Index)(&h3Set[0]),
+		C.int(len(h3Set)),
+		out,
 	))
 }
