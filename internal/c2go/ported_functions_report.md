@@ -287,15 +287,16 @@ These are primarily internal/static functions used to build the public API.
 - vertexRotations
 - vertexToLatLng
 
-## vertexGraph.c (5 functions)
+## vertexGraph.c (6 functions)
 
 - _hashVertex
 - addVertexNode
+- findNodeForEdge
 - firstVertexNode
 - initVertexGraph
 - removeVertexNode
 
-**Total ported internal functions: 238**
+**Total ported internal functions: 239**
 
 ---
 

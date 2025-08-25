@@ -12,6 +12,7 @@ void initVertexGraph(VertexGraph* graph, int numBuckets, int res);
 VertexNode* addVertexNode(VertexGraph* graph, const LatLng* fromVtx, const LatLng* toVtx);
 int removeVertexNode(VertexGraph* graph, VertexNode* node);
 VertexNode* firstVertexNode(const VertexGraph* graph);
+VertexNode* findNodeForEdge(const VertexGraph* graph, const LatLng* fromVtx, const LatLng* toVtx);
 */
 import "C"
 import "unsafe"
@@ -177,6 +178,81 @@ func firstVertexNodeC(graph *VertexGraph) *VertexNode {
 					}
 				}
 				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// findNodeForEdgeC wraps the C findNodeForEdge function for parity testing.
+func findNodeForEdgeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode {
+	// Create a C graph structure for testing
+	var cGraph C.VertexGraph
+	cGraph.numBuckets = C.int(graph.NumBuckets)
+	cGraph.size = C.int(graph.Size)
+	cGraph.res = C.int(graph.Res)
+
+	// Convert Go LatLng to C LatLng
+	cFromVtx := C.LatLng{
+		lat: C.double(fromVtx.Lat),
+		lng: C.double(fromVtx.Lng),
+	}
+
+	var cToVtx *C.LatLng
+	if toVtx != nil {
+		cToVtxVal := C.LatLng{
+			lat: C.double(toVtx.Lat),
+			lng: C.double(toVtx.Lng),
+		}
+		cToVtx = &cToVtxVal
+	} else {
+		cToVtx = nil
+	}
+
+	// For parity testing, we need to set up the buckets array
+	// This is a simplified approach since we don't maintain full C state
+	if graph.NumBuckets > 0 {
+		cGraph.buckets = (**C.VertexNode)(C.calloc(C.size_t(graph.NumBuckets), C.size_t(C.sizeof_uintptr_t)))
+		defer C.free(unsafe.Pointer(cGraph.buckets))
+
+		// Populate C buckets with equivalent data from Go buckets for testing
+		for i, bucket := range graph.Buckets {
+			currentGoNode := bucket
+			var prevCNode *C.VertexNode
+
+			// Convert the entire linked list for this bucket
+			for currentGoNode != nil {
+				// Create a C node
+				cNode := (*C.VertexNode)(C.malloc(C.size_t(C.sizeof_VertexNode)))
+				defer C.free(unsafe.Pointer(cNode))
+
+				cNode.from.lat = C.double(currentGoNode.From.Lat)
+				cNode.from.lng = C.double(currentGoNode.From.Lng)
+				cNode.to.lat = C.double(currentGoNode.To.Lat)
+				cNode.to.lng = C.double(currentGoNode.To.Lng)
+				cNode.next = nil
+
+				// Link the nodes
+				if prevCNode == nil {
+					// First node in bucket
+					bucketPtr := (**C.VertexNode)(unsafe.Pointer(uintptr(unsafe.Pointer(cGraph.buckets)) + uintptr(i)*unsafe.Sizeof(uintptr(0))))
+					*bucketPtr = cNode
+				} else {
+					prevCNode.next = cNode
+				}
+
+				prevCNode = cNode
+				currentGoNode = currentGoNode.Next
+			}
+		}
+
+		// Call C findNodeForEdge
+		result := C.findNodeForEdge(&cGraph, &cFromVtx, cToVtx)
+		if result != nil {
+			return &VertexNode{
+				From: LatLng{Lat: float64(result.from.lat), Lng: float64(result.from.lng)},
+				To:   LatLng{Lat: float64(result.to.lat), Lng: float64(result.to.lng)},
 			}
 		}
 	}
