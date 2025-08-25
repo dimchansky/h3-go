@@ -105,9 +105,20 @@ Execution plan per function
 - Add `<cfile>_<function>_parity_test.go` with realistic tolerances; compare bools directly.
 Conventions
 - One function per Go file: `<cfile>_<function>.go`
+  - **CRITICAL NAMING RULE**: Use EXACTLY ONE underscore between cfile and function name
+  - If C function has NO underscore prefix: `algos_maxGridDiskSize.go` (for C function `maxGridDiskSize`)
+  - If C function HAS underscore prefix: `algos__gridRingInternal.go` (for C function `_gridRingInternal`)
+  - **NEVER use triple underscores (___)**. The pattern is always `<cfile>_<function>` where function includes its prefix
+  - Examples:
+    - C `maxGridDiskSize` → `algos_maxGridDiskSize.go` ✅
+    - C `_gridRingInternal` → `algos__gridRingInternal.go` ✅ (NOT `algos___gridRingInternal.go` ❌)
+    - C `_faceIjkToH3` → `h3index__faceIjkToH3.go` ✅ (NOT `h3index___faceIjkToH3.go` ❌)
 - cgo interop per C module: `<cfile>_cgo.go` (build tag `cgo && c2go`), includes `"<cfile>.c"` by name only.
 - C wrappers named distinctly (e.g., `_ipow_c_wrapper`), Go helpers mirror with a `C` suffix (e.g., `_ipowC`).
-- Parity tests named `<cfile>_<function>_parity_test.go` with `//go:build c2go`. Reserve `<cfile>_<function>_test.go` for plain-Go tests later.
+- Parity tests follow the same naming as the implementation: `<cfile>_<function>_parity_test.go` with `//go:build cgo`.
+  - `algos_maxGridDiskSize_parity_test.go` for `maxGridDiskSize`
+  - `algos__gridRingInternal_parity_test.go` for `_gridRingInternal`
+- Reserve `<cfile>_<function>_test.go` for plain-Go tests later.
 - Do not hardcode H3 version in code; include directories provided via `CGO_CPPFLAGS` in `make test-c2go` with `H3VER`.
 
 Issue encountered: linking large C modules (resolved)

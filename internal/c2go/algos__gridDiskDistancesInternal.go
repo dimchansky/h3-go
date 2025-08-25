@@ -11,7 +11,9 @@ package c2go
 // Ported from H3 C: algos.c::_gridDiskDistancesInternal
 func _gridDiskDistancesInternal(origin H3Index, k int32, out []H3Index, distances []int32, maxIdx int64, curK int32) H3Error {
 	// Put origin in the output array. out is used as a hash set.
-	off := int64(origin) % maxIdx
+	// Note: In C, this is int64_t off = origin % maxIdx; where origin is uint64_t
+	// The C behavior with signed/unsigned conversion is preserved here
+	off := int64(uint64(origin) % uint64(maxIdx))
 	for out[off] != 0 && out[off] != origin {
 		off = (off + 1) % maxIdx
 	}
