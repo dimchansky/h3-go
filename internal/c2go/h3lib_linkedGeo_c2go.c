@@ -62,3 +62,8 @@ const LinkedGeoPolygon* findPolygonForHoleC(const LinkedGeoLoop *loop,
     return findPolygonForHole(loop, polygon, bboxes, polygonCount);
 }
 
+// Wrapper for destroyLinkedGeoLoop
+void destroyLinkedGeoLoopC(LinkedGeoLoop *loop) {
+    destroyLinkedGeoLoop(loop);
+}
+

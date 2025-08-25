@@ -22,6 +22,7 @@ int countContainersC(const LinkedGeoLoop *loop, const LinkedGeoPolygon **polygon
 const LinkedGeoPolygon* findDeepestContainerC(const LinkedGeoPolygon **polygons, const BBox **bboxes, int polygonCount);
 const LinkedGeoPolygon* findPolygonForHoleC(const LinkedGeoLoop *loop, const LinkedGeoPolygon *polygon, const BBox *bboxes, int polygonCount);
 H3Error normalizeMultiPolygon(LinkedGeoPolygon *root);
+void destroyLinkedGeoLoopC(LinkedGeoLoop *loop);
 */
 import "C"
 import "unsafe"
@@ -995,4 +996,45 @@ func normalizeMultiPolygonC(root *LinkedGeoPolygon) H3Error {
 	// its own memory, we should not attempt to free anything we allocated.
 
 	return H3Error(result)
+}
+
+// destroyLinkedGeoLoopC wraps the C destroyLinkedGeoLoop function for parity testing.
+func destroyLinkedGeoLoopC(loop *LinkedGeoLoop) {
+	if loop == nil {
+		return
+	}
+
+	// Create a minimal C LinkedGeoLoop for testing
+	var firstNode *C.LinkedLatLng
+	var currentGoCoord = loop.First
+	var prevCNode *C.LinkedLatLng
+
+	// Build the C linked list from Go linked list
+	for currentGoCoord != nil {
+		cNode := (*C.LinkedLatLng)(C.malloc(C.size_t(C.sizeof_LinkedLatLng)))
+		cNode.vertex.lat = C.double(currentGoCoord.Vertex.Lat)
+		cNode.vertex.lng = C.double(currentGoCoord.Vertex.Lng)
+		cNode.next = nil
+
+		if firstNode == nil {
+			firstNode = cNode
+		} else {
+			prevCNode.next = cNode
+		}
+
+		prevCNode = cNode
+		currentGoCoord = currentGoCoord.Next
+	}
+
+	// Create C LinkedGeoLoop
+	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
+	cLoop.first = firstNode
+	cLoop.last = prevCNode
+	cLoop.next = nil
+
+	// Call C function - this will free the coordinate nodes but not the loop itself
+	C.destroyLinkedGeoLoopC(cLoop)
+
+	// Free the loop structure itself (since the C function doesn't free it)
+	C.free(unsafe.Pointer(cLoop))
 }
