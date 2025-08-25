@@ -80,6 +80,12 @@ static H3Error gridRing_c_wrapper(H3Index origin, int k, H3Index *out) {
 static H3Error gridDisksUnsafe_c_wrapper(H3Index *h3Set, int length, int k, H3Index *out) {
     return gridDisksUnsafe(h3Set, length, k, out);
 }
+
+// Wrapper function to call _getEdgeHexagons
+static H3Error _getEdgeHexagons_c_wrapper(const GeoLoop *geoloop, int64_t numHexagons, int res,
+                                           int64_t *numSearchHexes, H3Index *search, H3Index *found) {
+    return _getEdgeHexagons(geoloop, numHexagons, res, numSearchHexes, search, found);
+}
 */
 import "C"
 
@@ -244,4 +250,26 @@ func gridDisksUnsafeC(h3Set []H3Index, k int32, out []H3Index) H3Error {
 		C.int(k),
 		(*C.H3Index)(&out[0]),
 	))
+}
+
+// _getEdgeHexagonsC calls the original C implementation.
+func _getEdgeHexagonsC(geoloop []LatLng, numHexagons int64, res int32, numSearchHexes *int64, search []H3Index, found []H3Index) H3Error {
+	if len(search) == 0 || len(found) == 0 {
+		return E_FAILED
+	}
+
+	cGeoloop, freeFn := toCGeoLoop(geoloop)
+	defer freeFn()
+
+	cNumSearchHexes := C.int64_t(*numSearchHexes)
+	err := H3Error(C._getEdgeHexagons_c_wrapper(
+		&cGeoloop,
+		C.int64_t(numHexagons),
+		C.int(res),
+		&cNumSearchHexes,
+		(*C.H3Index)(&search[0]),
+		(*C.H3Index)(&found[0]),
+	))
+	*numSearchHexes = int64(cNumSearchHexes)
+	return err
 }
