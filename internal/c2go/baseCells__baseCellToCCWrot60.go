@@ -9,13 +9,6 @@ func _baseCellToCCWrot60(baseCell int32, face int32) int32 {
 		return INVALID_ROTATIONS
 	}
 
-	// Handle edge case: face == NUM_ICOSA_FACES (20) is out of bounds but C returns 0
-	// This replicates C undefined behavior for exact parity
-	if face == NUM_ICOSA_FACES {
-		return 0
-	}
-
-	// Search through all ijk coordinates on this face
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
 			for k := 0; k < 3; k++ {

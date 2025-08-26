@@ -86,43 +86,18 @@ test-c2go:
 	TEST_FLAG=""; \
 	if [ -n "$(TEST)" ]; then TEST_FLAG="-run=$(TEST)"; fi; \
 	TIMEOUT_FLAG="-timeout=$(TIMEOUT)"; \
-	if [ -z "$(VERBOSE)" ]; then \
-		OUTPUT=$$(GOCACHE=$(PWD)/.gocache \
-		CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
-		CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
-		CGO_CFLAGS="-ffunction-sections -fdata-sections" \
-		CGO_LDFLAGS="-Wl,-dead_strip" \
-		go test -v $$TEST_FLAG $$TIMEOUT_FLAG -tags="c2go" ./internal/c2go 2>&1) || { \
-			echo "$$OUTPUT" | tail -20; \
-			echo; \
-			echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
-			echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \
-			echo " - Ensure a C toolchain is present (macOS: xcode-select --install)."; \
-			exit 1; \
-		}; \
-		PASS_LINE=$$(echo "$$OUTPUT" | grep "^PASS$$" | head -1); \
-		OK_LINE=$$(echo "$$OUTPUT" | grep "^ok" | head -1); \
-		if [ -n "$$PASS_LINE" ] && [ -n "$$OK_LINE" ]; then \
-			echo "$$OK_LINE"; \
-			TEST_COUNT=$$(echo "$$OUTPUT" | grep -c "^=== RUN"); \
-			echo "✓ Executed $$TEST_COUNT tests"; \
-		else \
-			echo "$$OUTPUT" | tail -5; \
-		fi; \
-	else \
-		GOCACHE=$(PWD)/.gocache \
-		CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
-		CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
-		CGO_CFLAGS="-ffunction-sections -fdata-sections" \
-		CGO_LDFLAGS="-Wl,-dead_strip" \
-		go test -v $$TEST_FLAG $$TIMEOUT_FLAG -tags="c2go" ./internal/c2go || { \
-			echo; \
-			echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
-			echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \
-			echo " - Ensure a C toolchain is present (macOS: xcode-select --install)."; \
-			exit 1; \
-		}; \
-	fi
+	GOCACHE=$(PWD)/.gocache \
+	CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
+	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
+	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
+	CGO_LDFLAGS="-Wl,-dead_strip" \
+	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG -tags="c2go" ./internal/c2go/... || { \
+		echo; \
+		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
+		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \
+		echo " - Ensure a C toolchain is present (macOS: xcode-select --install)."; \
+		exit 1; \
+	}
 fmt:
 	@echo "Checking gofmt formatting..."
 	@files=$$(gofmt -s -l .); \

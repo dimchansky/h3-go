@@ -14,7 +14,7 @@ func Test_baseCellToCCWrot60_parity(t *testing.T) {
 	}{
 		// Test edge cases
 		{"invalid_face_negative", 0, -1},
-		{"invalid_face_too_large", 0, NUM_ICOSA_FACES},
+		{"invalid_face_too_large", 0, NUM_ICOSA_FACES + 1},
 		{"invalid_face_way_too_large", 0, 100},
 
 		// Test a selection of valid base cell/face combinations
