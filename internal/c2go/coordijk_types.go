@@ -8,10 +8,3 @@ type CoordIJK struct {
 	J int32 // j component
 	K int32 // k component
 }
-
-// CoordIJ represents IJ coordinates (axial coordinates).
-// Uses int32 to match H3 C implementation exactly (including overflow behavior).
-type CoordIJ struct {
-	I int32 // i component
-	J int32 // j component
-}
