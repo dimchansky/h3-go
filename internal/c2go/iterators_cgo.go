@@ -32,13 +32,6 @@ extern void _iterInitParent(H3Index h, int childRes, IterCellsChildren *iter);
 */
 import "C"
 
-// IterCellsChildren mirrors the C IterCellsChildren struct for iterator state.
-type IterCellsChildren struct {
-	H         H3Index // Current H3 index
-	ParentRes int32   // Parent resolution
-	SkipDigit int32   // Skip digit for pentagons
-}
-
 // incrementResDigitC calls the C wrapper for _incrementResDigit.
 func incrementResDigitC(h *H3Index, res int32) {
 	ch := C.H3Index(*h)

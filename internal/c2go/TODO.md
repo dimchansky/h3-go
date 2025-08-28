@@ -27,7 +27,6 @@ Iteration Workflow (standard operating procedure)
   - Custom timeout: `make test-c2go TIMEOUT=30s`
   - All options combined: `make test-c2go TEST=Test_functionName_parity VERBOSE=1 TIMEOUT=30s`
 - Format code: run `make fix-fmt` prior to committing.
-- Update status: run `./scripts/update-h3-status.sh` to update implementation tracking reports.
 - Commit: commit the minimal, focused changes with a message stating the ported function(s), parity, and status update.
 
 Source Reference
@@ -61,22 +60,6 @@ Comment Style Requirements
 
 Interop helper note
 - When performing Go→C struct conversions in `*_cgo.go`, prefer creating small helper functions to convert common types (e.g., `toCGeoLoop`, `toCGeoPolygon`, `toCBBox`). This avoids duplication when multiple functions need the same transformation and makes memory management (malloc/free) clearer and safer.
-
-## Current Status
-
-**Run the following command to get current implementation status:**
-```bash
-./scripts/update-h3-status.sh
-```
-
-This will generate/update:
-- `internal/c2go/h3_functions.md` - Public API implementation status (checklist)
-- `internal/c2go/ported_functions_report.md` - Detailed report of all ported internal functions
-
-**Quick status check:**
-```bash
-./scripts/list-ported-functions.sh  # Live terminal output of ported functions
-```
 
 ## Completed Milestones
 - [x] Scaffold package and basic infrastructure
@@ -186,12 +169,3 @@ internal/c2go: port vertexRotations function with parity
 - Create comprehensive parity tests covering edge cases
 - All tests pass, verifying behavioral equivalence with H3 C v4.3.0
 ```
-
-## Update Status After Implementation
-
-After completing function implementations, always run:
-```bash
-./scripts/update-h3-status.sh
-```
-
-This ensures the automated tracking stays current and provides accurate progress reporting.

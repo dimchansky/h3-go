@@ -1,10 +1,10 @@
-.PHONY: test bench lint gen ref test-oracle test-all test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt
+.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt
 
 test:
-	go test -v ./...
+	CGO_ENABLED=0 go test ./...
 
 bench:
-	go test -bench=. -benchmem ./...
+	CGO_ENABLED=0 go test -bench=. -benchmem ./...
 
 # Note: golangci-lint tags use v1.x; latest stable at time of writing.
 # v2.x does not exist as a module tag; pin to latest v1 instead.
@@ -36,23 +36,6 @@ $(GOLANGCI_LINT):
 
 $(SMRCPTR):
 	@$(MAKE) install-smrcptr
-
-gen:
-	@echo "Reserved for future table generation"
-
-ref:
-	@echo "Building H3 reference oracle for test validation..."
-	$(MAKE) -C testref
-	@echo "Oracle built successfully at testref/h3ref"
-	@echo "Run 'make -C testref test' to verify installation"
-
-# Run tests that require the external C oracle as well
-test-oracle: ref
-	@echo "Running Go tests with oracle tag..."
-	go test -v -tags=oracle ./...
-
-# Convenience: run both regular and oracle-tagged tests
-test-all: test test-oracle
 
 # Run c2go parity tests (require cgo). Uses local GOCACHE to avoid sandboxed home cache writes.
 # Usage: make test-c2go [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration]
