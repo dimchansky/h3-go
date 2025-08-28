@@ -6,7 +6,7 @@ package h3
 // Ported from H3 C: polygon.c::pointInsidePolygon
 func pointInsidePolygon(poly GeoPolygon, bboxes []BBox, coord *LatLng) bool {
 	// primary geoloop
-	contains := pointInsideGeoLoop(poly.Geoloop, &bboxes[0], coord)
+	contains := pointInsideGeoLoop(poly.GeoLoop, &bboxes[0], coord)
 	if contains && len(poly.Holes) > 0 {
 		for i := 0; i < len(poly.Holes); i++ {
 			if pointInsideGeoLoop(poly.Holes[i], &bboxes[i+1], coord) {

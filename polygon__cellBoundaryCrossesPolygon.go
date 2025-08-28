@@ -4,7 +4,7 @@ package h3
 // Ported from polygon.c::cellBoundaryCrossesPolygon
 // Ported from H3 C: polygon.c::cellBoundaryCrossesPolygon
 func cellBoundaryCrossesPolygon(poly GeoPolygon, bboxes []BBox, boundary *CellBoundary, boundaryBBox *BBox) bool {
-	if cellBoundaryCrossesGeoLoop(poly.Geoloop, &bboxes[0], boundary, boundaryBBox) {
+	if cellBoundaryCrossesGeoLoop(poly.GeoLoop, &bboxes[0], boundary, boundaryBBox) {
 		return true
 	}
 	for i := 0; i < len(poly.Holes); i++ {

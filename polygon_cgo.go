@@ -93,7 +93,7 @@ func pointInsideGeoLoopC(loop []LatLng, bbox BBox, p LatLng) bool {
 func toCGeoPolygon(poly GeoPolygon) (C.GeoPolygon, func()) {
 	var cp C.GeoPolygon
 	// Outer loop
-	outer, freeOuter := toCGeoLoop(poly.Geoloop)
+	outer, freeOuter := toCGeoLoop(poly.GeoLoop)
 	cp.geoloop = outer
 	// Holes
 	n := len(poly.Holes)

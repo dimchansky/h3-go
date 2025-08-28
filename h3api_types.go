@@ -26,7 +26,7 @@ type GeoLoop []LatLng
 // GeoPolygon is an outer loop with optional holes.
 // Mirrors the GeoPolygon struct from h3api.h
 type GeoPolygon struct {
-	Geoloop GeoLoop
+	GeoLoop GeoLoop
 	Holes   []GeoLoop
 }
 

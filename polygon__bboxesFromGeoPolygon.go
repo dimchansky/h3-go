@@ -6,7 +6,7 @@ package h3
 // Ported from H3 C: polygon.c::bboxesFromGeoPolygon
 func bboxesFromGeoPolygon(polygon *GeoPolygon, bboxes []BBox) {
 	// Create bounding box for the main geoloop
-	bboxFromGeoLoop(polygon.Geoloop, &bboxes[0])
+	bboxFromGeoLoop(polygon.GeoLoop, &bboxes[0])
 
 	// Create bounding boxes for each hole
 	for i := 0; i < len(polygon.Holes); i++ {

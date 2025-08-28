@@ -15,7 +15,7 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 		{
 			"simple_triangle",
 			GeoPolygon{
-				Geoloop: GeoLoop{
+				GeoLoop: GeoLoop{
 					{0.1, 0.1},
 					{0.1, 0.2},
 					{0.2, 0.1},
@@ -25,7 +25,7 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 		{
 			"square_no_holes",
 			GeoPolygon{
-				Geoloop: GeoLoop{
+				GeoLoop: GeoLoop{
 					{0.0, 0.0},
 					{0.0, 0.1},
 					{0.1, 0.1},
@@ -36,7 +36,7 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 		{
 			"polygon_with_one_hole",
 			GeoPolygon{
-				Geoloop: GeoLoop{
+				GeoLoop: GeoLoop{
 					{0.0, 0.0},
 					{0.0, 0.2},
 					{0.2, 0.2},
@@ -55,7 +55,7 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 		{
 			"polygon_with_multiple_holes",
 			GeoPolygon{
-				Geoloop: GeoLoop{
+				GeoLoop: GeoLoop{
 					{0.0, 0.0},
 					{0.0, 0.3},
 					{0.3, 0.3},
@@ -80,7 +80,7 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 		{
 			"empty_polygon",
 			GeoPolygon{
-				Geoloop: GeoLoop{},
+				GeoLoop: GeoLoop{},
 			},
 		},
 	}
@@ -127,7 +127,7 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 	// Test deterministic behavior
 	t.Run("deterministic", func(t *testing.T) {
 		polygon := GeoPolygon{
-			Geoloop: GeoLoop{
+			GeoLoop: GeoLoop{
 				{0.1, 0.1},
 				{0.1, 0.2},
 				{0.2, 0.1},

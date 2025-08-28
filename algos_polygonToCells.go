@@ -44,7 +44,7 @@ func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Ind
 	// add them to the search hash. The hexagon containing the geoloop point
 	// may or may not be contained by the geoloop (as the hexagon's center
 	// point may be outside of the boundary.)
-	geoloop := geoPolygon.Geoloop
+	geoloop := geoPolygon.GeoLoop
 	edgeHexError := _getEdgeHexagons(geoloop, numHexagons, res,
 		&numSearchHexes, search, found)
 	if edgeHexError != E_SUCCESS {

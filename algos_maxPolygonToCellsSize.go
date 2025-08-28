@@ -14,7 +14,7 @@ func maxPolygonToCellsSize(geoPolygon *GeoPolygon, res int32, flags uint32, out 
 
 	// Get the bounding box for the GeoJSON-like struct
 	var bbox BBox
-	geoloop := geoPolygon.Geoloop
+	geoloop := geoPolygon.GeoLoop
 	bboxFromGeoLoop(geoloop, &bbox)
 
 	var numHexagons int64

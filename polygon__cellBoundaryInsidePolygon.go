@@ -9,7 +9,7 @@ func cellBoundaryInsidePolygon(poly GeoPolygon, bboxes []BBox, boundary *CellBou
 		return false
 	}
 	// If outer loop crossings exist, not contained
-	if cellBoundaryCrossesGeoLoop(poly.Geoloop, &bboxes[0], boundary, boundaryBBox) {
+	if cellBoundaryCrossesGeoLoop(poly.GeoLoop, &bboxes[0], boundary, boundaryBBox) {
 		return false
 	}
 	// Convert boundary to loop for point-inside checks

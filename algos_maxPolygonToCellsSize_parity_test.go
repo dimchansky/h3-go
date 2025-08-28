@@ -17,7 +17,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "simple_triangle_sf",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 					{Deg(37.780), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.415)},
@@ -31,7 +31,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "square_polygon",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.770), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.410)},
 					{Deg(37.780), Deg(-122.410)},
@@ -46,7 +46,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "polygon_with_hole",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.760), Deg(-122.430)},
 					{Deg(37.760), Deg(-122.400)},
 					{Deg(37.790), Deg(-122.400)},
@@ -68,7 +68,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "single_point_polygon",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 				},
 				Holes: nil,
@@ -80,7 +80,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "large_polygon_low_res",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.70), Deg(-122.50)},
 					{Deg(37.70), Deg(-122.30)},
 					{Deg(37.90), Deg(-122.30)},
@@ -95,7 +95,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "tiny_polygon_high_res",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.7750), Deg(-122.4180)},
 					{Deg(37.7751), Deg(-122.4181)},
 					{Deg(37.7749), Deg(-122.4179)},
@@ -109,7 +109,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "multiple_holes",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.750), Deg(-122.450)},
 					{Deg(37.750), Deg(-122.380)},
 					{Deg(37.800), Deg(-122.380)},
@@ -137,7 +137,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		{
 			name: "empty_polygon",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{},
+				GeoLoop: []LatLng{},
 				Holes:   nil,
 			},
 			res:         5,
@@ -178,7 +178,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 
 			// Sanity check - size should be positive for polygons with area
 			// Single points and empty polygons may return just the buffer size
-			if len(tt.geoPolygon.Geoloop) > 1 && goOut <= POLYGON_TO_CELLS_BUFFER {
+			if len(tt.geoPolygon.GeoLoop) > 1 && goOut <= POLYGON_TO_CELLS_BUFFER {
 				t.Errorf("maxPolygonToCellsSize should return more than buffer (%d) for polygon with area, got %d", POLYGON_TO_CELLS_BUFFER, goOut)
 			}
 
@@ -201,7 +201,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 		{
 			name: "invalid_flags",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 					{Deg(37.780), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.415)},
@@ -215,7 +215,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 		{
 			name: "invalid_containment_mode",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 					{Deg(37.780), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.415)},
@@ -229,7 +229,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 		{
 			name: "negative_resolution",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 					{Deg(37.780), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.415)},
@@ -243,7 +243,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 		{
 			name: "resolution_too_high",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 					{Deg(37.780), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.415)},
@@ -257,7 +257,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 		{
 			name: "polygon_with_many_vertices",
 			geoPolygon: GeoPolygon{
-				Geoloop: generateCirclePolygon(37.775, -122.418, 0.01, 100), // 100 vertices
+				GeoLoop: generateCirclePolygon(37.775, -122.418, 0.01, 100), // 100 vertices
 				Holes:   nil,
 			},
 			res:         5,

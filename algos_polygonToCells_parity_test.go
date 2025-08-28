@@ -17,7 +17,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "simple_triangle_sf",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 					{Deg(37.780), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.415)},
@@ -30,7 +30,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "square_polygon",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.770), Deg(-122.420)},
 					{Deg(37.770), Deg(-122.410)},
 					{Deg(37.780), Deg(-122.410)},
@@ -44,7 +44,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "polygon_with_hole",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.760), Deg(-122.430)},
 					{Deg(37.760), Deg(-122.400)},
 					{Deg(37.790), Deg(-122.400)},
@@ -65,7 +65,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "single_point_polygon",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.775), Deg(-122.418)},
 				},
 				Holes: nil,
@@ -76,7 +76,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "large_polygon_low_res",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.70), Deg(-122.50)},
 					{Deg(37.70), Deg(-122.30)},
 					{Deg(37.90), Deg(-122.30)},
@@ -90,7 +90,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "tiny_polygon_high_res",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.7750), Deg(-122.4180)},
 					{Deg(37.7751), Deg(-122.4181)},
 					{Deg(37.7749), Deg(-122.4179)},
@@ -103,7 +103,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "multiple_holes",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{
+				GeoLoop: []LatLng{
 					{Deg(37.750), Deg(-122.450)},
 					{Deg(37.750), Deg(-122.380)},
 					{Deg(37.800), Deg(-122.380)},
@@ -130,7 +130,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 		{
 			name: "empty_polygon",
 			geoPolygon: GeoPolygon{
-				Geoloop: []LatLng{},
+				GeoLoop: []LatLng{},
 				Holes:   nil,
 			},
 			res:   5,
@@ -218,7 +218,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 			}
 
 			// Sanity check - non-empty polygons should produce some cells
-			if len(tt.geoPolygon.Geoloop) > 0 && len(goValidCells) == 0 {
+			if len(tt.geoPolygon.GeoLoop) > 0 && len(goValidCells) == 0 {
 				t.Logf("polygonToCells(%s): Warning - non-empty polygon produced no cells", tt.name)
 			}
 		})
