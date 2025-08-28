@@ -92,6 +92,11 @@ func Test_cellToVertex_parity(t *testing.T) {
 			cell:      0x893006283807fff,
 			vertexNum: 5,
 		},
+		{
+			name:      "additional test 1",
+			cell:      0x08015fffffffffff,
+			vertexNum: 0,
+		},
 	}
 
 	for _, tc := range testCases {

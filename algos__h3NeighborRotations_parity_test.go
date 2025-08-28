@@ -54,6 +54,9 @@ func Test_h3NeighborRotations_parity(t *testing.T) {
 		{"base_cell_2", H3Index(0x8002fffffffffff), K_AXES_DIGIT, 0},
 		{"base_cell_10", H3Index(0x800afffffffffff), K_AXES_DIGIT, 0},
 		{"base_cell_20", H3Index(0x8014fffffffffff), K_AXES_DIGIT, 0},
+
+		// Failing case from cellToVertex debug - should cause parity test to fail
+		{"cellToVertex_failing_case", H3Index(0x08015fffffffffff), I_AXES_DIGIT, 0},
 	}
 
 	for _, tt := range tests {
