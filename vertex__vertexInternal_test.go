@@ -5,6 +5,7 @@ import "testing"
 // Tests ported from testVertexInternal.c
 
 func TestVertexNumForDirection_hex(t *testing.T) {
+	t.Parallel()
 	origin := H3Index(0x823d6ffffffffff)
 	vertexNums := make([]bool, NUM_HEX_VERTS)
 	
@@ -21,6 +22,7 @@ func TestVertexNumForDirection_hex(t *testing.T) {
 }
 
 func TestVertexNumForDirection_pent(t *testing.T) {
+	t.Parallel()
 	pentagon := H3Index(0x823007fffffffff)
 	vertexNums := make([]bool, NUM_PENT_VERTS)
 	
@@ -37,6 +39,7 @@ func TestVertexNumForDirection_pent(t *testing.T) {
 }
 
 func TestVertexNumForDirection_badDirections(t *testing.T) {
+	t.Parallel()
 	origin := H3Index(0x823007fffffffff)
 
 	// Test CENTER_DIGIT
@@ -57,6 +60,7 @@ func TestVertexNumForDirection_badDirections(t *testing.T) {
 }
 
 func TestDirectionForVertexNum_hex(t *testing.T) {
+	t.Parallel()
 	origin := H3Index(0x823d6ffffffffff)
 	seenDirs := make([]bool, NUM_DIGITS)
 	
@@ -73,6 +77,7 @@ func TestDirectionForVertexNum_hex(t *testing.T) {
 }
 
 func TestDirectionForVertexNum_badVerts(t *testing.T) {
+	t.Parallel()
 	origin := H3Index(0x823d6ffffffffff)
 
 	// Test negative vertex
