@@ -1,0 +1,62 @@
+package h3
+
+// Local H3 constants mirrored from testref h3lib/include/constants.h
+// Keep values in sync with the referenced H3 version used in tests.
+
+const (
+	// Mathematical constants
+	M_PI                = 3.14159265358979323846
+	M_PI_2              = 1.5707963267948966
+	M_2PI               = 6.28318530717958647692528676655900576839433
+	M_PI_180            = 0.0174532925199432957692369076848861271111
+	M_180_PI            = 57.29577951308232087679815481410517033240547
+	EPSILON             = 0.0000000000000001
+	M_SQRT3_2           = 0.8660254037844386467637231707529361834714
+	M_SIN60             = M_SQRT3_2
+	M_RSIN60            = 1.1547005383792515290182975610039149112953
+	M_ONETHIRD          = 0.333333333333333333333333333333333333333
+	M_ONESEVENTH        = 0.14285714285714285714285714285714285
+	M_AP7_ROT_RADS      = 0.333473172251832115336090755351601070065900389
+	M_SIN_AP7_ROT       = 0.3273268353539885718950318
+	M_COS_AP7_ROT       = 0.9449111825230680680167902
+	M_SQRT7             = 2.6457513110645905905016157536392604257102
+	M_RSQRT7            = 0.37796447300922722721451653623418006081576
+	INV_RES0_U_GNOMONIC = 2.61803398874989588842
+	RES0_U_GNOMONIC     = 0.38196601125010500003
+
+	// Earth radius (km)
+	EARTH_RADIUS_KM = 6371.007180918475
+
+	// Epsilon constants from latLng.h
+	EPSILON_DEG = .000000001             // epsilon of ~0.1mm in degrees
+	EPSILON_RAD = EPSILON_DEG * M_PI_180 // epsilon of ~0.1mm in radians
+
+	// Resolution and topology
+	MAX_H3_RES      = 15
+	NUM_ICOSA_FACES = 20
+	NUM_BASE_CELLS  = 122
+	NUM_HEX_VERTS   = 6
+	NUM_PENT_VERTS  = 5
+	NUM_PENTAGONS   = 12
+
+	// Base cell constants
+	INVALID_BASE_CELL = 127
+	INVALID_ROTATIONS = -1
+	MAX_FACE_COORD    = 2
+
+	// Face constants
+	INVALID_FACE = -1
+
+	// Modes
+	H3_CELL_MODE         = 1
+	H3_DIRECTEDEDGE_MODE = 2
+	H3_EDGE_MODE         = 3
+	H3_VERTEX_MODE       = 4
+)
+
+// Integer limits for overflow checking (from stdint.h)
+const (
+	INT32_MAX   = 2147483647
+	INT32_MIN   = -2147483648
+	INT32_MAX_3 = INT32_MAX / 3 // Used in aperture 7 overflow checking
+)

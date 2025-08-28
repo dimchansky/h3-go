@@ -74,7 +74,7 @@ test-c2go:
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
 	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
 	CGO_LDFLAGS="-Wl,-dead_strip" \
-	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG -tags="c2go" ./internal/c2go/... || { \
+	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG -tags="c2go" ./... || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
 		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \
