@@ -1,9 +1,9 @@
 package h3
 
-// _cellToVertexes gets all vertexes for the given cell.
+// cellToVertexes gets all vertexes for the given cell.
 // If the cell is a pentagon, will fill the final slot with H3_NULL.
 // Ported from H3 C: vertex.c::cellToVertexes
-func _cellToVertexes(cell H3Index, vertexes *[6]H3Index) H3Error {
+func cellToVertexes(cell H3Index, vertexes *[6]H3Index) H3Error {
 	// Get all vertexes. If the cell is a pentagon, will fill the final slot
 	// with H3_NULL.
 	isPent := isPentagon(cell)
@@ -11,7 +11,7 @@ func _cellToVertexes(cell H3Index, vertexes *[6]H3Index) H3Error {
 		if i == 5 && isPent {
 			vertexes[i] = H3_NULL
 		} else {
-			cellError := _cellToVertex(cell, i, &vertexes[i])
+			cellError := cellToVertex(cell, i, &vertexes[i])
 			if cellError != E_SUCCESS {
 				return cellError
 			}

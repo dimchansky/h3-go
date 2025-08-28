@@ -678,6 +678,194 @@ func (e DirectedEdge) Boundary() (out CellBoundary, err error) {
 	return
 }
 
+// CompactCells merges full sets of children into their parent H3Index
+// recursively, until no more merges are possible.
+func CompactCells(in []Cell) ([]Cell, error) {
+	csz := len(in)
+	out := make([]Cell, csz)
+	errC := compactCells(castSlice[Cell, H3Index](in), castSlice[Cell, H3Index](out), int64(csz))
+
+	return out, toErr(errC)
+}
+
+// UncompactCells splits every H3Index in in if its resolution is greater
+// than resolution recursively. Returns all the H3Indexes at resolution resolution.
+func UncompactCells(in []Cell, resolution int32) ([]Cell, error) {
+	csz, cErr := uncompactCellsSize(castSlice[Cell, H3Index](in), int64(len(in)), resolution)
+	if err := toErr(cErr); err != nil {
+		return nil, err
+	}
+
+	out := make([]Cell, csz)
+	errC := uncompactCells(castSlice[Cell, H3Index](in), int64(len(in)), castSlice[Cell, H3Index](out), csz, resolution)
+
+	return out, toErr(errC)
+}
+
+// ChildPosToCell returns the child of cell a at a given position within an ordered list of all
+// children at the specified resolution.
+func ChildPosToCell(position int64, a Cell, resolution int32) (Cell, error) {
+	out, errC := childPosToCell(position, H3Index(a), resolution)
+
+	return Cell(out), toErr(errC)
+}
+
+// ChildPosToCell returns the child cell at a given position within an ordered list of all
+// children at the specified resolution.
+func (c Cell) ChildPosToCell(position int64, resolution int32) (Cell, error) {
+	return ChildPosToCell(position, c, resolution)
+}
+
+// CellToChildPos returns the position of the cell a within an ordered list of all children of the cell's parent
+// at the specified resolution.
+func CellToChildPos(a Cell, resolution int32) (int64, error) {
+	out, errC := cellToChildPos(H3Index(a), resolution)
+
+	return out, toErr(errC)
+}
+
+// ChildPos returns the position of the cell within an ordered list of all children of the cell's parent
+// at the specified resolution.
+func (c Cell) ChildPos(resolution int32) (int64, error) {
+	return CellToChildPos(c, resolution)
+}
+
+// GridDistance returns grid distance between two cells.
+//
+// This function may fail to find the distance between two indexes, for example if they are very far apart. It may also
+// fail when finding distances for indexes on opposite sides of a pentagon.
+func GridDistance(a, b Cell) (int64, error) {
+	var out int64
+	errC := gridDistance(H3Index(a), H3Index(b), &out)
+
+	return out, toErr(errC)
+}
+
+// GridDistance returns grid distance between two cells.
+//
+// This function may fail to find the distance between two indexes, for example if they are very far apart. It may also
+// fail when finding distances for indexes on opposite sides of a pentagon.
+func (c Cell) GridDistance(other Cell) (int64, error) {
+	return GridDistance(c, other)
+}
+
+// GridPath returns the line of cells between the two cells (inclusive).
+//
+// This function may fail to find the line between two indexes, for example if they are very far apart. It may also fail
+// when finding distances for indexes on opposite sides of a pentagon.
+func GridPath(a, b Cell) ([]Cell, error) {
+	var outSz int64
+	if err := toErr(gridPathCellsSize(H3Index(a), H3Index(b), &outSz)); err != nil {
+		return nil, err
+	}
+
+	out := make([]Cell, outSz)
+	if err := toErr(gridPathCells(castSlice[Cell, H3Index](out), H3Index(a), H3Index(b))); err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
+// GridPath returns the line of cells between the two cells (inclusive).
+//
+// This function may fail to find the line between two indexes, for example if they are very far apart. It may also fail
+// when finding distances for indexes on opposite sides of a pentagon.
+func (c Cell) GridPath(other Cell) ([]Cell, error) {
+	return GridPath(c, other)
+}
+
+// CellToLocalIJ produces ij coordinates for cell anchored by an origin.
+//
+// The coordinate space used by this function may have deleted regions or warping due to pentagonal distortion.
+//
+// Coordinates are only comparable if they come from the same origin index.
+//
+// Failure may occur if the index is too far away from the origin or if the index is on the other side of a pentagon.
+func CellToLocalIJ(origin, cell Cell) (CoordIJ, error) {
+	var out CoordIJ
+	errC := cellToLocalIj(H3Index(origin), H3Index(cell), 0, &out)
+
+	return out, toErr(errC)
+}
+
+// LocalIJToCell produces a cell for ij coordinates anchored by an origin.
+//
+// The coordinate space used by this function may have deleted regions or warping due to pentagonal distortion.
+//
+// Failure may occur if the index is too far away from the origin or if the index is on the other side of a pentagon.
+func LocalIJToCell(origin Cell, ij CoordIJ) (Cell, error) {
+	var out H3Index
+	errC := localIjToCell(H3Index(origin), &ij, 0, &out)
+
+	return Cell(out), toErr(errC)
+}
+
+// CellToVertex returns a single vertex for a given cell, or InvalidH3Index if the vertex is invalid.
+func CellToVertex(c Cell, vertexNum int32) (Vertex, error) {
+	var out H3Index
+	errC := cellToVertex(H3Index(c), vertexNum, &out)
+
+	return Vertex(out), toErr(errC)
+}
+
+// Vertex returns a single vertex for a given cell, or InvalidH3Index if the vertex is invalid.
+func (c Cell) Vertex(vertexNum int32) (Vertex, error) {
+	return CellToVertex(c, vertexNum)
+}
+
+// CellToVertexes returns all vertexes for the given cell.
+func CellToVertexes(c Cell) ([]Vertex, error) {
+	var out [6]Vertex
+	h3Arr := asH3Array6(&out)
+	if err := toErr(cellToVertexes(H3Index(c), h3Arr)); err != nil {
+		return nil, err
+	}
+	return out[:], nil
+}
+
+// Vertexes returns all vertexes for the given cell.
+func (c Cell) Vertexes() ([]Vertex, error) {
+	return CellToVertexes(c)
+}
+
+// VertexToLatLng returns the geographic coordinates of the vertex.
+func VertexToLatLng(vertex Vertex) (LatLng, error) {
+	var out LatLng
+	errC := vertexToLatLng(H3Index(vertex), &out)
+	return out, toErr(errC)
+}
+
+// IsValidVertex returns whether the cell is a valid vertex.
+func IsValidVertex(v Vertex) bool {
+	return isValidVertex(H3Index(v))
+}
+
+// IsValid returns whether the cell is a valid vertex.
+func (v Vertex) IsValid() bool {
+	return IsValidVertex(v)
+}
+
+// String returns a string from a Vertex.
+func (v Vertex) String() string {
+	return IndexToString(uint64(v))
+}
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (v Vertex) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (v *Vertex) UnmarshalText(text []byte) error {
+	*v = VertexFromString(string(text))
+	if !v.IsValid() {
+		return errors.New("invalid cell index")
+	}
+
+	return nil
+}
+
 func ringSize(k int32) int64 {
 	if k == 0 {
 		return 1
@@ -696,4 +884,8 @@ func toErr(errC H3Error) error {
 // castSlice reinterprets a []From as []To without copying.
 func castSlice[From ~uint64, To ~uint64](in []From) []To {
 	return unsafe.Slice((*To)(unsafe.Pointer(unsafe.SliceData(in))), len(in))
+}
+
+func asH3Array6[T ~uint64](p *[6]T) *[6]H3Index {
+	return (*[6]H3Index)(unsafe.Pointer(p))
 }

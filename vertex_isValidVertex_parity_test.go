@@ -38,7 +38,7 @@ func Test_isValidVertex_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Get results from both implementations
-			goResult := _isValidVertex(tt.vertex)
+			goResult := isValidVertex(tt.vertex)
 			cResult := isValidVertexC(tt.vertex)
 
 			// Compare results
@@ -70,12 +70,12 @@ func Test_isValidVertex_comprehensive_parity(t *testing.T) {
 
 		for vertexNum := 0; vertexNum < maxVertexNum; vertexNum++ {
 			var vertex H3Index
-			err := _cellToVertex(cell, int32(vertexNum), &vertex)
+			err := cellToVertex(cell, int32(vertexNum), &vertex)
 			if err != E_SUCCESS {
 				continue // Skip invalid combinations
 			}
 
-			goResult := _isValidVertex(vertex)
+			goResult := isValidVertex(vertex)
 			cResult := isValidVertexC(vertex)
 
 			if goResult != cResult {

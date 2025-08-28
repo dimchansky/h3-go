@@ -29,7 +29,7 @@ func Test_vertexToLatLng_parity(t *testing.T) {
 			var goCoord, cCoord LatLng
 
 			// Get results from both implementations
-			goErr := _vertexToLatLng(tt.vertex, &goCoord)
+			goErr := vertexToLatLng(tt.vertex, &goCoord)
 			cErr := vertexToLatLngC(tt.vertex, &cCoord)
 
 			// Compare error codes
@@ -70,7 +70,7 @@ func Test_vertexToLatLng_invalidVertex_parity(t *testing.T) {
 		t.Run(fmt.Sprintf("invalid_%d", i), func(t *testing.T) {
 			var goCoord, cCoord LatLng
 
-			goErr := _vertexToLatLng(vertex, &goCoord)
+			goErr := vertexToLatLng(vertex, &goCoord)
 			cErr := vertexToLatLngC(vertex, &cCoord)
 
 			if goErr != cErr {

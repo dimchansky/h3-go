@@ -1,9 +1,9 @@
 package h3
 
-// _cellToVertex gets a single vertex for a given cell, as an H3 index, or
+// cellToVertex gets a single vertex for a given cell, as an H3 index, or
 // H3_NULL if the vertex is invalid.
 // Ported from H3 C: vertex.c::cellToVertex
-func _cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error {
+func cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error {
 	cellIsPentagon := isPentagon(cell)
 	var cellNumVerts int32
 	if cellIsPentagon {

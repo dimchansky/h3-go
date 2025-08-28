@@ -1,9 +1,9 @@
 package h3
 
-// _vertexToLatLng gets the geocoordinates of an H3 vertex.
+// vertexToLatLng gets the geocoordinates of an H3 vertex.
 // Converts a vertex H3 index to geographic coordinates (latitude and longitude).
 // Ported from H3 C: vertex.c::vertexToLatLng
-func _vertexToLatLng(vertex H3Index, coord *LatLng) H3Error {
+func vertexToLatLng(vertex H3Index, coord *LatLng) H3Error {
 	// Get the vertex number and owner from the vertex
 	vertexNum := getReservedBits(vertex)
 	owner := vertex

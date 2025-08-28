@@ -1,9 +1,9 @@
 package h3
 
-// _isValidVertex determines whether the input is a valid H3 vertex.
+// isValidVertex determines whether the input is a valid H3 vertex.
 // Returns true if the vertex index is valid, false otherwise.
 // Ported from H3 C: vertex.c::isValidVertex
-func _isValidVertex(vertex H3Index) bool {
+func isValidVertex(vertex H3Index) bool {
 	if getMode(vertex) != H3_VERTEX_MODE {
 		return false
 	}
@@ -20,7 +20,7 @@ func _isValidVertex(vertex H3Index) bool {
 	// The easiest way to ensure that the owner + vertex number is valid,
 	// and that the vertex is canonical, is to recreate and compare.
 	var canonical H3Index
-	if _cellToVertex(owner, vertexNum, &canonical) != E_SUCCESS {
+	if cellToVertex(owner, vertexNum, &canonical) != E_SUCCESS {
 		return false
 	}
 

@@ -104,7 +104,8 @@ func Test_gridPathCells_parity(t *testing.T) {
 			cOut := make([]H3Index, expectedSize)
 			cErr := _gridPathCellsC(tt.start, tt.end, cOut)
 
-			goOut, goErr := gridPathCells(nil, tt.start, tt.end)
+			goOut := make([]H3Index, expectedSize)
+			goErr := gridPathCells(goOut, tt.start, tt.end)
 
 			// Check error parity
 			if cErr != goErr {
@@ -141,19 +142,19 @@ func Test_gridPathCells_parity(t *testing.T) {
 
 			// Test with pre-allocated buffer (dst-buffer pattern)
 			dst := make([]H3Index, expectedSize)
-			goOutDst, goErrDst := gridPathCells(dst, tt.start, tt.end)
+			goErrDst := gridPathCells(dst, tt.start, tt.end)
 
 			if goErrDst != goErr {
 				t.Errorf("Error mismatch with dst buffer: got %v, expected %v", goErrDst, goErr)
 			}
 
-			if len(goOutDst) != len(goOut) {
-				t.Errorf("Length mismatch with dst buffer: got %d, expected %d", len(goOutDst), len(goOut))
+			if len(dst) != len(goOut) {
+				t.Errorf("Length mismatch with dst buffer: got %d, expected %d", len(dst), len(goOut))
 			}
 
 			for i := 0; i < len(goOut); i++ {
-				if goOutDst[i] != goOut[i] {
-					t.Errorf("Cell at index %d mismatch with dst buffer: got %016x, expected %016x", i, goOutDst[i], goOut[i])
+				if dst[i] != goOut[i] {
+					t.Errorf("Cell at index %d mismatch with dst buffer: got %016x, expected %016x", i, dst[i], goOut[i])
 				}
 			}
 		})
@@ -190,9 +191,10 @@ func Test_gridPathCells_pentagon_distortion(t *testing.T) {
 
 			if cSizeErr != E_SUCCESS {
 				// If size calculation fails, gridPathCells should also fail
-				goOut, goErr := gridPathCells(nil, tt.start, tt.end)
+				goOut := make([]H3Index, 1) // Minimal buffer to test failure
+				goErr := gridPathCells(goOut, tt.start, tt.end)
 				if goErr == E_SUCCESS {
-					t.Errorf("Expected gridPathCells to fail when gridPathCellsSize failed, but got success with %d cells", len(goOut))
+					t.Errorf("Expected gridPathCells to fail when gridPathCellsSize failed, but got success")
 				}
 				return
 			}
@@ -201,7 +203,8 @@ func Test_gridPathCells_pentagon_distortion(t *testing.T) {
 			cOut := make([]H3Index, cSize)
 			cErr := _gridPathCellsC(tt.start, tt.end, cOut)
 
-			goOut, goErr := gridPathCells(nil, tt.start, tt.end)
+			goOut := make([]H3Index, cSize)
+			goErr := gridPathCells(goOut, tt.start, tt.end)
 
 			// Check error parity
 			if cErr != goErr {
