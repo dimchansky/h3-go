@@ -76,17 +76,17 @@ func Test_bboxFromLinkedGeoLoop_parity(t *testing.T) {
 
 				const tolerance = 1e-15
 
-				if math.Abs(goBbox.North-cBbox.North) > tolerance {
-					t.Errorf("North mismatch for %s: Go=%v, C=%v", tc.name, goBbox.North, cBbox.North)
+				if math.Abs(goBbox.North.Rad()-cBbox.North.Rad()) > tolerance {
+					t.Errorf("North mismatch for %s: Go=%v, C=%v", tc.name, goBbox.North.Rad(), cBbox.North.Rad())
 				}
-				if math.Abs(goBbox.South-cBbox.South) > tolerance {
-					t.Errorf("South mismatch for %s: Go=%v, C=%v", tc.name, goBbox.South, cBbox.South)
+				if math.Abs(goBbox.South.Rad()-cBbox.South.Rad()) > tolerance {
+					t.Errorf("South mismatch for %s: Go=%v, C=%v", tc.name, goBbox.South.Rad(), cBbox.South.Rad())
 				}
-				if math.Abs(goBbox.East-cBbox.East) > tolerance {
-					t.Errorf("East mismatch for %s: Go=%v, C=%v", tc.name, goBbox.East, cBbox.East)
+				if math.Abs(goBbox.East.Rad()-cBbox.East.Rad()) > tolerance {
+					t.Errorf("East mismatch for %s: Go=%v, C=%v", tc.name, goBbox.East.Rad(), cBbox.East.Rad())
 				}
-				if math.Abs(goBbox.West-cBbox.West) > tolerance {
-					t.Errorf("West mismatch for %s: Go=%v, C=%v", tc.name, goBbox.West, cBbox.West)
+				if math.Abs(goBbox.West.Rad()-cBbox.West.Rad()) > tolerance {
+					t.Errorf("West mismatch for %s: Go=%v, C=%v", tc.name, goBbox.West.Rad(), cBbox.West.Rad())
 				}
 			}
 

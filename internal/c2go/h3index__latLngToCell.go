@@ -8,7 +8,9 @@ func latLngToCell(g *LatLng, res int32, out *H3Index) H3Error {
 	if res < 0 || res > MAX_H3_RES {
 		return E_RES_DOMAIN
 	}
-	if math.IsInf(g.Lat, 0) || math.IsNaN(g.Lat) || math.IsInf(g.Lng, 0) || math.IsNaN(g.Lng) {
+	latRad := g.Lat.Rad()
+	lngRad := g.Lng.Rad()
+	if math.IsInf(latRad, 0) || math.IsNaN(latRad) || math.IsInf(lngRad, 0) || math.IsNaN(lngRad) {
 		return E_LATLNG_DOMAIN
 	}
 

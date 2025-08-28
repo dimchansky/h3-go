@@ -5,6 +5,8 @@ package c2go
 import (
 	"math"
 	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 func Test_scaleBBox_parity(t *testing.T) {
@@ -39,21 +41,21 @@ func Test_scaleBBox_parity(t *testing.T) {
 			scaleBBox(&bboxGo, tt.scale)
 
 			// Compare results
-			if math.Abs(bboxGo.North-bboxC.North) > epsilon {
+			if math.Abs(bboxGo.North.Rad()-bboxC.North.Rad()) > epsilon {
 				t.Errorf("scaleBBox() North mismatch: Go=%g, C=%g (diff=%g)",
-					bboxGo.North, bboxC.North, math.Abs(bboxGo.North-bboxC.North))
+					bboxGo.North.Rad(), bboxC.North.Rad(), math.Abs(bboxGo.North.Rad()-bboxC.North.Rad()))
 			}
-			if math.Abs(bboxGo.South-bboxC.South) > epsilon {
+			if math.Abs(bboxGo.South.Rad()-bboxC.South.Rad()) > epsilon {
 				t.Errorf("scaleBBox() South mismatch: Go=%g, C=%g (diff=%g)",
-					bboxGo.South, bboxC.South, math.Abs(bboxGo.South-bboxC.South))
+					bboxGo.South.Rad(), bboxC.South.Rad(), math.Abs(bboxGo.South.Rad()-bboxC.South.Rad()))
 			}
-			if math.Abs(bboxGo.East-bboxC.East) > epsilon {
+			if math.Abs(bboxGo.East.Rad()-bboxC.East.Rad()) > epsilon {
 				t.Errorf("scaleBBox() East mismatch: Go=%g, C=%g (diff=%g)",
-					bboxGo.East, bboxC.East, math.Abs(bboxGo.East-bboxC.East))
+					bboxGo.East.Rad(), bboxC.East.Rad(), math.Abs(bboxGo.East.Rad()-bboxC.East.Rad()))
 			}
-			if math.Abs(bboxGo.West-bboxC.West) > epsilon {
+			if math.Abs(bboxGo.West.Rad()-bboxC.West.Rad()) > epsilon {
 				t.Errorf("scaleBBox() West mismatch: Go=%g, C=%g (diff=%g)",
-					bboxGo.West, bboxC.West, math.Abs(bboxGo.West-bboxC.West))
+					bboxGo.West.Rad(), bboxC.West.Rad(), math.Abs(bboxGo.West.Rad()-bboxC.West.Rad()))
 			}
 		})
 	}
@@ -89,8 +91,8 @@ func Test_scaleBBox_parity(t *testing.T) {
 				bbox:  BBox{math.Pi / 2 * 0.9, -0.1, 0.1, -0.1},
 				scale: 2.0,
 				checkFn: func(t *testing.T, result BBox) {
-					if result.North > math.Pi/2 {
-						t.Errorf("North should be clamped to π/2, got %g", result.North)
+					if result.North > angle.PiOver2 {
+						t.Errorf("North should be clamped to π/2, got %g", result.North.Rad())
 					}
 				},
 			},
@@ -99,8 +101,8 @@ func Test_scaleBBox_parity(t *testing.T) {
 				bbox:  BBox{0.1, -math.Pi / 2 * 0.9, 0.1, -0.1},
 				scale: 2.0,
 				checkFn: func(t *testing.T, result BBox) {
-					if result.South < -math.Pi/2 {
-						t.Errorf("South should be clamped to -π/2, got %g", result.South)
+					if result.South < -angle.PiOver2 {
+						t.Errorf("South should be clamped to -π/2, got %g", result.South.Rad())
 					}
 				},
 			},

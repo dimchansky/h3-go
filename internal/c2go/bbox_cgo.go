@@ -22,13 +22,14 @@ extern H3Error lineHexEstimate(const LatLng* origin, const LatLng* destination, 
 extern H3Error bboxHexEstimate(const BBox* bbox, int res, int64_t* out);
 */
 import "C"
+import "github.com/dimchansky/h3-go/angle"
 
 func toCBBox(b BBox) C.BBox {
 	var cb C.BBox
-	cb.north = C.double(b.North)
-	cb.south = C.double(b.South)
-	cb.east = C.double(b.East)
-	cb.west = C.double(b.West)
+	cb.north = C.double(b.North.Rad())
+	cb.south = C.double(b.South.Rad())
+	cb.east = C.double(b.East.Rad())
+	cb.west = C.double(b.West.Rad())
 	return cb
 }
 
@@ -70,15 +71,15 @@ func bboxCenterC(b BBox) LatLng {
 	cb := toCBBox(b)
 	var center C.LatLng
 	C.bboxCenter(&cb, &center)
-	return LatLng{Lat: float64(center.lat), Lng: float64(center.lng)}
+	return LatLng{Lat: angle.Rad(float64(center.lat)), Lng: angle.Rad(float64(center.lng))}
 }
 
 // bboxContainsC calls the original C implementation.
 func bboxContainsC(b BBox, p LatLng) bool {
 	cb := toCBBox(b)
 	var cp C.LatLng
-	cp.lat = C.double(p.Lat)
-	cp.lng = C.double(p.Lng)
+	cp.lat = C.double(p.Lat.Rad())
+	cp.lng = C.double(p.Lng.Rad())
 	if C.bboxContains(&cb, &cp) {
 		return true
 	} else {
@@ -113,10 +114,10 @@ func scaleBBoxC(bbox *BBox, scale float64) {
 	cb := toCBBox(*bbox)
 	C.scaleBBox(&cb, C.double(scale))
 	// Convert back to Go struct
-	bbox.North = float64(cb.north)
-	bbox.South = float64(cb.south)
-	bbox.East = float64(cb.east)
-	bbox.West = float64(cb.west)
+	bbox.North = angle.Rad(float64(cb.north))
+	bbox.South = angle.Rad(float64(cb.south))
+	bbox.East = angle.Rad(float64(cb.east))
+	bbox.West = angle.Rad(float64(cb.west))
 }
 
 // _hexRadiusKmC calls the original C implementation.

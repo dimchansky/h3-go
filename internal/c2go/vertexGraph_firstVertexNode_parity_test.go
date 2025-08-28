@@ -146,5 +146,5 @@ func Test_firstVertexNode_parity(t *testing.T) {
 // latLngsAlmostEqual checks if two LatLng values are approximately equal
 func latLngsAlmostEqual(a, b *LatLng) bool {
 	const tolerance = 1e-12
-	return abs(a.Lat-b.Lat) < tolerance && abs(a.Lng-b.Lng) < tolerance
+	return abs(a.Lat.Rad()-b.Lat.Rad()) < tolerance && abs(a.Lng.Rad()-b.Lng.Rad()) < tolerance
 }

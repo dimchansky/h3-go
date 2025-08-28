@@ -1,17 +1,22 @@
 package c2go
 
-import "math"
+import (
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // bboxCenter returns the center of a bbox.
 // Handles transmeridian bboxes by adding 2π to east longitude before averaging.
 // Ported from H3 C: bbox.c::bboxCenter
 func bboxCenter(b *BBox) LatLng {
 	center := LatLng{}
-	center.Lat = (b.North + b.South) * 0.5
+	// Average latitude directly with Angle operations
+	center.Lat = (b.North + b.South).Mul(0.5)
+
 	east := b.East
 	if bboxIsTransmeridian(b) {
-		east += 2 * math.Pi
+		east += angle.TwoPi
 	}
-	center.Lng = constrainLng((east + b.West) * 0.5)
+	// Average longitude and wrap to [-π, π]
+	center.Lng = constrainLng((east + b.West).Mul(0.5))
 	return center
 }

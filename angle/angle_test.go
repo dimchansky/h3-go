@@ -44,71 +44,14 @@ func TestRadDegConversions(t *testing.T) {
 	}
 }
 
-func TestWrapTwoPi(t *testing.T) {
-	twoPi := 2 * math.Pi
-	cases := []struct {
-		in   float64
-		want float64
-	}{
-		{0, 0},
-		{twoPi, 0},
-		{-0.1, twoPi - 0.1},
-		{4*twoPi + 0.3, 0.3},
-		{-4*twoPi - 0.3, twoPi - 0.3},
-	}
-	for _, tc := range cases {
-		t.Run(fmt.Sprintf("in=%g", tc.in), func(t *testing.T) {
-			got := Rad(tc.in).WrapTwoPi().Rad()
-			if !approx(got, tc.want, radEps) {
-				t.Fatalf("WrapTwoPi(): want=%v got=%v", tc.want, got)
-			}
-		})
-	}
-}
-
-func TestWrapPi(t *testing.T) {
-	pi := math.Pi
-	twoPi := 2 * math.Pi
-	cases := []struct {
-		in   float64
-		want float64
-	}{
-		{0, 0},
-		{pi, pi},             // π stays π (range is (-π, π])
-		{-pi, pi},            // -π wraps to π
-		{pi + pi/2, -pi / 2}, // 1.5π -> -0.5π
-		{-pi - pi/2, pi / 2}, // -1.5π -> 0.5π
-		{3 * pi, pi},         // 3π -> π (NOT -π in this convention)
-		{5 * pi, pi},         // 5π -> π
-		{10 * twoPi, 0},      // many turns -> 0
-	}
-
-	for _, tc := range cases {
-		t.Run(fmt.Sprintf("in=%g", tc.in), func(t *testing.T) {
-			got := Rad(tc.in).WrapPi().Rad()
-			if !approx(got, tc.want, radEps) {
-				t.Fatalf("WrapPi(): want=%v got=%v", tc.want, got)
-			}
-			// Invariant: result is in (-π, π] and equal to input modulo 2π.
-			if !(got > -pi && got <= pi) {
-				t.Fatalf("WrapPi(): out of range (-π, π], got %v", got)
-			}
-			diff := math.Mod(got-tc.in, 2*math.Pi)
-			if diff < -1e-12 || diff > 1e-12 {
-				t.Fatalf("WrapPi(): not equivalent modulo 2π, diff=%v", diff)
-			}
-		})
-	}
-}
-
 func TestArithmetic(t *testing.T) {
 	a := Deg(30)  // π/6
 	b := Deg(45)  // π/4
-	s := a.Add(b) // 75°
-	d := b.Sub(a) // 15°
+	s := a + b    // 75°
+	d := b - a    // 15°
 	m := a.Mul(2) // 60°
 	v := b.Div(2) // 22.5°
-	n := a.Neg()  // -30°
+	n := -a       // -30°
 
 	if !approx(s.Deg(), 75, degreeEps) {
 		t.Fatalf("Add(): want 75 got %v", s.Deg())
@@ -129,7 +72,7 @@ func TestArithmetic(t *testing.T) {
 
 func TestEqualApprox(t *testing.T) {
 	a := Deg(10)
-	b := Deg(10).Add(Rad(5e-13)) // tiny delta in radians
+	b := Deg(10) + Rad(5e-13) // tiny delta in radians
 
 	// Default epsilon path (eps <= 0 -> 1e-12)
 	if !a.EqualApprox(b, 0) {

@@ -42,8 +42,8 @@ func Test_bboxCenter_ParityWithC(t *testing.T) {
 	b := BBox{North: 1.2, South: -0.4, East: 3.0, West: -2.5}
 	goVal := bboxCenter(&b)
 	cVal := bboxCenterC(b)
-	if math.Abs(goVal.Lat-cVal.Lat) > 1e-15 || math.Abs(goVal.Lng-cVal.Lng) > 1e-15 {
-		t.Fatalf("bboxCenter mismatch: go=(%.17g,%.17g) c=(%.17g,%.17g)", goVal.Lat, goVal.Lng, cVal.Lat, cVal.Lng)
+	if math.Abs(goVal.Lat.Rad()-cVal.Lat.Rad()) > 1e-15 || math.Abs(goVal.Lng.Rad()-cVal.Lng.Rad()) > 1e-15 {
+		t.Fatalf("bboxCenter mismatch: go=(%.17g,%.17g) c=(%.17g,%.17g)", goVal.Lat.Rad(), goVal.Lng.Rad(), cVal.Lat.Rad(), cVal.Lng.Rad())
 	}
 }
 

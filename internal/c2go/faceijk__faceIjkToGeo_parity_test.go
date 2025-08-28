@@ -80,12 +80,12 @@ func Test_faceIjkToGeo_ParityWithC(t *testing.T) {
 
 			// Allow small floating-point differences in geographic coordinates
 			const tolerance = 1e-12
-			if absf(goGeo.Lat-cGeo.Lat) > tolerance {
-				t.Fatalf("Lat mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lat, cGeo.Lat, absf(goGeo.Lat-cGeo.Lat))
+			if !goGeo.Lat.EqualApprox(cGeo.Lat, tolerance) {
+				t.Fatalf("Lat mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lat.Rad(), cGeo.Lat.Rad(), absf(goGeo.Lat.Rad()-cGeo.Lat.Rad()))
 			}
 
-			if absf(goGeo.Lng-cGeo.Lng) > tolerance {
-				t.Fatalf("Lng mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lng, cGeo.Lng, absf(goGeo.Lng-cGeo.Lng))
+			if !goGeo.Lng.EqualApprox(cGeo.Lng, tolerance) {
+				t.Fatalf("Lng mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lng.Rad(), cGeo.Lng.Rad(), absf(goGeo.Lng.Rad()-cGeo.Lng.Rad()))
 			}
 		})
 	}
@@ -104,14 +104,14 @@ func Test_faceIjkToGeo_FaceCenters(t *testing.T) {
 			expected := faceCenterGeo[face]
 			const tolerance = 1e-12
 
-			if absf(result.Lat-expected.Lat) > tolerance {
+			if !result.Lat.EqualApprox(expected.Lat, tolerance) {
 				t.Fatalf("Face %d center Lat mismatch: got=%.15f expected=%.15f diff=%.15f",
-					face, result.Lat, expected.Lat, absf(result.Lat-expected.Lat))
+					face, result.Lat.Rad(), expected.Lat.Rad(), absf(result.Lat.Rad()-expected.Lat.Rad()))
 			}
 
-			if absf(result.Lng-expected.Lng) > tolerance {
+			if !result.Lng.EqualApprox(expected.Lng, tolerance) {
 				t.Fatalf("Face %d center Lng mismatch: got=%.15f expected=%.15f diff=%.15f",
-					face, result.Lng, expected.Lng, absf(result.Lng-expected.Lng))
+					face, result.Lng.Rad(), expected.Lng.Rad(), absf(result.Lng.Rad()-expected.Lng.Rad()))
 			}
 		})
 	}

@@ -25,10 +25,8 @@ func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32,
 		for j := int64(0); j < numHexesEstimate; j++ {
 			var interpolate LatLng
 			invNumHexesEst := 1.0 / float64(numHexesEstimate)
-			interpolate.Lat = (origin.Lat * float64(numHexesEstimate-j) * invNumHexesEst) +
-				(destination.Lat * float64(j) * invNumHexesEst)
-			interpolate.Lng = (origin.Lng * float64(numHexesEstimate-j) * invNumHexesEst) +
-				(destination.Lng * float64(j) * invNumHexesEst)
+			interpolate.Lat = origin.Lat.Mul(float64(numHexesEstimate-j)*invNumHexesEst) + (destination.Lat.Mul(float64(j) * invNumHexesEst))
+			interpolate.Lng = origin.Lng.Mul(float64(numHexesEstimate-j)*invNumHexesEst) + (destination.Lng.Mul(float64(j) * invNumHexesEst))
 
 			var pointHex H3Index
 			err := latLngToCell(&interpolate, res, &pointHex)

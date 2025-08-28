@@ -18,7 +18,11 @@ VertexNode* findNodeForEdge(const VertexGraph* graph, const LatLng* fromVtx, con
 VertexNode* findNodeForVertex(const VertexGraph* graph, const LatLng* fromVtx);
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // _hashVertexC wraps the C _hashVertex function for parity testing.
 func _hashVertexC(vertex *LatLng, res int32, numBuckets int32) uint32 {
@@ -86,8 +90,8 @@ func addVertexNodeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexN
 
 	// Convert C result back to Go
 	goNode := &VertexNode{
-		From: LatLng{Lat: float64(cNode.from.lat), Lng: float64(cNode.from.lng)},
-		To:   LatLng{Lat: float64(cNode.to.lat), Lng: float64(cNode.to.lng)},
+		From: LatLng{Lat: angle.Rad(float64(cNode.from.lat)), Lng: angle.Rad(float64(cNode.from.lng))},
+		To:   LatLng{Lat: angle.Rad(float64(cNode.to.lat)), Lng: angle.Rad(float64(cNode.to.lng))},
 	}
 
 	// Update the graph size from C
@@ -176,8 +180,8 @@ func firstVertexNodeC(graph *VertexGraph) *VertexNode {
 				result := C.firstVertexNode(&cGraph)
 				if result != nil {
 					return &VertexNode{
-						From: LatLng{Lat: float64(result.from.lat), Lng: float64(result.from.lng)},
-						To:   LatLng{Lat: float64(result.to.lat), Lng: float64(result.to.lng)},
+						From: LatLng{Lat: angle.Rad(float64(result.from.lat)), Lng: angle.Rad(float64(result.from.lng))},
+						To:   LatLng{Lat: angle.Rad(float64(result.to.lat)), Lng: angle.Rad(float64(result.to.lng))},
 					}
 				}
 				break
@@ -254,8 +258,8 @@ func findNodeForEdgeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *Verte
 		result := C.findNodeForEdge(&cGraph, &cFromVtx, cToVtx)
 		if result != nil {
 			return &VertexNode{
-				From: LatLng{Lat: float64(result.from.lat), Lng: float64(result.from.lng)},
-				To:   LatLng{Lat: float64(result.to.lat), Lng: float64(result.to.lng)},
+				From: LatLng{Lat: angle.Rad(float64(result.from.lat)), Lng: angle.Rad(float64(result.from.lng))},
+				To:   LatLng{Lat: angle.Rad(float64(result.to.lat)), Lng: angle.Rad(float64(result.to.lng))},
 			}
 		}
 	}
@@ -316,12 +320,12 @@ func _initVertexNodeC(node *VertexNode, fromVtx *LatLng, toVtx *LatLng) {
 
 	// Copy results back to Go struct
 	node.From = LatLng{
-		Lat: float64(cNode.from.lat),
-		Lng: float64(cNode.from.lng),
+		Lat: angle.Rad(float64(cNode.from.lat)),
+		Lng: angle.Rad(float64(cNode.from.lng)),
 	}
 	node.To = LatLng{
-		Lat: float64(cNode.to.lat),
-		Lng: float64(cNode.to.lng),
+		Lat: angle.Rad(float64(cNode.to.lat)),
+		Lng: angle.Rad(float64(cNode.to.lng)),
 	}
 	node.Next = nil // C function sets next to NULL
 }

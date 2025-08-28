@@ -1,9 +1,12 @@
 package c2go
 
-// BBox mirrors the C struct BBox used in bbox.h (radians)
+import "github.com/dimchansky/h3-go/angle"
+
+// BBox mirrors the C struct BBox used in bbox.h
+// Stores latitude and longitude bounds as angle.Angle (internally in radians).
 type BBox struct {
-	North float64
-	South float64
-	East  float64
-	West  float64
+	North angle.Angle
+	South angle.Angle
+	East  angle.Angle
+	West  angle.Angle
 }

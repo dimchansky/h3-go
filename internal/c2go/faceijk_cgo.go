@@ -44,12 +44,13 @@ static inline void face_ijk_pent_to_cell_boundary_c(const FaceIJK* h, int res, i
 }
 */
 import "C"
+import "github.com/dimchansky/h3-go/angle"
 
 // _geoToClosestFaceC calls the original C implementation.
 func _geoToClosestFaceC(g *LatLng, face *int32, sqd *float64) {
 	var cg C.LatLng
-	cg.lat = C.double(g.Lat)
-	cg.lng = C.double(g.Lng)
+	cg.lat = C.double(g.Lat.Rad())
+	cg.lng = C.double(g.Lng.Rad())
 
 	var cface C.int
 	var csqd C.double
@@ -63,8 +64,8 @@ func _geoToClosestFaceC(g *LatLng, face *int32, sqd *float64) {
 // _geoToHex2dC calls the original C implementation.
 func _geoToHex2dC(g *LatLng, res int32, face *int32, v *Vec2d) {
 	var cg C.LatLng
-	cg.lat = C.double(g.Lat)
-	cg.lng = C.double(g.Lng)
+	cg.lat = C.double(g.Lat.Rad())
+	cg.lng = C.double(g.Lng.Rad())
 
 	var cface C.int
 	var cv C.Vec2d
@@ -86,8 +87,8 @@ func _hex2dToGeoC(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
 
 	C.hex2d_to_geo_c(&cv, C.int(face), C.int(res), C.int(substrate), &cg)
 
-	g.Lat = float64(cg.lat)
-	g.Lng = float64(cg.lng)
+	g.Lat = angle.Rad(float64(cg.lat))
+	g.Lng = angle.Rad(float64(cg.lng))
 }
 
 // _faceIjkToGeoC calls the original C implementation.
@@ -102,8 +103,8 @@ func _faceIjkToGeoC(h *FaceIJK, res int32, g *LatLng) {
 
 	C.face_ijk_to_geo_c(&ch, C.int(res), &cg)
 
-	g.Lat = float64(cg.lat)
-	g.Lng = float64(cg.lng)
+	g.Lat = angle.Rad(float64(cg.lat))
+	g.Lng = angle.Rad(float64(cg.lng))
 }
 
 // _adjustOverageClassIIC calls the original C implementation.
@@ -220,8 +221,8 @@ func _faceIjkToCellBoundaryC(h *FaceIJK, res int32, start int32, length int32, g
 
 	// Copy vertices from C to Go
 	for i := int32(0); i < g.NumVerts; i++ {
-		g.Verts[i].Lat = float64(cg.verts[i].lat)
-		g.Verts[i].Lng = float64(cg.verts[i].lng)
+		g.Verts[i].Lat = angle.Rad(float64(cg.verts[i].lat))
+		g.Verts[i].Lng = angle.Rad(float64(cg.verts[i].lng))
 	}
 }
 
@@ -249,7 +250,7 @@ func _faceIjkPentToCellBoundaryC(h *FaceIJK, res int32, start int32, length int3
 
 	// Copy vertices from C to Go
 	for i := int32(0); i < g.NumVerts; i++ {
-		g.Verts[i].Lat = float64(cg.verts[i].lat)
-		g.Verts[i].Lng = float64(cg.verts[i].lng)
+		g.Verts[i].Lat = angle.Rad(float64(cg.verts[i].lat))
+		g.Verts[i].Lng = angle.Rad(float64(cg.verts[i].lng))
 	}
 }

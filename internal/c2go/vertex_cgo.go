@@ -12,6 +12,7 @@ package c2go
 extern H3Error vertexRotations_wrapper(H3Index cell, int *out);
 */
 import "C"
+import "github.com/dimchansky/h3-go/angle"
 
 // vertexRotationsC wraps the C vertexRotations function.
 func vertexRotationsC(cell H3Index, out *int32) H3Error {
@@ -55,8 +56,8 @@ func vertexToLatLngC(vertex H3Index, coord *LatLng) H3Error {
 	var cCoord C.LatLng
 	err := H3Error(C.vertexToLatLng(C.H3Index(vertex), &cCoord))
 	if err == E_SUCCESS {
-		coord.Lat = float64(cCoord.lat)
-		coord.Lng = float64(cCoord.lng)
+		coord.Lat = angle.Rad(float64(cCoord.lat))
+		coord.Lng = angle.Rad(float64(cCoord.lng))
 	}
 	return err
 }

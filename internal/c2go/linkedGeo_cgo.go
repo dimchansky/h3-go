@@ -26,7 +26,11 @@ void destroyLinkedGeoLoopC(LinkedGeoLoop *loop);
 void destroyLinkedMultiPolygon(LinkedGeoPolygon *polygon);
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // countLinkedCoordsC wraps the C countLinkedCoords function for parity testing.
 func countLinkedCoordsC(loop *LinkedGeoLoop) int32 {
@@ -199,10 +203,10 @@ func bboxFromLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox) {
 	C.bboxFromLinkedGeoLoopC(cLoop, cBbox)
 
 	// Convert C BBox back to Go BBox
-	bbox.North = float64(cBbox.north)
-	bbox.South = float64(cBbox.south)
-	bbox.East = float64(cBbox.east)
-	bbox.West = float64(cBbox.west)
+	bbox.North = angle.Rad(float64(cBbox.north))
+	bbox.South = angle.Rad(float64(cBbox.south))
+	bbox.East = angle.Rad(float64(cBbox.east))
+	bbox.West = angle.Rad(float64(cBbox.west))
 
 	// Clean up C memory
 	currentCNode := firstNode
@@ -466,7 +470,7 @@ func addLinkedCoordC(wasEmpty bool, loopHadCoord bool, vertex LatLng) (returnsCo
 		setsFirst = (wasEmpty && cLoop.first == cResult) || (!wasEmpty && cLoop.first == cExisting)
 		setsLast = (cLoop.last == cResult)
 		linksCoords = (loopHadCoord && cExisting != nil && cExisting.next == cResult)
-		vertexMatches = (float64(cResult.vertex.lat) == vertex.Lat && float64(cResult.vertex.lng) == vertex.Lng)
+		vertexMatches = (float64(cResult.vertex.lat) == vertex.Lat.Rad() && float64(cResult.vertex.lng) == vertex.Lng.Rad())
 	}
 
 	return

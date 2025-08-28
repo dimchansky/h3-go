@@ -1,6 +1,10 @@
 package c2go
 
-import "math"
+import (
+	"math"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // bboxFromGeoLoop computes a bounding box for a loop of coordinates.
 // Mirrors H3's polygon.c::bboxFromGeoLoop behavior.
@@ -10,12 +14,12 @@ func bboxFromGeoLoop(loop []LatLng, bbox *BBox) {
 		*bbox = BBox{}
 		return
 	}
-	south := math.MaxFloat64
-	west := math.MaxFloat64
-	north := -math.MaxFloat64
-	east := -math.MaxFloat64
-	minPosLng := math.MaxFloat64
-	maxNegLng := -math.MaxFloat64
+	south := angle.Rad(math.MaxFloat64)
+	west := angle.Rad(math.MaxFloat64)
+	north := angle.Rad(-math.MaxFloat64)
+	east := angle.Rad(-math.MaxFloat64)
+	minPosLng := angle.Rad(math.MaxFloat64)
+	maxNegLng := angle.Rad(-math.MaxFloat64)
 	isTrans := false
 	for i := 0; i < len(loop); i++ {
 		coord := loop[i]
@@ -40,7 +44,7 @@ func bboxFromGeoLoop(loop []LatLng, bbox *BBox) {
 		if lng < 0 && lng > maxNegLng {
 			maxNegLng = lng
 		}
-		if math.Abs(lng-next.Lng) > math.Pi {
+		if (lng - next.Lng).Abs() > angle.Pi {
 			isTrans = true
 		}
 	}

@@ -104,21 +104,21 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 
 			// Compare results
 			for i := 0; i < numBboxes; i++ {
-				if math.Abs(bboxesGo[i].North-bboxesC[i].North) > epsilon {
+				if math.Abs(bboxesGo[i].North.Rad()-bboxesC[i].North.Rad()) > epsilon {
 					t.Errorf("bboxesFromGeoPolygon() bbox[%d].North mismatch: Go=%g, C=%g",
-						i, bboxesGo[i].North, bboxesC[i].North)
+						i, bboxesGo[i].North.Rad(), bboxesC[i].North.Rad())
 				}
-				if math.Abs(bboxesGo[i].South-bboxesC[i].South) > epsilon {
+				if math.Abs(bboxesGo[i].South.Rad()-bboxesC[i].South.Rad()) > epsilon {
 					t.Errorf("bboxesFromGeoPolygon() bbox[%d].South mismatch: Go=%g, C=%g",
-						i, bboxesGo[i].South, bboxesC[i].South)
+						i, bboxesGo[i].South.Rad(), bboxesC[i].South.Rad())
 				}
-				if math.Abs(bboxesGo[i].East-bboxesC[i].East) > epsilon {
+				if math.Abs(bboxesGo[i].East.Rad()-bboxesC[i].East.Rad()) > epsilon {
 					t.Errorf("bboxesFromGeoPolygon() bbox[%d].East mismatch: Go=%g, C=%g",
-						i, bboxesGo[i].East, bboxesC[i].East)
+						i, bboxesGo[i].East.Rad(), bboxesC[i].East.Rad())
 				}
-				if math.Abs(bboxesGo[i].West-bboxesC[i].West) > epsilon {
+				if math.Abs(bboxesGo[i].West.Rad()-bboxesC[i].West.Rad()) > epsilon {
 					t.Errorf("bboxesFromGeoPolygon() bbox[%d].West mismatch: Go=%g, C=%g",
-						i, bboxesGo[i].West, bboxesC[i].West)
+						i, bboxesGo[i].West.Rad(), bboxesC[i].West.Rad())
 				}
 			}
 		})

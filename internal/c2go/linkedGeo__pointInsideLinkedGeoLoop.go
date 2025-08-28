@@ -32,8 +32,8 @@ func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bo
 	isTransmeridian := bboxIsTransmeridian(bbox)
 	contains := false
 
-	lat := coord.Lat
-	lng := normalizeLngTransmeridian(coord.Lng, isTransmeridian)
+	lat := coord.Lat.Rad()
+	lng := normalizeLngTransmeridian(coord.Lng.Rad(), isTransmeridian)
 
 	var a, b LatLng
 
@@ -70,7 +70,7 @@ func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bo
 
 		// Ray casting algo requires the second point to always be higher
 		// than the first, so swap if needed
-		if a.Lat > b.Lat {
+		if a.Lat.Rad() > b.Lat.Rad() {
 			a, b = b, a
 		}
 
@@ -84,18 +84,18 @@ func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bo
 		// a cell center or vertex, and no cell has a center or vertex on the
 		// north pole. If we need to expand this algo to more generic uses we
 		// might need to handle this edge case.
-		if lat == a.Lat || lat == b.Lat {
+		if lat == a.Lat.Rad() || lat == b.Lat.Rad() {
 			lat += DBL_EPSILON
 		}
 
 		// If we're totally above or below the latitude ranges, the test
 		// ray cannot intersect the line segment, so let's move on
-		if lat < a.Lat || lat > b.Lat {
+		if lat < a.Lat.Rad() || lat > b.Lat.Rad() {
 			continue
 		}
 
-		aLng := normalizeLngTransmeridian(a.Lng, isTransmeridian)
-		bLng := normalizeLngTransmeridian(b.Lng, isTransmeridian)
+		aLng := normalizeLngTransmeridian(a.Lng.Rad(), isTransmeridian)
+		bLng := normalizeLngTransmeridian(b.Lng.Rad(), isTransmeridian)
 
 		// Rays are cast in the longitudinal direction, in case a point
 		// exactly matches, to decide tiebreakers, bias westerly
@@ -108,7 +108,7 @@ func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bo
 		// This is done by computing the percent above a the lat is,
 		// and traversing the same percent in the longitudinal direction
 		// of a to b
-		ratio := (lat - a.Lat) / (b.Lat - a.Lat)
+		ratio := (lat - a.Lat.Rad()) / (b.Lat.Rad() - a.Lat.Rad())
 		testLng := normalizeLngTransmeridian(aLng+(bLng-aLng)*ratio, isTransmeridian)
 
 		// Intersection of the ray

@@ -1,6 +1,8 @@
 package c2go
 
-import "math"
+import (
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // scaleBBox scales a given bounding box by some factor.
 // Scales both width and height by the factor, rather than scaling area, which will scale at scale^2.
@@ -14,28 +16,28 @@ func scaleBBox(bbox *BBox, scale float64) {
 	heightBuffer := (height*scale - height) * 0.5
 
 	// Scale north and south, clamping to latitude domain
-	bbox.North += heightBuffer
-	if bbox.North > math.Pi/2 {
-		bbox.North = math.Pi / 2
+	bbox.North = bbox.North + angle.Rad(heightBuffer)
+	if bbox.North > angle.PiOver2 {
+		bbox.North = angle.PiOver2
 	}
-	bbox.South -= heightBuffer
-	if bbox.South < -math.Pi/2 {
-		bbox.South = -math.Pi / 2
+	bbox.South = bbox.South - angle.Rad(heightBuffer)
+	if bbox.South < -angle.PiOver2 {
+		bbox.South = -angle.PiOver2
 	}
 
 	// Scale east and west, clamping to longitude domain
-	bbox.East += widthBuffer
-	if bbox.East > math.Pi {
-		bbox.East -= 2 * math.Pi
+	bbox.East = bbox.East + angle.Rad(widthBuffer)
+	if bbox.East > angle.Pi {
+		bbox.East = bbox.East - angle.TwoPi
 	}
-	if bbox.East < -math.Pi {
-		bbox.East += 2 * math.Pi
+	if bbox.East < -angle.Pi {
+		bbox.East = bbox.East + angle.TwoPi
 	}
-	bbox.West -= widthBuffer
-	if bbox.West > math.Pi {
-		bbox.West -= 2 * math.Pi
+	bbox.West = bbox.West - angle.Rad(widthBuffer)
+	if bbox.West > angle.Pi {
+		bbox.West = bbox.West - angle.TwoPi
 	}
-	if bbox.West < -math.Pi {
-		bbox.West += 2 * math.Pi
+	if bbox.West < -angle.Pi {
+		bbox.West = bbox.West + angle.TwoPi
 	}
 }

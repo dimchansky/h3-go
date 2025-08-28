@@ -12,8 +12,8 @@ func Test_bboxFromGeoLoop_ParityWithC(t *testing.T) {
 	var goBBox BBox
 	bboxFromGeoLoop(loop, &goBBox)
 	cBBox := bboxFromGeoLoopC(loop)
-	if math.Abs(goBBox.North-cBBox.North) > 1e-15 || math.Abs(goBBox.South-cBBox.South) > 1e-15 ||
-		math.Abs(goBBox.East-cBBox.East) > 1e-15 || math.Abs(goBBox.West-cBBox.West) > 1e-15 {
+	if math.Abs(goBBox.North.Rad()-cBBox.North.Rad()) > 1e-15 || math.Abs(goBBox.South.Rad()-cBBox.South.Rad()) > 1e-15 ||
+		math.Abs(goBBox.East.Rad()-cBBox.East.Rad()) > 1e-15 || math.Abs(goBBox.West.Rad()-cBBox.West.Rad()) > 1e-15 {
 		t.Fatalf("bboxFromGeoLoop mismatch: go=%+v c=%+v", goBBox, cBBox)
 	}
 }

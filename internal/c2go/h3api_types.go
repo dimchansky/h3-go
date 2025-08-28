@@ -1,15 +1,17 @@
 package c2go
 
+import "github.com/dimchansky/h3-go/angle"
+
 // This file contains types that mirror the H3 C API types defined in h3api.h
 
 // H3Index mirrors C H3Index (uint64) from h3api.h
 type H3Index uint64
 
 // LatLng mirrors the C struct from h3api.h
-// Latitude and longitude in radians.
+// Latitude and longitude stored as angle.Angle (internally in radians).
 type LatLng struct {
-	Lat float64 // latitude in radians
-	Lng float64 // longitude in radians
+	Lat angle.Angle // latitude
+	Lng angle.Angle // longitude
 }
 
 // CellBoundary mirrors the CellBoundary struct from h3api.h

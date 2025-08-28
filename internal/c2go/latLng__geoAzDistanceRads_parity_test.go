@@ -23,7 +23,7 @@ func Test_geoAzDistanceRads_ParityWithC(t *testing.T) {
 		var goP2 LatLng
 		_geoAzDistanceRads(&tc.p1, tc.az, tc.d, &goP2)
 		cP2 := _geoAzDistanceRadsC(tc.p1, tc.az, tc.d)
-		if math.Abs(goP2.Lat-cP2.Lat) > 1e-15 || math.Abs(goP2.Lng-cP2.Lng) > 1e-15 {
+		if math.Abs(goP2.Lat.Rad()-cP2.Lat.Rad()) > 1e-15 || math.Abs(goP2.Lng.Rad()-cP2.Lng.Rad()) > 1e-15 {
 			t.Fatalf("_geoAzDistanceRads mismatch: go=(%.17g,%.17g) c=(%.17g,%.17g)", goP2.Lat, goP2.Lng, cP2.Lat, cP2.Lng)
 		}
 	}

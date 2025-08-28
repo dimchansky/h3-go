@@ -2,7 +2,11 @@
 
 package c2go
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // Test_h3index_faceIjkToH3_PentagonRotation_ParityWithC tests a specific case
 // that exposed a bug in pentagon rotation logic. The issue was using
@@ -23,7 +27,7 @@ func Test_h3index_faceIjkToH3_PentagonRotation_ParityWithC(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			g := &LatLng{Lat: tc.lat, Lng: tc.lng}
+			g := &LatLng{Lat: angle.Rad(tc.lat), Lng: angle.Rad(tc.lng)}
 
 			var goOut H3Index
 			var cOut H3Index

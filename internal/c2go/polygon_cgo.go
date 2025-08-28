@@ -12,7 +12,11 @@ package c2go
 extern void bboxesFromGeoPolygon(const GeoPolygon* polygon, BBox* bboxes);
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // validatePolygonFlagsC calls the original C implementation.
 func validatePolygonFlagsC(flags uint32) uint32 {
@@ -65,7 +69,7 @@ func bboxFromGeoLoopC(loop []LatLng) BBox {
 	defer freeFn()
 	var cb C.BBox
 	C.bboxFromGeoLoop(&cg, &cb)
-	return BBox{North: float64(cb.north), South: float64(cb.south), East: float64(cb.east), West: float64(cb.west)}
+	return BBox{North: angle.Rad(float64(cb.north)), South: angle.Rad(float64(cb.south)), East: angle.Rad(float64(cb.east)), West: angle.Rad(float64(cb.west))}
 }
 
 // pointInsideGeoLoopC calls C pointInsideGeoLoop for a point within a GeoLoop + BBox.
@@ -291,9 +295,9 @@ func bboxesFromGeoPolygonC(polygon *GeoPolygon, bboxes []BBox) {
 
 	// Convert back to Go structs
 	for i := 0; i < len(bboxes); i++ {
-		bboxes[i].North = float64(cbboxes[i].north)
-		bboxes[i].South = float64(cbboxes[i].south)
-		bboxes[i].East = float64(cbboxes[i].east)
-		bboxes[i].West = float64(cbboxes[i].west)
+		bboxes[i].North = angle.Rad(float64(cbboxes[i].north))
+		bboxes[i].South = angle.Rad(float64(cbboxes[i].south))
+		bboxes[i].East = angle.Rad(float64(cbboxes[i].east))
+		bboxes[i].West = angle.Rad(float64(cbboxes[i].west))
 	}
 }

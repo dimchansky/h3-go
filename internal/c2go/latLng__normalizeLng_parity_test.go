@@ -2,7 +2,11 @@
 
 package c2go
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 func Test_normalizeLng_ParityWithC(t *testing.T) {
 	cases := []struct {
@@ -16,10 +20,11 @@ func Test_normalizeLng_ParityWithC(t *testing.T) {
 		{-1.0, NORMALIZE_WEST},
 	}
 	for _, tc := range cases {
-		goVal := normalizeLng(tc.lng, tc.mode)
+		inputAngle := angle.Rad(tc.lng)
+		goVal := normalizeLng(inputAngle, tc.mode)
 		cVal := normalizeLngC(tc.lng, tc.mode)
-		if goVal != cVal {
-			t.Fatalf("normalizeLng mismatch: in=%g mode=%d go=%g c=%g", tc.lng, tc.mode, goVal, cVal)
+		if goVal.Rad() != cVal {
+			t.Fatalf("normalizeLng mismatch: in=%g mode=%d go=%g c=%g", tc.lng, tc.mode, goVal.Rad(), cVal)
 		}
 	}
 }

@@ -53,6 +53,7 @@ static H3Error areNeighborCells_c_wrapper(H3Index origin, H3Index destination, i
 }
 */
 import "C"
+import "github.com/dimchansky/h3-go/angle"
 
 // getDirectedEdgeOriginC calls the original C implementation.
 func getDirectedEdgeOriginC(edge H3Index) (H3Index, H3Error) {
@@ -103,8 +104,8 @@ func directedEdgeToBoundaryC(edge H3Index, cb *CellBoundary) H3Error {
 
 		// Copy vertices from C to Go
 		for i := int32(0); i < cb.NumVerts; i++ {
-			cb.Verts[i].Lat = float64(cCb.verts[i].lat)
-			cb.Verts[i].Lng = float64(cCb.verts[i].lng)
+			cb.Verts[i].Lat = angle.Rad(float64(cCb.verts[i].lat))
+			cb.Verts[i].Lng = angle.Rad(float64(cCb.verts[i].lng))
 		}
 	}
 

@@ -47,12 +47,12 @@ func Test_hex2dToGeo_ParityWithC(t *testing.T) {
 
 			// Allow small floating-point differences in geographic coordinates
 			const tolerance = 1e-12
-			if absf(goGeo.Lat-cGeo.Lat) > tolerance {
-				t.Fatalf("Lat mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lat, cGeo.Lat, absf(goGeo.Lat-cGeo.Lat))
+			if !goGeo.Lat.EqualApprox(cGeo.Lat, tolerance) {
+				t.Fatalf("Lat mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lat.Rad(), cGeo.Lat.Rad(), absf(goGeo.Lat.Rad()-cGeo.Lat.Rad()))
 			}
 
-			if absf(goGeo.Lng-cGeo.Lng) > tolerance {
-				t.Fatalf("Lng mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lng, cGeo.Lng, absf(goGeo.Lng-cGeo.Lng))
+			if !goGeo.Lng.EqualApprox(cGeo.Lng, tolerance) {
+				t.Fatalf("Lng mismatch: go=%.15f c=%.15f diff=%.15f", goGeo.Lng.Rad(), cGeo.Lng.Rad(), absf(goGeo.Lng.Rad()-cGeo.Lng.Rad()))
 			}
 		})
 	}
@@ -83,13 +83,13 @@ func Test_hex2dToGeo_RoundTripConsistency(t *testing.T) {
 			_hex2dToGeo(&hex2d, face, 5, 0, &result)
 
 			const tolerance = 1e-10 // Slightly relaxed for round-trip
-			if absf(tc.geo.Lat-result.Lat) > tolerance {
-				t.Fatalf("Round-trip Lat mismatch: orig=%.15f result=%.15f diff=%.15f", tc.geo.Lat, result.Lat, absf(tc.geo.Lat-result.Lat))
+			if !tc.geo.Lat.EqualApprox(result.Lat, tolerance) {
+				t.Fatalf("Round-trip Lat mismatch: orig=%.15f result=%.15f diff=%.15f", tc.geo.Lat.Rad(), result.Lat.Rad(), absf(tc.geo.Lat.Rad()-result.Lat.Rad()))
 			}
 
 			if !tc.skipLng {
-				if absf(tc.geo.Lng-result.Lng) > tolerance {
-					t.Fatalf("Round-trip Lng mismatch: orig=%.15f result=%.15f diff=%.15f", tc.geo.Lng, result.Lng, absf(tc.geo.Lng-result.Lng))
+				if !tc.geo.Lng.EqualApprox(result.Lng, tolerance) {
+					t.Fatalf("Round-trip Lng mismatch: orig=%.15f result=%.15f diff=%.15f", tc.geo.Lng.Rad(), result.Lng.Rad(), absf(tc.geo.Lng.Rad()-result.Lng.Rad()))
 				}
 			}
 		})

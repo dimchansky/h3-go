@@ -4,6 +4,8 @@ package c2go
 
 import (
 	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 func Test_findDeepestContainer_parity(t *testing.T) {
@@ -11,11 +13,11 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 	createSquareLoop := func(x, y, size float64) *LinkedGeoLoop {
 		loop := &LinkedGeoLoop{}
 		coords := []LatLng{
-			{Lat: x, Lng: y},
-			{Lat: x, Lng: y + size},
-			{Lat: x + size, Lng: y + size},
-			{Lat: x + size, Lng: y},
-			{Lat: x, Lng: y}, // Close the loop
+			{Lat: angle.Rad(x), Lng: angle.Rad(y)},
+			{Lat: angle.Rad(x), Lng: angle.Rad(y + size)},
+			{Lat: angle.Rad(x + size), Lng: angle.Rad(y + size)},
+			{Lat: angle.Rad(x + size), Lng: angle.Rad(y)},
+			{Lat: angle.Rad(x), Lng: angle.Rad(y)}, // Close the loop
 		}
 
 		var prev *LinkedLatLng
@@ -37,26 +39,21 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 
 	// Helper to create bbox for a loop
 	createBboxForLoop := func(loop *LinkedGeoLoop) *BBox {
-		bbox := &BBox{
-			North: -90.0,
-			South: 90.0,
-			East:  -180.0,
-			West:  180.0,
-		}
+		bbox := &BBox{North: angle.Deg(-90), South: angle.Deg(90), East: angle.Deg(-180), West: angle.Deg(180)}
 
 		// Simple bbox calculation (not exact but sufficient for testing)
 		current := loop.First
 		for current != nil {
-			if current.Vertex.Lat > bbox.North {
+			if current.Vertex.Lat.Rad() > bbox.North.Rad() {
 				bbox.North = current.Vertex.Lat
 			}
-			if current.Vertex.Lat < bbox.South {
+			if current.Vertex.Lat.Rad() < bbox.South.Rad() {
 				bbox.South = current.Vertex.Lat
 			}
-			if current.Vertex.Lng > bbox.East {
+			if current.Vertex.Lng.Rad() > bbox.East.Rad() {
 				bbox.East = current.Vertex.Lng
 			}
-			if current.Vertex.Lng < bbox.West {
+			if current.Vertex.Lng.Rad() < bbox.West.Rad() {
 				bbox.West = current.Vertex.Lng
 			}
 			current = current.Next

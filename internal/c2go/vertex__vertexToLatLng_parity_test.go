@@ -45,17 +45,14 @@ func Test_vertexToLatLng_parity(t *testing.T) {
 			// Compare coordinates with appropriate tolerance for lat/lng
 			const tolerance = 1e-12 // ~1 nanometer precision
 
-			latDiff := math.Abs(goCoord.Lat - cCoord.Lat)
-			lngDiff := math.Abs(goCoord.Lng - cCoord.Lng)
-
-			if latDiff > tolerance {
+			if !goCoord.Lat.EqualApprox(cCoord.Lat, tolerance) {
 				t.Errorf("Latitude mismatch: Go=%.15f, C=%.15f, diff=%.15f",
-					goCoord.Lat, cCoord.Lat, latDiff)
+					goCoord.Lat.Rad(), cCoord.Lat.Rad(), math.Abs(goCoord.Lat.Rad()-cCoord.Lat.Rad()))
 			}
 
-			if lngDiff > tolerance {
+			if !goCoord.Lng.EqualApprox(cCoord.Lng, tolerance) {
 				t.Errorf("Longitude mismatch: Go=%.15f, C=%.15f, diff=%.15f",
-					goCoord.Lng, cCoord.Lng, lngDiff)
+					goCoord.Lng.Rad(), cCoord.Lng.Rad(), math.Abs(goCoord.Lng.Rad()-cCoord.Lng.Rad()))
 			}
 		})
 	}

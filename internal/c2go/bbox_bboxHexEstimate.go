@@ -1,6 +1,8 @@
 package c2go
 
-import "math"
+import (
+	"math"
+)
 
 // bboxHexEstimate returns an estimated number of hexagons that fit
 // within the cartesian-projected bounding box.
@@ -29,8 +31,8 @@ func bboxHexEstimate(bbox *BBox, res int32, out *int64) H3Error {
 	p2.Lat = bbox.South
 	p2.Lng = bbox.West
 	d := greatCircleDistanceKm(&p1, &p2)
-	lngDiff := math.Abs(p1.Lng - p2.Lng)
-	latDiff := math.Abs(p1.Lat - p2.Lat)
+	lngDiff := (p1.Lng - p2.Lng).Abs().Rad()
+	latDiff := (p1.Lat - p2.Lat).Abs().Rad()
 	if lngDiff == 0 || latDiff == 0 {
 		return E_FAILED
 	}

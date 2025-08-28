@@ -33,7 +33,11 @@ extern int has_deleted_subsequence_c(H3Index h, int baseCell);
 */
 import "C"
 
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 // getResolutionC calls the original C implementation.
 func getResolutionC(h H3Index) int32 { return int32(C.getResolution(C.H3Index(h))) }
@@ -260,8 +264,8 @@ func cellToLatLngC(h H3Index, g *LatLng) uint32 {
 	var cg C.LatLng
 	err := C.cellToLatLng(C.H3Index(h), &cg)
 
-	g.Lat = float64(cg.lat)
-	g.Lng = float64(cg.lng)
+	g.Lat = angle.Rad(float64(cg.lat))
+	g.Lng = angle.Rad(float64(cg.lng))
 
 	return uint32(err)
 }
@@ -274,8 +278,8 @@ func isValidCellC(h H3Index) bool {
 // latLngToCellC calls the original C implementation.
 func latLngToCellC(g *LatLng, res int32, out *H3Index) uint32 {
 	var cg C.LatLng
-	cg.lat = C.double(g.Lat)
-	cg.lng = C.double(g.Lng)
+	cg.lat = C.double(g.Lat.Rad())
+	cg.lng = C.double(g.Lng.Rad())
 
 	var cOut C.H3Index
 	err := C.latLngToCell(&cg, C.int(res), &cOut)
@@ -287,8 +291,8 @@ func latLngToCellC(g *LatLng, res int32, out *H3Index) uint32 {
 // debugGeoToFaceIjkC calls the original C _geoToFaceIjk implementation.
 func debugGeoToFaceIjkC(g *LatLng, res int32, fijk *FaceIJK) {
 	var cg C.LatLng
-	cg.lat = C.double(g.Lat)
-	cg.lng = C.double(g.Lng)
+	cg.lat = C.double(g.Lat.Rad())
+	cg.lng = C.double(g.Lng.Rad())
 
 	var cfijk C.FaceIJK
 	C._geoToFaceIjk(&cg, C.int(res), &cfijk)
@@ -372,8 +376,8 @@ func cellToBoundaryC(h H3Index, cb *CellBoundary) uint32 {
 
 		// Copy vertices from C to Go
 		for i := int32(0); i < cb.NumVerts; i++ {
-			cb.Verts[i].Lat = float64(cCb.verts[i].lat)
-			cb.Verts[i].Lng = float64(cCb.verts[i].lng)
+			cb.Verts[i].Lat = angle.Rad(float64(cCb.verts[i].lat))
+			cb.Verts[i].Lng = angle.Rad(float64(cCb.verts[i].lng))
 		}
 	}
 

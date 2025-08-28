@@ -1,8 +1,6 @@
 package c2go
 
-import (
-	"math"
-)
+import "github.com/dimchansky/h3-go/angle"
 
 // isClockwiseLinkedGeoLoopNormalized determines clockwise winding order with normalization
 // for loops crossing the antimeridian. This is a helper function that handles the core
@@ -45,11 +43,11 @@ func isClockwiseLinkedGeoLoopNormalized(loop *LinkedGeoLoop, isTransmeridian boo
 
 		// If we identify a transmeridian arc (> 180 degrees longitude),
 		// start over with the transmeridian flag set
-		if !isTransmeridian && math.Abs(a.Lng-b.Lng) > math.Pi {
+		if !isTransmeridian && (a.Lng-b.Lng).Abs() > angle.Pi {
 			return isClockwiseLinkedGeoLoopNormalized(loop, true)
 		}
 
-		sum += (normalizeLngTransmeridian(b.Lng, isTransmeridian) - normalizeLngTransmeridian(a.Lng, isTransmeridian)) * (b.Lat + a.Lat)
+		sum += (normalizeLngTransmeridian(b.Lng.Rad(), isTransmeridian) - normalizeLngTransmeridian(a.Lng.Rad(), isTransmeridian)) * (b.Lat.Rad() + a.Lat.Rad())
 	}
 
 	return sum > 0

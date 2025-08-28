@@ -5,6 +5,8 @@ package c2go
 import (
 	"math"
 	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 func Test_getEdgeHexagons_parity(t *testing.T) {
@@ -17,21 +19,21 @@ func Test_getEdgeHexagons_parity(t *testing.T) {
 	}{
 		{
 			name:        "simple triangle",
-			geoloop:     []LatLng{{0.1, 0.1}, {0.1, 0.2}, {0.2, 0.15}},
+			geoloop:     []LatLng{{angle.Rad(0.1), angle.Rad(0.1)}, {angle.Rad(0.1), angle.Rad(0.2)}, {angle.Rad(0.2), angle.Rad(0.15)}},
 			numHexagons: 100,
 			res:         9,
 			description: "Small triangle at low resolution",
 		},
 		{
 			name:        "square loop",
-			geoloop:     []LatLng{{0.0, 0.0}, {0.0, 0.1}, {0.1, 0.1}, {0.1, 0.0}},
+			geoloop:     []LatLng{{angle.Rad(0.0), angle.Rad(0.0)}, {angle.Rad(0.0), angle.Rad(0.1)}, {angle.Rad(0.1), angle.Rad(0.1)}, {angle.Rad(0.1), angle.Rad(0.0)}},
 			numHexagons: 200,
 			res:         8,
 			description: "Square polygon",
 		},
 		{
 			name:        "single point loop",
-			geoloop:     []LatLng{{0.5, -0.5}},
+			geoloop:     []LatLng{{angle.Rad(0.5), angle.Rad(-0.5)}},
 			numHexagons: 50,
 			res:         7,
 			description: "Degenerate single point loop",
@@ -138,10 +140,10 @@ func Test_getEdgeHexagons_parity(t *testing.T) {
 func createPentagonLoop(centerLat, centerLng, radius float64) []LatLng {
 	loop := make([]LatLng, 5)
 	for i := 0; i < 5; i++ {
-		angle := 2.0 * math.Pi * float64(i) / 5.0
+		theta := 2.0 * math.Pi * float64(i) / 5.0
 		loop[i] = LatLng{
-			Lat: centerLat + radius*math.Cos(angle),
-			Lng: centerLng + radius*math.Sin(angle),
+			Lat: angle.Rad(centerLat + radius*math.Cos(theta)),
+			Lng: angle.Rad(centerLng + radius*math.Sin(theta)),
 		}
 	}
 	return loop
@@ -151,10 +153,10 @@ func createPentagonLoop(centerLat, centerLng, radius float64) []LatLng {
 func createHexagonLoop(centerLat, centerLng, radius float64) []LatLng {
 	loop := make([]LatLng, 6)
 	for i := 0; i < 6; i++ {
-		angle := 2.0 * math.Pi * float64(i) / 6.0
+		theta := 2.0 * math.Pi * float64(i) / 6.0
 		loop[i] = LatLng{
-			Lat: centerLat + radius*math.Cos(angle),
-			Lng: centerLng + radius*math.Sin(angle),
+			Lat: angle.Rad(centerLat + radius*math.Cos(theta)),
+			Lng: angle.Rad(centerLng + radius*math.Sin(theta)),
 		}
 	}
 	return loop

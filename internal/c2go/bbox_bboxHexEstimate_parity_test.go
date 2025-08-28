@@ -4,6 +4,8 @@ package c2go
 
 import (
 	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 func Test_bboxHexEstimate_parity(t *testing.T) {
@@ -14,83 +16,43 @@ func Test_bboxHexEstimate_parity(t *testing.T) {
 	}{
 		{
 			name: "small_box_sf",
-			bbox: BBox{
-				North: degsToRads(37.785),
-				South: degsToRads(37.765),
-				East:  degsToRads(-122.408),
-				West:  degsToRads(-122.428),
-			},
-			res: 5,
+			bbox: BBox{North: angle.Deg(37.785), South: angle.Deg(37.765), East: angle.Deg(-122.408), West: angle.Deg(-122.428)},
+			res:  5,
 		},
 		{
 			name: "medium_box_bay_area",
-			bbox: BBox{
-				North: degsToRads(37.85),
-				South: degsToRads(37.70),
-				East:  degsToRads(-122.35),
-				West:  degsToRads(-122.50),
-			},
-			res: 4,
+			bbox: BBox{North: angle.Deg(37.85), South: angle.Deg(37.70), East: angle.Deg(-122.35), West: angle.Deg(-122.50)},
+			res:  4,
 		},
 		{
 			name: "large_box_california",
-			bbox: BBox{
-				North: degsToRads(42.0),
-				South: degsToRads(32.5),
-				East:  degsToRads(-114.1),
-				West:  degsToRads(-124.4),
-			},
-			res: 2,
+			bbox: BBox{North: angle.Deg(42.0), South: angle.Deg(32.5), East: angle.Deg(-114.1), West: angle.Deg(-124.4)},
+			res:  2,
 		},
 		{
 			name: "very_small_box_high_res",
-			bbox: BBox{
-				North: degsToRads(37.7760),
-				South: degsToRads(37.7750),
-				East:  degsToRads(-122.4180),
-				West:  degsToRads(-122.4190),
-			},
-			res: 9,
+			bbox: BBox{North: angle.Deg(37.7760), South: angle.Deg(37.7750), East: angle.Deg(-122.4180), West: angle.Deg(-122.4190)},
+			res:  9,
 		},
 		{
 			name: "cross_antimeridian",
-			bbox: BBox{
-				North: degsToRads(40.0),
-				South: degsToRads(30.0),
-				East:  degsToRads(-170.0),
-				West:  degsToRads(170.0),
-			},
-			res: 3,
+			bbox: BBox{North: angle.Deg(40.0), South: angle.Deg(30.0), East: angle.Deg(-170.0), West: angle.Deg(170.0)},
+			res:  3,
 		},
 		{
 			name: "near_poles",
-			bbox: BBox{
-				North: degsToRads(85.0),
-				South: degsToRads(80.0),
-				East:  degsToRads(10.0),
-				West:  degsToRads(-10.0),
-			},
-			res: 2,
+			bbox: BBox{North: angle.Deg(85.0), South: angle.Deg(80.0), East: angle.Deg(10.0), West: angle.Deg(-10.0)},
+			res:  2,
 		},
 		{
 			name: "equatorial_strip",
-			bbox: BBox{
-				North: degsToRads(5.0),
-				South: degsToRads(-5.0),
-				East:  degsToRads(180.0),
-				West:  degsToRads(-180.0),
-			},
-			res: 1,
+			bbox: BBox{North: angle.Deg(5.0), South: angle.Deg(-5.0), East: angle.Deg(180.0), West: angle.Deg(-180.0)},
+			res:  1,
 		},
 		{
 			name: "minimal_box",
-			bbox: BBox{
-				North: degsToRads(0.001),
-				South: degsToRads(0.000),
-				East:  degsToRads(0.001),
-				West:  degsToRads(0.000),
-			},
-			res: 10,
+			bbox: BBox{North: angle.Deg(0.001), South: angle.Deg(0.000), East: angle.Deg(0.001), West: angle.Deg(0.000)},
+			res:  10,
 		},
 	}
 
@@ -137,57 +99,32 @@ func Test_bboxHexEstimate_edge_cases_parity(t *testing.T) {
 		expectErr H3Error
 	}{
 		{
-			name: "invalid_res_negative",
-			bbox: BBox{
-				North: degsToRads(1.0),
-				South: degsToRads(0.0),
-				East:  degsToRads(1.0),
-				West:  degsToRads(0.0),
-			},
+			name:      "invalid_res_negative",
+			bbox:      BBox{North: angle.Deg(1.0), South: angle.Deg(0.0), East: angle.Deg(1.0), West: angle.Deg(0.0)},
 			res:       -1,
 			expectErr: E_RES_DOMAIN,
 		},
 		{
-			name: "invalid_res_too_high",
-			bbox: BBox{
-				North: degsToRads(1.0),
-				South: degsToRads(0.0),
-				East:  degsToRads(1.0),
-				West:  degsToRads(0.0),
-			},
+			name:      "invalid_res_too_high",
+			bbox:      BBox{North: angle.Deg(1.0), South: angle.Deg(0.0), East: angle.Deg(1.0), West: angle.Deg(0.0)},
 			res:       16,
 			expectErr: E_RES_DOMAIN,
 		},
 		{
-			name: "zero_width",
-			bbox: BBox{
-				North: degsToRads(1.0),
-				South: degsToRads(0.0),
-				East:  degsToRads(1.0),
-				West:  degsToRads(1.0), // same as east
-			},
+			name:      "zero_width",
+			bbox:      BBox{North: angle.Deg(1.0), South: angle.Deg(0.0), East: angle.Deg(1.0), West: angle.Deg(1.0)}, // same as east
 			res:       5,
 			expectErr: E_FAILED,
 		},
 		{
-			name: "zero_height",
-			bbox: BBox{
-				North: degsToRads(1.0),
-				South: degsToRads(1.0), // same as north
-				East:  degsToRads(1.0),
-				West:  degsToRads(0.0),
-			},
+			name:      "zero_height",
+			bbox:      BBox{North: angle.Deg(1.0), South: angle.Deg(1.0), East: angle.Deg(1.0), West: angle.Deg(0.0)}, // same as north
 			res:       5,
 			expectErr: E_FAILED,
 		},
 		{
-			name: "global_bbox",
-			bbox: BBox{
-				North: degsToRads(90.0),
-				South: degsToRads(-90.0),
-				East:  degsToRads(180.0),
-				West:  degsToRads(-180.0),
-			},
+			name:      "global_bbox",
+			bbox:      BBox{North: angle.Deg(90.0), South: angle.Deg(-90.0), East: angle.Deg(180.0), West: angle.Deg(-180.0)},
 			res:       0,
 			expectErr: E_SUCCESS,
 		},

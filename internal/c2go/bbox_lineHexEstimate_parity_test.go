@@ -4,6 +4,8 @@ package c2go
 
 import (
 	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 func Test_lineHexEstimate_parity(t *testing.T) {
@@ -15,38 +17,38 @@ func Test_lineHexEstimate_parity(t *testing.T) {
 	}{
 		{
 			name:        "same_point",
-			origin:      LatLng{Lat: degsToRads(37.775), Lng: degsToRads(-122.418)},
-			destination: LatLng{Lat: degsToRads(37.775), Lng: degsToRads(-122.418)},
+			origin:      LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(-122.418)},
+			destination: LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(-122.418)},
 			res:         5,
 		},
 		{
 			name:        "short_distance",
-			origin:      LatLng{Lat: degsToRads(37.775), Lng: degsToRads(-122.418)},
-			destination: LatLng{Lat: degsToRads(37.785), Lng: degsToRads(-122.428)},
+			origin:      LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(-122.418)},
+			destination: LatLng{Lat: angle.Deg(37.785), Lng: angle.Deg(-122.428)},
 			res:         5,
 		},
 		{
 			name:        "medium_distance",
-			origin:      LatLng{Lat: degsToRads(37.775), Lng: degsToRads(-122.418)},
-			destination: LatLng{Lat: degsToRads(40.689), Lng: degsToRads(-74.044)}, // SF to NYC
+			origin:      LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(-122.418)},
+			destination: LatLng{Lat: angle.Deg(40.689), Lng: angle.Deg(-74.044)}, // SF to NYC
 			res:         3,
 		},
 		{
 			name:        "long_distance",
-			origin:      LatLng{Lat: degsToRads(37.775), Lng: degsToRads(-122.418)}, // SF
-			destination: LatLng{Lat: degsToRads(51.507), Lng: degsToRads(-0.127)},   // London
+			origin:      LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(-122.418)}, // SF
+			destination: LatLng{Lat: angle.Deg(51.507), Lng: angle.Deg(-0.127)},   // London
 			res:         2,
 		},
 		{
 			name:        "cross_antimeridian",
-			origin:      LatLng{Lat: degsToRads(37.775), Lng: degsToRads(179.0)},
-			destination: LatLng{Lat: degsToRads(37.775), Lng: degsToRads(-179.0)},
+			origin:      LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(179.0)},
+			destination: LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(-179.0)},
 			res:         4,
 		},
 		{
 			name:        "high_res",
-			origin:      LatLng{Lat: degsToRads(37.775), Lng: degsToRads(-122.418)},
-			destination: LatLng{Lat: degsToRads(37.776), Lng: degsToRads(-122.419)},
+			origin:      LatLng{Lat: angle.Deg(37.775), Lng: angle.Deg(-122.418)},
+			destination: LatLng{Lat: angle.Deg(37.776), Lng: angle.Deg(-122.419)},
 			res:         10,
 		},
 	}
@@ -97,21 +99,21 @@ func Test_lineHexEstimate_edge_cases_parity(t *testing.T) {
 		{
 			name:        "invalid_res_negative",
 			origin:      LatLng{Lat: 0, Lng: 0},
-			destination: LatLng{Lat: degsToRads(1), Lng: degsToRads(1)},
+			destination: LatLng{Lat: angle.Deg(1), Lng: angle.Deg(1)},
 			res:         -1,
 			expectErr:   E_RES_DOMAIN,
 		},
 		{
 			name:        "invalid_res_too_high",
 			origin:      LatLng{Lat: 0, Lng: 0},
-			destination: LatLng{Lat: degsToRads(1), Lng: degsToRads(1)},
+			destination: LatLng{Lat: angle.Deg(1), Lng: angle.Deg(1)},
 			res:         16,
 			expectErr:   E_RES_DOMAIN,
 		},
 		{
 			name:        "north_pole_to_south_pole",
-			origin:      LatLng{Lat: degsToRads(89.9), Lng: 0},
-			destination: LatLng{Lat: degsToRads(-89.9), Lng: 0},
+			origin:      LatLng{Lat: angle.Deg(89.9), Lng: 0},
+			destination: LatLng{Lat: angle.Deg(-89.9), Lng: 0},
 			res:         1,
 			expectErr:   E_SUCCESS,
 		},

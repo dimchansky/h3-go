@@ -2,6 +2,8 @@ package c2go
 
 import (
 	"math"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 // bboxFromLinkedGeoLoop creates a bounding box from a simple polygon loop.
@@ -18,12 +20,12 @@ func bboxFromLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox) {
 		return
 	}
 
-	bbox.South = math.MaxFloat64
-	bbox.West = math.MaxFloat64
-	bbox.North = -math.MaxFloat64
-	bbox.East = -math.MaxFloat64
-	minPosLng := math.MaxFloat64
-	maxNegLng := -math.MaxFloat64
+	bbox.South = angle.Rad(math.MaxFloat64)
+	bbox.West = angle.Rad(math.MaxFloat64)
+	bbox.North = angle.Rad(-math.MaxFloat64)
+	bbox.East = angle.Rad(-math.MaxFloat64)
+	minPosLng := angle.Rad(math.MaxFloat64)
+	maxNegLng := angle.Rad(-math.MaxFloat64)
 	isTransmeridian := false
 
 	// Iterate through linked coordinates
@@ -70,7 +72,7 @@ func bboxFromLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox) {
 		}
 
 		// Check for arcs > 180 degrees longitude, flagging as transmeridian
-		if math.Abs(lng-next.Lng) > math.Pi {
+		if (lng - next.Lng).Abs() > angle.Pi {
 			isTransmeridian = true
 		}
 

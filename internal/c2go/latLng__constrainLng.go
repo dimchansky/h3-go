@@ -1,15 +1,15 @@
 package c2go
 
-import "math"
+import "github.com/dimchansky/h3-go/angle"
 
 // constrainLng makes sure longitudes are in the proper bounds.
 // Ported from H3 C: latLng.c::constrainLng
-func constrainLng(lng float64) float64 {
-	for lng > math.Pi {
-		lng = lng - (2 * math.Pi)
+func constrainLng(lng angle.Angle) angle.Angle {
+	for lng > angle.Pi {
+		lng = lng - angle.TwoPi
 	}
-	for lng < -math.Pi {
-		lng = lng + (2 * math.Pi)
+	for lng < -angle.Pi {
+		lng = lng + angle.TwoPi
 	}
 	return lng
 }

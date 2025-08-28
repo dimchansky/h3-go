@@ -14,15 +14,18 @@ type Angle float64
 const (
 	// RadPerDeg is the conversion factor from degrees to radians.
 	RadPerDeg = math.Pi / 180
-	
+
 	// DegPerRad is the conversion factor from radians to degrees.
 	DegPerRad = 180 / math.Pi
 
 	// Pi represents π radians as an Angle.
 	Pi = Angle(math.Pi)
-	
+
 	// TwoPi represents 2π radians as an Angle.
 	TwoPi = Angle(2 * math.Pi)
+
+	// PiOver2 represents π/2 radians as an Angle.
+	PiOver2 = Angle(math.Pi / 2)
 )
 
 // Rad creates an Angle from a value in radians.
@@ -37,39 +40,15 @@ func (a Angle) Rad() float64 { return float64(a) }
 // Deg returns the angle value in degrees.
 func (a Angle) Deg() float64 { return float64(a) * DegPerRad }
 
-// Add returns the sum of two angles.
-func (a Angle) Add(b Angle) Angle { return a + b }
-
-// Sub returns the difference between two angles.
-func (a Angle) Sub(b Angle) Angle { return a - b }
-
 // Mul returns the angle multiplied by a scalar.
 func (a Angle) Mul(s float64) Angle { return Angle(float64(a) * s) }
 
 // Div returns the angle divided by a scalar.
 func (a Angle) Div(s float64) Angle { return Angle(float64(a) / s) }
 
-// Neg returns the negation of the angle.
-func (a Angle) Neg() Angle { return -a }
-
-// WrapTwoPi normalizes the angle to the range [0, 2π).
-func (a Angle) WrapTwoPi() Angle {
-	r := math.Mod(float64(a), 2*math.Pi)
-	if r < 0 {
-		r += 2 * math.Pi
-	}
-	return Angle(r)
-}
-
-// WrapPi normalizes the angle to the range (-π, π].
-func (a Angle) WrapPi() Angle {
-	r := math.Mod(float64(a), 2*math.Pi)
-	if r <= -math.Pi {
-		r += 2 * math.Pi
-	} else if r > math.Pi {
-		r -= 2 * math.Pi
-	}
-	return Angle(r)
+// Abs returns the absolute value of the angle.
+func (a Angle) Abs() Angle {
+	return Angle(math.Abs(float64(a)))
 }
 
 // EqualApprox compares two angles for approximate equality within the given epsilon.

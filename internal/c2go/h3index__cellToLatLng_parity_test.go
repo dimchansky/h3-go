@@ -58,13 +58,13 @@ func TestCellToLatLngParity(t *testing.T) {
 
 			// If no error, compare coordinates
 			if goErr == E_SUCCESS && cErr == 0 {
-				if math.Abs(goLatLng.Lat-cLatLng.Lat) > tolerance {
+				if !goLatLng.Lat.EqualApprox(cLatLng.Lat, tolerance) {
 					t.Errorf("Lat mismatch: Go=%.15f, C=%.15f, diff=%.15f",
-						goLatLng.Lat, cLatLng.Lat, math.Abs(goLatLng.Lat-cLatLng.Lat))
+						goLatLng.Lat.Rad(), cLatLng.Lat.Rad(), math.Abs(goLatLng.Lat.Rad()-cLatLng.Lat.Rad()))
 				}
-				if math.Abs(goLatLng.Lng-cLatLng.Lng) > tolerance {
+				if !goLatLng.Lng.EqualApprox(cLatLng.Lng, tolerance) {
 					t.Errorf("Lng mismatch: Go=%.15f, C=%.15f, diff=%.15f",
-						goLatLng.Lng, cLatLng.Lng, math.Abs(goLatLng.Lng-cLatLng.Lng))
+						goLatLng.Lng.Rad(), cLatLng.Lng.Rad(), math.Abs(goLatLng.Lng.Rad()-cLatLng.Lng.Rad()))
 				}
 			}
 		})

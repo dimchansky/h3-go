@@ -2,7 +2,11 @@
 
 package c2go
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
+)
 
 func Test_h3index_latLngToCell_ParityWithC(t *testing.T) {
 	testCases := []struct {
@@ -40,7 +44,7 @@ func Test_h3index_latLngToCell_ParityWithC(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		g := &LatLng{Lat: tc.lat, Lng: tc.lng}
+		g := &LatLng{Lat: angle.Deg(tc.lat), Lng: angle.Deg(tc.lng)}
 
 		var goOut H3Index
 		var cOut H3Index
@@ -72,7 +76,7 @@ func Test_h3index_latLngToCell_ErrorCases_ParityWithC(t *testing.T) {
 	}
 
 	for _, tc := range errorCases {
-		g := &LatLng{Lat: tc.lat, Lng: tc.lng}
+		g := &LatLng{Lat: angle.Deg(tc.lat), Lng: angle.Deg(tc.lng)}
 
 		var goOut H3Index
 		var cOut H3Index

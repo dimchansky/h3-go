@@ -4,6 +4,8 @@ package c2go
 
 import (
 	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 func Test_maxPolygonToCellsSize_parity(t *testing.T) {
@@ -18,9 +20,9 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			name: "simple_triangle_sf",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.775), degsToRads(-122.418)},
-					{degsToRads(37.780), degsToRads(-122.420)},
-					{degsToRads(37.770), degsToRads(-122.415)},
+					{angle.Deg(37.775), angle.Deg(-122.418)},
+					{angle.Deg(37.780), angle.Deg(-122.420)},
+					{angle.Deg(37.770), angle.Deg(-122.415)},
 				},
 				Holes: nil,
 			},
@@ -32,10 +34,10 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			name: "square_polygon",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.770), degsToRads(-122.420)},
-					{degsToRads(37.770), degsToRads(-122.410)},
-					{degsToRads(37.780), degsToRads(-122.410)},
-					{degsToRads(37.780), degsToRads(-122.420)},
+					{angle.Deg(37.770), angle.Deg(-122.420)},
+					{angle.Deg(37.770), angle.Deg(-122.410)},
+					{angle.Deg(37.780), angle.Deg(-122.410)},
+					{angle.Deg(37.780), angle.Deg(-122.420)},
 				},
 				Holes: nil,
 			},
@@ -47,17 +49,17 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			name: "polygon_with_hole",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.760), degsToRads(-122.430)},
-					{degsToRads(37.760), degsToRads(-122.400)},
-					{degsToRads(37.790), degsToRads(-122.400)},
-					{degsToRads(37.790), degsToRads(-122.430)},
+					{angle.Deg(37.760), angle.Deg(-122.430)},
+					{angle.Deg(37.760), angle.Deg(-122.400)},
+					{angle.Deg(37.790), angle.Deg(-122.400)},
+					{angle.Deg(37.790), angle.Deg(-122.430)},
 				},
 				Holes: []GeoLoop{
 					{
-						{degsToRads(37.770), degsToRads(-122.420)},
-						{degsToRads(37.770), degsToRads(-122.410)},
-						{degsToRads(37.780), degsToRads(-122.410)},
-						{degsToRads(37.780), degsToRads(-122.420)},
+						{angle.Deg(37.770), angle.Deg(-122.420)},
+						{angle.Deg(37.770), angle.Deg(-122.410)},
+						{angle.Deg(37.780), angle.Deg(-122.410)},
+						{angle.Deg(37.780), angle.Deg(-122.420)},
 					},
 				},
 			},
@@ -69,7 +71,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			name: "single_point_polygon",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.775), degsToRads(-122.418)},
+					{angle.Deg(37.775), angle.Deg(-122.418)},
 				},
 				Holes: nil,
 			},
@@ -81,10 +83,10 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			name: "large_polygon_low_res",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.70), degsToRads(-122.50)},
-					{degsToRads(37.70), degsToRads(-122.30)},
-					{degsToRads(37.90), degsToRads(-122.30)},
-					{degsToRads(37.90), degsToRads(-122.50)},
+					{angle.Deg(37.70), angle.Deg(-122.50)},
+					{angle.Deg(37.70), angle.Deg(-122.30)},
+					{angle.Deg(37.90), angle.Deg(-122.30)},
+					{angle.Deg(37.90), angle.Deg(-122.50)},
 				},
 				Holes: nil,
 			},
@@ -96,9 +98,9 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			name: "tiny_polygon_high_res",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.7750), degsToRads(-122.4180)},
-					{degsToRads(37.7751), degsToRads(-122.4181)},
-					{degsToRads(37.7749), degsToRads(-122.4179)},
+					{angle.Deg(37.7750), angle.Deg(-122.4180)},
+					{angle.Deg(37.7751), angle.Deg(-122.4181)},
+					{angle.Deg(37.7749), angle.Deg(-122.4179)},
 				},
 				Holes: nil,
 			},
@@ -110,23 +112,23 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			name: "multiple_holes",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.750), degsToRads(-122.450)},
-					{degsToRads(37.750), degsToRads(-122.380)},
-					{degsToRads(37.800), degsToRads(-122.380)},
-					{degsToRads(37.800), degsToRads(-122.450)},
+					{angle.Deg(37.750), angle.Deg(-122.450)},
+					{angle.Deg(37.750), angle.Deg(-122.380)},
+					{angle.Deg(37.800), angle.Deg(-122.380)},
+					{angle.Deg(37.800), angle.Deg(-122.450)},
 				},
 				Holes: []GeoLoop{
 					{
-						{degsToRads(37.765), degsToRads(-122.430)},
-						{degsToRads(37.765), degsToRads(-122.420)},
-						{degsToRads(37.775), degsToRads(-122.420)},
-						{degsToRads(37.775), degsToRads(-122.430)},
+						{angle.Deg(37.765), angle.Deg(-122.430)},
+						{angle.Deg(37.765), angle.Deg(-122.420)},
+						{angle.Deg(37.775), angle.Deg(-122.420)},
+						{angle.Deg(37.775), angle.Deg(-122.430)},
 					},
 					{
-						{degsToRads(37.780), degsToRads(-122.410)},
-						{degsToRads(37.780), degsToRads(-122.400)},
-						{degsToRads(37.790), degsToRads(-122.400)},
-						{degsToRads(37.790), degsToRads(-122.410)},
+						{angle.Deg(37.780), angle.Deg(-122.410)},
+						{angle.Deg(37.780), angle.Deg(-122.400)},
+						{angle.Deg(37.790), angle.Deg(-122.400)},
+						{angle.Deg(37.790), angle.Deg(-122.410)},
 					},
 				},
 			},
@@ -202,9 +204,9 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 			name: "invalid_flags",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.775), degsToRads(-122.418)},
-					{degsToRads(37.780), degsToRads(-122.420)},
-					{degsToRads(37.770), degsToRads(-122.415)},
+					{angle.Deg(37.775), angle.Deg(-122.418)},
+					{angle.Deg(37.780), angle.Deg(-122.420)},
+					{angle.Deg(37.770), angle.Deg(-122.415)},
 				},
 				Holes: nil,
 			},
@@ -216,9 +218,9 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 			name: "invalid_containment_mode",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.775), degsToRads(-122.418)},
-					{degsToRads(37.780), degsToRads(-122.420)},
-					{degsToRads(37.770), degsToRads(-122.415)},
+					{angle.Deg(37.775), angle.Deg(-122.418)},
+					{angle.Deg(37.780), angle.Deg(-122.420)},
+					{angle.Deg(37.770), angle.Deg(-122.415)},
 				},
 				Holes: nil,
 			},
@@ -230,9 +232,9 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 			name: "negative_resolution",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.775), degsToRads(-122.418)},
-					{degsToRads(37.780), degsToRads(-122.420)},
-					{degsToRads(37.770), degsToRads(-122.415)},
+					{angle.Deg(37.775), angle.Deg(-122.418)},
+					{angle.Deg(37.780), angle.Deg(-122.420)},
+					{angle.Deg(37.770), angle.Deg(-122.415)},
 				},
 				Holes: nil,
 			},
@@ -244,9 +246,9 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 			name: "resolution_too_high",
 			geoPolygon: GeoPolygon{
 				Geoloop: []LatLng{
-					{degsToRads(37.775), degsToRads(-122.418)},
-					{degsToRads(37.780), degsToRads(-122.420)},
-					{degsToRads(37.770), degsToRads(-122.415)},
+					{angle.Deg(37.775), angle.Deg(-122.418)},
+					{angle.Deg(37.780), angle.Deg(-122.420)},
+					{angle.Deg(37.770), angle.Deg(-122.415)},
 				},
 				Holes: nil,
 			},
@@ -305,10 +307,7 @@ func generateCirclePolygon(centerLat, centerLng, radius float64, numVertices int
 		// Create a simple polygon with varying vertices
 		lat := centerLat + radius*1.0*0.5*float64(i%2+1) // Varies radius slightly
 		lng := centerLng + radius*1.2*0.5*float64((i+1)%2+1)
-		polygon[i] = LatLng{
-			Lat: degsToRads(lat),
-			Lng: degsToRads(lng),
-		}
+		polygon[i] = LatLng{Lat: angle.Deg(lat), Lng: angle.Deg(lng)}
 	}
 	return polygon
 }

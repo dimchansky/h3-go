@@ -4,6 +4,8 @@ package c2go
 
 import (
 	"testing"
+
+	"github.com/dimchansky/h3-go/angle"
 )
 
 func Test_normalizeMultiPolygon_parity(t *testing.T) {
@@ -12,11 +14,11 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 	createSquareLoopCCW := func(lat, lng, size float64) *LinkedGeoLoop {
 		loop := &LinkedGeoLoop{}
 		coords := []LatLng{
-			{Lat: lat, Lng: lng},               // Start at SW corner
-			{Lat: lat, Lng: lng + size},        // Move east to SE corner
-			{Lat: lat + size, Lng: lng + size}, // Move north to NE corner
-			{Lat: lat + size, Lng: lng},        // Move west to NW corner
-			{Lat: lat, Lng: lng},               // Back to start (CCW)
+			{Lat: angle.Rad(lat), Lng: angle.Rad(lng)},               // Start at SW corner
+			{Lat: angle.Rad(lat), Lng: angle.Rad(lng + size)},        // Move east to SE corner
+			{Lat: angle.Rad(lat + size), Lng: angle.Rad(lng + size)}, // Move north to NE corner
+			{Lat: angle.Rad(lat + size), Lng: angle.Rad(lng)},        // Move west to NW corner
+			{Lat: angle.Rad(lat), Lng: angle.Rad(lng)},               // Back to start (CCW)
 		}
 
 		var prev *LinkedLatLng
@@ -40,11 +42,11 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 	createSquareLoopCW := func(lat, lng, size float64) *LinkedGeoLoop {
 		loop := &LinkedGeoLoop{}
 		coords := []LatLng{
-			{Lat: lat, Lng: lng},               // Start at SW corner
-			{Lat: lat + size, Lng: lng},        // Move north to NW corner
-			{Lat: lat + size, Lng: lng + size}, // Move east to NE corner
-			{Lat: lat, Lng: lng + size},        // Move south to SE corner
-			{Lat: lat, Lng: lng},               // Back to start (CW)
+			{Lat: angle.Rad(lat), Lng: angle.Rad(lng)},               // Start at SW corner
+			{Lat: angle.Rad(lat + size), Lng: angle.Rad(lng)},        // Move north to NW corner
+			{Lat: angle.Rad(lat + size), Lng: angle.Rad(lng + size)}, // Move east to NE corner
+			{Lat: angle.Rad(lat), Lng: angle.Rad(lng + size)},        // Move south to SE corner
+			{Lat: angle.Rad(lat), Lng: angle.Rad(lng)},               // Back to start (CW)
 		}
 
 		var prev *LinkedLatLng
