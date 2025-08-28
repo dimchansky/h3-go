@@ -30,7 +30,7 @@ func Test_directedEdgeToBoundary_parity(t *testing.T) {
 			var goBoundary CellBoundary
 			var cBoundary CellBoundary
 
-			goErr := _directedEdgeToBoundary(tt.edge, &goBoundary)
+			goErr := directedEdgeToBoundary(tt.edge, &goBoundary)
 			cErr := directedEdgeToBoundaryC(tt.edge, &cBoundary)
 
 			// Check error codes match
@@ -87,7 +87,7 @@ func Test_directedEdgeToBoundary_invalidEdges_parity(t *testing.T) {
 			var goBoundary CellBoundary
 			var cBoundary CellBoundary
 
-			goErr := _directedEdgeToBoundary(tt.edge, &goBoundary)
+			goErr := directedEdgeToBoundary(tt.edge, &goBoundary)
 			cErr := directedEdgeToBoundaryC(tt.edge, &cBoundary)
 
 			// For invalid edges, we primarily care that error codes match
@@ -130,7 +130,7 @@ func Test_directedEdgeToBoundary_comprehensive_parity(t *testing.T) {
 				var goBoundary CellBoundary
 				var cBoundary CellBoundary
 
-				goErr := _directedEdgeToBoundary(edge, &goBoundary)
+				goErr := directedEdgeToBoundary(edge, &goBoundary)
 				cErr := directedEdgeToBoundaryC(edge, &cBoundary)
 
 				if goErr != cErr {

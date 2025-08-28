@@ -9,13 +9,12 @@ import (
 // Ported from H3 C: bbox.c::bboxHexEstimate
 func bboxHexEstimate(bbox *BBox, res int32, out *int64) H3Error {
 	// Get the area of the pentagon as the maximally-distorted area possible
-	var pentagons [12]H3Index
-	var pentagonSlice []H3Index = pentagons[:0]
-	pentagonSlice, pentagonsErr := getPentagons(pentagonSlice, res)
+	var pentagons = make([]H3Index, NUM_PENTAGONS)
+	pentagonsErr := getPentagons(res, pentagons)
 	if pentagonsErr != E_SUCCESS {
 		return pentagonsErr
 	}
-	pentagonRadiusKm := _hexRadiusKm(pentagonSlice[0])
+	pentagonRadiusKm := _hexRadiusKm(pentagons[0])
 
 	// Area of a regular hexagon is 3/2*sqrt(3) * r * r
 	// The pentagon has the most distortion (smallest edges) and shares its

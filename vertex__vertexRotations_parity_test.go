@@ -60,8 +60,8 @@ func Test_vertexRotations_parity(t *testing.T) {
 func Test_vertexRotations_parity_pentagons(t *testing.T) {
 	// Test all pentagons at different resolutions
 	for res := 0; res <= 15; res++ {
-		pentagons := make([]H3Index, 0, NUM_PENTAGONS)
-		getPentagons(pentagons, int32(res))
+		pentagons := make([]H3Index, NUM_PENTAGONS)
+		getPentagons(int32(res), pentagons)
 
 		for _, pentagon := range pentagons {
 			var goOut, cOut int32

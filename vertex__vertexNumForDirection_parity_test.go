@@ -62,7 +62,8 @@ func Test_vertexNumForDirection_parity(t *testing.T) {
 func Test_vertexNumForDirection_parity_pentagons(t *testing.T) {
 	// Test all pentagons at different resolutions
 	for res := int32(0); res <= 15; res++ {
-		pentagons, err := getPentagons(nil, res)
+		pentagons := make([]H3Index, NUM_PENTAGONS)
+		err := getPentagons(res, pentagons)
 		if err != E_SUCCESS {
 			t.Fatalf("getPentagons failed for res=%d: %v", res, err)
 		}

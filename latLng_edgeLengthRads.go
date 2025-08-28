@@ -7,7 +7,7 @@ package h3
 func edgeLengthRads(edge H3Index, length *float64) H3Error {
 	var cb CellBoundary
 
-	err := _directedEdgeToBoundary(edge, &cb)
+	err := directedEdgeToBoundary(edge, &cb)
 	if err != E_SUCCESS {
 		return err
 	}

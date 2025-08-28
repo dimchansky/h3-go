@@ -44,7 +44,7 @@ func Test_cellsToDirectedEdge_parity(t *testing.T) {
 			cEdge, cErr := cellsToDirectedEdgeC(tt.origin, tt.destination)
 
 			// Get Go implementation result
-			goEdge, goErr := _cellsToDirectedEdge(tt.origin, tt.destination)
+			goEdge, goErr := cellsToDirectedEdge(tt.origin, tt.destination)
 
 			// Compare errors
 			if cErr != goErr {
@@ -93,7 +93,7 @@ func Test_cellsToDirectedEdge_known_neighbors_parity(t *testing.T) {
 			cEdge, cErr := cellsToDirectedEdgeC(tt.origin, tt.destination)
 
 			// Get Go implementation result
-			goEdge, goErr := _cellsToDirectedEdge(tt.origin, tt.destination)
+			goEdge, goErr := cellsToDirectedEdge(tt.origin, tt.destination)
 
 			// Compare errors
 			if cErr != goErr {
@@ -152,7 +152,7 @@ func Test_cellsToDirectedEdge_pentagon_parity(t *testing.T) {
 			cEdge, cErr := cellsToDirectedEdgeC(tt.origin, tt.destination)
 
 			// Get Go implementation result
-			goEdge, goErr := _cellsToDirectedEdge(tt.origin, tt.destination)
+			goEdge, goErr := cellsToDirectedEdge(tt.origin, tt.destination)
 
 			// Compare errors
 			if cErr != goErr {
