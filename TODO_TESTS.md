@@ -1,5 +1,6 @@
 Tests ported:
 
+testH3IteratorsInternal.c
 testH3NeighborRotations.c
 testH3SetToVertexGraphInternal.c
 testLatLng.c

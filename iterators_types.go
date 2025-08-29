@@ -27,3 +27,12 @@ type IterCellsPolygon struct {
 	cellIter  IterCellsPolygonCompact // sub-iterator for compact cells
 	childIter IterCellsChildren       // sub-iterator for cell children
 }
+
+// IterCellsResolution mirrors the C IterCellsResolution struct for iterating
+// through all cells at a given resolution.
+type IterCellsResolution struct {
+	H           H3Index           // current value
+	baseCellNum int32             // current base cell number
+	res         int32             // target resolution
+	itC         IterCellsChildren // child iterator for current base cell
+}
