@@ -13,13 +13,13 @@ import (
 // C test-specific fixtures for degenerate polygons
 var (
 	// Point polygon with single vertex at origin - C test expects E_FAILED
-	pointVertsC = []LatLng{{Lat: 0, Lng: 0}}
-	pointGeoLoopC = GeoLoop(pointVertsC)
+	pointVertsC      = []LatLng{{Lat: 0, Lng: 0}}
+	pointGeoLoopC    = GeoLoop(pointVertsC)
 	pointGeoPolygonC = GeoPolygon{GeoLoop: pointGeoLoopC, Holes: nil}
 
-	// Line polygon from origin - C test expects E_FAILED  
-	lineVertsC = []LatLng{{Lat: 0, Lng: 0}, {Lat: 1, Lng: 0}}
-	lineGeoLoopC = GeoLoop(lineVertsC)
+	// Line polygon from origin - C test expects E_FAILED
+	lineVertsC      = []LatLng{{Lat: 0, Lng: 0}, {Lat: 1, Lng: 0}}
+	lineGeoLoopC    = GeoLoop(lineVertsC)
 	lineGeoPolygonC = GeoPolygon{GeoLoop: lineGeoLoopC, Holes: nil}
 )
 
@@ -284,7 +284,7 @@ func TestPolygonToCellsExactStandard(t *testing.T) {
 
 func TestPolygonToCellsTransmeridianStandard(t *testing.T) {
 	t.Parallel()
-	
+
 	// Prime meridian case
 	primeMeridianVerts := []LatLng{
 		{0.01, 0.01}, {0.01, -0.01}, {-0.01, -0.01}, {-0.01, 0.01},
@@ -311,7 +311,7 @@ func TestPolygonToCellsTransmeridianStandard(t *testing.T) {
 		Holes:   []GeoLoop{transMeridianHoleGeoLoop},
 	}
 	transMeridianFilledHoleGeoPolygon := GeoPolygon{
-		GeoLoop: transMeridianHoleGeoLoop, 
+		GeoLoop: transMeridianHoleGeoLoop,
 		Holes:   nil,
 	}
 
@@ -387,7 +387,7 @@ func TestPolygonToCellsTransmeridianStandard(t *testing.T) {
 
 func TestPolygonToCellsTransmeridianComplexStandard(t *testing.T) {
 	t.Parallel()
-	
+
 	// Complex polygon with > 4 vertices
 	verts := []LatLng{
 		{0.1, -math.Pi + 0.00001}, {0.1, math.Pi - 0.00001},
@@ -417,7 +417,7 @@ func TestPolygonToCellsTransmeridianComplexStandard(t *testing.T) {
 
 func TestPolygonToCellsPentagonStandard(t *testing.T) {
 	t.Parallel()
-	
+
 	var pentagon H3Index
 	setH3Index(&pentagon, 9, 24, 0)
 	var coord LatLng
@@ -486,9 +486,9 @@ func TestPolygonToCellsPentagonStandard(t *testing.T) {
 
 func TestInvalidFlagsStandard(t *testing.T) {
 	t.Parallel()
-	
+
 	var numHexagons int64
-	
+
 	// Test invalid flags for maxPolygonToCellsSize
 	for flags := uint32(CONTAINMENT_INVALID); flags <= 32; flags++ {
 		err := maxPolygonToCellsSize(&sfGeoPolygon, 9, flags, &numHexagons)
@@ -504,7 +504,7 @@ func TestInvalidFlagsStandard(t *testing.T) {
 	}
 
 	hexagons := make([]H3Index, numHexagons)
-	
+
 	// Test invalid flags for polygonToCells
 	for flags := uint32(CONTAINMENT_INVALID); flags <= 32; flags++ {
 		err = polygonToCells(&sfGeoPolygon, 9, flags, hexagons)
@@ -516,7 +516,7 @@ func TestInvalidFlagsStandard(t *testing.T) {
 
 func TestPolygonToCellsInvalidPolygon(t *testing.T) {
 	t.Parallel()
-	
+
 	hexagons := make([]H3Index, 0)
 	err := polygonToCells(&invalidGeoPolygon, 9, 0, hexagons)
 	if err != E_FAILED {
@@ -526,37 +526,37 @@ func TestPolygonToCellsInvalidPolygon(t *testing.T) {
 
 func TestFillIndex(t *testing.T) {
 	t.Parallel()
-	
+
 	// Test a few cells at resolutions 0, 1, 2
 	// Note: This is a simplified version of iterateAllIndexesAtRes
-	
+
 	// Test base cells at resolution 0
 	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
 		if _isBaseCellPentagon(baseCell) {
 			continue // Skip pentagons for now
 		}
-		
+
 		var h H3Index
 		setH3Index(&h, 0, baseCell, 0)
 		if !isValidCell(h) {
 			continue
 		}
-		
+
 		fillIndex_assertions(h)
 	}
-	
+
 	// Test some cells at resolution 1
 	for baseCell := int32(0); baseCell < 10; baseCell++ { // Limited sample
 		if _isBaseCellPentagon(baseCell) {
 			continue
 		}
-		
+
 		var h H3Index
 		setH3Index(&h, 1, baseCell, 0)
 		if !isValidCell(h) {
 			continue
 		}
-		
+
 		fillIndex_assertions(h)
 	}
 }
@@ -564,10 +564,10 @@ func TestFillIndex(t *testing.T) {
 // Helper function to get edge hexagons (tests internal function)
 func TestGetEdgeHexagonsInvalid(t *testing.T) {
 	t.Parallel()
-	
+
 	search := make([]H3Index, 100)
 	found := make([]H3Index, 100)
-	
+
 	var numSearchHexes int64
 	err := _getEdgeHexagons(invalidGeoLoop, 100, 0, &numSearchHexes, search, found)
 	if err == E_SUCCESS {

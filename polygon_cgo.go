@@ -10,6 +10,8 @@ package h3
 
 // Prototype for bboxesFromGeoPolygon
 extern void bboxesFromGeoPolygon(const GeoPolygon* polygon, BBox* bboxes);
+// Prototype for isClockwiseGeoLoop
+extern bool isClockwiseGeoLoop(const GeoLoop* geoloop);
 */
 import "C"
 import (
@@ -298,4 +300,11 @@ func bboxesFromGeoPolygonC(polygon *GeoPolygon, bboxes []BBox) {
 		bboxes[i].East = Rad(float64(cbboxes[i].east))
 		bboxes[i].West = Rad(float64(cbboxes[i].west))
 	}
+}
+
+// isClockwiseGeoLoopC calls the original C implementation.
+func isClockwiseGeoLoopC(loop GeoLoop) bool {
+	cg, freeFn := toCGeoLoop(loop)
+	defer freeFn()
+	return bool(C.isClockwiseGeoLoop(&cg))
 }
