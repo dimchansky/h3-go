@@ -1,7 +1,25 @@
 .PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt
 
+# Usage: make test [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration]
+# Examples:
+#   make test                              # Run all tests (default timeout)
+#   make test TEST=TestPolygonToCells_ZeroSize  # Run specific test
+#   make test VERBOSE=1                    # Run all tests in verbose mode
+#   make test TEST=TestPolygonToCells_ZeroSize VERBOSE=1  # Run specific test verbosely
+#   make test TIMEOUT=30s                  # Run all tests with 30s timeout
 test:
-	CGO_ENABLED=0 go test ./...
+	@if [ -n "$(TEST)" ]; then \
+		echo "Running test: $(TEST)..."; \
+	else \
+		echo "Running all tests..."; \
+	fi
+	@VERBOSE_FLAG=""; \
+	if [ -n "$(VERBOSE)" ]; then VERBOSE_FLAG="-v"; fi; \
+	TEST_FLAG=""; \
+	if [ -n "$(TEST)" ]; then TEST_FLAG="-run=$(TEST)"; fi; \
+	TIMEOUT_FLAG=""; \
+	if [ -n "$(TIMEOUT)" ]; then TIMEOUT_FLAG="-timeout=$(TIMEOUT)"; fi; \
+	CGO_ENABLED=0 go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG ./...
 
 bench:
 	CGO_ENABLED=0 go test -bench=. -benchmem ./...
