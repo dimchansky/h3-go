@@ -8,7 +8,7 @@ import (
 
 func Test_pointSquareDist(t *testing.T) {
 	t.Parallel()
-	
+
 	v1 := &Vec3d{0, 0, 0}
 	v2 := &Vec3d{1, 0, 0}
 	v3 := &Vec3d{0, 1, 1}

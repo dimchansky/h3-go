@@ -5,7 +5,7 @@ import "testing"
 
 func TestCellToVertex_badVerts(t *testing.T) {
 	t.Parallel()
-	
+
 	origin := H3Index(0x823d6ffffffffff)
 
 	var vert H3Index
@@ -24,7 +24,7 @@ func TestCellToVertex_badVerts(t *testing.T) {
 
 func TestCellToVertex_invalid(t *testing.T) {
 	t.Parallel()
-	
+
 	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
 	var vert H3Index
 	if err := cellToVertex(invalid, 3, &vert); err != E_FAILED {
@@ -34,7 +34,7 @@ func TestCellToVertex_invalid(t *testing.T) {
 
 func TestCellToVertex_invalid2(t *testing.T) {
 	t.Parallel()
-	
+
 	index := H3Index(0x685b2396e900fff9)
 	var vert H3Index
 	if err := cellToVertex(index, 2, &vert); err != E_CELL_INVALID {
@@ -44,7 +44,7 @@ func TestCellToVertex_invalid2(t *testing.T) {
 
 func TestCellToVertex_invalid3(t *testing.T) {
 	t.Parallel()
-	
+
 	index := H3Index(0x20ff20202020ff35)
 	var vert H3Index
 	if err := cellToVertex(index, 0, &vert); err != E_CELL_INVALID {
@@ -54,7 +54,7 @@ func TestCellToVertex_invalid3(t *testing.T) {
 
 func TestIsValidVertex_hex(t *testing.T) {
 	t.Parallel()
-	
+
 	origin := H3Index(0x823d6ffffffffff)
 	vert := H3Index(0x2222597fffffffff)
 
@@ -74,7 +74,7 @@ func TestIsValidVertex_hex(t *testing.T) {
 
 func TestIsValidVertex_invalidOwner(t *testing.T) {
 	t.Parallel()
-	
+
 	origin := H3Index(0x823d6ffffffffff)
 	vertexNum := int32(0)
 	var vert H3Index
@@ -92,7 +92,7 @@ func TestIsValidVertex_invalidOwner(t *testing.T) {
 
 func TestIsValidVertex_wrongOwner(t *testing.T) {
 	t.Parallel()
-	
+
 	origin := H3Index(0x823d6ffffffffff)
 	vertexNum := int32(0)
 	var vert H3Index
@@ -120,7 +120,7 @@ func TestIsValidVertex_wrongOwner(t *testing.T) {
 
 func TestIsValidVertex_badVerts(t *testing.T) {
 	t.Parallel()
-	
+
 	origin := H3Index(0x823d6ffffffffff)
 	if isValidVertex(origin) {
 		t.Error("cell should not be valid")
@@ -154,7 +154,7 @@ func TestIsValidVertex_badVerts(t *testing.T) {
 
 func TestVertexToLatLng_invalid(t *testing.T) {
 	t.Parallel()
-	
+
 	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
 	var latLng LatLng
 	if err := vertexToLatLng(invalid, &latLng); err == E_SUCCESS {
@@ -164,7 +164,7 @@ func TestVertexToLatLng_invalid(t *testing.T) {
 
 func TestCellToVertexes_invalid(t *testing.T) {
 	t.Parallel()
-	
+
 	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
 	var verts [6]H3Index
 	if err := cellToVertexes(invalid, &verts); err != E_FAILED {

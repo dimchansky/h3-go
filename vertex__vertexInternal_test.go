@@ -8,7 +8,7 @@ func TestVertexNumForDirection_hex(t *testing.T) {
 	t.Parallel()
 	origin := H3Index(0x823d6ffffffffff)
 	vertexNums := make([]bool, NUM_HEX_VERTS)
-	
+
 	for dir := K_AXES_DIGIT; dir < NUM_DIGITS; dir++ {
 		vertexNum := vertexNumForDirection(origin, dir)
 		if vertexNum < 0 || vertexNum >= int32(NUM_HEX_VERTS) {
@@ -25,7 +25,7 @@ func TestVertexNumForDirection_pent(t *testing.T) {
 	t.Parallel()
 	pentagon := H3Index(0x823007fffffffff)
 	vertexNums := make([]bool, NUM_PENT_VERTS)
-	
+
 	for dir := J_AXES_DIGIT; dir < NUM_DIGITS; dir++ {
 		vertexNum := vertexNumForDirection(pentagon, dir)
 		if vertexNum < 0 || vertexNum >= int32(NUM_PENT_VERTS) {
@@ -63,7 +63,7 @@ func TestDirectionForVertexNum_hex(t *testing.T) {
 	t.Parallel()
 	origin := H3Index(0x823d6ffffffffff)
 	seenDirs := make([]bool, NUM_DIGITS)
-	
+
 	for vertexNum := int32(0); vertexNum < int32(NUM_HEX_VERTS); vertexNum++ {
 		dir := directionForVertexNum(origin, vertexNum)
 		if dir <= 0 || dir >= INVALID_DIGIT {

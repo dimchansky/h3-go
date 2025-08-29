@@ -6,3 +6,24 @@ type IterCellsChildren struct {
 	ParentRes int32   // Parent resolution
 	SkipDigit int32   // Skip digit for pentagons
 }
+
+// IterCellsPolygonCompact mirrors the C IterCellsPolygonCompact struct for iterating
+// through all cells within a given polygon, outputting a compact set.
+type IterCellsPolygonCompact struct {
+	Cell    H3Index     // current value
+	Error   H3Error     // error, if any
+	res     int32       // target resolution
+	flags   uint32      // Mode flags for the polygonToCells operation
+	polygon *GeoPolygon // the polygon we're filling
+	bboxes  []BBox      // Bounding box(es) for the polygon and its holes
+	started bool        // Whether iteration has started
+}
+
+// IterCellsPolygon mirrors the C IterCellsPolygon struct for iterating through
+// all cells within a given polygon at a fixed resolution.
+type IterCellsPolygon struct {
+	Cell      H3Index                 // current value
+	Error     H3Error                 // error, if any
+	cellIter  IterCellsPolygonCompact // sub-iterator for compact cells
+	childIter IterCellsChildren       // sub-iterator for cell children
+}

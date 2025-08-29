@@ -8,7 +8,7 @@ import (
 
 func Test_geoToVec3d(t *testing.T) {
 	t.Parallel()
-	
+
 	origin := &Vec3d{0, 0, 0}
 
 	// Test: Geo point is on the unit sphere

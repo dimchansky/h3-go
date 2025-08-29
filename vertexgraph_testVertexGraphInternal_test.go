@@ -21,14 +21,14 @@ func TestMakeVertexGraph(t *testing.T) {
 	t.Parallel()
 	var graph VertexGraph
 	initVertexGraph(&graph, 10, 9)
-	
+
 	if graph.NumBuckets != 10 {
 		t.Errorf("numBuckets not set correctly: got %d, want 10", graph.NumBuckets)
 	}
 	if graph.Size != 0 {
 		t.Errorf("size not initialized to 0: got %d", graph.Size)
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
 
@@ -36,23 +36,23 @@ func TestVertexHash(t *testing.T) {
 	t.Parallel()
 	center, _, _, _, _, _, _ := getTestVertices()
 	numBuckets := int32(1000)
-	
+
 	for res := 0; res < 11; res++ {
 		centerIndex, err := LatLngToCell(center, res)
 		if err != nil {
 			t.Fatalf("LatLngToCell failed for res %d: %v", res, err)
 		}
-		
+
 		boundary, err := CellToBoundary(Cell(centerIndex))
 		if err != nil {
 			t.Fatalf("CellToBoundary failed: %v", err)
 		}
-		
+
 		numVerts := len(boundary)
 		for i := 0; i < numVerts; i++ {
 			hash1 := _hashVertex(&boundary[i], int32(res), numBuckets)
 			hash2 := _hashVertex(&boundary[(i+1)%numVerts], int32(res), numBuckets)
-			
+
 			if hash1 == hash2 {
 				t.Errorf("Hashes must not be equal at res %d, vertex %d: both are %d", res, i, hash1)
 			}
@@ -64,12 +64,12 @@ func TestVertexHashNegative(t *testing.T) {
 	t.Parallel()
 	_, _, _, _, _, vertex5, vertex6 := getTestVertices()
 	numBuckets := int32(10)
-	
+
 	hash5 := _hashVertex(&vertex5, 5, numBuckets)
 	if hash5 >= uint32(numBuckets) {
 		t.Errorf("zero vertex hash out of bounds: %d >= %d", hash5, numBuckets)
 	}
-	
+
 	hash6 := _hashVertex(&vertex6, 5, numBuckets)
 	if hash6 >= uint32(numBuckets) {
 		t.Errorf("negative coordinates vertex hash out of bounds: %d >= %d", hash6, numBuckets)
@@ -81,7 +81,7 @@ func TestAddVertexNode(t *testing.T) {
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
 	var graph VertexGraph
 	initVertexGraph(&graph, 10, 9)
-	
+
 	// Basic add
 	addedNode := addVertexNode(&graph, &vertex1, &vertex2)
 	node := findNodeForEdge(&graph, &vertex1, &vertex2)
@@ -94,7 +94,7 @@ func TestAddVertexNode(t *testing.T) {
 	if graph.Size != 1 {
 		t.Errorf("Graph size not incremented: got %d, want 1", graph.Size)
 	}
-	
+
 	// Collision add
 	addedNode = addVertexNode(&graph, &vertex1, &vertex3)
 	node = findNodeForEdge(&graph, &vertex1, &vertex3)
@@ -107,7 +107,7 @@ func TestAddVertexNode(t *testing.T) {
 	if graph.Size != 2 {
 		t.Errorf("Graph size not incremented: got %d, want 2", graph.Size)
 	}
-	
+
 	// Collision add #2
 	addedNode = addVertexNode(&graph, &vertex1, &vertex4)
 	node = findNodeForEdge(&graph, &vertex1, &vertex4)
@@ -120,7 +120,7 @@ func TestAddVertexNode(t *testing.T) {
 	if graph.Size != 3 {
 		t.Errorf("Graph size not incremented: got %d, want 3", graph.Size)
 	}
-	
+
 	// Exact match no-op
 	oldNode := findNodeForEdge(&graph, &vertex1, &vertex2)
 	addedNode = addVertexNode(&graph, &vertex1, &vertex2)
@@ -133,7 +133,7 @@ func TestAddVertexNode(t *testing.T) {
 	if graph.Size != 3 {
 		t.Errorf("Graph size changed on duplicate: got %d, want 3", graph.Size)
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
 
@@ -142,7 +142,7 @@ func TestAddVertexNodeDupe(t *testing.T) {
 	_, vertex1, vertex2, _, _, _, _ := getTestVertices()
 	var graph VertexGraph
 	initVertexGraph(&graph, 10, 9)
-	
+
 	// Basic add
 	addedNode := addVertexNode(&graph, &vertex1, &vertex2)
 	node := findNodeForEdge(&graph, &vertex1, &vertex2)
@@ -155,7 +155,7 @@ func TestAddVertexNodeDupe(t *testing.T) {
 	if graph.Size != 1 {
 		t.Errorf("Graph size not incremented: got %d, want 1", graph.Size)
 	}
-	
+
 	// Dupe add
 	addedNode = addVertexNode(&graph, &vertex1, &vertex2)
 	if node != addedNode {
@@ -164,7 +164,7 @@ func TestAddVertexNodeDupe(t *testing.T) {
 	if graph.Size != 1 {
 		t.Errorf("Graph size incremented on duplicate: got %d, want 1", graph.Size)
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
 
@@ -174,35 +174,35 @@ func TestFindNodeForEdge(t *testing.T) {
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
 	var graph VertexGraph
 	initVertexGraph(&graph, 10, 9)
-	
+
 	// Empty graph
 	node := findNodeForEdge(&graph, &vertex1, &vertex2)
 	if node != nil {
 		t.Error("Node lookup should fail for empty graph")
 	}
-	
+
 	addVertexNode(&graph, &vertex1, &vertex2)
-	
+
 	// Different hash
 	node = findNodeForEdge(&graph, &vertex3, &vertex2)
 	if node != nil {
 		t.Error("Node lookup should fail for different hash")
 	}
-	
+
 	// Hash collision
 	node = findNodeForEdge(&graph, &vertex1, &vertex3)
 	if node != nil {
 		t.Error("Node lookup should fail for hash collision")
 	}
-	
+
 	addVertexNode(&graph, &vertex1, &vertex4)
-	
+
 	// Hash collision, list iteration
 	node = findNodeForEdge(&graph, &vertex1, &vertex3)
 	if node != nil {
 		t.Error("Node lookup should fail for collision w/iteration")
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
 
@@ -211,25 +211,25 @@ func TestFindNodeForVertex(t *testing.T) {
 	_, vertex1, vertex2, vertex3, _, _, _ := getTestVertices()
 	var graph VertexGraph
 	initVertexGraph(&graph, 10, 9)
-	
+
 	// Empty graph
 	node := findNodeForVertex(&graph, &vertex1)
 	if node != nil {
 		t.Error("Node lookup should fail for empty graph")
 	}
-	
+
 	addVertexNode(&graph, &vertex1, &vertex2)
-	
+
 	node = findNodeForVertex(&graph, &vertex1)
 	if node == nil {
 		t.Error("Node lookup should succeed for correct node")
 	}
-	
+
 	node = findNodeForVertex(&graph, &vertex3)
 	if node != nil {
 		t.Error("Node lookup should fail for different node")
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
 
@@ -238,11 +238,11 @@ func TestRemoveVertexNode(t *testing.T) {
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
 	var graph VertexGraph
 	initVertexGraph(&graph, 10, 9)
-	
+
 	// Straight removal
 	node := addVertexNode(&graph, &vertex1, &vertex2)
 	success := removeVertexNode(&graph, node) == 0
-	
+
 	if !success {
 		t.Error("Removal failed")
 	}
@@ -252,12 +252,12 @@ func TestRemoveVertexNode(t *testing.T) {
 	if graph.Size != 0 {
 		t.Errorf("Graph size not decremented: got %d, want 0", graph.Size)
 	}
-	
+
 	// Remove end of list
 	addVertexNode(&graph, &vertex1, &vertex2)
 	node = addVertexNode(&graph, &vertex1, &vertex3)
 	success = removeVertexNode(&graph, node) == 0
-	
+
 	if !success {
 		t.Error("Removal of end node failed")
 	}
@@ -271,18 +271,18 @@ func TestRemoveVertexNode(t *testing.T) {
 	if graph.Size != 1 {
 		t.Errorf("Graph size not decremented: got %d, want 1", graph.Size)
 	}
-	
+
 	// Clean up for next test
 	node = findNodeForVertex(&graph, &vertex1)
 	if removeVertexNode(&graph, node) != 0 {
 		t.Error("Cleanup removal failed")
 	}
-	
+
 	// Remove beginning of list
 	node = addVertexNode(&graph, &vertex1, &vertex2)
 	addVertexNode(&graph, &vertex1, &vertex3)
 	success = removeVertexNode(&graph, node) == 0
-	
+
 	if !success {
 		t.Error("Removal of beginning node failed")
 	}
@@ -299,19 +299,19 @@ func TestRemoveVertexNode(t *testing.T) {
 	if graph.Size != 1 {
 		t.Errorf("Graph size not decremented: got %d, want 1", graph.Size)
 	}
-	
+
 	// Clean up for next test
 	node = findNodeForVertex(&graph, &vertex1)
 	if removeVertexNode(&graph, node) != 0 {
 		t.Error("Cleanup removal failed")
 	}
-	
+
 	// Remove middle of list
 	addVertexNode(&graph, &vertex1, &vertex2)
 	node = addVertexNode(&graph, &vertex1, &vertex3)
 	addVertexNode(&graph, &vertex1, &vertex4)
 	success = removeVertexNode(&graph, node) == 0
-	
+
 	if !success {
 		t.Error("Removal of middle node failed")
 	}
@@ -324,19 +324,19 @@ func TestRemoveVertexNode(t *testing.T) {
 	if graph.Size != 2 {
 		t.Errorf("Graph size not decremented: got %d, want 2", graph.Size)
 	}
-	
+
 	// Remove non-existent node
 	// Create a node that's not in the graph
 	fakeNode := &VertexNode{}
 	success = removeVertexNode(&graph, fakeNode) == 0
-	
+
 	if success {
 		t.Error("Removal of non-existent node should fail")
 	}
 	if graph.Size != 2 {
 		t.Errorf("Graph size changed after failed removal: got %d, want 2", graph.Size)
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
 
@@ -345,19 +345,19 @@ func TestFirstVertexNode(t *testing.T) {
 	_, vertex1, vertex2, _, _, _, _ := getTestVertices()
 	var graph VertexGraph
 	initVertexGraph(&graph, 10, 9)
-	
+
 	node := firstVertexNode(&graph)
 	if node != nil {
 		t.Error("No node should be found for empty graph")
 	}
-	
+
 	addedNode := addVertexNode(&graph, &vertex1, &vertex2)
-	
+
 	node = firstVertexNode(&graph)
 	if node != addedNode {
 		t.Error("First node not found correctly")
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
 
@@ -374,16 +374,16 @@ func TestSingleBucketVertexGraph(t *testing.T) {
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
 	var graph VertexGraph
 	initVertexGraph(&graph, 1, 9)
-	
+
 	if graph.NumBuckets != 1 {
 		t.Errorf("Wrong number of buckets: got %d, want 1", graph.NumBuckets)
 	}
-	
+
 	node := firstVertexNode(&graph)
 	if node != nil {
 		t.Error("No node should be found for empty graph")
 	}
-	
+
 	node = addVertexNode(&graph, &vertex1, &vertex2)
 	if node == nil {
 		t.Error("Node not added")
@@ -391,7 +391,7 @@ func TestSingleBucketVertexGraph(t *testing.T) {
 	if firstVertexNode(&graph) != node {
 		t.Error("First node is not the added node")
 	}
-	
+
 	addVertexNode(&graph, &vertex2, &vertex3)
 	addVertexNode(&graph, &vertex3, &vertex4)
 	if firstVertexNode(&graph) != node {
@@ -400,6 +400,6 @@ func TestSingleBucketVertexGraph(t *testing.T) {
 	if graph.Size != 3 {
 		t.Errorf("Graph size not updated correctly: got %d, want 3", graph.Size)
 	}
-	
+
 	destroyVertexGraph(&graph)
 }
