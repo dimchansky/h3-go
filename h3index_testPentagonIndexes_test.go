@@ -31,17 +31,17 @@ func Test_getPentagons_propertyTests(t *testing.T) {
 				h3Index := h3Indexes[i]
 				if h3Index != 0 {
 					numFound++
-					
+
 					if !isValidCell(h3Index) {
 						t.Errorf("index %v should be valid", h3Index)
 					}
-					
+
 					if !isPentagon(h3Index) {
 						t.Errorf("index %v should be pentagon", h3Index)
 					}
-					
+
 					if getResolution(h3Index) != res {
-						t.Errorf("index %v should have resolution %d, got %d", 
+						t.Errorf("index %v should have resolution %d, got %d",
 							h3Index, res, getResolution(h3Index))
 					}
 
@@ -81,7 +81,7 @@ func Test_getPentagons_invalid(t *testing.T) {
 			h3Indexes := make([]H3Index, PADDED_COUNT)
 			err := getPentagons(tc.res, h3Indexes)
 			if err != E_RES_DOMAIN {
-				t.Errorf("getPentagons of invalid resolution %d should return E_RES_DOMAIN, got %v", 
+				t.Errorf("getPentagons of invalid resolution %d should return E_RES_DOMAIN, got %v",
 					tc.res, err)
 			}
 		})
@@ -92,9 +92,9 @@ func Test_isPentagon_invalid(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name    string
-		index   H3Index
-		isPent  bool
+		name   string
+		index  H3Index
+		isPent bool
 	}{
 		{"zero index", H3Index(0), false},
 		{"all but high bit", H3Index(0x7fffffffffffffff), false},

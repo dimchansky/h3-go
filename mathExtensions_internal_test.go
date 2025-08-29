@@ -5,7 +5,7 @@ import "testing"
 
 func TestIpow(t *testing.T) {
 	t.Parallel()
-	
+
 	tests := []struct {
 		name     string
 		base     int64
@@ -31,7 +31,7 @@ func TestIpow(t *testing.T) {
 
 func TestSubOverflows(t *testing.T) {
 	t.Parallel()
-	
+
 	tests := []struct {
 		name     string
 		a        int32
@@ -79,7 +79,7 @@ func TestSubOverflows(t *testing.T) {
 
 func TestAddOverflows(t *testing.T) {
 	t.Parallel()
-	
+
 	tests := []struct {
 		name     string
 		a        int32

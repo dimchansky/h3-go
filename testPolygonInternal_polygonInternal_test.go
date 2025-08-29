@@ -1078,4 +1078,3 @@ func TestCellBoundaryInsidePolygonNotInsideContainsHole(t *testing.T) {
 		t.Error("not inside when it contains hole")
 	}
 }
-

@@ -47,7 +47,7 @@ func TestDistanceRads(t *testing.T) {
 	if greatCircleDistanceRads(&p1, &p1) >= EPSILON_RAD*1000 {
 		t.Error("0 distance as expected")
 	}
-	
+
 	expectedDist := degsToRads(10)
 	actualDist := greatCircleDistanceRads(&p1, &p2)
 	if math.Abs(actualDist-expectedDist) >= EPSILON_RAD*1000 {
@@ -138,7 +138,7 @@ func TestIntConstantsErrors(t *testing.T) {
 	if err != E_RES_DOMAIN {
 		t.Error("getNumCells resolution negative")
 	}
-	
+
 	_, err = getNumCells(16)
 	if err != E_RES_DOMAIN {
 		t.Error("getNumCells resolution too high")
