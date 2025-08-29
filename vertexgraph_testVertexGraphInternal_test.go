@@ -38,20 +38,22 @@ func TestVertexHash(t *testing.T) {
 	numBuckets := int32(1000)
 
 	for res := 0; res < 11; res++ {
-		centerIndex, err := LatLngToCell(center, res)
-		if err != nil {
-			t.Fatalf("LatLngToCell failed for res %d: %v", res, err)
+		var centerIndex H3Index
+		err := latLngToCell(&center, int32(res), &centerIndex)
+		if err != E_SUCCESS {
+			t.Fatalf("latLngToCell failed for res %d: %v", res, err)
 		}
 
-		boundary, err := CellToBoundary(Cell(centerIndex))
-		if err != nil {
-			t.Fatalf("CellToBoundary failed: %v", err)
+		var boundary CellBoundary
+		err = cellToBoundary(centerIndex, &boundary)
+		if err != E_SUCCESS {
+			t.Fatalf("cellToBoundary failed: %v", err)
 		}
 
-		numVerts := len(boundary)
+		numVerts := int(boundary.NumVerts)
 		for i := 0; i < numVerts; i++ {
-			hash1 := _hashVertex(&boundary[i], int32(res), numBuckets)
-			hash2 := _hashVertex(&boundary[(i+1)%numVerts], int32(res), numBuckets)
+			hash1 := _hashVertex(&boundary.Verts[i], int32(res), numBuckets)
+			hash2 := _hashVertex(&boundary.Verts[(i+1)%numVerts], int32(res), numBuckets)
 
 			if hash1 == hash2 {
 				t.Errorf("Hashes must not be equal at res %d, vertex %d: both are %d", res, i, hash1)

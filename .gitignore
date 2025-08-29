@@ -13,8 +13,8 @@
 
 .idea/
 
-coverage.html
-coverage.out
+coverage*.html
+coverage*.out
 
 .claude/
 

@@ -1,12 +1,14 @@
-.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt
+.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all
 
-# Usage: make test [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration]
+# Usage: make test [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration] [COVERAGE=1]
 # Examples:
 #   make test                              # Run all tests (default timeout)
 #   make test TEST=TestPolygonToCells_ZeroSize  # Run specific test
 #   make test VERBOSE=1                    # Run all tests in verbose mode
 #   make test TEST=TestPolygonToCells_ZeroSize VERBOSE=1  # Run specific test verbosely
 #   make test TIMEOUT=30s                  # Run all tests with 30s timeout
+#   make test COVERAGE=1                   # Run tests with coverage report
+#   make test COVERAGE=1 COVERPROFILE=coverage.out  # Save coverage to specific file
 test:
 	@if [ -n "$(TEST)" ]; then \
 		echo "Running test: $(TEST)..."; \
@@ -19,7 +21,19 @@ test:
 	if [ -n "$(TEST)" ]; then TEST_FLAG="-run=$(TEST)"; fi; \
 	TIMEOUT_FLAG=""; \
 	if [ -n "$(TIMEOUT)" ]; then TIMEOUT_FLAG="-timeout=$(TIMEOUT)"; fi; \
-	CGO_ENABLED=0 go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG ./...
+	COVERAGE_FLAG=""; \
+	if [ -n "$(COVERAGE)" ]; then \
+		COVERPROFILE="$${COVERPROFILE:-coverage.out}"; \
+		COVERAGE_FLAG="-cover -coverprofile=$$COVERPROFILE"; \
+		echo "Coverage will be saved to: $$COVERPROFILE"; \
+	fi; \
+	CGO_ENABLED=0 go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG ./... && \
+	if [ -n "$(COVERAGE)" ]; then \
+		echo ""; \
+		echo "Coverage report generated. View with:"; \
+		echo "  go tool cover -func=$$COVERPROFILE    # Function coverage"; \
+		echo "  go tool cover -html=$$COVERPROFILE    # HTML report"; \
+	fi
 
 bench:
 	CGO_ENABLED=0 go test -bench=. -benchmem ./...
@@ -56,17 +70,21 @@ $(SMRCPTR):
 	@$(MAKE) install-smrcptr
 
 # Run c2go parity tests (require cgo). Uses local GOCACHE to avoid sandboxed home cache writes.
-# Usage: make test-c2go [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration]
+# Usage: make test-c2go [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration] [COVERAGE=1]
 # Examples:
 #   make test-c2go                              # Run all tests (10s timeout)
 #   make test-c2go TEST=Test_getIcosahedronFaces  # Run specific test
 #   make test-c2go VERBOSE=1                    # Run all tests in verbose mode
 #   make test-c2go TEST=Test_getIcosahedronFaces VERBOSE=1  # Run specific test verbosely
 #   make test-c2go TIMEOUT=30s                  # Run all tests with 30s timeout
+#   make test-c2go COVERAGE=1                   # Run tests with coverage report
+#   make test-c2go COVERAGE=1 COVERPROFILE=coverage-c2go.out  # Save to specific file
 H3VER ?= 4.3.0
 TEST ?=
 VERBOSE ?=
 TIMEOUT ?= 10s
+COVERAGE ?=
+COVERPROFILE ?=
 test-c2go:
 	@if [ -n "$(TEST)" ]; then \
 		echo "Running c2go parity test: $(TEST) (requires cgo)..."; \
@@ -87,18 +105,30 @@ test-c2go:
 	TEST_FLAG=""; \
 	if [ -n "$(TEST)" ]; then TEST_FLAG="-run=$(TEST)"; fi; \
 	TIMEOUT_FLAG="-timeout=$(TIMEOUT)"; \
+	COVERAGE_FLAG=""; \
+	if [ -n "$(COVERAGE)" ]; then \
+		COVERPROFILE="$${COVERPROFILE:-coverage-c2go.out}"; \
+		COVERAGE_FLAG="-cover -coverprofile=$$COVERPROFILE"; \
+		echo "Coverage will be saved to: $$COVERPROFILE"; \
+	fi; \
 	GOCACHE=$(PWD)/.gocache \
 	CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
 	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
 	CGO_LDFLAGS="-Wl,-dead_strip" \
-	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG -tags="c2go" ./... || { \
+	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="c2go" ./... || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
 		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \
 		echo " - Ensure a C toolchain is present (macOS: xcode-select --install)."; \
 		exit 1; \
-	}
+	}; \
+	if [ -n "$(COVERAGE)" ] && [ -z "$$TEST_FLAG" -o $$? -eq 0 ]; then \
+		echo ""; \
+		echo "Coverage report generated. View with:"; \
+		echo "  go tool cover -func=$$COVERPROFILE    # Function coverage"; \
+		echo "  go tool cover -html=$$COVERPROFILE    # HTML report"; \
+	fi
 fmt:
 	@echo "Checking gofmt formatting..."
 	@files=$$(gofmt -s -l .); \
@@ -113,3 +143,67 @@ fix-fmt:
 	@echo "Formatting Go files..."
 	@gofmt -s -w .
 	@echo "All Go files formatted"
+
+# Convenience target to run tests with coverage and display report
+coverage:
+	@echo "Running tests with coverage..."
+	@$(MAKE) test COVERAGE=1 COVERPROFILE=coverage.out
+	@echo ""
+	@echo "Function coverage summary:"
+	@go tool cover -func=coverage.out | tail -5
+
+# Generate and open HTML coverage report
+coverage-html: coverage
+	@echo "Generating HTML coverage report..."
+	@go tool cover -html=coverage.out -o coverage.html
+	@echo "Opening coverage.html in browser..."
+	@if command -v open >/dev/null 2>&1; then \
+		open coverage.html; \
+	elif command -v xdg-open >/dev/null 2>&1; then \
+		xdg-open coverage.html; \
+	else \
+		echo "Please open coverage.html manually"; \
+	fi
+
+# Convenience target to run c2go parity tests with coverage and display report
+coverage-c2go:
+	@echo "Running c2go parity tests with coverage..."
+	@$(MAKE) test-c2go COVERAGE=1 COVERPROFILE=coverage-c2go.out TIMEOUT=30s
+	@echo ""
+	@echo "Function coverage summary:"
+	@go tool cover -func=coverage-c2go.out | tail -5
+
+# Generate and open HTML coverage report for c2go tests
+coverage-c2go-html: coverage-c2go
+	@echo "Generating HTML coverage report for c2go tests..."
+	@go tool cover -html=coverage-c2go.out -o coverage-c2go.html
+	@echo "Opening coverage-c2go.html in browser..."
+	@if command -v open >/dev/null 2>&1; then \
+		open coverage-c2go.html; \
+	elif command -v xdg-open >/dev/null 2>&1; then \
+		xdg-open coverage-c2go.html; \
+	else \
+		echo "Please open coverage-c2go.html manually"; \
+	fi
+
+# Combined coverage: run both test suites and merge coverage
+coverage-all:
+	@echo "Running all tests with coverage (regular + c2go)..."
+	@echo "Step 1: Running regular tests..."
+	@$(MAKE) test COVERAGE=1 COVERPROFILE=coverage-regular.out
+	@echo ""
+	@echo "Step 2: Running c2go parity tests..."
+	@$(MAKE) test-c2go COVERAGE=1 COVERPROFILE=coverage-c2go-temp.out TIMEOUT=30s
+	@echo ""
+	@echo "Step 3: Merging coverage profiles..."
+	@echo "mode: set" > coverage-all.out
+	@tail -n +2 coverage-regular.out >> coverage-all.out 2>/dev/null || true
+	@tail -n +2 coverage-c2go-temp.out >> coverage-all.out 2>/dev/null || true
+	@rm -f coverage-regular.out coverage-c2go-temp.out
+	@echo ""
+	@echo "Combined coverage summary:"
+	@go tool cover -func=coverage-all.out | tail -5
+	@echo ""
+	@echo "View combined coverage with:"
+	@echo "  go tool cover -func=coverage-all.out    # Function coverage"
+	@echo "  go tool cover -html=coverage-all.out    # HTML report"

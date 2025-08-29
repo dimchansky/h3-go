@@ -1,5 +1,6 @@
 Tests ported:
 
+testPolygonToCells.c
 testPolygonToCellsExperimental.c
 testPolygonToCellsReported.c
 testPolygonToCellsReportedExperimental.c
