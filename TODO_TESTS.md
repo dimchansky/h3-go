@@ -1,5 +1,6 @@
 Tests ported:
 
+testMathExtensionsInternal.c
 testPentagonIndexes.c
 testPolyfillInternal.c
 testPolygonInternal.c
