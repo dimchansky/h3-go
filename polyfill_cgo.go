@@ -111,3 +111,30 @@ func cellToBBoxC(cell H3Index, coverChildren bool) (BBox, H3Error) {
 
 	return goBBox, err
 }
+
+// bboxToCellBoundaryC calls the C bboxToCellBoundary function
+func bboxToCellBoundaryC(bbox *BBox) CellBoundary {
+	cBBox := C.BBox{
+		north: C.double(bbox.North),
+		south: C.double(bbox.South),
+		east:  C.double(bbox.East),
+		west:  C.double(bbox.West),
+	}
+
+	cBoundary := C.bboxToCellBoundary(&cBBox)
+
+	// Convert C CellBoundary to Go CellBoundary
+	boundary := CellBoundary{
+		NumVerts: int32(cBoundary.numVerts),
+		Verts:    make([]LatLng, int32(cBoundary.numVerts)),
+	}
+
+	for i := int32(0); i < boundary.NumVerts; i++ {
+		boundary.Verts[i] = LatLng{
+			Lat: Angle(cBoundary.verts[i].lat),
+			Lng: Angle(cBoundary.verts[i].lng),
+		}
+	}
+
+	return boundary
+}
