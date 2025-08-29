@@ -1,5 +1,6 @@
 Tests ported:
 
+testLatLngInternal.c
 testLinkedGeoInternal.c
 testMathExtensionsInternal.c
 testPentagonIndexes.c
