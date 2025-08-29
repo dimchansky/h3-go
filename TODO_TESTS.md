@@ -1,5 +1,6 @@
 Tests ported:
 
+testLinkedGeoInternal.c
 testMathExtensionsInternal.c
 testPentagonIndexes.c
 testPolyfillInternal.c
