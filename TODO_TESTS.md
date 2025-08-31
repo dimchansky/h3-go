@@ -1,5 +1,6 @@
 Tests ported:
 
+- testDescribeH3Error.c
 - testDirectedEdge.c
 - testDirectedEdgeExhaustive.c
 - testGetIcosahedronFaces.c
