@@ -1,5 +1,7 @@
 Tests ported:
 
+testGridPathCells.c
+testGridPathCellsExhaustive.c
 testGridRing.c
 testGridRingInternal.c
 testGridRingUnsafe.c
