@@ -1,5 +1,6 @@
 Tests ported:
 
+- testDirectedEdge.c
 - testDirectedEdgeExhaustive.c
 - testGetIcosahedronFaces.c
 - testGridDisk.c
