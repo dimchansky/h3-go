@@ -1,5 +1,7 @@
 Tests ported:
 
+testGridDistanceExhaustive.c
+testGridDistanceInternal.c
 testGridPathCells.c
 testGridPathCellsExhaustive.c
 testGridRing.c
