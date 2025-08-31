@@ -1,5 +1,6 @@
 Tests ported:
 
+- testCoordIjkInternal.c
 - testDescribeH3Error.c
 - testDirectedEdge.c
 - testDirectedEdgeExhaustive.c
