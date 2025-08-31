@@ -31,7 +31,7 @@ func Test_h3NeighborRotations_rotationsOverflow(t *testing.T) {
 
 	var origin H3Index
 	setH3Index(&origin, 0, 0, int32(CENTER_DIGIT))
-	
+
 	// A multiple of 6, so effectively no rotation. Very close to INT32_MAX.
 	rotations := int32(2147483646)
 	var out H3Index
@@ -59,7 +59,7 @@ func Test_h3NeighborRotations_rotationsOverflow2(t *testing.T) {
 
 	var origin H3Index
 	setH3Index(&origin, 0, 4, int32(CENTER_DIGIT))
-	
+
 	// This modulo 6 is 1.
 	rotations := int32(INT32_MAX)
 	var out H3Index
@@ -133,15 +133,15 @@ func Test_cwOffsetPent(t *testing.T) {
 			// only direction where we can move from digit 2 to digit 1, and
 			// into the deleted k subsequence.
 			neighborPentagon := _getBaseCellNeighbor(neighbor, J_AXES_DIGIT)
-			
+
 			if neighborPentagon != pentagon || _baseCellIsCwOffset(pentagon, neighborFace) {
 				// This is the expected condition - either we don't move to this pentagon
 				// or the cwOffsetPent check would pass
 				continue
 			}
-			
+
 			// If we get here, it means we found a case that would fail the cwOffsetPent check
-			t.Errorf("cwOffsetPent check would fail: neighbor %d (face %d) -> pentagon %d", 
+			t.Errorf("cwOffsetPent check would fail: neighbor %d (face %d) -> pentagon %d",
 				neighbor, neighborFace, pentagon)
 		}
 	}

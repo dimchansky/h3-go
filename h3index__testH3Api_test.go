@@ -108,13 +108,13 @@ func Test_cellToBoundary_classIIIEdgeVertex_exact(t *testing.T) {
 	for i := 0; i < int(boundary.NumVerts) && i < len(boundary.Verts); i++ {
 		latDiff := math.Abs(boundary.Verts[i].Lat.Deg() - expected.Verts[i].Lat.Deg())
 		lngDiff := math.Abs(boundary.Verts[i].Lng.Deg() - expected.Verts[i].Lng.Deg())
-		
+
 		if latDiff > tolerance {
-			t.Errorf("vertex %d latitude mismatch: expected %f, got %f, diff %f", 
+			t.Errorf("vertex %d latitude mismatch: expected %f, got %f, diff %f",
 				i, expected.Verts[i].Lat.Deg(), boundary.Verts[i].Lat.Deg(), latDiff)
 		}
 		if lngDiff > tolerance {
-			t.Errorf("vertex %d longitude mismatch: expected %f, got %f, diff %f", 
+			t.Errorf("vertex %d longitude mismatch: expected %f, got %f, diff %f",
 				i, expected.Verts[i].Lng.Deg(), boundary.Verts[i].Lng.Deg(), lngDiff)
 		}
 	}
@@ -152,13 +152,13 @@ func Test_cellToBoundary_coslngConstrain(t *testing.T) {
 	for i := 0; i < int(boundary.NumVerts) && i < len(boundary.Verts); i++ {
 		latDiff := math.Abs(boundary.Verts[i].Lat.Deg() - expected.Verts[i].Lat.Deg())
 		lngDiff := math.Abs(boundary.Verts[i].Lng.Deg() - expected.Verts[i].Lng.Deg())
-		
+
 		if latDiff > tolerance {
-			t.Errorf("vertex %d latitude mismatch: expected %f, got %f, diff %f", 
+			t.Errorf("vertex %d latitude mismatch: expected %f, got %f, diff %f",
 				i, expected.Verts[i].Lat.Deg(), boundary.Verts[i].Lat.Deg(), latDiff)
 		}
 		if lngDiff > tolerance {
-			t.Errorf("vertex %d longitude mismatch: expected %f, got %f, diff %f", 
+			t.Errorf("vertex %d longitude mismatch: expected %f, got %f, diff %f",
 				i, expected.Verts[i].Lng.Deg(), boundary.Verts[i].Lng.Deg(), lngDiff)
 		}
 	}
@@ -170,7 +170,7 @@ func Test_cellToBoundary_failed(t *testing.T) {
 	// Set an invalid base cell (NUM_BASE_CELLS + 1 = 122 + 1 = 123)
 	// Need to check how base cells are encoded in Go version
 	invalidH := h | (H3Index(123) << H3_BC_OFFSET)
-	
+
 	var gb CellBoundary
 	err := cellToBoundary(invalidH, &gb)
 	if err != E_CELL_INVALID {
@@ -193,12 +193,12 @@ func Test_version(t *testing.T) {
 	if H3_VERSION_MAJOR < 0 {
 		t.Error("major version is set")
 	}
-	
+
 	// Port of C test: t_assert(H3_VERSION_MINOR >= 0, "minor version is set");
 	if H3_VERSION_MINOR < 0 {
 		t.Error("minor version is set")
 	}
-	
+
 	// Port of C test: t_assert(H3_VERSION_PATCH >= 0, "patch version is set");
 	if H3_VERSION_PATCH < 0 {
 		t.Error("patch version is set")

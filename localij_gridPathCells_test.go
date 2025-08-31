@@ -7,7 +7,7 @@ import (
 
 func Test_gridPathCells_acrossMultipleFaces(t *testing.T) {
 	t.Parallel()
-	
+
 	start := H3Index(0x85285aa7fffffff)
 	end := H3Index(0x851d9b1bfffffff)
 
@@ -20,7 +20,7 @@ func Test_gridPathCells_acrossMultipleFaces(t *testing.T) {
 
 func Test_gridPathCells_pentagon(t *testing.T) {
 	t.Parallel()
-	
+
 	start := H3Index(0x820807fffffffff)
 	end := H3Index(0x8208e7fffffffff)
 
@@ -29,7 +29,7 @@ func Test_gridPathCells_pentagon(t *testing.T) {
 	if err != E_SUCCESS {
 		t.Fatalf("gridPathCellsSize failed: %v", err)
 	}
-	
+
 	path := make([]H3Index, size)
 	result := gridPathCells(path, start, end)
 	if result != E_PENTAGON {

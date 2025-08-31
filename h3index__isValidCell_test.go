@@ -14,11 +14,11 @@ func TestLatLngToCellExtremeCoordinates(t *testing.T) {
 		lng float64
 		res int32
 	}{
-		{0, 1E45, 14},
-		{1E46, 1E45, 15},
-		{degsToRads(2), degsToRads(-3E39), 0},
+		{0, 1e45, 14},
+		{1e46, 1e45, 15},
+		{degsToRads(2), degsToRads(-3e39), 0},
 	}
-	
+
 	for _, tc := range tests {
 		t.Run(fmt.Sprintf("lat_%v_lng_%v_res_%d", tc.lat, tc.lng, tc.res), func(t *testing.T) {
 			g := LatLng{Lat: Rad(tc.lat), Lng: Rad(tc.lng)}
@@ -70,11 +70,11 @@ func TestIsValidCellBaseCell(t *testing.T) {
 			h := H3Index(H3_INIT)
 			h = setMode(h, H3_CELL_MODE)
 			h = setBaseCell(h, i)
-			
+
 			if !isValidCell(h) {
 				t.Errorf("isValidCell failed on base cell %d", i)
 			}
-			
+
 			if getBaseCellNumber(h) != i {
 				t.Errorf("failed to recover base cell: got %d, want %d", getBaseCellNumber(h), i)
 			}
@@ -165,7 +165,7 @@ func TestH3DeletedSubsequenceInvalid(t *testing.T) {
 func TestMoreDeletedSubsequenceInvalid(t *testing.T) {
 	t.Parallel()
 	p := H3Index(0x80c3fffffffffff) // res 0 pentagon
-	
+
 	for res := int32(1); res <= 15; res++ {
 		t.Run(fmt.Sprintf("res_%d", res), func(t *testing.T) {
 			h, err := cellToCenterChild(p, res)
@@ -175,7 +175,7 @@ func TestMoreDeletedSubsequenceInvalid(t *testing.T) {
 			if !isValidCell(h) {
 				t.Error("should be a valid pentagon")
 			}
-			
+
 			for d := int32(0); d <= 6; d++ {
 				hTest := setIndexDigit(h, res, d)
 				if d == 1 {
@@ -196,7 +196,7 @@ func TestH3ToString(t *testing.T) {
 	t.Parallel()
 	// Note: The Go implementation of h3ToString returns a string directly,
 	// not using a buffer like the C version. Testing the actual behavior.
-	
+
 	tests := []struct {
 		name     string
 		h        H3Index
@@ -218,16 +218,16 @@ func TestH3ToString(t *testing.T) {
 			expected: "1234",
 		},
 	}
-	
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			result, errCode := h3ToString(tc.h)
-			
+
 			if errCode != 0 {
 				t.Errorf("h3ToString returned error code %d", errCode)
 				return
 			}
-			
+
 			if result != tc.expected {
 				t.Errorf("h3ToString produced %q, expected %q", result, tc.expected)
 			}
@@ -260,23 +260,23 @@ func TestStringToH3(t *testing.T) {
 			wantErr:  false,
 		},
 	}
-	
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			h3, err := stringToH3(tc.input)
-			
+
 			if tc.wantErr {
 				if err == E_SUCCESS {
 					t.Error("expected error but got success")
 				}
 				return
 			}
-			
+
 			if err != E_SUCCESS {
 				t.Errorf("stringToH3 failed with error %v", err)
 				return
 			}
-			
+
 			if h3 != tc.expected {
 				t.Errorf("got %#x, expected %#x", h3, tc.expected)
 			}
@@ -288,7 +288,7 @@ func TestSetH3Index(t *testing.T) {
 	t.Parallel()
 	var h H3Index
 	setH3Index(&h, 5, 12, 1)
-	
+
 	if getResolution(h) != 5 {
 		t.Errorf("resolution: got %d, expected 5", getResolution(h))
 	}
@@ -298,19 +298,19 @@ func TestSetH3Index(t *testing.T) {
 	if getMode(h) != H3_CELL_MODE {
 		t.Errorf("mode: got %d, expected %d", getMode(h), H3_CELL_MODE)
 	}
-	
+
 	for i := int32(1); i <= 5; i++ {
 		if getIndexDigit(h, i) != 1 {
 			t.Errorf("digit %d: got %d, expected 1", i, getIndexDigit(h, i))
 		}
 	}
-	
+
 	for i := int32(6); i <= MAX_H3_RES; i++ {
 		if getIndexDigit(h, i) != int32(INVALID_DIGIT) {
 			t.Errorf("blanked digit %d: got %d, expected %d", i, getIndexDigit(h, i), INVALID_DIGIT)
 		}
 	}
-	
+
 	if h != 0x85184927fffffff {
 		t.Errorf("index: got %#x, expected %#x", h, 0x85184927fffffff)
 	}
@@ -326,10 +326,10 @@ func TestIsResClassIII(t *testing.T) {
 			if err != E_SUCCESS {
 				t.Fatalf("latLngToCell failed: %v", err)
 			}
-			
+
 			got := isResClassIII(h)
 			want := isResolutionClassIII(i)
-			
+
 			if got != want {
 				t.Errorf("isResClassIII mismatch for res %d: got %v, want %v", i, got, want)
 			}

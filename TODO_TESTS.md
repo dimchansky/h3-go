@@ -1,5 +1,6 @@
 Tests ported:
 
+- testGridDisk.c
 - testGridDiskInternal.c
 - testGridDisksUnsafe.c
 - testGridDistance.c

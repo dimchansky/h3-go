@@ -7,8 +7,8 @@ import (
 
 func Test_gridRingInternal_identityGridRing(t *testing.T) {
 	t.Parallel()
-	
-	sf := LatLng{Lat: 0.659966917655, Lng: 2 * 3.14159 - 2.1364398519396}
+
+	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
 	var sfHex H3Index
 	err := latLngToCell(&sf, 9, &sfHex)
 	if err != E_SUCCESS {
@@ -27,8 +27,8 @@ func Test_gridRingInternal_identityGridRing(t *testing.T) {
 
 func Test_gridRingInternal_negativeK(t *testing.T) {
 	t.Parallel()
-	
-	sf := LatLng{Lat: 0.659966917655, Lng: 2 * 3.14159 - 2.1364398519396}
+
+	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
 	var sfHex H3Index
 	err := latLngToCell(&sf, 9, &sfHex)
 	if err != E_SUCCESS {
@@ -44,14 +44,14 @@ func Test_gridRingInternal_negativeK(t *testing.T) {
 
 func Test_gridRingInternal_gridDiskInvalid(t *testing.T) {
 	t.Parallel()
-	
+
 	const k = 1000
 	var kSz int64
 	err := maxGridDiskSize(k, &kSz)
 	if err != E_SUCCESS {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
-	
+
 	neighbors := make([]H3Index, kSz)
 	result := _gridRingInternal(0x7fffffffffffffff, k, neighbors)
 	if result != E_CELL_INVALID {
@@ -61,14 +61,14 @@ func Test_gridRingInternal_gridDiskInvalid(t *testing.T) {
 
 func Test_gridRingInternal_gridDiskInvalidDigit(t *testing.T) {
 	t.Parallel()
-	
+
 	const k = 2
 	var kSz int64
 	err := maxGridDiskSize(k, &kSz)
 	if err != E_SUCCESS {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
-	
+
 	neighbors := make([]H3Index, kSz)
 	result := _gridRingInternal(0x4d4b00fe5c5c3030, k, neighbors)
 	if result != E_CELL_INVALID {

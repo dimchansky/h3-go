@@ -240,7 +240,7 @@ func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(H3Index) (float64,
 // Test haversine distances between neighboring cells
 func TestHaversineDistances(t *testing.T) {
 	t.Parallel()
-	
+
 	t.Run("res0", func(t *testing.T) {
 		t.Parallel()
 		iterateAllDirectedEdgesAtRes(t, 0, haversineAssert)
@@ -262,7 +262,7 @@ func TestHaversineDistances(t *testing.T) {
 // Test edge length functions
 func TestEdgeLength(t *testing.T) {
 	t.Parallel()
-	
+
 	t.Run("res0", func(t *testing.T) {
 		t.Parallel()
 		iterateAllDirectedEdgesAtRes(t, 0, edgeLengthAssert)
@@ -284,7 +284,7 @@ func TestEdgeLength(t *testing.T) {
 // Test cell area positivity
 func TestCellAreaPositive(t *testing.T) {
 	t.Parallel()
-	
+
 	t.Run("res0", func(t *testing.T) {
 		t.Parallel()
 		iterateAllIndexesAtRes(t, 0, cellAreaAssert)
@@ -306,7 +306,7 @@ func TestCellAreaPositive(t *testing.T) {
 // Test that sum of all cell areas equals earth surface area
 func TestCellAreaEarth(t *testing.T) {
 	t.Parallel()
-	
+
 	// Earth area in different units
 	rads2 := 4 * math.Pi
 	km2 := rads2 * EARTH_RADIUS_KM * EARTH_RADIUS_KM
