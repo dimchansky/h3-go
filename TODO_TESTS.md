@@ -1,35 +1,37 @@
 Tests ported:
 
-testGridDistance.c
-testGridDistanceExhaustive.c
-testGridDistanceInternal.c
-testGridPathCells.c
-testGridPathCellsExhaustive.c
-testGridRing.c
-testGridRingInternal.c
-testGridRingUnsafe.c
-testH3Api.c
-testH3CellArea.c
-testH3CellAreaExhaustive.c
-testH3Index.c
-testH3IndexInternal.c
-testH3IteratorsInternal.c
-testH3NeighborRotations.c
-testH3SetToVertexGraphInternal.c
-testLatLng.c
-testLatLngInternal.c
-testLinkedGeoInternal.c
-testMathExtensionsInternal.c
-testPentagonIndexes.c
-testPolyfillInternal.c
-testPolygonInternal.c
-testPolygonToCells.c
-testPolygonToCellsExperimental.c
-testPolygonToCellsReported.c
-testPolygonToCellsReportedExperimental.c
-testVec2dInternal.c
-testVec3dInternal.c
-testVertex.c
-testVertexExhaustive.c
-testVertexGraphInternal.c
-testVertexInternal.c
+- testGridDiskInternal.c
+- testGridDisksUnsafe.c
+- testGridDistance.c
+- testGridDistanceExhaustive.c
+- testGridDistanceInternal.c
+- testGridPathCells.c
+- testGridPathCellsExhaustive.c
+- testGridRing.c
+- testGridRingInternal.c
+- testGridRingUnsafe.c
+- testH3Api.c
+- testH3CellArea.c
+- testH3CellAreaExhaustive.c
+- testH3Index.c
+- testH3IndexInternal.c
+- testH3IteratorsInternal.c
+- testH3NeighborRotations.c
+- testH3SetToVertexGraphInternal.c
+- testLatLng.c
+- testLatLngInternal.c
+- testLinkedGeoInternal.c
+- testMathExtensionsInternal.c
+- testPentagonIndexes.c
+- testPolyfillInternal.c
+- testPolygonInternal.c
+- testPolygonToCells.c
+- testPolygonToCellsExperimental.c
+- testPolygonToCellsReported.c
+- testPolygonToCellsReportedExperimental.c
+- testVec2dInternal.c
+- testVec3dInternal.c
+- testVertex.c
+- testVertexExhaustive.c
+- testVertexGraphInternal.c
+- testVertexInternal.c
