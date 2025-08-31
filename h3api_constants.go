@@ -22,3 +22,12 @@ const (
 	E_MEMORY_BOUNDS      H3Error = 14
 	E_OPTION_INVALID     H3Error = 15
 )
+
+// H3 version constants.
+// These constants mirror the H3_VERSION_* macros from h3api.h
+// Ported from H3 C: h3api.h::H3_VERSION_MAJOR, H3_VERSION_MINOR, H3_VERSION_PATCH
+const (
+	H3_VERSION_MAJOR = 4
+	H3_VERSION_MINOR = 3
+	H3_VERSION_PATCH = 0
+)
