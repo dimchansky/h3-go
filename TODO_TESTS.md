@@ -1,5 +1,7 @@
 Tests ported:
 
+testGridRing.c
+testGridRingInternal.c
 testGridRingUnsafe.c
 testH3Api.c
 testH3CellArea.c
