@@ -1,5 +1,6 @@
 Tests ported:
 
+- testCellToChildPos.c
 - testCellToChildren.c
 - testCellToChildrenSize.c
 - testCellToLocalIj.c
