@@ -1,5 +1,6 @@
 Tests ported:
 
+- testCellToLocalIj.c
 - testCellToLocalIjExhaustive.c
 - testCellToLocalIjInternal.c
 - testCellToParent.c
