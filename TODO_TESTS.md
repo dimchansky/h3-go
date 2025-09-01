@@ -1,5 +1,6 @@
 Tests ported:
 
+- testCompactCells.c
 - testCoordIjInternal.c
 - testCoordIjkInternal.c
 - testDescribeH3Error.c
