@@ -1,5 +1,8 @@
 Tests ported:
 
+- testBaseCells.c
+- testBaseCellsInternal.c
+- testBBoxInternal.c
 - testCellsToLinkedMultiPolygon.c
 - testCellToBBoxExhaustive.c
 - testCellToBoundaryEdgeCases.c
