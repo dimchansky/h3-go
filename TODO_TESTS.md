@@ -1,5 +1,6 @@
 Tests ported:
 
+- testCellToCenterChild.c
 - testCellToChildPos.c
 - testCellToChildren.c
 - testCellToChildrenSize.c
