@@ -316,7 +316,7 @@ func TestSetH3Index(t *testing.T) {
 	}
 }
 
-func Test_IsResClassIII(t *testing.T) {
+func TestIsResClassIII(t *testing.T) {
 	t.Parallel()
 	coord := LatLng{Lat: Rad(0), Lng: Rad(0)}
 	for i := int32(0); i <= MAX_H3_RES; i++ {

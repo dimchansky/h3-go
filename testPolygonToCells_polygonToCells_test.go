@@ -175,7 +175,7 @@ func TestMaxPolygonToCellsSizeLine(t *testing.T) {
 	}
 }
 
-func Test_PolygonToCells(t *testing.T) {
+func TestPolygonToCells(t *testing.T) {
 	t.Parallel()
 	var numHexagons int64
 
