@@ -1,5 +1,6 @@
 Tests ported:
 
+- testCellToBBoxExhaustive.c
 - testCellToBoundaryEdgeCases.c
 - testCellToCenterChild.c
 - testCellToChildPos.c
