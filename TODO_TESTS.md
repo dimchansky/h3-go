@@ -1,5 +1,6 @@
 Tests ported:
 
+- testCellsToLinkedMultiPolygon.c
 - testCellToBBoxExhaustive.c
 - testCellToBoundaryEdgeCases.c
 - testCellToCenterChild.c

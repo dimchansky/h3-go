@@ -24,13 +24,6 @@ func h3SetToVertexGraph(h3Set []H3Index, numHexes int32, graph *VertexGraph) H3E
 
 	// Iterate through every hexagon
 	for i := int32(0); i < numHexes; i++ {
-		// First check if the H3 index is valid
-		if !isValidCell(h3Set[i]) {
-			// Destroy vertex graph as caller will not know to do so.
-			destroyVertexGraph(graph)
-			return E_CELL_INVALID
-		}
-
 		var vertices CellBoundary
 		boundaryErr := cellToBoundary(h3Set[i], &vertices)
 		if boundaryErr != E_SUCCESS {
