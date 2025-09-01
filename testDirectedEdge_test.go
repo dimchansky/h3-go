@@ -115,23 +115,23 @@ func TestAreNeighborCells_invalid(t *testing.T) {
 	t.Parallel()
 
 	// PARITY TEST: This test reveals a behavioral difference between C and Go implementations.
-	// The C areNeighborCells function validates input cells and returns E_CELL_INVALID 
+	// The C areNeighborCells function validates input cells and returns E_CELL_INVALID
 	// for invalid cells, but the Go implementation does not perform this validation.
-	
+
 	// Create test cells with specific digits
 	var origin H3Index
 	setH3Index(&origin, 5, 0, int32(CENTER_DIGIT))
 	dest := origin
-	
+
 	// Test 1: Invalid digit in origin (INVALID_DIGIT = 7)
 	origin = setIndexDigit(origin, 5, int32(INVALID_DIGIT))
 	dest = setIndexDigit(dest, 5, int32(JK_AXES_DIGIT))
-	
+
 	// Debug info
 	t.Logf("Test 1 - Invalid digit origin:")
 	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
 	t.Logf("  Dest cell: %x (isValid: %v)", dest, isValidCell(dest))
-	
+
 	_, err := areNeighborCells(origin, dest)
 	// BEHAVIOR DIFFERENCE: C returns E_CELL_INVALID, Go returns E_SUCCESS
 	if err != E_CELL_INVALID {
@@ -145,31 +145,31 @@ func TestAreNeighborCells_invalid(t *testing.T) {
 	dest = origin
 	origin = setIndexDigit(origin, 5, int32(K_AXES_DIGIT))
 	dest = setIndexDigit(dest, 5, int32(IK_AXES_DIGIT))
-	
+
 	t.Logf("Test 2 - Invalid k subsequence (K->IK):")
 	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
 	t.Logf("  Dest cell: %x (isValid: %v)", dest, isValidCell(dest))
-	
+
 	_, err = areNeighborCells(origin, dest)
 	if err != E_CELL_INVALID {
 		t.Logf("PARITY DIFFERENCE: C would return E_CELL_INVALID, Go returned %v", err)
 	}
 
-	// Test 3: Invalid k subsequence - origin with IK_AXES_DIGIT, dest with K_AXES_DIGIT  
+	// Test 3: Invalid k subsequence - origin with IK_AXES_DIGIT, dest with K_AXES_DIGIT
 	setH3Index(&origin, 5, 4, int32(CENTER_DIGIT))
 	dest = origin
 	origin = setIndexDigit(origin, 5, int32(IK_AXES_DIGIT))
 	dest = setIndexDigit(dest, 5, int32(K_AXES_DIGIT))
-	
+
 	t.Logf("Test 3 - Invalid k subsequence (IK->K):")
 	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
 	t.Logf("  Dest cell: %x (isValid: %v)", dest, isValidCell(dest))
-	
+
 	_, err = areNeighborCells(origin, dest)
 	if err != E_CELL_INVALID {
 		t.Logf("PARITY DIFFERENCE: C would return E_CELL_INVALID, Go returned %v", err)
 	}
-	
+
 	// Mark as expected failure for now - this documents the behavioral difference
 	// that needs to be fixed in the Go implementation
 	t.Log("This test documents behavioral differences between C and Go implementations")
@@ -180,24 +180,24 @@ func Test_debugIsValidCell(t *testing.T) {
 	// Create the problematic cell from our parity test
 	var origin H3Index
 	setH3Index(&origin, 5, 0, int32(CENTER_DIGIT))
-	
+
 	// Set invalid digit (INVALID_DIGIT = 7) at resolution 5
 	origin = setIndexDigit(origin, 5, int32(INVALID_DIGIT))
-	
+
 	t.Logf("Debug isValidCell for cell: %x", origin)
 	t.Logf("  Mode: %d", getMode(origin))
 	t.Logf("  Resolution: %d", getResolution(origin))
 	t.Logf("  BaseCell: %d", getBaseCell(origin))
-	
+
 	// Test each validation step
 	t.Logf("  _hasGoodTopBits: %v", _hasGoodTopBits(origin))
 	t.Logf("  BaseCell < NUM_BASE_CELLS: %v (%d < %d)", getBaseCell(origin) < NUM_BASE_CELLS, getBaseCell(origin), NUM_BASE_CELLS)
 	t.Logf("  _hasAny7UptoRes(h, res): %v", _hasAny7UptoRes(origin, getResolution(origin)))
 	t.Logf("  _hasAll7AfterRes(h, res): %v", _hasAll7AfterRes(origin, getResolution(origin)))
 	t.Logf("  _hasDeletedSubsequence(h, bc): %v", _hasDeletedSubsequence(origin, getBaseCell(origin)))
-	
+
 	t.Logf("  Overall isValidCell: %v", isValidCell(origin))
-	
+
 	// Let's also check what digits are actually in the cell
 	res := getResolution(origin)
 	t.Logf("  Digits from 1 to %d:", res)
@@ -224,7 +224,7 @@ func TestCellsToDirectedEdgeAndFriends(t *testing.T) {
 	if len(ring) == 0 {
 		t.Fatal("Ring should not be empty")
 	}
-	
+
 	var sf2 H3Index
 	for _, cell := range ring {
 		if cell != 0 && cell != sf {
@@ -278,7 +278,7 @@ func TestCellsToDirectedEdgeAndFriends(t *testing.T) {
 	// Create invalid edge
 	var invalidEdge H3Index
 	setH3Index(&invalidEdge, 1, 4, 0)
-	invalidEdge = (invalidEdge & ^H3Index(0x7<<56)) | (H3Index(INVALID_DIGIT) << 56) // Set reserved bits
+	invalidEdge = (invalidEdge & ^H3Index(0x7<<56)) | (H3Index(INVALID_DIGIT) << 56)        // Set reserved bits
 	invalidEdge = (invalidEdge & ^H3Index(0xF<<59)) | (H3Index(H3_DIRECTEDEDGE_MODE) << 59) // Set mode
 	err = directedEdgeToCells(invalidEdge, originDestination)
 	if err == E_SUCCESS {
@@ -290,7 +290,7 @@ func TestCellsToDirectedEdgeAndFriends(t *testing.T) {
 	if err != E_SUCCESS {
 		t.Fatalf("gridRingUnsafe failed: %v", err)
 	}
-	
+
 	var sf3 H3Index
 	for _, cell := range largerRing {
 		if cell != 0 {
@@ -338,7 +338,7 @@ func TestGetDirectedEdgeOriginBadInput2(t *testing.T) {
 	if err != E_SUCCESS {
 		t.Fatalf("gridRingUnsafe failed: %v", err)
 	}
-	
+
 	var sf2 H3Index
 	for _, cell := range ring {
 		if cell != 0 && cell != sf {
@@ -441,7 +441,7 @@ func TestIsValidDirectedEdge(t *testing.T) {
 	if err != E_SUCCESS {
 		t.Fatalf("gridRingUnsafe failed: %v", err)
 	}
-	
+
 	var sf2 H3Index
 	for _, cell := range ring {
 		if cell != 0 && cell != sf {
@@ -779,8 +779,8 @@ func TestDirectedEdgeToBoundary_invalid(t *testing.T) {
 
 	// Create invalid edge with bad base cell and reserved bits
 	invalidEdge2 := sf
-	invalidEdge2 = (invalidEdge2 & ^H3Index(0x7<<56)) | (H3Index(1) << 56) // Set reserved bits
-	invalidEdge2 = (invalidEdge2 & ^H3Index(0x7F<<45)) | (H3Index(NUM_BASE_CELLS+1) << 45) // Set invalid base cell
+	invalidEdge2 = (invalidEdge2 & ^H3Index(0x7<<56)) | (H3Index(1) << 56)                    // Set reserved bits
+	invalidEdge2 = (invalidEdge2 & ^H3Index(0x7F<<45)) | (H3Index(NUM_BASE_CELLS+1) << 45)    // Set invalid base cell
 	invalidEdge2 = (invalidEdge2 & ^H3Index(0xF<<59)) | (H3Index(H3_DIRECTEDEDGE_MODE) << 59) // Set mode
 	err = directedEdgeToBoundary(invalidEdge2, &cb)
 	if err == E_SUCCESS {

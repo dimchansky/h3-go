@@ -14,7 +14,7 @@ var directionsForCellToLocalIj = []CoordIJ{
 	{I: 0, J: -1}, {I: 1, J: 0}, {I: 1, J: 1},
 }
 
-// Next ring direction from C implementation NEXT_RING_DIRECTION  
+// Next ring direction from C implementation NEXT_RING_DIRECTION
 var nextRingDirectionForCellToLocalIj = CoordIJ{I: 1, J: 0}
 
 // Helper function to iterate all indexes at a given resolution

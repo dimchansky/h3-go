@@ -5,10 +5,10 @@ import "testing"
 
 func Test_ijkToIj_zero(t *testing.T) {
 	t.Parallel()
-	
+
 	ijk := CoordIJK{0, 0, 0}
 	ij := CoordIJ{0, 0}
-	
+
 	ijkToIj(&ijk, &ij)
 	if ij.I != 0 {
 		t.Errorf("ij.i zero: expected 0, got %v", ij.I)
@@ -20,19 +20,19 @@ func Test_ijkToIj_zero(t *testing.T) {
 
 func Test_ijkToIj_roundtrip(t *testing.T) {
 	t.Parallel()
-	
+
 	for dir := CENTER_DIGIT; dir < NUM_DIGITS; dir++ {
 		ijk := CoordIJK{0, 0, 0}
 		_neighbor(&ijk, dir)
-		
+
 		ij := CoordIJ{0, 0}
 		ijkToIj(&ijk, &ij)
-		
+
 		recovered := CoordIJK{0, 0, 0}
 		if err := ijToIjk(&ij, &recovered); err != E_SUCCESS {
 			t.Errorf("ijToIjk failed for direction %v: %v", dir, err)
 		}
-		
+
 		if !_ijkMatches(&ijk, &recovered) {
 			t.Errorf("got same ijk coordinates back: original %v, recovered %v", ijk, recovered)
 		}

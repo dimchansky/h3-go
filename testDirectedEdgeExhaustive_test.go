@@ -92,7 +92,7 @@ func directedEdge_correctness_assertions(t *testing.T, h3 H3Index) {
 			}
 			continue
 		}
-		
+
 		if !isValidDirectedEdge(edges[i]) {
 			t.Errorf("Edge %#016x is not valid directed edge", edges[i])
 			continue
@@ -166,7 +166,7 @@ func directedEdge_boundary_assertions(t *testing.T, h3 H3Index) {
 		}
 
 		if edgeBoundary.NumVerts != revEdgeBoundary.NumVerts {
-			t.Errorf("NumVerts mismatch for edge %#016x: edge=%d, reverse=%d", 
+			t.Errorf("NumVerts mismatch for edge %#016x: edge=%d, reverse=%d",
 				edges[i], edgeBoundary.NumVerts, revEdgeBoundary.NumVerts)
 			continue
 		}

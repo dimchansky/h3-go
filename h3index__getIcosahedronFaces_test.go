@@ -15,7 +15,7 @@ func countFaces(t *testing.T, h3 H3Index, expectedMax int32) int32 {
 	if sz != expectedMax {
 		t.Fatalf("expected max face count %d, got %d", expectedMax, sz)
 	}
-	
+
 	faces := make([]int32, sz)
 	err = getIcosahedronFaces(h3, faces)
 	if err != E_SUCCESS {
@@ -61,7 +61,7 @@ func assertPentagonFaces(t *testing.T, h3 H3Index) {
 
 func TestGetIcosahedronFaces_SingleFaceHexes(t *testing.T) {
 	t.Parallel()
-	
+
 	// base cell 16 is at the center of an icosahedron face,
 	// so all children should have the same face
 	iterateBaseCellIndexesAtRes(t, 2, assertSingleHexFace, 16)
@@ -70,7 +70,7 @@ func TestGetIcosahedronFaces_SingleFaceHexes(t *testing.T) {
 
 func TestGetIcosahedronFaces_HexagonWithEdgeVertices(t *testing.T) {
 	t.Parallel()
-	
+
 	// Class II pentagon neighbor - one face, two adjacent vertices on edge
 	h3 := H3Index(0x821c37fffffffff)
 	assertSingleHexFace(t, h3)
@@ -78,7 +78,7 @@ func TestGetIcosahedronFaces_HexagonWithEdgeVertices(t *testing.T) {
 
 func TestGetIcosahedronFaces_HexagonWithDistortion(t *testing.T) {
 	t.Parallel()
-	
+
 	// Class III pentagon neighbor, distortion across faces
 	h3 := H3Index(0x831c06fffffffff)
 	assertMultipleHexFaces(t, h3)
@@ -86,7 +86,7 @@ func TestGetIcosahedronFaces_HexagonWithDistortion(t *testing.T) {
 
 func TestGetIcosahedronFaces_HexagonCrossingFaces(t *testing.T) {
 	t.Parallel()
-	
+
 	// Class II hex with two vertices on edge
 	h3 := H3Index(0x821ce7fffffffff)
 	assertMultipleHexFaces(t, h3)
@@ -94,7 +94,7 @@ func TestGetIcosahedronFaces_HexagonCrossingFaces(t *testing.T) {
 
 func TestGetIcosahedronFaces_ClassIIIPentagon(t *testing.T) {
 	t.Parallel()
-	
+
 	var pentagon H3Index
 	setH3Index(&pentagon, 1, 4, 0)
 	assertPentagonFaces(t, pentagon)
@@ -102,7 +102,7 @@ func TestGetIcosahedronFaces_ClassIIIPentagon(t *testing.T) {
 
 func TestGetIcosahedronFaces_ClassIIPentagon(t *testing.T) {
 	t.Parallel()
-	
+
 	var pentagon H3Index
 	setH3Index(&pentagon, 2, 4, 0)
 	assertPentagonFaces(t, pentagon)
@@ -110,7 +110,7 @@ func TestGetIcosahedronFaces_ClassIIPentagon(t *testing.T) {
 
 func TestGetIcosahedronFaces_Res15Pentagon(t *testing.T) {
 	t.Parallel()
-	
+
 	var pentagon H3Index
 	setH3Index(&pentagon, 15, 4, 0)
 	assertPentagonFaces(t, pentagon)
@@ -118,7 +118,7 @@ func TestGetIcosahedronFaces_Res15Pentagon(t *testing.T) {
 
 func TestGetIcosahedronFaces_BaseCellHexagons(t *testing.T) {
 	t.Parallel()
-	
+
 	var singleCount int32
 	var multipleCount int32
 	for i := int32(0); i < NUM_BASE_CELLS; i++ {
@@ -147,7 +147,7 @@ func TestGetIcosahedronFaces_BaseCellHexagons(t *testing.T) {
 
 func TestGetIcosahedronFaces_BaseCellPentagons(t *testing.T) {
 	t.Parallel()
-	
+
 	for i := int32(0); i < NUM_BASE_CELLS; i++ {
 		if _isBaseCellPentagon(i) {
 			// Make the base cell index
@@ -160,7 +160,7 @@ func TestGetIcosahedronFaces_BaseCellPentagons(t *testing.T) {
 
 func TestGetIcosahedronFaces_Invalid(t *testing.T) {
 	t.Parallel()
-	
+
 	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
 	out := make([]int32, 1)
 	err := getIcosahedronFaces(invalid, out)
@@ -171,7 +171,7 @@ func TestGetIcosahedronFaces_Invalid(t *testing.T) {
 
 func TestGetIcosahedronFaces_Invalid2(t *testing.T) {
 	t.Parallel()
-	
+
 	invalid := H3Index(0x71330073003f004e)
 	var sz int32
 	err := maxFaceCount(invalid, &sz)

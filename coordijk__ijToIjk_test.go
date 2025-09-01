@@ -5,14 +5,14 @@ import "testing"
 
 func Test_ijToIjk_zero(t *testing.T) {
 	t.Parallel()
-	
+
 	ij := CoordIJ{0, 0}
 	ijk := CoordIJK{0, 0, 0}
-	
+
 	if err := ijToIjk(&ij, &ijk); err != E_SUCCESS {
 		t.Errorf("ijToIjk failed: %v", err)
 	}
-	
+
 	if ijk.I != 0 {
 		t.Errorf("ijk.i zero: expected 0, got %v", ijk.I)
 	}

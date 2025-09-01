@@ -27,12 +27,12 @@ func assertNoDuplicates(t *testing.T, cells []H3Index, testName string) {
 func assertSubset(t *testing.T, set1, set2 []H3Index, testName string) {
 	t.Helper()
 	assertNoDuplicates(t, set1, testName+" (set1)")
-	
+
 	for i := 0; i < len(set1); i++ {
 		if set1[i] == H3_NULL {
 			continue
 		}
-		
+
 		present := false
 		for j := 0; j < len(set2); j++ {
 			if set1[i] == set2[j] {
@@ -59,7 +59,7 @@ func assertSetsEqual(t *testing.T, set1, set2 []H3Index, testName string) {
 // checkChildren helper function that mirrors the C version
 func checkChildren(t *testing.T, h H3Index, res int32, expectedError H3Error, expected []H3Index, testName string) {
 	t.Helper()
-	
+
 	numChildren, numChildrenError := cellToChildrenSize(h, res)
 	if numChildrenError != expectedError {
 		t.Errorf("%s: Expected error code %v, got %v", testName, expectedError, numChildrenError)
@@ -68,38 +68,38 @@ func checkChildren(t *testing.T, h H3Index, res int32, expectedError H3Error, ex
 	if expectedError != E_SUCCESS {
 		return
 	}
-	
+
 	children := make([]H3Index, numChildren)
 	err := cellToChildren(h, res, children)
 	if err != E_SUCCESS {
 		t.Fatalf("%s: cellToChildren failed: %v", testName, err)
 	}
-	
+
 	assertSetsEqual(t, children, expected, testName)
 }
 
 func Test_oneResStep(t *testing.T) {
 	t.Parallel()
-	
+
 	h := H3Index(0x88283080ddfffff)
 	res := int32(9)
-	
+
 	expected := []H3Index{
 		0x89283080dc3ffff, 0x89283080dc7ffff,
 		0x89283080dcbffff, 0x89283080dcfffff,
 		0x89283080dd3ffff, 0x89283080dd7ffff,
 		0x89283080ddbffff,
 	}
-	
+
 	checkChildren(t, h, res, E_SUCCESS, expected, "oneResStep")
 }
 
 func Test_multipleResSteps(t *testing.T) {
 	t.Parallel()
-	
+
 	h := H3Index(0x88283080ddfffff)
 	res := int32(10)
-	
+
 	expected := []H3Index{
 		0x8a283080dd27fff, 0x8a283080dd37fff, 0x8a283080dc47fff,
 		0x8a283080dcdffff, 0x8a283080dc5ffff, 0x8a283080dc27fff,
@@ -119,49 +119,49 @@ func Test_multipleResSteps(t *testing.T) {
 		0x8a283080dc1ffff, 0x8a283080dd0ffff, 0x8a283080dc2ffff,
 		0x8a283080dd67fff,
 	}
-	
+
 	checkChildren(t, h, res, E_SUCCESS, expected, "multipleResSteps")
 }
 
 func Test_sameRes(t *testing.T) {
 	t.Parallel()
-	
+
 	h := H3Index(0x88283080ddfffff)
 	res := int32(8)
-	
+
 	expected := []H3Index{h}
-	
+
 	checkChildren(t, h, res, E_SUCCESS, expected, "sameRes")
 }
 
 func Test_childResTooCoarse(t *testing.T) {
 	t.Parallel()
-	
+
 	h := H3Index(0x88283080ddfffff)
 	res := int32(7)
-	
+
 	expected := []H3Index{0} // empty set; zeros are ignored
-	
+
 	checkChildren(t, h, res, E_RES_DOMAIN, expected, "childResTooCoarse")
 }
 
 func Test_childResTooFine(t *testing.T) {
 	t.Parallel()
-	
+
 	h := H3Index(0x8f283080dcb0ae2) // res 15 cell
 	res := int32(MAX_H3_RES + 1)
-	
+
 	expected := []H3Index{0} // empty set; zeros are ignored
-	
+
 	checkChildren(t, h, res, E_RES_DOMAIN, expected, "childResTooFine")
 }
 
 func Test_pentagonChildren(t *testing.T) {
 	t.Parallel()
-	
+
 	h := H3Index(0x81083ffffffffff) // res 1 pentagon
 	res := int32(3)
-	
+
 	expected := []H3Index{
 		0x830800fffffffff, 0x830802fffffffff, 0x830803fffffffff,
 		0x830804fffffffff, 0x830805fffffffff, 0x830806fffffffff,
@@ -178,6 +178,6 @@ func Test_pentagonChildren(t *testing.T) {
 		0x830832fffffffff, 0x830833fffffffff, 0x830834fffffffff,
 		0x830835fffffffff, 0x830836fffffffff,
 	}
-	
+
 	checkChildren(t, h, res, E_SUCCESS, expected, "pentagonChildren")
 }

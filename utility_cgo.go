@@ -8,11 +8,70 @@ package h3
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "h3api.h"
 #include "utility.h"
 
 // Callback type for H3Index iteration
 typedef void (*h3_callback)(H3Index);
+
+// CGO wrappers for print functions
+static void h3Print_wrapper(H3Index h) {
+    h3Print(h);
+}
+
+static void h3Println_wrapper(H3Index h) {
+    h3Println(h);
+}
+
+static void coordIjkPrint_wrapper(const CoordIJK *c) {
+    coordIjkPrint(c);
+}
+
+static void geoToStringRads_wrapper(const LatLng *p, char *str) {
+    geoToStringRads(p, str);
+}
+
+static void geoToStringDegs_wrapper(const LatLng *p, char *str) {
+    geoToStringDegs(p, str);
+}
+
+static void geoToStringDegsNoFmt_wrapper(const LatLng *p, char *str) {
+    geoToStringDegsNoFmt(p, str);
+}
+
+static void geoPrint_wrapper(const LatLng *p) {
+    geoPrint(p);
+}
+
+static void geoPrintln_wrapper(const LatLng *p) {
+    geoPrintln(p);
+}
+
+static void geoPrintNoFmt_wrapper(const LatLng *p) {
+    geoPrintNoFmt(p);
+}
+
+static void geoPrintlnNoFmt_wrapper(const LatLng *p) {
+    geoPrintlnNoFmt(p);
+}
+
+static void cellBoundaryPrint_wrapper(const CellBoundary *b) {
+    cellBoundaryPrint(b);
+}
+
+static void cellBoundaryPrintln_wrapper(const CellBoundary *b) {
+    cellBoundaryPrintln(b);
+}
+
+static void bboxPrint_wrapper(const BBox *bbox) {
+    bboxPrint(bbox);
+}
+
+static void bboxPrintln_wrapper(const BBox *bbox) {
+    bboxPrintln(bbox);
+}
 
 // Global variables to store Go callback results
 static H3Index* callback_buffer = NULL;
@@ -109,4 +168,152 @@ func iterateBaseCellIndexesAtResC(res int32, baseCell int32, out []H3Index) int 
 		C.int(len(out)),
 	)
 	return int(count)
+}
+
+// h3PrintC calls the C implementation of h3Print
+func h3PrintC(h H3Index) {
+	C.h3Print_wrapper(C.H3Index(h))
+}
+
+// h3PrintlnC calls the C implementation of h3Println
+func h3PrintlnC(h H3Index) {
+	C.h3Println_wrapper(C.H3Index(h))
+}
+
+// coordIjkPrintC calls the C implementation of coordIjkPrint
+func coordIjkPrintC(c *CoordIJK) {
+	cCoord := C.CoordIJK{
+		i: C.int(c.I),
+		j: C.int(c.J),
+		k: C.int(c.K),
+	}
+	C.coordIjkPrint_wrapper(&cCoord)
+}
+
+// geoToStringRadsC calls the C implementation of geoToStringRads
+func geoToStringRadsC(p *LatLng) string {
+	cLatLng := C.LatLng{
+		lat: C.double(p.Lat.Rad()),
+		lng: C.double(p.Lng.Rad()),
+	}
+	str := C.malloc(BUFF_SIZE)
+	defer C.free(str)
+	C.geoToStringRads_wrapper(&cLatLng, (*C.char)(str))
+	return C.GoString((*C.char)(str))
+}
+
+// geoToStringDegsC calls the C implementation of geoToStringDegs
+func geoToStringDegsC(p *LatLng) string {
+	cLatLng := C.LatLng{
+		lat: C.double(p.Lat.Rad()),
+		lng: C.double(p.Lng.Rad()),
+	}
+	str := C.malloc(BUFF_SIZE)
+	defer C.free(str)
+	C.geoToStringDegs_wrapper(&cLatLng, (*C.char)(str))
+	return C.GoString((*C.char)(str))
+}
+
+// geoToStringDegsNoFmtC calls the C implementation of geoToStringDegsNoFmt
+func geoToStringDegsNoFmtC(p *LatLng) string {
+	cLatLng := C.LatLng{
+		lat: C.double(p.Lat.Rad()),
+		lng: C.double(p.Lng.Rad()),
+	}
+	str := C.malloc(BUFF_SIZE)
+	defer C.free(str)
+	C.geoToStringDegsNoFmt_wrapper(&cLatLng, (*C.char)(str))
+	return C.GoString((*C.char)(str))
+}
+
+// geoPrintC calls the C implementation of geoPrint
+func geoPrintC(p *LatLng) {
+	cLatLng := C.LatLng{
+		lat: C.double(p.Lat.Rad()),
+		lng: C.double(p.Lng.Rad()),
+	}
+	C.geoPrint_wrapper(&cLatLng)
+}
+
+// geoPrintlnC calls the C implementation of geoPrintln
+func geoPrintlnC(p *LatLng) {
+	cLatLng := C.LatLng{
+		lat: C.double(p.Lat.Rad()),
+		lng: C.double(p.Lng.Rad()),
+	}
+	C.geoPrintln_wrapper(&cLatLng)
+}
+
+// geoPrintNoFmtC calls the C implementation of geoPrintNoFmt
+func geoPrintNoFmtC(p *LatLng) {
+	cLatLng := C.LatLng{
+		lat: C.double(p.Lat.Rad()),
+		lng: C.double(p.Lng.Rad()),
+	}
+	C.geoPrintNoFmt_wrapper(&cLatLng)
+}
+
+// geoPrintlnNoFmtC calls the C implementation of geoPrintlnNoFmt
+func geoPrintlnNoFmtC(p *LatLng) {
+	cLatLng := C.LatLng{
+		lat: C.double(p.Lat.Rad()),
+		lng: C.double(p.Lng.Rad()),
+	}
+	C.geoPrintlnNoFmt_wrapper(&cLatLng)
+}
+
+// cellBoundaryPrintC calls the C implementation of cellBoundaryPrint
+func cellBoundaryPrintC(b *CellBoundary) {
+	// C CellBoundary has a fixed array of 10 LatLng vertices
+	var cBoundary C.CellBoundary
+	cBoundary.numVerts = C.int(b.NumVerts)
+
+	// Copy vertices to the fixed-size C array
+	for i := 0; i < len(b.Verts) && i < 10; i++ {
+		// We need to access the array elements directly
+		// This is a workaround since we can't easily assign to the fixed array
+		cVertPtr := (*C.LatLng)(unsafe.Pointer(uintptr(unsafe.Pointer(&cBoundary.verts[0])) + uintptr(i)*unsafe.Sizeof(C.LatLng{})))
+		cVertPtr.lat = C.double(b.Verts[i].Lat.Rad())
+		cVertPtr.lng = C.double(b.Verts[i].Lng.Rad())
+	}
+	C.cellBoundaryPrint_wrapper(&cBoundary)
+}
+
+// cellBoundaryPrintlnC calls the C implementation of cellBoundaryPrintln
+func cellBoundaryPrintlnC(b *CellBoundary) {
+	// C CellBoundary has a fixed array of 10 LatLng vertices
+	var cBoundary C.CellBoundary
+	cBoundary.numVerts = C.int(b.NumVerts)
+
+	// Copy vertices to the fixed-size C array
+	for i := 0; i < len(b.Verts) && i < 10; i++ {
+		// We need to access the array elements directly
+		// This is a workaround since we can't easily assign to the fixed array
+		cVertPtr := (*C.LatLng)(unsafe.Pointer(uintptr(unsafe.Pointer(&cBoundary.verts[0])) + uintptr(i)*unsafe.Sizeof(C.LatLng{})))
+		cVertPtr.lat = C.double(b.Verts[i].Lat.Rad())
+		cVertPtr.lng = C.double(b.Verts[i].Lng.Rad())
+	}
+	C.cellBoundaryPrintln_wrapper(&cBoundary)
+}
+
+// bboxPrintC calls the C implementation of bboxPrint
+func bboxPrintC(bbox *BBox) {
+	cBBox := C.BBox{
+		north: C.double(bbox.North.Rad()),
+		south: C.double(bbox.South.Rad()),
+		east:  C.double(bbox.East.Rad()),
+		west:  C.double(bbox.West.Rad()),
+	}
+	C.bboxPrint_wrapper(&cBBox)
+}
+
+// bboxPrintlnC calls the C implementation of bboxPrintln
+func bboxPrintlnC(bbox *BBox) {
+	cBBox := C.BBox{
+		north: C.double(bbox.North.Rad()),
+		south: C.double(bbox.South.Rad()),
+		east:  C.double(bbox.East.Rad()),
+		west:  C.double(bbox.West.Rad()),
+	}
+	C.bboxPrintln_wrapper(&cBBox)
 }
