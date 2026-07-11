@@ -45,6 +45,12 @@ The recommended architecture:
    API today; nothing usable exists to preserve.
 6. **Upstream sync stays function-level**: filename convention + `// Ported from H3 C:`
    attributions + the committed `tools/apiinventory` tool + a CI completeness gate.
+7. **Hard invariant (DR-007): the production library is safe Go only.** No file selected
+   by any normal build (`go build ./...`, `go test ./...`, `CGO_ENABLED=0 go test ./...`,
+   `go test -race ./...`, any GOOS/GOARCH) imports `unsafe`; no public API requires or
+   exposes an unsafe abstraction. `unsafe` exists only inside the opt-in cgo parity
+   harness behind `cgo && c2go` tags, and a two-layer CI gate (§9.2) keeps it that way.
+   Full audit in [Appendix B](#appendix-b-unsafe-audit).
 
 One urgent unrelated finding: **CI is red** (last three runs failed): the `make fmt` gate
 fails on 8 unformatted files at HEAD, and behind it `go test -race ./...` enables cgo,
@@ -823,6 +829,35 @@ touching C or external modules is opt-in.
   more simply `go doc -all` normalization in a script) and diffs against a committed
   `docs/api-surface.txt`. Any accidental (un)export fails CI. Root module stays
   dependency-free.
+- **No-unsafe gate** (`make check-unsafe`, introduced in Phase 0): two independent
+  layers, both cheap, both pure shell + `go list`:
+
+  ```sh
+  # Layer 1 — build-selection check (authoritative for the CI platform).
+  # For every normal build mode, ask the toolchain which packages/files it
+  # would actually compile — including test files — and fail if anything in
+  # THIS module imports unsafe. (Stdlib internals are out of scope by design.)
+  for cgo in 0 1; do
+    for tags in "" "race"; do
+      CGO_ENABLED=$cgo go list -tags "$tags" \
+        -f '{{.ImportPath}}: {{join .Imports " "}} {{join .TestImports " "}} {{join .XTestImports " "}}' \
+        ./... | grep -w unsafe && exit 1
+    done
+  done
+
+  # Layer 2 — tag allowlist (platform- and GOOS-independent).
+  # Any file in the repository importing unsafe MUST carry a build constraint
+  # containing c2go; this also catches files layer 1 can never select on the
+  # CI platform (e.g. a hypothetical //go:build windows file).
+  for f in $(grep -rl '^[[:space:]]*"unsafe"$' --include='*.go' . | grep -v '^./testref'); do
+    grep -q 'go:build.*c2go' "$f" || { echo "$f: unsafe outside c2go"; exit 1; }
+  done
+  ```
+
+  A third, reviewer-facing layer: a `depguard` rule in `.golangci.yml` denying `unsafe`
+  (after the Phase-0 retag, lint's default build tags no longer select the parity files,
+  so the rule needs no exceptions). The three layers fail independently, so bypassing the
+  policy accidentally requires three separate mistakes.
 - **C-API completeness gate**: `tools/apiinventory` in verify mode (Phase 6) fails CI if
   any `H3_EXPORT` in the vendored header lacks both a Go port attribution and a public
   wrapper/omission entry. This is the "detect missing upstream functions" test and runs
@@ -839,7 +874,8 @@ touching C or external modules is opt-in.
 |---|---|---|
 | build+test | `CGO_ENABLED=0 go test ./...` | nothing |
 | race | `go test -race ./...` (interop excluded by `c2go` tag) | cgo toolchain |
-| lint | golangci-lint, `gofmt -s`, smrcptr | nothing |
+| lint | golangci-lint (incl. depguard no-unsafe), `gofmt -s`, smrcptr | nothing |
+| no-unsafe | `make check-unsafe` (both layers, all four build modes) | nothing |
 | allocs | included in build+test (plain tests) | nothing |
 | parity | `make ref && make test-c2go` | network + C toolchain |
 | api-surface + completeness | golden diff + apiinventory verify | testref fetch |
@@ -888,10 +924,13 @@ Scope: `make fix-fmt` the 8 unformatted files at HEAD (the current first CI fail
 unify interop/parity build tags to `cgo && c2go` (19 `*_cgo.go`, 224 parity files,
 2 cgo-tagged plain tests, `h3lib_vertexGraph_cgo.c`); verify CI goes green; delete
 `h3.go.backup`/`h3_test.go.backup` (superseded by this document; preserved in git
-history); rewrite `README.md`/`AGENTS.md`/`CLAUDE.md` to describe the real layout; bump
-`go.mod` to `go 1.24` and CI to an explicit matrix (oldest supported + latest).
+history); add the `make check-unsafe` gate and the `depguard` no-unsafe lint rule
+(DR-007, §9.2) to CI; rewrite `README.md`/`AGENTS.md`/`CLAUDE.md` to describe the real
+layout; bump `go.mod` to `go 1.24` and CI to an explicit matrix (oldest supported +
+latest).
 Risks: none meaningful (tag edits are mechanical).
-Done when: CI green on all jobs; gopls clean with cgo enabled.
+Done when: CI green on all jobs, including the no-unsafe gate; gopls clean with cgo
+enabled.
 
 **Phase 1 — Type foundation**
 Scope: `h3api_types.go` gains `Cell`/`DirectedEdge`/`Vertex` + `h3Index = Cell` alias
@@ -1088,13 +1127,36 @@ Context: §8 evidence (no tags/users/callable API; red CI). Consequences: no dep
 layer to build or maintain; freedom to fix `CellBoundary` and the export surface.
 Rejected: compatibility wrappers, gradual deprecation (cost without beneficiaries).
 
-**DR-007 — `unsafe`: none in production code.**
-Context: the `.backup` draft's `castSlice` was the only candidate; the alias eliminates
-its purpose. Decision: zero `unsafe` imports in the library; the parity/cgo layer stays
-test-only behind `cgo && c2go`. If a future need arises (e.g. interop reinterpretation of
-a foreign `[]uint64`), the bar is: documented invariant (identical underlying type),
-`unsafe.Slice` + `unsafe.SliceData` only, alloc test proving the win, and a safe fallback
-build path. Rejected: keeping `castSlice` "just in case" (dead unsafe code is pure risk).
+**DR-007 — `unsafe`: prohibited in the production package (hard invariant).**
+Context: the `.backup` draft's `castSlice` was the only production-`unsafe` candidate;
+the alias eliminates its purpose. A full repository audit (Appendix B) confirms `unsafe`
+appears today only in six cgo parity-interop files and the dead `.backup` file.
+Decision — the invariant, not a preference:
+
+- The production package `h3` is **safe Go only**: no file selected by any normal build —
+  `go build ./...`, `go test ./...`, `CGO_ENABLED=0 go test ./...`,
+  `go test -race ./...`, on any GOOS/GOARCH — imports or uses `unsafe`.
+- No public API requires callers to perform unsafe conversions to reach zero-copy or
+  allocation-efficient functionality, exposes an unsafe abstraction, or depends on a
+  representation contract that only `unsafe` could honor. Zero-copy `[]Cell`
+  interoperability is achieved through **type identity** (`type h3Index = Cell` alias),
+  not memory reinterpretation — verified in Appendix A (E1/E2) and per-category in
+  Appendix B.3.
+- `unsafe` is permitted **only** in test/parity/benchmark/development files that are
+  excluded from every normal build by an explicit build constraint containing `c2go`
+  (currently: the cgo parity interop, which needs `C.free` and C-array↔Go-slice
+  bridging).
+- Enforcement is mechanical, three independent layers: the `make check-unsafe` gate
+  (build-selection check across all four build modes + platform-independent tag
+  allowlist, §9.2) and a `depguard` lint rule.
+- **Introducing `unsafe` into production code in the future requires a new reviewed
+  decision record** containing: proof that no safe design can meet the requirement,
+  benchmarks quantifying the win, the exact representation invariants relied upon and
+  their basis in the Go specification, and the tests that pin the behavior. Absent that
+  record, the CI gate is the answer.
+
+Rejected: keeping `castSlice` "just in case" (dead unsafe code is pure risk); the softer
+"avoid unsafe" phrasing (unenforceable).
 
 ---
 
@@ -1142,4 +1204,71 @@ convertible to another slice type only when the element types are *identical* (o
 identical under struct-tag ignoring); named element types with same underlying type are
 not identical, hence `[]Cell` ↛ `[]uint64`. Alias declarations (§Type declarations) create
 *the same type*, hence `[]h3Index` ≡ `[]Cell` — the design's foundation.
+
+---
+
+## Appendix B — `unsafe` audit
+
+Audit date 2026-07-11, commit `ee2d510` + this document. Method: `grep -rl '"unsafe"'`
+over every `*.go` and `*.go.backup` in the repository (excluding `testref/`, which
+contains only upstream C sources), plus a sweep for unsafe-adjacent mechanisms
+(`go:linkname`, `reflect.SliceHeader`/`StringHeader`: **none found** outside one benign
+`reflect.ValueOf` nil-check in the dead `h3_test.go.backup`), plus `go list`-verified
+build-selection checks per mode.
+
+### B.1 Every current occurrence
+
+| File | Kind | Build constraint | Selected by a normal build? | Why `unsafe` exists | Fate |
+|---|---|---|---|---|---|
+| `h3index_cgo.go` | cgo parity interop | `//go:build cgo` → **`cgo && c2go` in Phase 0** | Today: *selected* whenever `CGO_ENABLED=1` (the build then fails on missing C includes — nothing links against it in practice); after Phase 0: **no** | `C.free(unsafe.Pointer(...))` on C-malloc'd buffers; `(*[1<<30]C.H3Index)(unsafe.Pointer(p))[:n:n]` views of C arrays for Go↔C comparison | keep, retag |
+| `linkedGeo_cgo.go` | cgo parity interop | same | same | freeing/marshaling the C linked-list polygon structures | keep, retag |
+| `polygon_cgo.go` | cgo parity interop | same | same | C struct marshaling | keep, retag |
+| `utility_cgo.go` | cgo parity interop | same | same | C string/buffer interop | keep, retag |
+| `vertexGraph_cgo.go` | cgo parity interop | same | same | C vertex-graph node interop | keep, retag |
+| `polyfill_cgo.go` | cgo parity interop | `//go:build cgo && c2go` (already correct) | **no** (verified: absent from `go list` CgoFiles without `-tags c2go`, present with it) | C polygon interop | keep as-is |
+| `h3.go.backup` | obsolete draft | none — `.backup` is not a Go file; `go list` confirms it is never compiled | **no** | the abandoned `castSlice[From, To ~uint64]` / `asH3Array6` slice-reinterpretation helpers | delete in Phase 0 |
+
+For completeness of the classification requested: the remaining 13 `*_cgo.go` interop
+files do **not** import `unsafe`; **zero** of the 274 pure-Go implementation files, 224
+parity tests, 66 plain test files, or `tools/apiinventory` import it; there is no
+generated code and there are no benchmarks yet (planned ones are pure Go, §9.2).
+
+Transitive user exposure: none, in any state. The interop files define only unexported
+`…C` wrappers used by parity tests; no exported symbol references them, and after the
+Phase-0 retag they are not even compiled unless the user explicitly opts in with
+`-tags c2go` *and* cgo *and* the `CGO_CPPFLAGS` include paths from `make test-c2go`. A
+library importer cannot transitively depend on them.
+
+### B.2 Build-mode verification (measured, not asserted)
+
+| Command | Files importing `unsafe` selected today | After Phase-0 retag |
+|---|---|---|
+| `CGO_ENABLED=0 go test ./...` | 0 (verified: `go list` CgoFiles is empty) | 0 |
+| `go build ./...` (cgo default-on) | 5 (build fails anyway on missing includes) | **0** |
+| `go test ./...` (cgo default-on) | 5 (same) | **0** |
+| `go test -race ./...` | 5 (same — this is the red CI job) | **0** |
+
+The `cgo && c2go` exclusion mechanism is already proven in-repo: `polyfill_cgo.go`
+carries it today and is verifiably absent from every default build's file list.
+
+### B.3 Planned public API: per-category safety verification
+
+Every category of the proposed surface, checked against the actual planned
+implementation (the Appendix A experiment code compiled with **no** `unsafe` import):
+
+| Category | Mechanism | `unsafe`? |
+|---|---|---|
+| Scalar conversions (`Cell(x)`, `DirectedEdge(v)`, `int(res)`) | language conversions between types with identical underlying types | no |
+| `[]Cell` inputs/outputs incl. all `Append*` APIs | **type identity** — `[]h3Index` *is* `[]Cell` (alias); `slices.Grow` + `clear` + in-place compaction (E2) | no |
+| Polygon/geometry inputs (`GeoPolygon`, `GeoLoop`, `LatLng`) | public types *are* the internal types; passed by pointer | no |
+| `CellBoundary` | value struct with fixed `[10]LatLng` array; plain indexing (E4) | no |
+| Directed-edge / vertex outputs | stack `[6]h3Index` + element-wise converting loop (§5.3) | no |
+| Iterators (`ChildrenSeq`, `CellsAtRes`) | range-over-func closures over ported iterator structs (E5) | no |
+| Text parsing/formatting/marshaling | `strconv.AppendUint`/manual hex over stack buffers; unexported `~uint64` generics | no |
+| Multipolygon conversion (`CellsToMultiPolygon`) | pointer-walk of the linked structure + exact-size slice fill | no |
+
+No production feature in the proposed design requires `unsafe`; consequently no safe
+alternative with a performance penalty needs to be traded off anywhere. The one historical
+candidate — bridging `[]Cell` to a differently-defined index type — is dissolved by the
+alias rather than worked around.
 
