@@ -1,15 +1,25 @@
-This project reimplements algorithms and behavior from Uber's H3 library.
+h3-go — a pure-Go implementation of Uber's H3 geospatial indexing system.
 
-Attribution:
-- H3: Copyright (c) 2018-2024 Uber Technologies, Inc.
-- H3 is licensed under the Apache License, Version 2.0 (the "License").
-  See https://github.com/uber/h3 and the LICENSE file therein for details.
+This project is a derivative work of Uber's H3 library
+(https://github.com/uber/h3):
 
-This repository does not link to or depend on H3 C at runtime. The test
-oracle under `testref/` downloads and builds the H3 C reference (v4.3.0)
-as a standalone CLI for parity testing only; it is not part of this Go
-module and is excluded from the library build.
+- H3: Copyright (c) 2016-2025 Uber Technologies, Inc.
+- H3 is licensed under the Apache License, Version 2.0; see the LICENSE
+  file in the H3 repository for details.
 
-No source code from the H3 C implementation is copied verbatim. The
-algorithms are reimplemented based on public documentation and observed
-behavior of the reference implementation.
+The Go implementation is a function-by-function translation of the H3 C
+sources (currently targeting the version reported by the package's
+Version* constants). Each ported declaration carries a
+"Ported from H3 C: <file>::<name>" attribution comment, and
+docs/c-api-inventory.csv maps the complete C API surface to its Go
+counterparts.
+
+No H3 C source files are vendored in this repository. The opt-in parity
+test suite (build tags `cgo && c2go`) downloads pristine upstream H3
+sources into `testref/` at test time and compiles them for in-process
+comparison against the Go implementation; that infrastructure is excluded
+from every normal build of this module, which is pure Go with no cgo and
+no dependencies.
+
+This project is licensed under the Apache License, Version 2.0 (see
+LICENSE).
