@@ -3,7 +3,14 @@ package h3
 // This file contains types that mirror the H3 C API types defined in h3api.h
 
 // H3Index mirrors C H3Index (uint64) from h3api.h.
-type H3Index uint64
+//
+// It is a type ALIAS of Cell, so the mechanically ported implementation and
+// the public API share one type: []H3Index and []Cell are identical types,
+// which is what makes every slice-producing algorithm zero-copy at the public
+// boundary (docs/public-api-architecture.md, DR-003). Where the C code uses
+// H3Index for directed-edge or vertex values, the public wrappers convert to
+// DirectedEdge/Vertex at the boundary.
+type H3Index = Cell
 
 // LatLng mirrors the C struct from h3api.h
 // Latitude and longitude stored as angle.Angle (internally in radians).
