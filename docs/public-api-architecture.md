@@ -1,7 +1,12 @@
 # H3-Go: Public API Architecture
 
-Status: **proposal — awaiting approval before implementation**
-Scope: repository `github.com/dimchansky/h3-go` at commit `52d76be`, upstream reference H3 C **v4.3.0** (`testref/h3-4.3.0`).
+Status: **implemented** — the proposal below was approved and executed in full
+(Phases 0–7, commits `b2e4870`…`a69a804`, tags `v0.1.0`/`v0.2.0`), including the
+Phase-7 upstream sync rehearsal that moved the parity target to H3 C v4.4.0.
+The document is kept as the authoritative design record: measurements, decision
+records, and the living upstream-sync workflow (§10).
+Scope at time of writing: repository `github.com/dimchansky/h3-go` at commit
+`52d76be`, upstream reference H3 C **v4.3.0** (`testref/h3-4.3.0`).
 
 This document proposes how to layer an idiomatic, strongly typed, allocation-aware public Go
 API on top of the existing mechanically ported C implementation, without losing
