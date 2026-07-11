@@ -54,6 +54,9 @@ decision records, measurements).
 - `tools/apiinventory` — generates [docs/c-api-inventory.csv](docs/c-api-inventory.csv)
   and enforces C-API completeness (`make check-api`).
 - [docs/DEVIATIONS.md](docs/DEVIATIONS.md) — the intentional differences from C.
+- [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md) — the backlog: deferred features
+  (GeoJSON, grouped disk distances, polyfill workspaces), profiling-gated
+  ideas, rejected designs, and the pre-v1.0.0 checklist.
 
 ## Development
 

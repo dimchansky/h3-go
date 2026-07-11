@@ -1,0 +1,431 @@
+# Future work backlog
+
+Durable context for improvements that were deliberately **not** implemented
+during the public-API build-out (Phases 0–7 of
+[public-api-architecture.md](./public-api-architecture.md), commits
+`b2e4870`…`a69a804`, tags `v0.1.0`/`v0.2.0`). Each entry records enough
+background to be actionable in a fresh session without re-deriving the
+reasoning.
+
+Standing constraints that apply to everything below:
+
+- **Production code stays pure, safe Go** — no `unsafe`, no cgo (DR-007,
+  enforced by `make check-unsafe` + depguard). Any feature that cannot be
+  built under that constraint is out of scope by definition.
+- **Convenience must not weaken the efficient core.** The allocation-efficient
+  APIs (`Append*` forms, `iter.Seq` iterators, value-type `CellBoundary`) are
+  the primary surface; new conveniences layer *on top* of them and must never
+  force extra copies or allocations into the existing paths.
+- **Geometry is `Angle`-based (radians inside).** `LatLng{Lat, Lng Angle}` is
+  shared verbatim between the public API and the ported C-shaped layer —
+  that identity is what makes polygon inputs and boundary outputs zero-copy
+  (DR-003). Any serialization feature must convert at the edge, never by
+  changing the internal representation.
+
+---
+
+## 1. JSON / GeoJSON support for geometry types
+
+### User problem and use cases
+
+Users routinely need to (a) persist or transmit cells and geometries through
+JSON APIs, (b) render H3 geometry on maps (Leaflet, Mapbox, deck.gl) that
+consume GeoJSON, and (c) ingest polygons from GeoJSON files for
+`PolygonToCells`. Today the index types (`Cell`, `DirectedEdge`, `Vertex`)
+marshal as canonical hex via `encoding.TextMarshaler` — that part is done —
+but `LatLng`, `Angle`, `CellBoundary`, `GeoLoop`, and `GeoPolygon` have **no**
+JSON support, and users must hand-roll conversions.
+
+### Why it was deliberately excluded (v0.x decision, §12-Q5)
+
+Any default marshaling of geometry silently embeds three contestable
+conventions, and getting them wrong mis-places data on maps by design:
+
+| Axis | This library (internal) | GeoJSON (RFC 7946) |
+|---|---|---|
+| Unit | radians (inside `Angle`) | degrees |
+| Field order | `Lat`, `Lng` struct fields | `[longitude, latitude]` arrays |
+| Ring rules | C loop order, implicit closure | outer CCW, holes CW, explicitly closed rings |
+
+A `MarshalJSON` on `LatLng` that emits `{"lat": 0.659, "lng": -2.136}`
+(radians) looks plausible and is wrong for almost every consumer; one that
+emits degrees breaks round-tripping with anything that assumed the struct's
+radian semantics. Refusing a default was the safe call for v0.
+
+### Design questions and trade-offs
+
+1. **Where does the conversion live?** On the core types (methods) or in a
+   separate `geojson` sub-package? Methods are discoverable but bake one
+   convention into the core forever; a sub-package keeps the core neutral and
+   can be versioned/replaced independently.
+2. **Geometry model**: GeoJSON `Polygon` vs `MultiPolygon` vs `Feature`
+   (with the H3 index in `properties`)? Cells naturally map to `Feature`s;
+   `CellsToMultiPolygon` output naturally maps to `MultiPolygon`.
+3. **Ring orientation and closure**: H3 boundaries are CCW and unclosed;
+   GeoJSON wants closed rings and prescribes winding. The encoder must append
+   the closing vertex and (for holes from `CellsToMultiPolygon`) verify or
+   fix winding.
+4. **Antimeridian**: RFC 7946 §3.1.9 says geometries SHOULD be cut at the
+   antimeridian. Cells crossing ±180° (and the poles) need either cutting
+   (correct, complex) or documented non-cutting (what most H3 bindings do).
+5. **Precision**: how many decimal digits to emit (GeoJSON convention is ~6–7;
+   full float64 round-trip needs 17).
+
+### Possible API shapes
+
+Recommended shape — a leaf sub-package, core types untouched:
+
+```go
+// package h3/geojson (own file tree, still zero external dependencies:
+// encoding/json only)
+func CellBoundaryPolygon(b *h3.CellBoundary) Polygon          // closed ring, degrees
+func MultiPolygon(polys []h3.GeoPolygon) MultiPolygonGeom     // from CellsToMultiPolygon
+func CellFeature(c h3.Cell) (Feature, error)                  // boundary + {"h3": "89283..."}
+func ParsePolygon(data []byte) (h3.GeoPolygon, error)         // degrees -> Angle at the edge
+
+// Explicit, unambiguous DTO — no magic marshaling on h3.LatLng itself:
+type Position [2]float64 // [lng, lat], degrees — the GeoJSON convention, named so
+```
+
+Rejected shape (do not resurrect without revisiting §12-Q5):
+`func (ll LatLng) MarshalJSON()` on the core type — whichever unit/order it
+picks, it is a silent trap for the other half of users, and it freezes the
+choice into the core package's compatibility surface.
+
+An intermediate option if a sub-package feels heavy: explicit conversion
+methods on core types (`ll.GeoJSONPosition() [2]float64`) that make the
+convention visible at the call site, still without `MarshalJSON`.
+
+### Allocation / ownership / concurrency / safety
+
+- Marshaling inherently allocates (the JSON bytes); that is (A)-class,
+  acceptable. Conversion `Angle→degrees` is per-scalar, no copies of backing
+  arrays needed except the output structures the user asked for.
+- `ParsePolygon` should build the `GeoLoop`/`Holes` slices exactly once at
+  the right size; the result is owned by the caller, no retained state.
+- Pure Go throughout (`encoding/json`); no concurrency concerns (stateless
+  functions).
+
+### Evidence needed before building
+
+User demand, not profiling: issues/requests for GeoJSON, or friction writing
+the conversion by hand. Prototype against a real consumer (Leaflet/deck.gl
+rendering of `CellsToMultiPolygon` output) to validate winding/closure
+decisions before freezing names.
+
+### Tests and benchmarks
+
+- Round-trip: `ParsePolygon(Marshal(MultiPolygon(x)))` set-equality on
+  `PolygonToCells` results.
+- Golden GeoJSON fixtures validated against an external checker (e.g.
+  `geojson.io`-conformant linter output committed as testdata).
+- Antimeridian/pole cells (transmeridian fixtures already exist in the
+  ported tests — reuse them).
+- Winding tests for holes from donut `CellsToMultiPolygon` output.
+- Allocation budget test: encoding N cells allocates O(output), not O(N²).
+
+### Compatibility
+
+Fully backward-compatible if shipped as a sub-package (pure addition). This
+is also **the main open decision to settle before v1.0.0** — not because v1
+must include it, but because v1 must commit to *not* having marshaling on the
+core geometry types (aliasing that decision into the frozen surface).
+
+### Recommended direction
+
+Leaf sub-package `geojson` with explicit DTO types and edge conversion;
+`Feature`-oriented helpers for cells; document non-cutting at the
+antimeridian in v1 of the sub-package (cutting as a later option). Do not
+add `MarshalJSON` to core geometry types.
+
+---
+
+## 2. Grouped convenience variant of GridDiskDistances
+
+### User problem and use cases
+
+"Give me the neighbors bucketed by ring" is a common traversal pattern
+(BFS-style expansion, ring-weighted scoring, rendering rings in distinct
+styles). Today users get the efficient flat form:
+
+```go
+cells, dists, err := origin.GridDiskDistances(k) // []Cell, []int32, parallel
+```
+
+and must group by hand. uber/h3-go returns `[][]Cell` directly, so migrating
+users will look for it.
+
+### Why it was deliberately excluded (§12-Q8)
+
+The flat parallel-slice form **is** the zero-copy representation: cells fill
+the caller's buffer directly and distances are the algorithm's own `int32`s
+(re-typing to `int` or grouping would force a copy per element). A grouped
+result inherently allocates k+2 slices (or one backing array plus k+2
+headers); shipping only the grouped form — as uber does — would have baked
+that cost into the primary API. Flat-first keeps the efficient path primary;
+grouping is pure convenience layerable on top at any time.
+
+### Design questions and trade-offs
+
+1. **Shape**: `[][]Cell` (index = distance, uber-compatible mental model) vs
+   `iter.Seq2[int, []Cell]`. The slice form is simpler; the Seq form saves
+   nothing meaningful because the whole disk must be materialized anyway.
+2. **Backing storage**: k+1 independent slices, or one flat allocation
+   partitioned into sub-slices? The partitioned form is 2 allocations total
+   (backing array + headers array) and cache-friendly; sub-slices share the
+   backing array, which must be documented (mutating one ring's slice can
+   never touch another ring — partitions don't overlap — but appends to a
+   ring slice could, so headers should be returned with len == cap per ring).
+3. **Ordering within a ring**: the safe algorithm has no order; sorting per
+   ring would add cost and promise more than C does. Document "no order
+   within a ring".
+4. Do Safe/Unsafe variants need grouped forms too, or only the default?
+   Start with only the default; the Unsafe form is already ring-ordered
+   (ring-walk), making grouping nearly free for those who need it.
+
+### Possible API shape
+
+```go
+// GridDiskDistancesGrouped returns the cells within grid distance k of c,
+// grouped by distance: result[d] holds the cells at exactly distance d.
+// Cells within a ring are in no particular order. All rings share one
+// backing array; each ring slice has len == cap.
+func (c Cell) GridDiskDistancesGrouped(k int) ([][]Cell, error) {
+    cells, dists, err := c.GridDiskDistances(k) // existing zero-copy core
+    if err != nil {
+        return nil, err
+    }
+    counts := make([]int, k+1)
+    for _, d := range dists {
+        counts[d]++
+    }
+    groups := make([][]Cell, k+1)
+    // partition one backing array by counting sort — 2 allocations total
+    ...
+    return groups, nil
+}
+```
+
+Implementation is a counting sort over the flat result: O(n), 2–3
+allocations, all of them the requested output. No changes to internal ported
+code.
+
+### Allocation / concurrency / safety
+
+Allocates exactly the result (backing array + headers + counts scratch);
+callers wanting reuse keep using the flat `Append*` form. Stateless, no
+ownership subtleties beyond the documented shared backing array.
+
+### Evidence needed
+
+None technical — this is demand-driven sugar. Implement when a user asks or
+when migration friction from uber/h3-go shows up. It is deliberately cheap
+to add later precisely because the flat form already exists.
+
+### Tests and benchmarks
+
+- Histogram equivalence with the flat form (`counts[d] == len(groups[d])`).
+- Pentagon origins (rings shorter than 6d — the pruning path).
+- `len == cap` per ring (append safety).
+- Benchmark vs hand-grouping to confirm the counting-sort partition is not
+  slower than the naive `append` loop.
+
+### Compatibility
+
+Purely additive; backward-compatible.
+
+### Recommended direction
+
+Add `GridDiskDistancesGrouped` (name aligned with the existing family) as a
+thin layer over `GridDiskDistances`, single backing array, when demand
+appears. Do not add grouped Safe/Unsafe variants until asked.
+
+---
+
+## 3. Reusable scratch/workspace buffers for polygon operations
+
+### User problem and use cases
+
+High-throughput polyfill services (tiling pipelines, geofencing engines)
+call `PolygonToCells`/`AppendPolygonToCells` in tight loops. The *result*
+buffer is already reusable via `AppendPolygonToCells`, but each call still
+performs algorithm-internal allocations. Measured at v0.2.0
+(`BenchmarkAppendPolygonToCells`, 1253-cell SF polygon, warm result buffer):
+**3 allocations / ~152 KB per call** — the search/found hash arrays and the
+per-polygon bbox slice inside the ported `polygonToCells` (the C original
+heap-allocates the same arrays). `AppendCompactCells` similarly retains 3
+internal working arrays (again matching C's mallocs), and
+`polygonToCells` also uses a small per-search ring buffer that C keeps on
+the stack.
+
+### Why it was deliberately excluded
+
+- The allocations mirror the C implementation's own mallocs — the port is
+  not *worse* than C; there is no regression to fix.
+- A workspace API adds real costs: lifecycle rules (who resets it?),
+  concurrency rules (one workspace per goroutine, never shared), retained-
+  memory growth (a workspace sized by the largest polygon ever seen pins
+  that memory), and permanent API surface. Per the architecture's §5.7 this
+  was explicitly deferred: "could later be offered a scratch buffer via an
+  options struct if profiling demands it — explicitly out of scope now."
+- Amortized over the ~1 ms compute of a 1253-cell fill, 3 allocations are
+  noise for most users; only sustained-throughput workloads could tell the
+  difference, and none has been measured yet.
+
+### Design questions and trade-offs
+
+1. **Workspace object vs pool vs variadic option.** A `sync.Pool` hidden
+   inside the package trades determinism for convenience and *retains
+   memory invisibly* — poor fit for a library that advertises explicit
+   allocation control. An explicit workspace type keeps ownership visible.
+2. **Scope**: polygon fill only, or also compact/uncompact and the gridDisk
+   internal distance scratch? Start narrow (polygon fill is the heavyweight).
+3. **Interaction with ported code**: threading a workspace through
+   `polygonToCells` means touching ported function signatures — a
+   traceability cost. The workspace parameters must be *additive* shims
+   (e.g. a thin variant that the attribution-carrying function delegates
+   to), never a rewrite of the C-shaped body.
+4. **Growth policy**: grow-only (simple, pins peak memory) vs shrink
+   heuristics (complex). Grow-only with a documented `Reset()`/re-make
+   escape hatch is the honest option.
+
+### Possible API shape (sketch only — do not commit prematurely)
+
+```go
+// PolyfillWorkspace holds reusable internal buffers for polygon-to-cells
+// operations. Not safe for concurrent use; use one per goroutine.
+// The zero value is ready to use. Buffers grow to the largest polygon
+// processed and are retained until the workspace is garbage collected.
+type PolyfillWorkspace struct {
+    search, found []Cell  // internal hash arrays
+    bboxes        []bbox  // note: internal type — fields stay unexported
+}
+
+func (w *PolyfillWorkspace) AppendPolygonToCells(dst []Cell, p GeoPolygon, res int) ([]Cell, error)
+```
+
+Alternative considered: `AppendPolygonToCells(dst, p, res, WithWorkspace(w))`
+variadic options — heavier machinery for one option; only worth it if more
+options (e.g. flags) accumulate.
+
+### Allocation / copying / concurrency / ownership / safety
+
+- Target: 0 allocations on the warm path (result buffer via `dst`, internals
+  via workspace). No copying changes; no `unsafe` needed — the buffers are
+  ordinary slices of internal types.
+- **Not** concurrency-safe by design; the doc comment must say "one per
+  goroutine" and tests should include a `-race` misuse test only if we decide
+  to detect misuse (probably not — document instead).
+- Ownership: caller owns the workspace; the library never retains a
+  reference past the call (must be asserted in review — retaining would be a
+  correctness bug, not just a perf one).
+
+### Evidence needed before building (the gate)
+
+A profile of a realistic sustained workload (thousands of polyfills/second)
+showing GC pressure or allocation time from *these specific* buffers —
+e.g. `pprof` alloc_space attributing a meaningful share to
+`polygonToCells`'s `make` calls, or benchmark deltas >5–10% from a
+prototype. Without that, the API-complexity cost wins. The cheap first step
+if polyfill throughput ever matters: move the small per-search ring buffer
+(`maxOneRingSize`) to a stack array — C keeps it on the stack, it is
+bounded, and it needs no API change at all.
+
+### Tests and benchmarks
+
+- Alloc assertion: warm workspace path == 0 allocs (AllocsPerRun).
+- Equivalence: workspace results byte-identical to the plain path across the
+  ported polygon test corpus (SF polygon, holes, transmeridian, pentagon
+  fixtures).
+- Reuse across differently-sized polygons (grow, then smaller input).
+- Benchmark: plain vs workspace at several polygon sizes; report B/op.
+
+### Compatibility
+
+Purely additive; backward-compatible. The existing `AppendPolygonToCells`
+stays untouched.
+
+### Recommended direction
+
+Do nothing until profiling evidence exists. If it arrives: explicit
+grow-only workspace struct (zero value usable, per-goroutine), polygon fill
+first, stack-ring micro-fix independently of the workspace. Reject the
+hidden `sync.Pool`.
+
+---
+
+## Other follow-ups discovered during Phases 0–7
+
+### Planned / promising (no blockers, do when convenient)
+
+- **Push and watch the first GitHub CI run.** The workflow (matrix build,
+  no-unsafe gate, api-gates job, parity job) is verified locally
+  command-for-command but has never executed on GitHub runners. Commits and
+  tags (`v0.1.0`, `v0.2.0`) exist locally only.
+- **`IndexDigit` for edges/vertexes.** C 4.4.0's `getIndexDigit` accepts any
+  index; the public method exists only on `Cell`. Adding
+  `DirectedEdge.IndexDigit`/`Vertex.IndexDigit` is trivial if a use case
+  shows up.
+- **uberdiff extensions**: add benchmark comparisons (pure Go vs cgo
+  binding) to quantify the no-cgo advantage per operation, and absorb Uber's
+  unreleased pure-Go port (`x/h3go`, present in uber/h3-go master) into the
+  same differential harness — cgo-free — once it ships.
+- **Error-code accessor (§12-Q7)**: `func Code(err error) (int, bool)`
+  returning the numeric H3 code for cross-language stability. Additive;
+  implement on first request.
+
+### Ideas requiring profiling or user demand (gated)
+
+- Items 1–3 above (GeoJSON: demand; grouped distances: demand; workspaces:
+  profiling).
+- **Stack ring buffer in `polygonToCells`** (see item 3) — smallest possible
+  perf follow-up, no API change, C-fidelity improvement.
+- **Filename convention cleanup (§12-Q12)**: 49 of the original 75 C-public
+  functions live in double-underscore files
+  (e.g. `algos__gridDisk.go`), and `h3Index_getBaseCellNumber.go` breaks the
+  lowercase-prefix convention. The apiinventory tool already compensates, so
+  this is cosmetic churn — only worth doing in a quiet moment, as a pure
+  `git mv` commit with no content changes. New ports (e.g. the 4.4.0 trio)
+  already follow the correct convention.
+- **Internal tidy**: the ported `h3ToString` returns `(string, uint32)` and
+  uses `fmt.Sprintf` — unused by the public path (which formats via
+  `strconv`); could be aligned with the C signature during a future sync.
+
+### Intentionally rejected designs (do not revisit without new evidence)
+
+Recorded here so they are not re-proposed from scratch; full rationale in
+[public-api-architecture.md](./public-api-architecture.md) (decision records)
+and [DEVIATIONS.md](./DEVIATIONS.md):
+
+- `internal/` package split for the ported layer (DR-001: breaks the
+  zero-copy alias, methods, and white-box parity tests).
+- `unsafe` slice reinterpretation (`castSlice`) — obsoleted by the
+  `h3Index = Cell` alias; DR-007 requires a new reviewed decision record,
+  benchmarks, and proof no safe design suffices before any production
+  `unsafe`.
+- Public umbrella `Index` type (DR-002) — forces conversions everywhere;
+  `IsValidIndex(uint64)` covers the mode-generic need.
+- Degrees-based `float64` `LatLng` (DR-003/§12-Q4) — would force O(n)
+  convert-copies on every polygon/boundary crossing the API boundary.
+- Dual package-function + method forms for every operation (§12-Q10) — one
+  obvious form each; uber's duplication was judged a wart.
+- `MarshalJSON` directly on core geometry types (§12-Q5; see item 1).
+- Sorting/ordering guarantees beyond C's documented contracts (§12-Q11).
+
+### Release considerations before v1.0.0
+
+v1 freezes the public surface (`docs/api-surface.txt` is the inventory of
+what gets frozen). Before tagging:
+
+1. CI green on GitHub (all four jobs), including the api-gates job against a
+   fresh upstream download.
+2. Settle item 1's *boundary* decision — specifically, commit to "no JSON
+   marshaling on core geometry types" (the sub-package can come later).
+3. Decide whether `Code(err)` (§12-Q7) is in or out — additive either way,
+   but cheap to include if wanted.
+4. Ideally ride through one more upstream release (4.5.x) with the §10 sync
+   workflow to confirm the 4.4.0 rehearsal wasn't a one-off; the
+   `getIndexDigit` macro/function collision showed each sync can surface a
+   naming surprise.
+5. Re-run the full matrix on both supported Go versions and refresh the
+   benchmark numbers in the README if they are quoted there.
