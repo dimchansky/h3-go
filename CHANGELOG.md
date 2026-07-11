@@ -16,6 +16,9 @@ contain breaking changes (called out explicitly below).
 - New `tools/upstreamdiff` (`make upstream-diff FROM=... TO=...`): symbol-level
   C tree diff mapped to the Go port via attribution comments; upstream-sync
   documentation now makes this review mandatory.
+- CI: tiered pipeline (docs/ci-policy.md) — docs-only changes skip Go jobs,
+  fast checks signal in ~3 minutes, race runs on PRs/nightly/tags, heavy
+  suites nightly/on-demand; in-flight runs are cancelled by newer commits.
 - CI: version-agnostic parity/include paths (no H3 version hardcoded in
   code); platform-independent allocation assertions; Linux parity build
   fixes (portable `C.int64_t`, `-lm`, no section-GC linker flags) and
