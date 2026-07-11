@@ -1,128 +1,30 @@
-# H3 Reference Test Oracle
+# testref — upstream H3 C sources for parity testing
 
-This directory will contain the external C oracle CLI for testing our pure-Go H3 implementation against the reference H3 C v4.3.0 implementation.
+This directory fetches (never vendors) the pristine upstream
+[H3 C](https://github.com/uber/h3) sources that the cgo parity suite and the
+API-completeness gate compare against.
 
-## Overview
-
-The Go library is intentionally pure Go (no cgo, no external dependencies). To ensure correctness, we build a separate C binary that wraps H3 C v4.3.0 and provides a simple CLI interface for Go tests to invoke via `exec.Command`.
-
-## Architecture
-
-- **Go library**: Pure Go implementation in `../` (this package)
-- **C oracle**: Separate C binary built from H3 v4.3.0 source (this directory)
-- **Test harness**: Go tests that invoke the C oracle and compare results
-
-## Building the Oracle
-
-```bash
-make ref  # From repository root
+```sh
+make -C testref h3-source              # download + extract the default version
+make -C testref H3_VERSION=4.5.0 h3-source   # fetch another version (upstream syncs)
 ```
 
-This will:
-1. Download H3 v4.3.0 source to `testref/h3-4.3.0/`
-2. Build the `testref/h3ref` CLI binary
-3. The binary provides a simple command-line interface for test queries
+The downloaded trees (`h3-<version>/`) and tarballs are gitignored; only this
+scaffolding is committed. The version consumed by the root Makefile is set by
+`H3VER` there (`make test-c2go H3VER=...`); this Makefile's `H3_VERSION`
+controls what gets downloaded.
 
-## Direct Build
+How the sources are used:
 
-You can also build directly in the testref directory:
+- **Parity suite** (`make test-c2go`, build tags `cgo && c2go`): the root
+  package's `h3lib_*_c2go.c` shims `#include` the original C files by name —
+  include paths are injected via `CGO_CPPFLAGS`, so no H3 version is ever
+  hardcoded in code — and `*_cgo.go` wrappers let 227 parity tests compare Go
+  vs C behavior in-process.
+- **API gates** (`make check-api`, `make api-inventory`):
+  `tools/apiinventory` parses `h3api.h.in` to enforce that every C public
+  function is ported and publicly represented.
 
-```bash
-cd testref
-make        # Download and build oracle
-make test   # Run validation tests
-make version    # Show current H3 version
-make clean-all  # Remove all downloaded source and binaries
-```
-
-## Upgrading H3 Version
-
-To upgrade to a newer H3 version:
-
-1. Edit `H3_VERSION` in `testref/Makefile`
-2. Run `make clean-all && make` to rebuild with new version
-3. Run `make test` to verify compatibility
-
-The oracle source code is version-agnostic and requires no changes.
-
-## Protocol
-
-The `h3ref` binary provides a simple command-line interface (command names mirror the underlying H3 C function names):
-
-```bash
-# Test pentagon detection
-./h3ref isBaseCellPentagon 4        # Returns: 1 (is pentagon)
-./h3ref isBaseCellPentagon 0        # Returns: 0 (is hexagon)
-
-# Convert FaceIJK to H3 index  
-./h3ref faceIjkToH3 0 0 0 1 0  # Returns: 0x8025fffffffffff
-
-# Convert LatLng to H3 index
-./h3ref latLngToCell 37.775 -122.418 9  # Returns: 0x8928308280fffff 0
-
-# Rotate H3 indices
-./h3ref h3Rotate60cw 0x8021fffffffffff   # Returns: 0x8021fffffffffff
-./h3ref h3Rotate60ccw 0x8021fffffffffff  # Returns: 0x8021fffffffffff
-
-# CoordIJK helpers (for validating Go internal/coordijk)
-./h3ref ijkDistance 0 0 0  1 0 1               # Returns: 1
-./h3ref ijkRotate60ccw 1 0 0                   # Returns: "1 1 0"
-./h3ref ijkRotate60cw  0 1 0                   # Returns: "1 1 0"
-./h3ref ijkToHex2d 1 1 0                       # Returns: "0.500000... 0.866025..."
-./h3ref hex2dToCoordIJK 0.5 0.86602540378      # Returns: "1 1 0"
-./h3ref neighbor 4 0 0 0                       # Returns: "1 0 0"
-
-# Aperture transforms (Up/Down Ap7/Ap3)
-./h3ref upAp7   7 0 0   # Returns parent in CCW ap7
-./h3ref upAp7r  7 0 0   # Returns parent in CW ap7
-./h3ref downAp7 1 0 0   # Returns child at next finer CCW ap7
-./h3ref downAp7r 1 0 0  # Returns child at next finer CW ap7
-./h3ref downAp3 1 0 0   # Ap3 (pentagon) finer
-./h3ref downAp3r 1 0 0  # Ap3 reverse finer
-```
-
-## Error Code Mapping
-
-The C oracle returns numeric error codes that must be mapped to Go errors:
-
-```go
-// C error code -> Go error sentinel mapping (parity with H3 C v4.3.0).
-var cErrToGo = map[uint32]error{
-    0:  nil,                    // Success
-    1:  ErrFailed,
-    2:  ErrDomain,
-    3:  ErrLatLngDomain,
-    4:  ErrResolutionDomain,
-    5:  ErrCellInvalid,
-    6:  ErrDirectedEdgeInvalid,
-    7:  ErrUndirectedEdgeInvalid,
-    8:  ErrVertexInvalid,
-    9:  ErrPentagon,
-    10: ErrDuplicateInput,
-    11: ErrNotNeighbors,
-    12: ErrResolutionMismatch, // corrected name
-    13: ErrMemoryAlloc,
-    14: ErrMemoryBounds,
-    15: ErrOptionInvalid,
-}
-```
-
-Unknown error codes map to `ErrFailed` with logging.
-
-## Status
-
-- [x] Download and build H3 C v4.3.0
-- [x] Implement `h3ref` CLI with command-line protocol
-- [x] Add `make ref` target to root Makefile
-- [x] Expose CoordIJK helpers (distance, rotate, neighbor, hex2d conversions)
-- [x] Expose aperture transforms (Up/Down Ap7/Ap3)
-- [ ] Wire up Go test harness to use oracle
-- [ ] Add golden test datasets for stable operations
-- [x] Validate pentagon handling and rotation functions
-
-## Design Goals
-
-1. **No linking**: The Go library never links to C code - oracle is a separate process
-2. **Hermetic builds**: Oracle build is reproducible and isolated
-3. **Behavioral parity**: All operations match H3 C v4.3.0 exactly
-4. **Performance isolation**: Oracle is only used in tests, not production code
+`h3ref.c` builds a small standalone CLI (`make -C testref`) for manually
+querying the reference implementation while debugging, e.g.
+`./testref/h3ref latLngToCell 37.775 -122.418 9`. No Go test depends on it.

@@ -75,7 +75,7 @@ describe an `internal/`-package + oracle-CLI design that no longer exists; `AGEN
   - **19 `*_cgo.go` interop files** + **17 `h3lib_*_c2go.c` shims** that compile the
     original C sources for in-process parity testing;
   - **290 test files**: 224 `*_parity_test.go` (Go-vs-C comparisons), 31 ported upstream
-    unit-test files (`testGridDisk_test.go`, …, tracked in `TODO_TESTS.md`), 35 other
+    unit-test files (`testGridDisk_test.go`, …, tracked in `docs/ported-c-tests.md`), 35 other
     plain Go tests.
 - `testref/` holds the downloaded upstream source (`make -C testref` / `make ref`); only
   the small oracle scaffolding is committed.
@@ -166,7 +166,8 @@ Gaps:
   `#include "mathExtensions.c"` without the include paths that only `make test-c2go`
   provides. Reproduced locally: `CGO_ENABLED=1 go test -race ./...` →
   `fatal error: 'mathExtensions.c' file not found`. The intended design (per
-  `C2GO_README.md`) was `cgo && c2go`; only 14 parity files and 3 interop files actually
+  `C2GO_README.md`, since folded into `CONTRIBUTING.md`) was `cgo && c2go`; only 14
+  parity files and 3 interop files actually
   say that.
 - No public API to test yet: no allocation assertions, no fuzz targets, no examples, no
   API-surface lock. §9 addresses all of these.
@@ -877,7 +878,7 @@ touching C or external modules is opt-in.
 | lint | golangci-lint (incl. depguard no-unsafe), `gofmt -s`, smrcptr | nothing |
 | no-unsafe | `make check-unsafe` (both layers, all four build modes) | nothing |
 | allocs | included in build+test (plain tests) | nothing |
-| parity | `make ref && make test-c2go` | network + C toolchain |
+| parity | `make -C testref h3-source && make test-c2go` | network + C toolchain |
 | api-surface + completeness | golden diff + apiinventory verify | testref fetch |
 | uberdiff | `make test-uberdiff` | cgo + network |
 
@@ -901,7 +902,7 @@ Goal: when H3 `4.4.x`/`4.5.x` releases, produce a reviewable, function-scoped up
    harness retargets with `make test-c2go H3VER=4.4.0` — no code changes needed for the
    harness itself (include paths are injected at test time by design).
 5. **Update tests**: port upstream's new/changed `testXxx.c` cases (tracked in
-   `TODO_TESTS.md` as today); extend parity tests for new functions.
+   `docs/ported-c-tests.md` as today); extend parity tests for new functions.
 6. **Preserve intentional Go deviations**: they are enumerable — `Angle` fields,
    `int32` mapping, fixed-array `CellBoundary`, dst-slice out-params, iterator structs.
    Each is documented at its declaration and listed in this file; a `docs/DEVIATIONS.md`
@@ -1069,7 +1070,7 @@ ordering guarantees beyond C's are out of scope.
 `h3Index_getBaseCellNumber.go` casing, attribution format variants). Resolution: do *not*
 mass-rename files (churn without benefit — the inventory tool already normalizes);
 optionally fix the single casing outlier and standardize future attributions
-(`file.c::name`, no `H3_EXPORT()` wrapper) in `C2GO_TODO.md`.
+(`file.c::name`, no `H3_EXPORT()` wrapper) in `CONTRIBUTING.md`.
 
 **Q13 — Uber's `x/h3go` pure-Go port exists** (in uber/h3-go master, unreleased). It
 covers indexing+hierarchy+sets so far, `int64`/degrees shapes. Impact: validates the

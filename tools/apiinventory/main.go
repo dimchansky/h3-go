@@ -2,7 +2,8 @@
 // in the repository root, using the "// Ported from H3 C: <file>::<name>"
 // attribution comments that every ported declaration carries.
 //
-// Usage (from the repository root, after `make ref` has populated testref/):
+// Usage (from the repository root, after `make -C testref h3-source` has
+// populated testref/):
 //
 //	go run ./tools/apiinventory > docs/c-api-inventory.csv
 //	go run ./tools/apiinventory -h3ver 4.4.0        # future upstream versions
@@ -50,7 +51,7 @@ func norm(s string) string { return strings.TrimSpace(wsRe.ReplaceAllString(s, "
 func parseHeader(headerPath string) []cDecl {
 	data, err := os.ReadFile(headerPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "cannot read C header %s: %v\n(run `make ref` or pass -h3ver/-header)\n", headerPath, err)
+		fmt.Fprintf(os.Stderr, "cannot read C header %s: %v\n(run `make -C testref h3-source` or pass -h3ver/-header)\n", headerPath, err)
 		os.Exit(1)
 	}
 	text := string(data)

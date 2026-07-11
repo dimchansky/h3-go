@@ -34,7 +34,7 @@ check-unsafe:
 	fi
 	@echo "check-unsafe: OK"
 
-# Regenerate the C-API inventory (requires testref sources; see make ref).
+# Regenerate the C-API inventory (requires testref sources; see make -C testref h3-source).
 api-inventory:
 	@go run ./tools/apiinventory -h3ver $(H3VER) > docs/c-api-inventory.csv
 	@echo "docs/c-api-inventory.csv regenerated (H3 $(H3VER))"
@@ -143,7 +143,7 @@ test-c2go:
 	INC_BASE="$(PWD)/testref/h3-$(H3VER)/src/h3lib"; \
 	APPS_BASE="$(PWD)/testref/h3-$(H3VER)/src/apps/applib"; \
 	if [ ! -d "$$INC_BASE" ]; then \
-		echo "H3 C sources not found at $$INC_BASE. Run 'make ref' or set H3VER=..."; \
+		echo "H3 C sources not found at $$INC_BASE. Run 'make -C testref h3-source' or set H3VER=..."; \
 		exit 1; \
 	fi; \
 	VERBOSE_FLAG=""; \

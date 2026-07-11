@@ -1,0 +1,90 @@
+# Contributing
+
+Thanks for your interest! This project has an unusual structure — a public
+Go API layered over a mechanically ported C implementation — and a few hard
+rules that keep it maintainable against upstream H3 releases. Reading this
+page first will save you review round-trips.
+
+## Ground rules (CI-enforced)
+
+1. **Production code is pure, safe Go.** No `unsafe`, no cgo, no
+   dependencies in any file selected by a normal build. cgo exists only in
+   the parity harness behind `//go:build cgo && c2go`. `make check-unsafe`
+   is the gate; introducing production `unsafe` requires a new reviewed
+   decision record (see DR-007 in
+   [docs/public-api-architecture.md](docs/public-api-architecture.md)).
+2. **Ported code stays traceable to C.** Files named
+   `<cfile>_<function>.go` mirror one C function each and keep C names,
+   C-shaped bodies, and a `// Ported from H3 C: <file>::<name>` attribution.
+   Do not restructure them for style — several linters are configured off
+   for exactly this reason (see `.golangci.yml` comments).
+   C `int` maps to Go `int32`, C `int64_t` to `int64` (overflow parity).
+3. **Public wrappers carry an `H3 C API: <name>` doc line** naming their C
+   counterpart. `make check-api` fails if a C public function is neither
+   referenced nor listed in the omissions table
+   (`tools/apiinventory/main.go`).
+4. **The exported surface is locked.** Any intentional API change must
+   regenerate the golden file:
+   `UPDATE_API_SURFACE=1 go test -run TestAPISurface .`
+5. **Intentional divergences from C live in
+   [docs/DEVIATIONS.md](docs/DEVIATIONS.md).** If your change makes Go
+   behavior differ from C on purpose, document it there; if it isn't listed
+   there, parity with C is a requirement.
+
+## Development workflow
+
+```sh
+make test                    # pure-Go tests (CGO_ENABLED=0) — needs only Go
+go test -race ./...          # race detector
+make lint                    # gofmt -s, go vet, golangci-lint, smrcptr
+make check-unsafe            # no-unsafe gate
+make bench                   # benchmarks with allocation stats
+```
+
+Parity validation (optional locally, mandatory in CI; needs a C toolchain
+and network):
+
+```sh
+make -C testref h3-source    # download the upstream H3 sources (never vendored)
+make test-c2go               # full parity suite vs the original C objects
+make test-c2go TEST=Test_gridDisk_parity   # single parity test
+make check-api               # C-API completeness gate
+make api-inventory           # regenerate docs/c-api-inventory.csv
+```
+
+Differential testing against the official cgo binding:
+
+```sh
+make test-uberdiff           # separate module in interop/uberdiff
+```
+
+## Porting a C function (upstream syncs)
+
+The full workflow is
+[docs/public-api-architecture.md §10](docs/public-api-architecture.md#10-upstream-synchronization-workflow);
+the short version:
+
+1. Fetch the new version: `make -C testref H3_VERSION=<ver> h3-source`, then
+   diff `testref/h3-<old>` vs `testref/h3-<new>`.
+2. `go run ./tools/apiinventory -h3ver <ver> -verify` lists anything new or
+   missing.
+3. Port each changed C function in its own file, preserving the attribution
+   comment. Never hardcode an H3 version in code — include paths come from
+   `make test-c2go` (`H3VER=` selects the tree).
+4. Add/extend a `<cfile>_cgo.go` wrapper and a `*_parity_test.go`
+   (both `//go:build cgo && c2go`), then `make test-c2go H3VER=<ver>`.
+5. Port new upstream `testXxx.c` cases and record them in
+   [docs/ported-c-tests.md](docs/ported-c-tests.md).
+6. Add the public wrapper with its `H3 C API:` line, tests (including an
+   allocation assertion if it returns collections), and regenerate the
+   inventory + API surface.
+
+## Pull requests
+
+- Keep commits focused; describe *what* changed and *why* (see `git log`
+  for the house style — prefixes like `api:`, `c2go:`, `docs:`, `ci:`).
+- Run `make fmt lint test check-unsafe` before pushing; run the parity suite
+  if you touched ported code or the harness.
+- Benchmark deltas are expected for performance-related changes
+  (`make bench`), and allocation assertions must keep passing — new
+  convenience APIs must not add allocations to existing paths.

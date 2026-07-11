@@ -1,3 +1,10 @@
+# Ported upstream C tests
+
+Tracks which of the upstream H3 `src/apps/testapps/testXxx.c` suites have
+been translated to Go. Consulted during upstream syncs
+(docs/public-api-architecture.md §10, step 5): when a new H3 release changes
+or adds a `testXxx.c`, port the delta and update this list.
+
 Tests ported:
 
 - testBaseCells.c
