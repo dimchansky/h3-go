@@ -106,13 +106,15 @@ func Test_gridRing_parity(t *testing.T) {
 
 	// Test error cases
 	t.Run("negative_k", func(t *testing.T) {
+		// Go side only: calling the C gridRing with k < 0 is undefined
+		// behavior — after gridRingUnsafe rejects k, C does
+		// memset(out, 0, 6*k*sizeof(H3Index)) with a negative (wrapped to
+		// huge) size. macOS's end-pointer memset happens to write nothing;
+		// glibc's rep-stosb memset segfaults. The Go port is memory-safe
+		// here (it ranges over the caller's slice) and returns eDomain;
+		// see docs/DEVIATIONS.md.
 		out := make([]h3Index, 1)
 		goErr := gridRing(0x85283473fffffff, -1, out)
-		cErr := gridRingC(0x85283473fffffff, -1, out)
-
-		if goErr != cErr {
-			t.Errorf("Error mismatch for negative k: Go=%v, C=%v", goErr, cErr)
-		}
 		if goErr != eDomain {
 			t.Errorf("Expected eDomain for negative k, got %v", goErr)
 		}
