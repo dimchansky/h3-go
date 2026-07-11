@@ -1,54 +1,74 @@
 # h3-go — pure Go port of Uber H3
 
-A **pure-Go** reimplementation of [Uber's H3](https://github.com/uber/h3) hexagonal
-hierarchical geospatial indexing system (reference version **v4.3.0**). No cgo, no
-external dependencies; the production library is **safe Go only** (no `unsafe`).
+A **pure-Go** implementation of [Uber's H3](https://github.com/uber/h3) hexagonal
+hierarchical geospatial indexing system, behaviorally equivalent to **H3 C v4.3.0**.
+No cgo, no external dependencies, and the production library is **safe Go only**
+(no `unsafe` — enforced in CI).
 
-**Status:** the C implementation layer is complete — all **75/75** public functions of
-H3 C 4.3.0 are ported and parity-tested against the original C objects. The idiomatic
-public Go API (`Cell`, `DirectedEdge`, `Vertex`, …) is being built per
-[docs/public-api-architecture.md](docs/public-api-architecture.md).
+All **75/75** public functions of H3 C 4.3.0 are covered: ported
+function-by-function, validated against the original C objects by a 224-file cgo
+parity suite, and exposed through an idiomatic, strongly typed Go API.
+
+```go
+import h3 "github.com/dimchansky/h3-go"
+
+cell, _ := h3.LatLngToCell(h3.LatLngDegs(37.7759, -122.4180), 9)
+fmt.Println(cell)                  // 8928308280fffff
+
+disk, _ := cell.GridDisk(1)        // the cell and its 6 neighbors
+center, _ := cell.LatLng()         // cell centroid
+area, _ := cell.AreaKm2()          // exact spherical area
+
+// Zero-allocation form: reuse a buffer across queries.
+buf := make([]h3.Cell, 0, 64)
+disk, _ = cell.AppendGridDisk(buf[:0], 1)
+
+// Iterators stream without materializing (0 allocs).
+for child := range cell.ChildrenSeq(12) { _ = child }
+```
+
+## API shape
+
+- **Typed indexes**: `Cell`, `DirectedEdge`, `Vertex` (distinct `uint64` types)
+  with `String`/`ParseCell`/`MarshalText` (hex, JSON-ready).
+- **Type-safe angles**: `LatLng` fields are `Angle` values — construct with
+  `h3.LatLngDegs(...)` or `h3.Deg`/`h3.Rad`; degree/radian mix-ups don't compile.
+- **Errors**: sentinel values (`h3.ErrPentagon`, `h3.ErrCellInvalid`, ...) matched
+  with `errors.Is`, mirroring the C error codes.
+- **Allocation-aware**: every collection API has an allocating convenience form
+  and a zero-allocation `Append*` form; `iter.Seq` iterators for streaming.
+
+See the [package documentation](https://pkg.go.dev/github.com/dimchansky/h3-go)
+and [docs/public-api-architecture.md](docs/public-api-architecture.md) (design,
+decision records, measurements).
 
 ## Layout
 
-- **Root package `h3`** — one Go file per ported C function
-  (`<cfile>_<function>.go`, `__` marks a C-internal `_`-prefixed helper), each carrying a
-  `// Ported from H3 C: <file>::<name>` attribution. Public API files use plain topical
-  names (`cell.go`, `traversal.go`, …).
-- **Parity harness** — `*_cgo.go` interop wrappers + `h3lib_*_c2go.c` shims, all behind
-  `//go:build cgo && c2go`, compile the *original* upstream C sources (downloaded to
-  `testref/`, never vendored) and compare Go vs C behavior in-process.
-- `tools/apiinventory` — generates [docs/c-api-inventory.csv](docs/c-api-inventory.csv),
-  the mechanical C↔Go function mapping used for upstream synchronization.
+- **Root package `h3`** — public API files (`indexing.go`, `traversal.go`, …)
+  over a one-file-per-C-function ported implementation
+  (`<cfile>_<function>.go`, each with a `// Ported from H3 C: <file>::<name>`
+  attribution). Public operations carry `H3 C API: <name>` doc lines.
+- **Parity harness** — `*_cgo.go` + `h3lib_*_c2go.c` behind
+  `//go:build cgo && c2go` compile the *original* upstream C sources
+  (downloaded to `testref/`, never vendored) and compare Go vs C in-process.
+- `tools/apiinventory` — generates [docs/c-api-inventory.csv](docs/c-api-inventory.csv)
+  and enforces C-API completeness (`make check-api`).
+- [docs/DEVIATIONS.md](docs/DEVIATIONS.md) — the intentional differences from C.
 
 ## Development
 
 ```sh
 make test              # pure-Go tests (CGO_ENABLED=0)
 go test -race ./...    # race detector
-make ref               # one-time: download & build the C reference (testref/)
-make test-c2go         # cgo parity tests vs original C (H3VER=4.3.0)
+make -C testref h3-source && make test-c2go   # cgo parity tests vs original C
 make lint              # gofmt + go vet + golangci-lint + smrcptr
 make check-unsafe      # DR-007 gate: no unsafe reachable from any normal build
+make check-api         # every C public function ported & publicly represented
 make bench             # benchmarks with allocation stats
 ```
 
-Requires Go ≥ 1.24. The parity suite additionally needs a C toolchain and network (to
-fetch upstream sources).
-
-## Design in one paragraph
-
-The mechanically ported layer keeps C names, C signatures (out-params, caller-sized
-buffers), and C integer semantics (`int32` for C `int`) so future upstream releases can
-be diffed and merged function-by-function. The public layer exposes defined types
-`Cell`/`DirectedEdge`/`Vertex` (`uint64`), with the internal `H3Index` an *alias* of
-`Cell` — so `[]Cell` and the ported code's index slices are the same type and every hot
-path is zero-copy without `unsafe` or generics. Collection APIs come in an allocating
-convenience form and a zero-allocation `Append*` form, plus `iter.Seq` iterators.
-Angles use the `Angle` type (radians inside, `Deg()`/`Rad()` accessors) so
-degree-vs-radian bugs cannot compile. See the
-[architecture document](docs/public-api-architecture.md) for the full rationale,
-decision records, and measurements.
+Requires Go ≥ 1.24. The parity suite additionally needs a C toolchain and
+network access (to fetch upstream sources).
 
 ## License & attribution
 

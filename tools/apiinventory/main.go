@@ -210,10 +210,50 @@ func classify(lines []string, i int) (kind, ident, sig string) {
 	return "other", "", norm(line)
 }
 
+// omissions lists C public functions that intentionally have no dedicated
+// public Go API, with the reason. The -verify mode accepts these instead of
+// requiring an "H3 C API:" doc reference.
+var omissions = map[string]string{
+	"describeH3Error":           "surfaced as the Error() text of the sentinel errors (errors.go)",
+	"degsToRads":                "replaced by the Angle type: Deg(x).Rad()",
+	"radsToDegs":                "replaced by the Angle type: Rad(x).Deg()",
+	"destroyLinkedMultiPolygon": "meaningless under garbage collection; CellsToMultiPolygon returns slices",
+}
+
+var apiLineRe = regexp.MustCompile(`(?m)//\s*H3 C API:\s*(.+)$`)
+var wordRe = regexp.MustCompile(`[A-Za-z_]\w*`)
+
+// collectAPIRefs gathers every identifier mentioned on an "H3 C API:" doc
+// line in the non-test root Go files.
+func collectAPIRefs(repoRoot string) map[string]bool {
+	refs := map[string]bool{}
+	entries, err := os.ReadDir(repoRoot)
+	if err != nil {
+		return refs
+	}
+	for _, e := range entries {
+		name := e.Name()
+		if e.IsDir() || !strings.HasSuffix(name, ".go") || strings.HasSuffix(name, "_test.go") {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(repoRoot, name))
+		if err != nil {
+			continue
+		}
+		for _, m := range apiLineRe.FindAllStringSubmatch(string(data), -1) {
+			for _, w := range wordRe.FindAllString(m[1], -1) {
+				refs[w] = true
+			}
+		}
+	}
+	return refs
+}
+
 func main() {
 	repoRoot := flag.String("repo", ".", "repository root containing the ported Go files")
 	h3ver := flag.String("h3ver", "4.3.0", "upstream H3 version vendored under testref/")
 	header := flag.String("header", "", "explicit path to h3api.h.in (overrides -h3ver)")
+	verify := flag.Bool("verify", false, "verify completeness: every C public function must be ported AND either referenced by an 'H3 C API:' doc line or listed in the omissions table; exit 1 otherwise")
 	flag.Parse()
 
 	headerPath := *header
@@ -223,6 +263,31 @@ func main() {
 
 	cDecls := parseHeader(headerPath)
 	goDecls := parseGoFiles(*repoRoot)
+
+	if *verify {
+		refs := collectAPIRefs(*repoRoot)
+		ported := map[string]bool{}
+		for _, g := range goDecls {
+			ported[g.attrName] = true
+		}
+		failed := 0
+		for _, c := range cDecls {
+			if !ported[c.name] {
+				fmt.Fprintf(os.Stderr, "VERIFY FAIL: C public function %s has no Go port (missing 'Ported from H3 C:' attribution)\n", c.name)
+				failed++
+			}
+			if !refs[c.name] && omissions[c.name] == "" {
+				fmt.Fprintf(os.Stderr, "VERIFY FAIL: C public function %s has neither an 'H3 C API:' doc reference nor an omissions entry\n", c.name)
+				failed++
+			}
+		}
+		if failed > 0 {
+			fmt.Fprintf(os.Stderr, "verify: %d problems across %d C public functions\n", failed, len(cDecls))
+			os.Exit(1)
+		}
+		fmt.Fprintf(os.Stderr, "verify: OK — all %d C public functions are ported and publicly represented\n", len(cDecls))
+		return
+	}
 
 	cByName := map[string]cDecl{}
 	for _, c := range cDecls {

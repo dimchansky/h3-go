@@ -62,3 +62,37 @@ jobs:
 
       - name: Test (race)
         run: go test -race ./...
+
+  # Gates that need the upstream C sources (header parse only, no compile).
+  api-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Fetch upstream H3 sources
+        run: make -C testref h3-source
+      - name: C-API completeness gate
+        run: make check-api
+      - name: Inventory is up to date
+        run: |
+          go run ./tools/apiinventory > /tmp/inventory.csv
+          diff -u docs/c-api-inventory.csv /tmp/inventory.csv
+
+  # Full parity suite against the original C implementation.
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Fetch upstream H3 sources
+        run: make -C testref h3-source
+      - name: Run cgo parity tests
+        run: make test-c2go TIMEOUT=120s

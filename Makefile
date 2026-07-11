@@ -1,4 +1,4 @@
-.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory
+.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -38,6 +38,12 @@ check-unsafe:
 api-inventory:
 	@go run ./tools/apiinventory > docs/c-api-inventory.csv
 	@echo "docs/c-api-inventory.csv regenerated"
+
+# Completeness gate: every H3 C public function must be ported AND publicly
+# represented (an "H3 C API:" doc line or a documented omission).
+# Requires testref sources (make -C testref h3-source downloads them).
+check-api:
+	@go run ./tools/apiinventory -verify
 
 # Usage: make test [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration] [COVERAGE=1]
 # Examples:
@@ -150,11 +156,16 @@ test-c2go:
 		COVERAGE_FLAG="-cover -coverprofile=$$COVERPROFILE"; \
 		echo "Coverage will be saved to: $$COVERPROFILE"; \
 	fi; \
+	TOOLCHAIN_ENV=""; \
+	if [ -n "$$CC" ]; then TOOLCHAIN_ENV="CC=$$CC CXX=$$CXX SDKROOT=$$SDKROOT"; fi; \
+	LDFLAGS_ENV="-Wl,-dead_strip"; \
+	if [ "$$(uname -s)" != "Darwin" ]; then LDFLAGS_ENV="-Wl,--gc-sections"; fi; \
+	env $$TOOLCHAIN_ENV \
 	GOCACHE=$(PWD)/.gocache \
-	CGO_ENABLED=1 CC="$$CC" CXX="$$CXX" SDKROOT="$$SDKROOT" \
+	CGO_ENABLED=1 \
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
 	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
-	CGO_LDFLAGS="-Wl,-dead_strip" \
+	CGO_LDFLAGS="$$LDFLAGS_ENV" \
 	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="c2go" ./... || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
@@ -246,3 +257,8 @@ coverage-all:
 	@echo "View combined coverage with:"
 	@echo "  go tool cover -func=coverage-all.out    # Function coverage"
 	@echo "  go tool cover -html=coverage-all.out    # HTML report"
+
+# Differential tests against the official cgo binding (separate module;
+# requires cgo + network). Not run by default CI.
+test-uberdiff:
+	cd interop/uberdiff && go test ./...
