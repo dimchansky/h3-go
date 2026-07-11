@@ -15,7 +15,7 @@ func Test_geoToVec3d_ParityWithC(t *testing.T) {
 		{Lat: 1.2, Lng: -2.3},
 	}
 	for _, g := range cases {
-		var goV, cV Vec3d
+		var goV, cV vec3d
 		_geoToVec3d(&g, &goV)
 		_geoToVec3dC(&g, &cV)
 		if math.Abs(goV.X-cV.X) > 1e-15 || math.Abs(goV.Y-cV.Y) > 1e-15 || math.Abs(goV.Z-cV.Z) > 1e-15 {

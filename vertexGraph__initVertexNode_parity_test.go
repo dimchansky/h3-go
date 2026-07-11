@@ -47,11 +47,11 @@ func Test__initVertexNode_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create and initialize Go node
-			goNode := &VertexNode{}
+			goNode := &vertexNode{}
 			_initVertexNode(goNode, &tt.fromVtx, &tt.toVtx)
 
 			// Create and initialize C node
-			cNode := &VertexNode{}
+			cNode := &vertexNode{}
 			_initVertexNodeC(cNode, &tt.fromVtx, &tt.toVtx)
 
 			// Compare from vertex

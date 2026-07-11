@@ -9,47 +9,47 @@ import (
 func Test_iterInitParent_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		h        H3Index
+		h        h3Index
 		childRes int32
 	}{
 		{
 			"valid_parent_to_child",
-			H3Index(0x85283473fffffff), // res 5 cell
+			h3Index(0x85283473fffffff), // res 5 cell
 			7,                          // child res 7
 		},
 		{
 			"parent_res_0_child_res_5",
-			H3Index(0x8003fffffffffff), // res 0 cell
+			h3Index(0x8003fffffffffff), // res 0 cell
 			5,                          // child res 5
 		},
 		{
 			"parent_res_10_child_res_15",
-			H3Index(0x8a2834700007fff), // res 10 cell
+			h3Index(0x8a2834700007fff), // res 10 cell
 			15,                         // child res 15 (max)
 		},
 		{
 			"same_resolution",
-			H3Index(0x85283473fffffff), // res 5 cell
+			h3Index(0x85283473fffffff), // res 5 cell
 			5,                          // same res 5
 		},
 		{
 			"invalid_child_res_too_small",
-			H3Index(0x85283473fffffff), // res 5 cell
+			h3Index(0x85283473fffffff), // res 5 cell
 			3,                          // child res < parent res
 		},
 		{
 			"invalid_child_res_too_large",
-			H3Index(0x85283473fffffff), // res 5 cell
-			16,                         // child res > MAX_H3_RES
+			h3Index(0x85283473fffffff), // res 5 cell
+			16,                         // child res > maxH3Res
 		},
 		{
 			"null_index",
-			H3Index(0), // H3_NULL
+			h3Index(0), // h3Null
 			5,
 		},
 		{
 			"pentagon_parent",
-			H3Index(0x81283fffffffffff), // res 1 pentagon
+			h3Index(0x81283fffffffffff), // res 1 pentagon
 			3,
 		},
 	}
@@ -57,11 +57,11 @@ func Test_iterInitParent_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Test Go implementation
-			var iterGo IterCellsChildren
+			var iterGo iterCellsChildren
 			iterInitParent(tt.h, tt.childRes, &iterGo)
 
 			// Test C implementation
-			var iterC IterCellsChildren
+			var iterC iterCellsChildren
 			iterInitParentC(tt.h, tt.childRes, &iterC)
 
 			// Compare results
@@ -79,10 +79,10 @@ func Test_iterInitParent_parity(t *testing.T) {
 
 	// Test deterministic behavior
 	t.Run("deterministic", func(t *testing.T) {
-		h := H3Index(0x85283473fffffff)
+		h := h3Index(0x85283473fffffff)
 		childRes := int32(7)
 
-		var iter1, iter2 IterCellsChildren
+		var iter1, iter2 iterCellsChildren
 		iterInitParent(h, childRes, &iter1)
 		iterInitParent(h, childRes, &iter2)
 

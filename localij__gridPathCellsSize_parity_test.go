@@ -9,8 +9,8 @@ import (
 func Test_gridPathCellsSize_parity(t *testing.T) {
 	testCases := []struct {
 		name  string
-		start H3Index
-		end   H3Index
+		start h3Index
+		end   h3Index
 	}{
 		// Same cell - should return size 1 (start == end)
 		{
@@ -103,8 +103,8 @@ func Test_gridPathCellsSize_parity(t *testing.T) {
 func Test_gridPathCellsSize_error_cases_parity(t *testing.T) {
 	errorCases := []struct {
 		name  string
-		start H3Index
-		end   H3Index
+		start h3Index
+		end   h3Index
 	}{
 		{
 			"Different resolutions",
@@ -113,13 +113,13 @@ func Test_gridPathCellsSize_error_cases_parity(t *testing.T) {
 		},
 		{
 			"Invalid start",
-			0x0000000000000000, // Invalid H3Index
+			0x0000000000000000, // Invalid h3Index
 			0x85283473fffffff,
 		},
 		{
 			"Invalid end",
 			0x85283473fffffff,
-			0x0000000000000000, // Invalid H3Index
+			0x0000000000000000, // Invalid h3Index
 		},
 	}
 

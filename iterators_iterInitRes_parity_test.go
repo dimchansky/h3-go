@@ -64,7 +64,7 @@ func Test_iterInitRes_initialValues_parity(t *testing.T) {
 		// 1. Start with base cell 0
 		// 2. Have the correct resolution
 		// 3. Have the first cell from base cell 0 at that resolution
-		if res >= 0 && res <= MAX_H3_RES {
+		if res >= 0 && res <= maxH3Res {
 			if goResult.baseCellNum != 0 {
 				t.Errorf("Expected baseCellNum=0 for res=%d, got %d", res, goResult.baseCellNum)
 			}

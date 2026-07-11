@@ -7,32 +7,32 @@ import "testing"
 func Test_hex2dToGeo_ParityWithC(t *testing.T) {
 	testCases := []struct {
 		name      string
-		vec       Vec2d
+		vec       vec2d
 		face      int32
 		res       int32
 		substrate int32
 	}{
-		{"origin_face0_res0", Vec2d{0.0, 0.0}, 0, 0, 0},
-		{"origin_face5_res0", Vec2d{0.0, 0.0}, 5, 0, 0},
-		{"origin_face10_res5", Vec2d{0.0, 0.0}, 10, 5, 0},
-		{"small_offset_face0", Vec2d{0.1, 0.05}, 0, 0, 0},
-		{"small_offset_face0_res3", Vec2d{0.1, 0.05}, 0, 3, 0},
-		{"unit_x_face0", Vec2d{1.0, 0.0}, 0, 0, 0},
-		{"unit_y_face0", Vec2d{0.0, 1.0}, 0, 0, 0},
-		{"diagonal_face0", Vec2d{0.7071, 0.7071}, 0, 0, 0},
-		{"negative_x_face0", Vec2d{-1.0, 0.0}, 0, 0, 0},
-		{"negative_y_face0", Vec2d{0.0, -1.0}, 0, 0, 0},
-		{"various_faces_res0", Vec2d{0.5, 0.3}, 1, 0, 0},
-		{"various_faces_res0_2", Vec2d{0.5, 0.3}, 8, 0, 0},
-		{"various_faces_res0_3", Vec2d{0.5, 0.3}, 15, 0, 0},
-		{"class_III_res1", Vec2d{0.2, 0.1}, 0, 1, 0},
-		{"class_III_res3", Vec2d{0.2, 0.1}, 0, 3, 0},
-		{"class_III_res9", Vec2d{0.2, 0.1}, 0, 9, 0},
-		{"high_res", Vec2d{0.001, 0.002}, 0, 15, 0},
-		{"substrate_test", Vec2d{0.5, 0.3}, 0, 2, 1},
-		{"substrate_class_III", Vec2d{0.5, 0.3}, 0, 3, 1},
-		{"large_coords", Vec2d{10.0, 5.0}, 0, 0, 0},
-		{"medium_coords_res7", Vec2d{2.5, 1.8}, 5, 7, 0},
+		{"origin_face0_res0", vec2d{0.0, 0.0}, 0, 0, 0},
+		{"origin_face5_res0", vec2d{0.0, 0.0}, 5, 0, 0},
+		{"origin_face10_res5", vec2d{0.0, 0.0}, 10, 5, 0},
+		{"small_offset_face0", vec2d{0.1, 0.05}, 0, 0, 0},
+		{"small_offset_face0_res3", vec2d{0.1, 0.05}, 0, 3, 0},
+		{"unit_x_face0", vec2d{1.0, 0.0}, 0, 0, 0},
+		{"unit_y_face0", vec2d{0.0, 1.0}, 0, 0, 0},
+		{"diagonal_face0", vec2d{0.7071, 0.7071}, 0, 0, 0},
+		{"negative_x_face0", vec2d{-1.0, 0.0}, 0, 0, 0},
+		{"negative_y_face0", vec2d{0.0, -1.0}, 0, 0, 0},
+		{"various_faces_res0", vec2d{0.5, 0.3}, 1, 0, 0},
+		{"various_faces_res0_2", vec2d{0.5, 0.3}, 8, 0, 0},
+		{"various_faces_res0_3", vec2d{0.5, 0.3}, 15, 0, 0},
+		{"class_III_res1", vec2d{0.2, 0.1}, 0, 1, 0},
+		{"class_III_res3", vec2d{0.2, 0.1}, 0, 3, 0},
+		{"class_III_res9", vec2d{0.2, 0.1}, 0, 9, 0},
+		{"high_res", vec2d{0.001, 0.002}, 0, 15, 0},
+		{"substrate_test", vec2d{0.5, 0.3}, 0, 2, 1},
+		{"substrate_class_III", vec2d{0.5, 0.3}, 0, 3, 1},
+		{"large_coords", vec2d{10.0, 5.0}, 0, 0, 0},
+		{"medium_coords_res7", vec2d{2.5, 1.8}, 5, 7, 0},
 	}
 
 	for _, tc := range testCases {
@@ -76,7 +76,7 @@ func Test_hex2dToGeo_RoundTripConsistency(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// geo -> hex2d -> geo
 			var face int32
-			var hex2d Vec2d
+			var hex2d vec2d
 			var result LatLng
 
 			_geoToHex2d(&tc.geo, 5, &face, &hex2d) // Use resolution 5

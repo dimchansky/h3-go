@@ -78,15 +78,15 @@ func Test_removeVertexNode_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create and populate Go graph
-			goGraph := &VertexGraph{
-				Buckets:    make([]*VertexNode, tt.numBuckets),
+			goGraph := &vertexGraph{
+				Buckets:    make([]*vertexNode, tt.numBuckets),
 				NumBuckets: tt.numBuckets,
 				Size:       0,
 				Res:        tt.res,
 			}
 
 			// Add all edges and collect node references
-			nodes := make([]*VertexNode, len(tt.edges))
+			nodes := make([]*vertexNode, len(tt.edges))
 			for i, edge := range tt.edges {
 				nodes[i] = addVertexNode(goGraph, &edge.from, &edge.to)
 				if nodes[i] == nil {
@@ -105,15 +105,15 @@ func Test_removeVertexNode_parity(t *testing.T) {
 			goResult := removeVertexNode(goGraph, nodeToRemove)
 
 			// Test removal with C implementation (simulated)
-			cGraph := &VertexGraph{
-				Buckets:    make([]*VertexNode, tt.numBuckets),
+			cGraph := &vertexGraph{
+				Buckets:    make([]*vertexNode, tt.numBuckets),
 				NumBuckets: tt.numBuckets,
 				Size:       0,
 				Res:        tt.res,
 			}
 
 			// Recreate the same graph structure for C test
-			cNodes := make([]*VertexNode, len(tt.edges))
+			cNodes := make([]*vertexNode, len(tt.edges))
 			for i, edge := range tt.edges {
 				cNodes[i] = addVertexNode(cGraph, &edge.from, &edge.to)
 			}
@@ -189,8 +189,8 @@ func Test_removeVertexNode_parity(t *testing.T) {
 
 func Test_removeVertexNode_not_found_parity(t *testing.T) {
 	// Test removing a node that doesn't exist in the graph
-	goGraph := &VertexGraph{
-		Buckets:    make([]*VertexNode, 10),
+	goGraph := &vertexGraph{
+		Buckets:    make([]*vertexNode, 10),
 		NumBuckets: 10,
 		Size:       0,
 		Res:        8,
@@ -204,7 +204,7 @@ func Test_removeVertexNode_not_found_parity(t *testing.T) {
 	// Create a different node that's not in the graph
 	differentFromVtx := LatLng{Lat: 40.0, Lng: -75.0}
 	differentToVtx := LatLng{Lat: 40.1, Lng: -75.1}
-	nonExistentNode := &VertexNode{
+	nonExistentNode := &vertexNode{
 		From: differentFromVtx,
 		To:   differentToVtx,
 		Next: nil,
@@ -214,8 +214,8 @@ func Test_removeVertexNode_not_found_parity(t *testing.T) {
 	goResult := removeVertexNode(goGraph, nonExistentNode)
 
 	// Test C implementation - should also fail
-	cGraph := &VertexGraph{
-		Buckets:    make([]*VertexNode, 10),
+	cGraph := &vertexGraph{
+		Buckets:    make([]*vertexNode, 10),
 		NumBuckets: 10,
 		Size:       1, // Simulate having one node
 		Res:        8,
@@ -245,8 +245,8 @@ func Test_removeVertexNode_not_found_parity(t *testing.T) {
 
 func Test_removeVertexNode_empty_graph_parity(t *testing.T) {
 	// Test removing from an empty graph
-	goGraph := &VertexGraph{
-		Buckets:    make([]*VertexNode, 5),
+	goGraph := &vertexGraph{
+		Buckets:    make([]*vertexNode, 5),
 		NumBuckets: 5,
 		Size:       0,
 		Res:        8,
@@ -255,7 +255,7 @@ func Test_removeVertexNode_empty_graph_parity(t *testing.T) {
 	// Create a node to "remove" (even though it's not in the graph)
 	fromVtx := LatLng{Lat: 37.775, Lng: -122.418}
 	toVtx := LatLng{Lat: 37.776, Lng: -122.419}
-	nonExistentNode := &VertexNode{
+	nonExistentNode := &vertexNode{
 		From: fromVtx,
 		To:   toVtx,
 		Next: nil,
@@ -265,8 +265,8 @@ func Test_removeVertexNode_empty_graph_parity(t *testing.T) {
 	goResult := removeVertexNode(goGraph, nonExistentNode)
 
 	// Test C implementation
-	cGraph := &VertexGraph{
-		Buckets:    make([]*VertexNode, 5),
+	cGraph := &vertexGraph{
+		Buckets:    make([]*vertexNode, 5),
 		NumBuckets: 5,
 		Size:       0,
 		Res:        8,

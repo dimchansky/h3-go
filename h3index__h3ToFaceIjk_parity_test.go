@@ -8,7 +8,7 @@ import (
 )
 
 func TestH3ToFaceIjkParity(t *testing.T) {
-	testCases := []H3Index{
+	testCases := []h3Index{
 		// Base resolution cells
 		0x8001fffffffffff, // res 0, base cell 1
 		0x8007fffffffffff, // res 0, base cell 7 (pentagon)
@@ -35,20 +35,20 @@ func TestH3ToFaceIjkParity(t *testing.T) {
 	for i, h3 := range testCases {
 		t.Run(fmt.Sprintf("case_%d_0x%x", i, uint64(h3)), func(t *testing.T) {
 			// Test Go implementation
-			var goFijk FaceIJK
+			var goFijk faceIJK
 			goErr := _h3ToFaceIjk(h3, &goFijk)
 
 			// Test C implementation
-			var cFijk FaceIJK
+			var cFijk faceIJK
 			cErr := _h3ToFaceIjkC(h3, &cFijk)
 
 			// Compare errors
-			if goErr != H3Error(cErr) {
+			if goErr != h3Error(cErr) {
 				t.Errorf("Error mismatch: Go=%d, C=%d", goErr, cErr)
 			}
 
 			// If no error, compare results
-			if goErr == E_SUCCESS && cErr == 0 {
+			if goErr == eSuccess && cErr == 0 {
 				if goFijk.Face != cFijk.Face {
 					t.Errorf("Face mismatch: Go=%d, C=%d", goFijk.Face, cFijk.Face)
 				}

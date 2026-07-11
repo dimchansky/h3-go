@@ -9,13 +9,13 @@ package h3
 // versions of H3.
 //
 // Ported from H3 C: localij.c::localIjToCell.
-func localIjToCell(origin H3Index, ij *CoordIJ, mode uint32, out *H3Index) H3Error {
+func localIjToCell(origin h3Index, ij *CoordIJ, mode uint32, out *h3Index) h3Error {
 	if mode != 0 {
-		return E_OPTION_INVALID
+		return eOptionInvalid
 	}
-	var ijk CoordIJK
+	var ijk coordIJK
 	ijToIjkError := ijToIjk(ij, &ijk)
-	if ijToIjkError != E_SUCCESS {
+	if ijToIjkError != eSuccess {
 		return ijToIjkError
 	}
 

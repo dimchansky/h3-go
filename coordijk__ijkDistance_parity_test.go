@@ -7,18 +7,18 @@ import "testing"
 func Test_ijkDistance_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		c1   CoordIJK
-		c2   CoordIJK
+		c1   coordIJK
+		c2   coordIJK
 	}{
-		{"same point", CoordIJK{0, 0, 0}, CoordIJK{0, 0, 0}},
-		{"unit distance i", CoordIJK{0, 0, 0}, CoordIJK{1, 0, 0}},
-		{"unit distance j", CoordIJK{0, 0, 0}, CoordIJK{0, 1, 0}},
-		{"unit distance k", CoordIJK{0, 0, 0}, CoordIJK{0, 0, 1}},
-		{"simple distance", CoordIJK{1, 2, 3}, CoordIJK{4, 5, 6}},
-		{"negative coords", CoordIJK{-1, -2, -3}, CoordIJK{1, 2, 3}},
-		{"mixed coords", CoordIJK{10, -5, 2}, CoordIJK{-3, 8, -1}},
-		{"large distance", CoordIJK{100, 200, 300}, CoordIJK{400, 500, 600}},
-		{"asymmetric", CoordIJK{0, 0, 0}, CoordIJK{5, 3, 1}},
+		{"same point", coordIJK{0, 0, 0}, coordIJK{0, 0, 0}},
+		{"unit distance i", coordIJK{0, 0, 0}, coordIJK{1, 0, 0}},
+		{"unit distance j", coordIJK{0, 0, 0}, coordIJK{0, 1, 0}},
+		{"unit distance k", coordIJK{0, 0, 0}, coordIJK{0, 0, 1}},
+		{"simple distance", coordIJK{1, 2, 3}, coordIJK{4, 5, 6}},
+		{"negative coords", coordIJK{-1, -2, -3}, coordIJK{1, 2, 3}},
+		{"mixed coords", coordIJK{10, -5, 2}, coordIJK{-3, 8, -1}},
+		{"large distance", coordIJK{100, 200, 300}, coordIJK{400, 500, 600}},
+		{"asymmetric", coordIJK{0, 0, 0}, coordIJK{5, 3, 1}},
 	}
 
 	for _, tt := range tests {

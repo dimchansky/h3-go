@@ -130,7 +130,7 @@ import (
 )
 
 // iterateAllIndexesAtResPartialC calls the C implementation of iterateAllIndexesAtResPartial
-func iterateAllIndexesAtResPartialC(res int32, baseCells int32, out []H3Index) int {
+func iterateAllIndexesAtResPartialC(res int32, baseCells int32, out []h3Index) int {
 	if len(out) == 0 {
 		return 0
 	}
@@ -144,7 +144,7 @@ func iterateAllIndexesAtResPartialC(res int32, baseCells int32, out []H3Index) i
 }
 
 // iterateAllIndexesAtResC calls the C implementation of iterateAllIndexesAtRes
-func iterateAllIndexesAtResC(res int32, out []H3Index) int {
+func iterateAllIndexesAtResC(res int32, out []h3Index) int {
 	if len(out) == 0 {
 		return 0
 	}
@@ -157,7 +157,7 @@ func iterateAllIndexesAtResC(res int32, out []H3Index) int {
 }
 
 // iterateBaseCellIndexesAtResC calls the C implementation of iterateBaseCellIndexesAtRes
-func iterateBaseCellIndexesAtResC(res int32, baseCell int32, out []H3Index) int {
+func iterateBaseCellIndexesAtResC(res int32, baseCell int32, out []h3Index) int {
 	if len(out) == 0 {
 		return 0
 	}
@@ -171,17 +171,17 @@ func iterateBaseCellIndexesAtResC(res int32, baseCell int32, out []H3Index) int 
 }
 
 // h3PrintC calls the C implementation of h3Print
-func h3PrintC(h H3Index) {
+func h3PrintC(h h3Index) {
 	C.h3Print_wrapper(C.H3Index(h))
 }
 
 // h3PrintlnC calls the C implementation of h3Println
-func h3PrintlnC(h H3Index) {
+func h3PrintlnC(h h3Index) {
 	C.h3Println_wrapper(C.H3Index(h))
 }
 
 // coordIjkPrintC calls the C implementation of coordIjkPrint
-func coordIjkPrintC(c *CoordIJK) {
+func coordIjkPrintC(c *coordIJK) {
 	cCoord := C.CoordIJK{
 		i: C.int(c.I),
 		j: C.int(c.J),
@@ -196,7 +196,7 @@ func geoToStringRadsC(p *LatLng) string {
 		lat: C.double(p.Lat.Rad()),
 		lng: C.double(p.Lng.Rad()),
 	}
-	str := C.malloc(BUFF_SIZE)
+	str := C.malloc(buffSize)
 	defer C.free(str)
 	C.geoToStringRads_wrapper(&cLatLng, (*C.char)(str))
 	return C.GoString((*C.char)(str))
@@ -208,7 +208,7 @@ func geoToStringDegsC(p *LatLng) string {
 		lat: C.double(p.Lat.Rad()),
 		lng: C.double(p.Lng.Rad()),
 	}
-	str := C.malloc(BUFF_SIZE)
+	str := C.malloc(buffSize)
 	defer C.free(str)
 	C.geoToStringDegs_wrapper(&cLatLng, (*C.char)(str))
 	return C.GoString((*C.char)(str))
@@ -220,7 +220,7 @@ func geoToStringDegsNoFmtC(p *LatLng) string {
 		lat: C.double(p.Lat.Rad()),
 		lng: C.double(p.Lng.Rad()),
 	}
-	str := C.malloc(BUFF_SIZE)
+	str := C.malloc(buffSize)
 	defer C.free(str)
 	C.geoToStringDegsNoFmt_wrapper(&cLatLng, (*C.char)(str))
 	return C.GoString((*C.char)(str))
@@ -297,7 +297,7 @@ func cellBoundaryPrintlnC(b *CellBoundary) {
 }
 
 // bboxPrintC calls the C implementation of bboxPrint
-func bboxPrintC(bbox *BBox) {
+func bboxPrintC(bbox *bbox) {
 	cBBox := C.BBox{
 		north: C.double(bbox.North.Rad()),
 		south: C.double(bbox.South.Rad()),
@@ -308,7 +308,7 @@ func bboxPrintC(bbox *BBox) {
 }
 
 // bboxPrintlnC calls the C implementation of bboxPrintln
-func bboxPrintlnC(bbox *BBox) {
+func bboxPrintlnC(bbox *bbox) {
 	cBBox := C.BBox{
 		north: C.double(bbox.North.Rad()),
 		south: C.double(bbox.South.Rad()),

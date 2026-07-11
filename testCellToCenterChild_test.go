@@ -8,40 +8,40 @@ import (
 func Test_centerChild_propertyTests(t *testing.T) {
 	t.Parallel()
 
-	var baseHex H3Index
+	var baseHex h3Index
 	var baseCentroid LatLng
 	setH3Index(&baseHex, 8, 4, 2)
 	err := cellToLatLng(baseHex, &baseCentroid)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("Failed to get base centroid: %v", err)
 	}
 
-	for res := int32(0); res <= MAX_H3_RES-1; res++ {
-		for childRes := res + 1; childRes <= MAX_H3_RES; childRes++ {
+	for res := int32(0); res <= maxH3Res-1; res++ {
+		for childRes := res + 1; childRes <= maxH3Res; childRes++ {
 			var centroid LatLng
-			var h3Index H3Index
+			var idx h3Index
 
-			err := latLngToCell(&baseCentroid, res, &h3Index)
-			if err != E_SUCCESS {
+			err := latLngToCell(&baseCentroid, res, &idx)
+			if err != eSuccess {
 				t.Errorf("latLngToCell failed at res %d: %v", res, err)
 				continue
 			}
 
-			err = cellToLatLng(h3Index, &centroid)
-			if err != E_SUCCESS {
+			err = cellToLatLng(idx, &centroid)
+			if err != eSuccess {
 				t.Errorf("cellToLatLng failed at res %d: %v", res, err)
 				continue
 			}
 
-			var geoChild H3Index
+			var geoChild h3Index
 			err = latLngToCell(&centroid, childRes, &geoChild)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Errorf("latLngToCell failed for geoChild at childRes %d: %v", childRes, err)
 				continue
 			}
 
-			centerChild, err := cellToCenterChild(h3Index, childRes)
-			if err != E_SUCCESS {
+			centerChild, err := cellToCenterChild(idx, childRes)
+			if err != eSuccess {
 				t.Errorf("cellToCenterChild failed at res %d childRes %d: %v", res, childRes, err)
 				continue
 			}
@@ -55,13 +55,13 @@ func Test_centerChild_propertyTests(t *testing.T) {
 			}
 
 			parent, err := cellToParent(centerChild, res)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Errorf("cellToParent failed: %v", err)
 				continue
 			}
 
-			if parent != h3Index {
-				t.Errorf("parent at original resolution should be initial index: expected 0x%x, got 0x%x", h3Index, parent)
+			if parent != idx {
+				t.Errorf("parent at original resolution should be initial index: expected 0x%x, got 0x%x", idx, parent)
 			}
 		}
 	}
@@ -70,12 +70,12 @@ func Test_centerChild_propertyTests(t *testing.T) {
 func Test_centerChild_sameRes(t *testing.T) {
 	t.Parallel()
 
-	var baseHex H3Index
+	var baseHex h3Index
 	setH3Index(&baseHex, 8, 4, 2)
 	res := getResolution(baseHex)
 
 	child, err := cellToCenterChild(baseHex, res)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellToCenterChild failed: %v", err)
 	}
 
@@ -87,25 +87,25 @@ func Test_centerChild_sameRes(t *testing.T) {
 func Test_centerChild_invalidInputs(t *testing.T) {
 	t.Parallel()
 
-	var baseHex H3Index
+	var baseHex h3Index
 	setH3Index(&baseHex, 8, 4, 2)
 	res := getResolution(baseHex)
 
 	// Test coarser resolution
 	_, err := cellToCenterChild(baseHex, res-1)
-	if err != E_RES_DOMAIN {
-		t.Errorf("should fail at coarser resolution: expected E_RES_DOMAIN, got %v", err)
+	if err != eResDomain {
+		t.Errorf("should fail at coarser resolution: expected eResDomain, got %v", err)
 	}
 
 	// Test negative resolution
 	_, err = cellToCenterChild(baseHex, -1)
-	if err != E_RES_DOMAIN {
-		t.Errorf("should fail for negative resolution: expected E_RES_DOMAIN, got %v", err)
+	if err != eResDomain {
+		t.Errorf("should fail for negative resolution: expected eResDomain, got %v", err)
 	}
 
 	// Test beyond finest resolution
-	_, err = cellToCenterChild(baseHex, MAX_H3_RES+1)
-	if err != E_RES_DOMAIN {
-		t.Errorf("should fail beyond finest resolution: expected E_RES_DOMAIN, got %v", err)
+	_, err = cellToCenterChild(baseHex, maxH3Res+1)
+	if err != eResDomain {
+		t.Errorf("should fail beyond finest resolution: expected eResDomain, got %v", err)
 	}
 }

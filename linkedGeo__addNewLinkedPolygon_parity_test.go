@@ -9,11 +9,11 @@ import (
 func Test_addNewLinkedPolygon_parity(t *testing.T) {
 	testCases := []struct {
 		name    string
-		polygon *LinkedGeoPolygon
+		polygon *linkedGeoPolygon
 	}{
 		{
 			name: "empty polygon",
-			polygon: &LinkedGeoPolygon{
+			polygon: &linkedGeoPolygon{
 				First: nil,
 				Last:  nil,
 				Next:  nil,
@@ -21,24 +21,24 @@ func Test_addNewLinkedPolygon_parity(t *testing.T) {
 		},
 		{
 			name: "polygon with one loop",
-			polygon: &LinkedGeoPolygon{
-				First: &LinkedGeoLoop{
-					First: &LinkedLatLng{
+			polygon: &linkedGeoPolygon{
+				First: &linkedGeoLoop{
+					First: &linkedLatLng{
 						Vertex: LatLng{Lat: 0.0, Lng: 0.0},
 						Next:   nil,
 					},
-					Last: &LinkedLatLng{
+					Last: &linkedLatLng{
 						Vertex: LatLng{Lat: 0.0, Lng: 0.0},
 						Next:   nil,
 					},
 					Next: nil,
 				},
-				Last: &LinkedGeoLoop{
-					First: &LinkedLatLng{
+				Last: &linkedGeoLoop{
+					First: &linkedLatLng{
 						Vertex: LatLng{Lat: 0.0, Lng: 0.0},
 						Next:   nil,
 					},
-					Last: &LinkedLatLng{
+					Last: &linkedLatLng{
 						Vertex: LatLng{Lat: 0.0, Lng: 0.0},
 						Next:   nil,
 					},
@@ -66,7 +66,7 @@ func Test_addNewLinkedPolygon_parity(t *testing.T) {
 			}
 
 			// Reset for C test by creating a fresh polygon
-			freshPolygon := &LinkedGeoPolygon{
+			freshPolygon := &linkedGeoPolygon{
 				First: tc.polygon.First,
 				Last:  tc.polygon.Last,
 				Next:  nil, // Reset Next for C test
@@ -91,7 +91,7 @@ func Test_addNewLinkedPolygon_parity(t *testing.T) {
 
 func Test_addNewLinkedPolygon_chaining(t *testing.T) {
 	// Test that we can chain multiple polygons
-	root := &LinkedGeoPolygon{
+	root := &linkedGeoPolygon{
 		First: nil,
 		Last:  nil,
 		Next:  nil,
@@ -123,10 +123,10 @@ func Test_addNewLinkedPolygon_chaining(t *testing.T) {
 
 func Test_addNewLinkedPolygon_panic_on_non_nil_next(t *testing.T) {
 	// Test that function panics when Next is not nil
-	polygon := &LinkedGeoPolygon{
+	polygon := &linkedGeoPolygon{
 		First: nil,
 		Last:  nil,
-		Next:  &LinkedGeoPolygon{}, // Non-nil Next should cause panic
+		Next:  &linkedGeoPolygon{}, // Non-nil Next should cause panic
 	}
 
 	defer func() {

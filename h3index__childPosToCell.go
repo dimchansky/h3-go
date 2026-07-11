@@ -3,15 +3,15 @@ package h3
 // childPosToCell returns the child cell at a given position under parent at childRes.
 // Ports H3_EXPORT(childPosToCell).
 // Ported from H3 C: h3Index.c::childPosToCell.
-func childPosToCell(childPos int64, parent H3Index, childRes int32) (H3Index, H3Error) {
-	if childRes < 0 || childRes > MAX_H3_RES {
-		return 0, E_RES_DOMAIN
+func childPosToCell(childPos int64, parent h3Index, childRes int32) (h3Index, h3Error) {
+	if childRes < 0 || childRes > maxH3Res {
+		return 0, eResDomain
 	}
 	parentRes := getResolution(parent)
 	if childRes < parentRes {
-		return 0, E_RES_MISMATCH
+		return 0, eResMismatch
 	}
-	if err := validateChildPos(childPos, parent, childRes); err != E_SUCCESS {
+	if err := validateChildPos(childPos, parent, childRes); err != eSuccess {
 		return 0, err
 	}
 
@@ -49,5 +49,5 @@ func childPosToCell(childPos int64, parent H3Index, childRes int32) (H3Index, H3
 		}
 	}
 
-	return child, E_SUCCESS
+	return child, eSuccess
 }

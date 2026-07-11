@@ -12,27 +12,27 @@ func Test_adjustPentVertOverage_parity(t *testing.T) {
 	// specifically for pentagon vertex coordinates from _faceIjkPentToVerts
 	tests := []struct {
 		name string
-		fijk FaceIJK
+		fijk faceIJK
 		res  int32
 	}{
 		{
 			name: "no overage case face 0",
-			fijk: FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}},
+			fijk: faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}},
 			res:  0,
 		},
 		{
 			name: "simple case face 2",
-			fijk: FaceIJK{Face: 2, Coord: CoordIJK{I: 2, J: 1, K: 0}},
+			fijk: faceIJK{Face: 2, Coord: coordIJK{I: 2, J: 1, K: 0}},
 			res:  2,
 		},
 		{
 			name: "normalized case face 5",
-			fijk: FaceIJK{Face: 5, Coord: CoordIJK{I: 1, J: 2, K: 0}},
+			fijk: faceIJK{Face: 5, Coord: coordIJK{I: 1, J: 2, K: 0}},
 			res:  4,
 		},
 		{
 			name: "critical difference case",
-			fijk: FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}},
+			fijk: faceIJK{Face: 5, Coord: coordIJK{I: 715827882, J: 0, K: 1431655770}},
 			res:  3,
 		},
 	}
@@ -52,7 +52,7 @@ func Test_adjustPentVertOverage_parity(t *testing.T) {
 				t.Errorf("overage result mismatch: Go=%v, C=%v", goResult, cResult)
 			}
 
-			// Compare final FaceIJK coordinates
+			// Compare final faceIJK coordinates
 			if goFijk.Face != cFijk.Face {
 				t.Errorf("face mismatch: Go=%d, C=%d", goFijk.Face, cFijk.Face)
 			}

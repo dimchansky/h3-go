@@ -9,7 +9,7 @@ import (
 func Test__gridRingInternal_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
+		origin h3Index
 		k      int32
 	}{
 		// Test basic cases
@@ -46,7 +46,7 @@ func Test__gridRingInternal_parity(t *testing.T) {
 		{"cell3_k1", 0x89283480c27ffff, 1},
 		{"cell3_k2", 0x89283480c27ffff, 2},
 
-		// Test with cells that may be near pentagons (may fail with E_PENTAGON)
+		// Test with cells that may be near pentagons (may fail with ePentagon)
 		{"nearPentagon1", 0x821c07fffffffff, 1},
 		{"nearPentagon2", 0x821c07fffffffff, 2},
 		{"nearPentagon3", 0x8073fffffffffff, 1},
@@ -65,8 +65,8 @@ func Test__gridRingInternal_parity(t *testing.T) {
 			}
 
 			// Allocate output arrays
-			goOut := make([]H3Index, size)
-			cOut := make([]H3Index, size)
+			goOut := make([]h3Index, size)
+			cOut := make([]h3Index, size)
 
 			// Call Go implementation
 			goErr := _gridRingInternal(tc.origin, tc.k, goOut)
@@ -80,7 +80,7 @@ func Test__gridRingInternal_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare outputs
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				// Compare the cell arrays
 				for i := int64(0); i < size; i++ {
 					if goOut[i] != cOut[i] {
@@ -95,12 +95,12 @@ func Test__gridRingInternal_parity(t *testing.T) {
 	// Note: _gridRingInternal may not validate the origin index,
 	// so we just check that both implementations behave the same
 	t.Run("invalid_origin", func(t *testing.T) {
-		origin := H3Index(0xFFFFFFFFFFFFFFFF) // Definitely invalid index
+		origin := h3Index(0xFFFFFFFFFFFFFFFF) // Definitely invalid index
 		k := int32(1)
 		size := int64(6)
 
-		goOut := make([]H3Index, size)
-		cOut := make([]H3Index, size)
+		goOut := make([]h3Index, size)
+		cOut := make([]h3Index, size)
 
 		goErr := _gridRingInternal(origin, k, goOut)
 		cErr := _gridRingInternalC(origin, k, cOut)
@@ -112,7 +112,7 @@ func Test__gridRingInternal_parity(t *testing.T) {
 
 		// If both succeeded (unlikely but possible if no validation),
 		// the outputs should still match
-		if goErr == E_SUCCESS {
+		if goErr == eSuccess {
 			for i := int64(0); i < size; i++ {
 				if goOut[i] != cOut[i] {
 					t.Errorf("Output mismatch at index %d: Go=0x%x, C=0x%x", i, goOut[i], cOut[i])
@@ -123,13 +123,13 @@ func Test__gridRingInternal_parity(t *testing.T) {
 
 	// Test larger rings
 	t.Run("large_rings", func(t *testing.T) {
-		origin := H3Index(0x89283080ddbffff)
+		origin := h3Index(0x89283080ddbffff)
 		testKValues := []int32{10, 20, 30}
 
 		for _, k := range testKValues {
 			size := 6 * int64(k)
-			goOut := make([]H3Index, size)
-			cOut := make([]H3Index, size)
+			goOut := make([]h3Index, size)
+			cOut := make([]h3Index, size)
 
 			goErr := _gridRingInternal(origin, k, goOut)
 			cErr := _gridRingInternalC(origin, k, cOut)
@@ -139,7 +139,7 @@ func Test__gridRingInternal_parity(t *testing.T) {
 				continue
 			}
 
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				// Verify outputs match
 				for i := int64(0); i < size; i++ {
 					if goOut[i] != cOut[i] {

@@ -2,49 +2,49 @@ package h3
 
 // H3 index bit layout (from h3Index.h).
 const (
-	H3_NUM_BITS         = 64
-	H3_MAX_OFFSET       = 63
-	H3_MODE_OFFSET      = 59
-	H3_BC_OFFSET        = 45
-	H3_RES_OFFSET       = 52
-	H3_RESERVED_OFFSET  = 56
-	H3_PER_DIGIT_OFFSET = 3
+	h3NumBits        = 64
+	h3MaxOffset      = 63
+	h3ModeOffset     = 59
+	h3BcOffset       = 45
+	h3ResOffset      = 52
+	h3ReservedOffset = 56
+	h3PerDigitOffset = 3
 
-	H3_HIGH_BIT_MASK          uint64 = 1 << H3_MAX_OFFSET
-	H3_HIGH_BIT_MASK_NEGATIVE uint64 = ^H3_HIGH_BIT_MASK
+	h3HighBitMask         uint64 = 1 << h3MaxOffset
+	h3HighBitMaskNegative uint64 = ^h3HighBitMask
 
-	H3_MODE_MASK          uint64 = 15 << H3_MODE_OFFSET
-	H3_MODE_MASK_NEGATIVE uint64 = ^H3_MODE_MASK
+	h3ModeMask         uint64 = 15 << h3ModeOffset
+	h3ModeMaskNegative uint64 = ^h3ModeMask
 
-	H3_BC_MASK          uint64 = 127 << H3_BC_OFFSET
-	H3_BC_MASK_NEGATIVE uint64 = ^H3_BC_MASK
+	h3BcMask         uint64 = 127 << h3BcOffset
+	h3BcMaskNegative uint64 = ^h3BcMask
 
-	H3_RES_MASK          uint64 = 15 << H3_RES_OFFSET
-	H3_RES_MASK_NEGATIVE uint64 = ^H3_RES_MASK
+	h3ResMask         uint64 = 15 << h3ResOffset
+	h3ResMaskNegative uint64 = ^h3ResMask
 
-	H3_RESERVED_MASK          uint64 = 7 << H3_RESERVED_OFFSET
-	H3_RESERVED_MASK_NEGATIVE uint64 = ^H3_RESERVED_MASK
+	h3ReservedMask         uint64 = 7 << h3ReservedOffset
+	h3ReservedMaskNegative uint64 = ^h3ReservedMask
 
-	H3_DIGIT_MASK          uint64 = 7
-	H3_DIGIT_MASK_NEGATIVE uint64 = ^H3_DIGIT_MASK
+	h3DigitMask         uint64 = 7
+	h3DigitMaskNegative uint64 = ^h3DigitMask
 
-	// H3_INIT: mode=cell, res=0, base cell=0, digits all 7.
-	H3_INIT uint64 = 35184372088831
+	// h3Init: mode=cell, res=0, base cell=0, digits all 7.
+	h3Init uint64 = 35184372088831
 
-	// H3_NULL represents the null H3 index.
-	H3_NULL H3Index = 0
+	// h3Null represents the null H3 index.
+	h3Null h3Index = 0
 )
 
-// Bit manipulation constants for H3Index validation and digit checking.
+// Bit manipulation constants for h3Index validation and digit checking.
 // These constants are used in _hasAny7UptoRes and related functions.
 const (
 	// MHI is a bit mask with alternating 100 pattern for each 3-bit digit position.
 	// Used to efficiently check for invalid digits (7) without looping.
 	// Pattern: 100100100100100100100100100100100100100100100 (binary).
-	H3_DIGIT_CHECK_MHI = 0b100100100100100100100100100100100100100100100
+	h3DigitCheckMhi = 0b100100100100100100100100100100100100100100100
 
 	// MLO is MHI shifted right by 2 bits, used in the digit validation algorithm.
-	H3_DIGIT_CHECK_MLO = H3_DIGIT_CHECK_MHI >> 2
+	h3DigitCheckMlo = h3DigitCheckMhi >> 2
 )
 
 // isBaseCellPentagonArr mirrors the compact array used in h3Index.c for pentagon base cells.
@@ -78,23 +78,23 @@ var isBaseCellPentagonArr = [128]bool{
 
 // Note: C implementation lives in baseCells.c as _isBaseCellPentagon.
 
-// h3ErrorDescriptions contains error message strings for each H3Error code.
+// h3ErrorDescriptions contains error message strings for each h3Error code.
 // Mirrored from H3 C: h3Index.c::H3ErrorDescriptions.
 var h3ErrorDescriptions = [16]string{
-	/* E_SUCCESS */ "Success",
-	/* E_FAILED */ "The operation failed but a more specific error is not available",
-	/* E_DOMAIN */ "Argument was outside of acceptable range",
-	/* E_LATLNG_DOMAIN */ "Latitude or longitude arguments were outside of acceptable range",
-	/* E_RES_DOMAIN */ "Resolution argument was outside of acceptable range",
-	/* E_CELL_INVALID */ "Cell argument was not valid",
-	/* E_DIR_EDGE_INVALID */ "Directed edge argument was not valid",
-	/* E_UNDIR_EDGE_INVALID */ "Undirected edge argument was not valid",
-	/* E_VERTEX_INVALID */ "Vertex argument was not valid",
-	/* E_PENTAGON */ "Pentagon distortion was encountered",
-	/* E_DUPLICATE_INPUT */ "Duplicate input",
-	/* E_NOT_NEIGHBORS */ "Cell arguments were not neighbors",
-	/* E_RES_MISMATCH */ "Cell arguments had incompatible resolutions",
-	/* E_MEMORY_ALLOC */ "Memory allocation failed",
-	/* E_MEMORY_BOUNDS */ "Bounds of provided memory were insufficient",
-	/* E_OPTION_INVALID */ "Mode or flags argument was not valid",
+	/* eSuccess */ "Success",
+	/* eFailed */ "The operation failed but a more specific error is not available",
+	/* eDomain */ "Argument was outside of acceptable range",
+	/* eLatlngDomain */ "Latitude or longitude arguments were outside of acceptable range",
+	/* eResDomain */ "Resolution argument was outside of acceptable range",
+	/* eCellInvalid */ "Cell argument was not valid",
+	/* eDirEdgeInvalid */ "Directed edge argument was not valid",
+	/* eUndirEdgeInvalid */ "Undirected edge argument was not valid",
+	/* eVertexInvalid */ "Vertex argument was not valid",
+	/* ePentagon */ "Pentagon distortion was encountered",
+	/* eDuplicateInput */ "Duplicate input",
+	/* eNotNeighbors */ "Cell arguments were not neighbors",
+	/* eResMismatch */ "Cell arguments had incompatible resolutions",
+	/* eMemoryAlloc */ "Memory allocation failed",
+	/* eMemoryBounds */ "Bounds of provided memory were insufficient",
+	/* eOptionInvalid */ "Mode or flags argument was not valid",
 }

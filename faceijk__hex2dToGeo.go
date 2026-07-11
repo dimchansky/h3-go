@@ -5,11 +5,11 @@ import "math"
 // _hex2dToGeo converts 2D hexagonal coordinates to geographic coordinates.
 // Mirrors _hex2dToGeo in faceijk.c
 // Ported from H3 C: faceijk.c::_hex2dToGeo.
-func _hex2dToGeo(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
+func _hex2dToGeo(v *vec2d, face int32, res int32, substrate int32, g *LatLng) {
 	// calculate (r, theta) in hex2d
 	r := _v2dMag(v)
 
-	if r < EPSILON {
+	if r < epsilon {
 		*g = faceCenterGeo[face]
 		return
 	}
@@ -18,18 +18,18 @@ func _hex2dToGeo(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
 
 	// scale for current resolution length u
 	for i := int32(0); i < res; i++ {
-		r *= M_RSQRT7
+		r *= mRsqrt7
 	}
 
 	// scale accordingly if this is a substrate grid
 	if substrate != 0 {
-		r *= M_ONETHIRD
+		r *= mOnethird
 		if isResolutionClassIII(res) {
-			r *= M_RSQRT7
+			r *= mRsqrt7
 		}
 	}
 
-	r *= RES0_U_GNOMONIC
+	r *= res0UGnomonic
 
 	// perform inverse gnomonic scaling of r
 	r = math.Atan(r)
@@ -37,7 +37,7 @@ func _hex2dToGeo(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
 	// adjust theta for Class III
 	// if a substrate grid, then it's already been adjusted for Class III
 	if substrate == 0 && isResolutionClassIII(res) {
-		theta = _posAngleRads(theta + M_AP7_ROT_RADS)
+		theta = _posAngleRads(theta + mAp7RotRads)
 	}
 
 	// find theta as an azimuth

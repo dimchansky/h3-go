@@ -8,12 +8,12 @@ import (
 func Test_h3NeighborRotations_identity(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x811d7ffffffffff)
+	origin := h3Index(0x811d7ffffffffff)
 	rotations := int32(0)
-	var out H3Index
+	var out h3Index
 
-	result := h3NeighborRotations(origin, CENTER_DIGIT, &rotations, &out)
-	if result != E_SUCCESS {
+	result := h3NeighborRotations(origin, centerDigit, &rotations, &out)
+	if result != eSuccess {
 		t.Fatalf("h3NeighborRotations failed: %v", result)
 	}
 
@@ -29,21 +29,21 @@ func Test_h3NeighborRotations_identity(t *testing.T) {
 func Test_h3NeighborRotations_rotationsOverflow(t *testing.T) {
 	t.Parallel()
 
-	var origin H3Index
-	setH3Index(&origin, 0, 0, int32(CENTER_DIGIT))
+	var origin h3Index
+	setH3Index(&origin, 0, 0, int32(centerDigit))
 
-	// A multiple of 6, so effectively no rotation. Very close to INT32_MAX.
+	// A multiple of 6, so effectively no rotation. Very close to int32Max.
 	rotations := int32(2147483646)
-	var out H3Index
+	var out h3Index
 
-	result := h3NeighborRotations(origin, K_AXES_DIGIT, &rotations, &out)
-	if result != E_SUCCESS {
+	result := h3NeighborRotations(origin, kAxesDigit, &rotations, &out)
+	if result != eSuccess {
 		t.Fatalf("h3NeighborRotations failed: %v", result)
 	}
 
-	var expected H3Index
+	var expected h3Index
 	// Determined by looking at the base cell table
-	setH3Index(&expected, 0, 1, int32(CENTER_DIGIT))
+	setH3Index(&expected, 0, 1, int32(centerDigit))
 
 	if out != expected {
 		t.Errorf("Expected neighbor %x, got %x", expected, out)
@@ -57,23 +57,23 @@ func Test_h3NeighborRotations_rotationsOverflow(t *testing.T) {
 func Test_h3NeighborRotations_rotationsOverflow2(t *testing.T) {
 	t.Parallel()
 
-	var origin H3Index
-	setH3Index(&origin, 0, 4, int32(CENTER_DIGIT))
+	var origin h3Index
+	setH3Index(&origin, 0, 4, int32(centerDigit))
 
 	// This modulo 6 is 1.
-	rotations := int32(INT32_MAX)
-	var out H3Index
+	rotations := int32(int32Max)
+	var out h3Index
 
 	// This will try to move in the K direction off of origin,
 	// which will be adjusted to the IK direction.
-	result := h3NeighborRotations(origin, JK_AXES_DIGIT, &rotations, &out)
-	if result != E_SUCCESS {
+	result := h3NeighborRotations(origin, jkAxesDigit, &rotations, &out)
+	if result != eSuccess {
 		t.Fatalf("h3NeighborRotations failed: %v", result)
 	}
 
-	var expected H3Index
+	var expected h3Index
 	// Determined by looking at the base cell table
-	setH3Index(&expected, 0, 0, int32(CENTER_DIGIT))
+	setH3Index(&expected, 0, 0, int32(centerDigit))
 
 	if out != expected {
 		t.Errorf("Expected neighbor %x, got %x", expected, out)
@@ -89,23 +89,23 @@ func Test_h3NeighborRotations_rotationsOverflow2(t *testing.T) {
 func Test_h3NeighborRotations_invalid(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x811d7ffffffffff)
+	origin := h3Index(0x811d7ffffffffff)
 	rotations := int32(0)
-	var out H3Index
+	var out h3Index
 
 	result := h3NeighborRotations(origin, -1, &rotations, &out)
-	if result != E_FAILED {
-		t.Errorf("Expected E_FAILED for invalid direction -1, got %v", result)
+	if result != eFailed {
+		t.Errorf("Expected eFailed for invalid direction -1, got %v", result)
 	}
 
 	result = h3NeighborRotations(origin, 7, &rotations, &out)
-	if result != E_FAILED {
-		t.Errorf("Expected E_FAILED for invalid direction 7, got %v", result)
+	if result != eFailed {
+		t.Errorf("Expected eFailed for invalid direction 7, got %v", result)
 	}
 
 	result = h3NeighborRotations(origin, 100, &rotations, &out)
-	if result != E_FAILED {
-		t.Errorf("Expected E_FAILED for invalid direction 100, got %v", result)
+	if result != eFailed {
+		t.Errorf("Expected eFailed for invalid direction 100, got %v", result)
 	}
 }
 
@@ -120,19 +120,19 @@ func Test_cwOffsetPent(t *testing.T) {
 	// base cell, and neither of the cwOffsetPent values are the original
 	// base cell's face.
 
-	for pentagon := int32(0); pentagon < NUM_BASE_CELLS; pentagon++ {
+	for pentagon := int32(0); pentagon < numBaseCells; pentagon++ {
 		if !_isBaseCellPentagon(pentagon) {
 			continue
 		}
 
-		for neighbor := int32(0); neighbor < NUM_BASE_CELLS; neighbor++ {
+		for neighbor := int32(0); neighbor < numBaseCells; neighbor++ {
 			// Get the face for the neighbor base cell
 			neighborFace := baseCellData[neighbor].HomeFijk.Face
 
 			// Only direction 2 needs to be checked, because that is the
 			// only direction where we can move from digit 2 to digit 1, and
 			// into the deleted k subsequence.
-			neighborPentagon := _getBaseCellNeighbor(neighbor, J_AXES_DIGIT)
+			neighborPentagon := _getBaseCellNeighbor(neighbor, jAxesDigit)
 
 			if neighborPentagon != pentagon || _baseCellIsCwOffset(pentagon, neighborFace) {
 				// This is the expected condition - either we don't move to this pentagon

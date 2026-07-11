@@ -9,7 +9,7 @@ import (
 )
 
 func TestCellToLatLngParity(t *testing.T) {
-	testCases := []H3Index{
+	testCases := []h3Index{
 		// Base resolution cells
 		0x8001fffffffffff, // res 0, base cell 1
 		0x8007fffffffffff, // res 0, base cell 7 (pentagon)
@@ -52,12 +52,12 @@ func TestCellToLatLngParity(t *testing.T) {
 			cErr := cellToLatLngC(h3, &cLatLng)
 
 			// Compare errors
-			if goErr != H3Error(cErr) {
+			if goErr != h3Error(cErr) {
 				t.Errorf("Error mismatch: Go=%d, C=%d", goErr, cErr)
 			}
 
 			// If no error, compare coordinates
-			if goErr == E_SUCCESS && cErr == 0 {
+			if goErr == eSuccess && cErr == 0 {
 				if !goLatLng.Lat.EqualApprox(cLatLng.Lat, tolerance) {
 					t.Errorf("Lat mismatch: Go=%.15f, C=%.15f, diff=%.15f",
 						goLatLng.Lat.Rad(), cLatLng.Lat.Rad(), math.Abs(goLatLng.Lat.Rad()-cLatLng.Lat.Rad()))

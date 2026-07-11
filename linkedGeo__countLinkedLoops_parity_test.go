@@ -9,12 +9,12 @@ import (
 func Test_countLinkedLoops_parity(t *testing.T) {
 	testCases := []struct {
 		name    string
-		polygon *LinkedGeoPolygon
+		polygon *linkedGeoPolygon
 		count   int32
 	}{
 		{
 			name: "empty polygon",
-			polygon: &LinkedGeoPolygon{
+			polygon: &linkedGeoPolygon{
 				First: nil,
 				Last:  nil,
 				Next:  nil,
@@ -23,8 +23,8 @@ func Test_countLinkedLoops_parity(t *testing.T) {
 		},
 		{
 			name: "single loop",
-			polygon: &LinkedGeoPolygon{
-				First: &LinkedGeoLoop{
+			polygon: &linkedGeoPolygon{
+				First: &linkedGeoLoop{
 					First: nil, // Don't need coords for loop counting
 					Last:  nil,
 					Next:  nil,
@@ -79,12 +79,12 @@ func Test_countLinkedLoops_parity(t *testing.T) {
 }
 
 // Helper function to create a test polygon with specified number of loops
-func createTestPolygon(numLoops int32) *LinkedGeoPolygon {
+func createTestPolygon(numLoops int32) *linkedGeoPolygon {
 	if numLoops == 0 {
-		return &LinkedGeoPolygon{First: nil, Last: nil, Next: nil}
+		return &linkedGeoPolygon{First: nil, Last: nil, Next: nil}
 	}
 
-	first := &LinkedGeoLoop{
+	first := &linkedGeoLoop{
 		First: nil, // Don't need coordinate data for loop counting
 		Last:  nil,
 		Next:  nil,
@@ -92,7 +92,7 @@ func createTestPolygon(numLoops int32) *LinkedGeoPolygon {
 
 	current := first
 	for i := int32(1); i < numLoops; i++ {
-		next := &LinkedGeoLoop{
+		next := &linkedGeoLoop{
 			First: nil,
 			Last:  nil,
 			Next:  nil,
@@ -101,7 +101,7 @@ func createTestPolygon(numLoops int32) *LinkedGeoPolygon {
 		current = next
 	}
 
-	return &LinkedGeoPolygon{
+	return &linkedGeoPolygon{
 		First: first,
 		Last:  current,
 		Next:  nil,

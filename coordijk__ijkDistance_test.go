@@ -8,11 +8,11 @@ import (
 func Test_ijkDistance(t *testing.T) {
 	t.Parallel()
 
-	z := CoordIJK{I: 0, J: 0, K: 0}
-	i := CoordIJK{I: 1, J: 0, K: 0}
-	ik := CoordIJK{I: 1, J: 0, K: 1}
-	ij := CoordIJK{I: 1, J: 1, K: 0}
-	j2 := CoordIJK{I: 0, J: 2, K: 0}
+	z := coordIJK{I: 0, J: 0, K: 0}
+	i := coordIJK{I: 1, J: 0, K: 0}
+	ik := coordIJK{I: 1, J: 0, K: 1}
+	ij := coordIJK{I: 1, J: 1, K: 0}
+	j2 := coordIJK{I: 0, J: 2, K: 0}
 
 	// Identity distance tests
 	if dist := ijkDistance(&z, &z); dist != 0 {

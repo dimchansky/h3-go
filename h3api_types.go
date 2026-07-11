@@ -2,15 +2,15 @@ package h3
 
 // This file contains types that mirror the H3 C API types defined in h3api.h
 
-// H3Index mirrors C H3Index (uint64) from h3api.h.
+// h3Index mirrors C H3Index (uint64) from h3api.h.
 //
 // It is a type ALIAS of Cell, so the mechanically ported implementation and
-// the public API share one type: []H3Index and []Cell are identical types,
+// the public API share one type: []h3Index and []Cell are identical types,
 // which is what makes every slice-producing algorithm zero-copy at the public
 // boundary (docs/public-api-architecture.md, DR-003). Where the C code uses
-// H3Index for directed-edge or vertex values, the public wrappers convert to
+// h3Index for directed-edge or vertex values, the public wrappers convert to
 // DirectedEdge/Vertex at the boundary.
-type H3Index = Cell
+type h3Index = Cell
 
 // LatLng mirrors the C struct from h3api.h
 // Latitude and longitude stored as angle.Angle (internally in radians).
@@ -44,22 +44,22 @@ type CoordIJ struct {
 	J int32 // j component
 }
 
-// LinkedLatLng mirrors the C struct from h3api.h - a coordinate node in a linked geo structure.
-type LinkedLatLng struct {
+// linkedLatLng mirrors the C struct from h3api.h - a coordinate node in a linked geo structure.
+type linkedLatLng struct {
 	Vertex LatLng
-	Next   *LinkedLatLng
+	Next   *linkedLatLng
 }
 
-// LinkedGeoLoop mirrors the C struct from h3api.h - a loop node in a linked geo structure.
-type LinkedGeoLoop struct {
-	First *LinkedLatLng
-	Last  *LinkedLatLng
-	Next  *LinkedGeoLoop
+// linkedGeoLoop mirrors the C struct from h3api.h - a loop node in a linked geo structure.
+type linkedGeoLoop struct {
+	First *linkedLatLng
+	Last  *linkedLatLng
+	Next  *linkedGeoLoop
 }
 
-// LinkedGeoPolygon mirrors the C struct from h3api.h - a polygon node in a linked geo structure.
-type LinkedGeoPolygon struct {
-	First *LinkedGeoLoop
-	Last  *LinkedGeoLoop
-	Next  *LinkedGeoPolygon
+// linkedGeoPolygon mirrors the C struct from h3api.h - a polygon node in a linked geo structure.
+type linkedGeoPolygon struct {
+	First *linkedGeoLoop
+	Last  *linkedGeoLoop
+	Next  *linkedGeoPolygon
 }

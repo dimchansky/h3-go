@@ -9,7 +9,7 @@ import (
 func Test_cellToChildren_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		h        H3Index
+		h        h3Index
 		childRes int32
 	}{
 		{
@@ -48,17 +48,17 @@ func Test_cellToChildren_parity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Get the number of children
 			childrenSize, err := cellToChildrenSize(tt.h, tt.childRes)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("cellToChildrenSize failed: %v", err)
 			}
 
 			// Allocate arrays for both implementations
-			goChildren := make([]H3Index, childrenSize)
-			cChildren := make([]H3Index, childrenSize)
+			goChildren := make([]h3Index, childrenSize)
+			cChildren := make([]h3Index, childrenSize)
 
 			// Call Go implementation
 			goErr := cellToChildren(tt.h, tt.childRes, goChildren)
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				t.Fatalf("Go cellToChildren failed: %v", goErr)
 			}
 
@@ -82,8 +82,8 @@ func Test_cellToChildren_parity(t *testing.T) {
 
 			// Verify all children are valid
 			for i, child := range goChildren {
-				if child == H3_NULL {
-					t.Errorf("Go implementation returned H3_NULL at index %d", i)
+				if child == h3Null {
+					t.Errorf("Go implementation returned h3Null at index %d", i)
 				}
 				if getResolution(child) != tt.childRes {
 					t.Errorf("Go child %d has wrong resolution: expected %d, got %d",
@@ -101,7 +101,7 @@ func Test_cellToChildren_parity(t *testing.T) {
 func Test_cellToChildren_edge_cases_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		h        H3Index
+		h        h3Index
 		childRes int32
 	}{
 		{
@@ -120,26 +120,26 @@ func Test_cellToChildren_edge_cases_parity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Get the number of children
 			childrenSize, err := cellToChildrenSize(tt.h, tt.childRes)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				// If cellToChildrenSize fails, both implementations should fail
 				t.Logf("Expected failure for invalid resolution: %v", err)
 				return
 			}
 
 			// Allocate arrays for both implementations
-			goChildren := make([]H3Index, childrenSize)
-			cChildren := make([]H3Index, childrenSize)
+			goChildren := make([]h3Index, childrenSize)
+			cChildren := make([]h3Index, childrenSize)
 
 			// Call both implementations
 			goErr := cellToChildren(tt.h, tt.childRes, goChildren)
 			cErr := cellToChildrenC(tt.h, tt.childRes, cChildren)
 
 			// Both should succeed or both should fail
-			if (goErr == E_SUCCESS) != (cErr == 0) {
+			if (goErr == eSuccess) != (cErr == 0) {
 				t.Errorf("Error mismatch: Go=%v, C=%v", goErr, cErr)
 			}
 
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				// Compare results
 				for i := 0; i < len(goChildren) && i < len(cChildren); i++ {
 					if goChildren[i] != cChildren[i] {

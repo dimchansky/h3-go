@@ -9,20 +9,20 @@ import (
 func Test_destroyLinkedGeoLoop_parity(t *testing.T) {
 	tests := []struct {
 		name        string
-		setupLoop   func() *LinkedGeoLoop
+		setupLoop   func() *linkedGeoLoop
 		description string
 	}{
 		{
 			name: "nil loop",
-			setupLoop: func() *LinkedGeoLoop {
+			setupLoop: func() *linkedGeoLoop {
 				return nil
 			},
 			description: "destroyLinkedGeoLoop with nil loop should handle gracefully",
 		},
 		{
 			name: "empty loop",
-			setupLoop: func() *LinkedGeoLoop {
-				return &LinkedGeoLoop{
+			setupLoop: func() *linkedGeoLoop {
+				return &linkedGeoLoop{
 					First: nil,
 					Last:  nil,
 					Next:  nil,
@@ -32,12 +32,12 @@ func Test_destroyLinkedGeoLoop_parity(t *testing.T) {
 		},
 		{
 			name: "single coordinate",
-			setupLoop: func() *LinkedGeoLoop {
-				coord := &LinkedLatLng{
+			setupLoop: func() *linkedGeoLoop {
+				coord := &linkedLatLng{
 					Vertex: LatLng{Lat: 37.775, Lng: -122.418},
 					Next:   nil,
 				}
-				return &LinkedGeoLoop{
+				return &linkedGeoLoop{
 					First: coord,
 					Last:  coord,
 					Next:  nil,
@@ -47,16 +47,16 @@ func Test_destroyLinkedGeoLoop_parity(t *testing.T) {
 		},
 		{
 			name: "multiple coordinates",
-			setupLoop: func() *LinkedGeoLoop {
-				coord1 := &LinkedLatLng{
+			setupLoop: func() *linkedGeoLoop {
+				coord1 := &linkedLatLng{
 					Vertex: LatLng{Lat: 37.775, Lng: -122.418},
 					Next:   nil,
 				}
-				coord2 := &LinkedLatLng{
+				coord2 := &linkedLatLng{
 					Vertex: LatLng{Lat: 37.776, Lng: -122.419},
 					Next:   nil,
 				}
-				coord3 := &LinkedLatLng{
+				coord3 := &linkedLatLng{
 					Vertex: LatLng{Lat: 37.777, Lng: -122.420},
 					Next:   nil,
 				}
@@ -65,7 +65,7 @@ func Test_destroyLinkedGeoLoop_parity(t *testing.T) {
 				coord1.Next = coord2
 				coord2.Next = coord3
 
-				return &LinkedGeoLoop{
+				return &linkedGeoLoop{
 					First: coord1,
 					Last:  coord3,
 					Next:  nil,
@@ -81,9 +81,9 @@ func Test_destroyLinkedGeoLoop_parity(t *testing.T) {
 			goLoop := tt.setupLoop()
 
 			// Create a copy for C function testing (deep copy)
-			var cTestLoop *LinkedGeoLoop
+			var cTestLoop *linkedGeoLoop
 			if goLoop != nil {
-				cTestLoop = &LinkedGeoLoop{
+				cTestLoop = &linkedGeoLoop{
 					First: nil,
 					Last:  nil,
 					Next:  goLoop.Next,
@@ -91,12 +91,12 @@ func Test_destroyLinkedGeoLoop_parity(t *testing.T) {
 
 				// Deep copy coordinates
 				if goLoop.First != nil {
-					var firstCopy *LinkedLatLng
-					var prevCopy *LinkedLatLng
+					var firstCopy *linkedLatLng
+					var prevCopy *linkedLatLng
 
 					current := goLoop.First
 					for current != nil {
-						coordCopy := &LinkedLatLng{
+						coordCopy := &linkedLatLng{
 							Vertex: current.Vertex,
 							Next:   nil,
 						}
@@ -170,18 +170,18 @@ func Test_destroyLinkedGeoLoop_parity(t *testing.T) {
 
 func Test_destroyLinkedGeoLoop_behavior(t *testing.T) {
 	// Test that the function properly clears references to help GC
-	coord1 := &LinkedLatLng{
+	coord1 := &linkedLatLng{
 		Vertex: LatLng{Lat: 37.775, Lng: -122.418},
 		Next:   nil,
 	}
-	coord2 := &LinkedLatLng{
+	coord2 := &linkedLatLng{
 		Vertex: LatLng{Lat: 37.776, Lng: -122.419},
 		Next:   nil,
 	}
 
 	coord1.Next = coord2
 
-	loop := &LinkedGeoLoop{
+	loop := &linkedGeoLoop{
 		First: coord1,
 		Last:  coord2,
 		Next:  nil,

@@ -5,7 +5,7 @@ package h3
 import "testing"
 
 func Test_baseCells_isBaseCellPentagon_ParityWithC(t *testing.T) {
-	for base := int32(0); base < NUM_BASE_CELLS; base++ {
+	for base := int32(0); base < numBaseCells; base++ {
 		goVal := _isBaseCellPentagon(base)
 		cVal := isBaseCellPentagonC(base)
 		if goVal != cVal {
@@ -13,7 +13,7 @@ func Test_baseCells_isBaseCellPentagon_ParityWithC(t *testing.T) {
 		}
 	}
 	// Check a couple out-of-range values behave as false
-	for _, base := range []int32{-1, NUM_BASE_CELLS, 200} {
+	for _, base := range []int32{-1, numBaseCells, 200} {
 		if _isBaseCellPentagon(base) {
 			t.Fatalf("_isBaseCellPentagon out-of-range base=%d should be false", base)
 		}

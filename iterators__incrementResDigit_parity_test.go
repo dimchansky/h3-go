@@ -9,57 +9,57 @@ import (
 func Test_incrementResDigit_parity(t *testing.T) {
 	tests := []struct {
 		name    string
-		h3Index H3Index
+		h3Index h3Index
 		res     int32
 	}{
 		{
 			"increment_at_res_15",
-			H3Index(0x85283473fffffff),
+			h3Index(0x85283473fffffff),
 			15,
 		},
 		{
 			"increment_at_res_10",
-			H3Index(0x8a2834700007fff),
+			h3Index(0x8a2834700007fff),
 			10,
 		},
 		{
 			"increment_at_res_5",
-			H3Index(0x85283400000ffff),
+			h3Index(0x85283400000ffff),
 			5,
 		},
 		{
 			"increment_at_res_1",
-			H3Index(0x81283fffffffffff),
+			h3Index(0x81283fffffffffff),
 			1,
 		},
 		{
 			"increment_zero_index_res_15",
-			H3Index(0x0),
+			h3Index(0x0),
 			15,
 		},
 		{
 			"increment_zero_index_res_10",
-			H3Index(0x0),
+			h3Index(0x0),
 			10,
 		},
 		{
 			"increment_zero_index_res_5",
-			H3Index(0x0),
+			h3Index(0x0),
 			5,
 		},
 		{
 			"increment_zero_index_res_1",
-			H3Index(0x0),
+			h3Index(0x0),
 			1,
 		},
 		{
 			"increment_max_index_res_15",
-			H3Index(0xffffffffffffffff),
+			h3Index(0xffffffffffffffff),
 			15,
 		},
 		{
 			"increment_max_index_res_10",
-			H3Index(0xffffffffffffffff),
+			h3Index(0xffffffffffffffff),
 			10,
 		},
 	}
@@ -83,7 +83,7 @@ func Test_incrementResDigit_parity(t *testing.T) {
 
 	// Test deterministic behavior
 	t.Run("deterministic", func(t *testing.T) {
-		h3Index := H3Index(0x85283473fffffff)
+		h3Index := h3Index(0x85283473fffffff)
 		res := int32(10)
 
 		h1 := h3Index

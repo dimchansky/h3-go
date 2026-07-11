@@ -9,8 +9,8 @@ import (
 func Test_normalizeMultiPolygon_parity(t *testing.T) {
 	// Helper to create a square loop with counter-clockwise winding (outer loop)
 	// Using standard geographic coordinates: Lat = North/South, Lng = East/West
-	createSquareLoopCCW := func(lat, lng, size float64) *LinkedGeoLoop {
-		loop := &LinkedGeoLoop{}
+	createSquareLoopCCW := func(lat, lng, size float64) *linkedGeoLoop {
+		loop := &linkedGeoLoop{}
 		coords := []LatLng{
 			{Lat: Rad(lat), Lng: Rad(lng)},               // Start at SW corner
 			{Lat: Rad(lat), Lng: Rad(lng + size)},        // Move east to SE corner
@@ -19,9 +19,9 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 			{Lat: Rad(lat), Lng: Rad(lng)},               // Back to start (CCW)
 		}
 
-		var prev *LinkedLatLng
+		var prev *linkedLatLng
 		for i, coord := range coords {
-			node := &LinkedLatLng{
+			node := &linkedLatLng{
 				Vertex: coord,
 				Next:   nil,
 			}
@@ -37,8 +37,8 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 	}
 
 	// Helper to create a square loop with clockwise winding (hole/inner loop)
-	createSquareLoopCW := func(lat, lng, size float64) *LinkedGeoLoop {
-		loop := &LinkedGeoLoop{}
+	createSquareLoopCW := func(lat, lng, size float64) *linkedGeoLoop {
+		loop := &linkedGeoLoop{}
 		coords := []LatLng{
 			{Lat: Rad(lat), Lng: Rad(lng)},               // Start at SW corner
 			{Lat: Rad(lat + size), Lng: Rad(lng)},        // Move north to NW corner
@@ -47,9 +47,9 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 			{Lat: Rad(lat), Lng: Rad(lng)},               // Back to start (CW)
 		}
 
-		var prev *LinkedLatLng
+		var prev *linkedLatLng
 		for i, coord := range coords {
-			node := &LinkedLatLng{
+			node := &linkedLatLng{
 				Vertex: coord,
 				Next:   nil,
 			}
@@ -66,50 +66,50 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		setupPolygon  func() *LinkedGeoPolygon
-		expectedError H3Error
+		setupPolygon  func() *linkedGeoPolygon
+		expectedError h3Error
 	}{
 		// Note: Skipping nil polygon test as C function expects valid pointer
 		// and would segfault with nil input. Go version handles it properly.
 		{
 			name: "empty polygon",
-			setupPolygon: func() *LinkedGeoPolygon {
-				return &LinkedGeoPolygon{}
+			setupPolygon: func() *linkedGeoPolygon {
+				return &linkedGeoPolygon{}
 			},
-			expectedError: E_SUCCESS,
+			expectedError: eSuccess,
 		},
 		{
 			name: "polygon with Next (multiple polygons) - should fail",
-			setupPolygon: func() *LinkedGeoPolygon {
-				root := &LinkedGeoPolygon{
+			setupPolygon: func() *linkedGeoPolygon {
+				root := &linkedGeoPolygon{
 					First: createSquareLoopCCW(0, 0, 0.1),
 				}
 				root.Last = root.First
 
-				// Add another polygon (this should cause E_FAILED)
-				root.Next = &LinkedGeoPolygon{
+				// Add another polygon (this should cause eFailed)
+				root.Next = &linkedGeoPolygon{
 					First: createSquareLoopCCW(0.2, 0.2, 0.1),
 				}
 				root.Next.Last = root.Next.First
 
 				return root
 			},
-			expectedError: E_FAILED,
+			expectedError: eFailed,
 		},
 		{
 			name: "single outer loop - should succeed",
-			setupPolygon: func() *LinkedGeoPolygon {
-				root := &LinkedGeoPolygon{
+			setupPolygon: func() *linkedGeoPolygon {
+				root := &linkedGeoPolygon{
 					First: createSquareLoopCCW(0, 0, 0.1),
 				}
 				root.Last = root.First
 				return root
 			},
-			expectedError: E_SUCCESS,
+			expectedError: eSuccess,
 		},
 		{
 			name: "outer loop with hole - should succeed",
-			setupPolygon: func() *LinkedGeoPolygon {
+			setupPolygon: func() *linkedGeoPolygon {
 				// Create outer loop (counter-clockwise)
 				outerLoop := createSquareLoopCCW(0, 0, 0.1)
 
@@ -119,17 +119,17 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 				// Link them together
 				outerLoop.Next = innerLoop
 
-				root := &LinkedGeoPolygon{
+				root := &linkedGeoPolygon{
 					First: outerLoop,
 					Last:  innerLoop,
 				}
 				return root
 			},
-			expectedError: E_SUCCESS,
+			expectedError: eSuccess,
 		},
 		{
 			name: "multiple outer loops with holes - should succeed",
-			setupPolygon: func() *LinkedGeoPolygon {
+			setupPolygon: func() *linkedGeoPolygon {
 				// Create first outer loop (counter-clockwise)
 				outerLoop1 := createSquareLoopCCW(0, 0, 0.1)
 
@@ -147,17 +147,17 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 				holeLoop1.Next = outerLoop2
 				outerLoop2.Next = holeLoop2
 
-				root := &LinkedGeoPolygon{
+				root := &linkedGeoPolygon{
 					First: outerLoop1,
 					Last:  holeLoop2,
 				}
 				return root
 			},
-			expectedError: E_SUCCESS,
+			expectedError: eSuccess,
 		},
 		{
 			name: "orphaned hole (no containing polygon) - should fail",
-			setupPolygon: func() *LinkedGeoPolygon {
+			setupPolygon: func() *linkedGeoPolygon {
 				// Create outer loop in one area
 				outerLoop := createSquareLoopCCW(0, 0, 0.1)
 
@@ -167,13 +167,13 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 				// Link them together
 				outerLoop.Next = orphanedHole
 
-				root := &LinkedGeoPolygon{
+				root := &linkedGeoPolygon{
 					First: outerLoop,
 					Last:  orphanedHole,
 				}
 				return root
 			},
-			expectedError: E_FAILED, // Should fail because hole has no container
+			expectedError: eFailed, // Should fail because hole has no container
 		},
 	}
 
@@ -183,7 +183,7 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 			goPolygon := tt.setupPolygon()
 
 			// Create deep copy for C test (since C function modifies in-place)
-			var cPolygon *LinkedGeoPolygon
+			var cPolygon *linkedGeoPolygon
 			if goPolygon != nil {
 				cPolygon = deepCopyLinkedGeoPolygon(goPolygon)
 			}
@@ -193,7 +193,7 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 
 			// Test C implementation - only if we have a valid polygon
 			// C implementation can't handle nil input safely
-			var cResult H3Error
+			var cResult h3Error
 			if cPolygon != nil {
 				cResult = normalizeMultiPolygonC(cPolygon)
 
@@ -219,25 +219,25 @@ func Test_normalizeMultiPolygon_parity(t *testing.T) {
 	}
 }
 
-// deepCopyLinkedGeoPolygon creates a deep copy of a LinkedGeoPolygon structure
-func deepCopyLinkedGeoPolygon(orig *LinkedGeoPolygon) *LinkedGeoPolygon {
+// deepCopyLinkedGeoPolygon creates a deep copy of a linkedGeoPolygon structure
+func deepCopyLinkedGeoPolygon(orig *linkedGeoPolygon) *linkedGeoPolygon {
 	if orig == nil {
 		return nil
 	}
 
-	// Helper function to deep copy a LinkedGeoLoop
-	copyLoop := func(origLoop *LinkedGeoLoop) *LinkedGeoLoop {
+	// Helper function to deep copy a linkedGeoLoop
+	copyLoop := func(origLoop *linkedGeoLoop) *linkedGeoLoop {
 		if origLoop == nil {
 			return nil
 		}
 
-		newLoop := &LinkedGeoLoop{}
+		newLoop := &linkedGeoLoop{}
 
-		var prevNode *LinkedLatLng
+		var prevNode *linkedLatLng
 		currentOrig := origLoop.First
 
 		for currentOrig != nil {
-			newNode := &LinkedLatLng{
+			newNode := &linkedLatLng{
 				Vertex: LatLng{
 					Lat: currentOrig.Vertex.Lat,
 					Lng: currentOrig.Vertex.Lng,
@@ -259,10 +259,10 @@ func deepCopyLinkedGeoPolygon(orig *LinkedGeoPolygon) *LinkedGeoPolygon {
 		return newLoop
 	}
 
-	newPolygon := &LinkedGeoPolygon{}
+	newPolygon := &linkedGeoPolygon{}
 
 	// Copy all loops
-	var prevLoop *LinkedGeoLoop
+	var prevLoop *linkedGeoLoop
 	currentOrigLoop := orig.First
 
 	for currentOrigLoop != nil {

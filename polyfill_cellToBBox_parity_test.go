@@ -10,63 +10,63 @@ import (
 func Test_cellToBBox_parity(t *testing.T) {
 	tests := []struct {
 		name          string
-		cell          H3Index
+		cell          h3Index
 		coverChildren bool
-		expectError   H3Error
+		expectError   h3Error
 	}{
 		{
 			name:          "Valid res 0 cell",
 			cell:          0x8001fffffffffff, // Base cell 1 at res 0
 			coverChildren: false,
-			expectError:   E_SUCCESS,
+			expectError:   eSuccess,
 		},
 		{
 			name:          "Valid res 0 cell with children coverage",
 			cell:          0x8001fffffffffff,
 			coverChildren: true,
-			expectError:   E_SUCCESS,
+			expectError:   eSuccess,
 		},
 		{
 			name:          "Valid res 5 cell",
 			cell:          0x851fb46622dffff, // Some res 5 cell
 			coverChildren: false,
-			expectError:   E_SUCCESS,
+			expectError:   eSuccess,
 		},
 		{
 			name:          "Valid res 5 cell with children coverage",
 			cell:          0x851fb46622dffff,
 			coverChildren: true,
-			expectError:   E_SUCCESS,
+			expectError:   eSuccess,
 		},
 		{
 			name:          "North pole cell res 1",
-			cell:          NORTH_POLE_CELLS[1],
+			cell:          northPoleCells[1],
 			coverChildren: false,
-			expectError:   E_SUCCESS,
+			expectError:   eSuccess,
 		},
 		{
 			name:          "South pole cell res 1",
-			cell:          SOUTH_POLE_CELLS[1],
+			cell:          southPoleCells[1],
 			coverChildren: false,
-			expectError:   E_SUCCESS,
+			expectError:   eSuccess,
 		},
 		{
 			name:          "Pentagon base cell",
 			cell:          0x804dfffffffffff, // Base cell 4 (pentagon)
 			coverChildren: false,
-			expectError:   E_SUCCESS,
+			expectError:   eSuccess,
 		},
 		{
 			name:          "Invalid cell",
 			cell:          0x0,
 			coverChildren: false,
-			expectError:   E_CELL_INVALID,
+			expectError:   eCellInvalid,
 		},
 		{
 			name:          "Another invalid cell",
-			cell:          H3_NULL,
+			cell:          h3Null,
 			coverChildren: false,
-			expectError:   E_CELL_INVALID,
+			expectError:   eCellInvalid,
 		},
 	}
 
@@ -85,7 +85,7 @@ func Test_cellToBBox_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare the bounding boxes
-			if goErr == E_SUCCESS && cErr == E_SUCCESS {
+			if goErr == eSuccess && cErr == eSuccess {
 				tolerance := 1e-12 // Tight tolerance for coordinate comparisons
 
 				if math.Abs(float64(goBBox.North-cBBox.North)) > tolerance {
@@ -111,10 +111,10 @@ func Test_cellToBBox_parity(t *testing.T) {
 
 func Test_cellToBBox_comprehensive_parity(t *testing.T) {
 	// Test all base cells at resolution 0
-	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
+	for baseCell := int32(0); baseCell < numBaseCells; baseCell++ {
 		t.Run("BaseCell_"+string(rune(baseCell+'0')), func(t *testing.T) {
 			cell := baseCellNumToCell(baseCell)
-			if cell == H3_NULL {
+			if cell == h3Null {
 				return // Skip invalid base cells
 			}
 
@@ -134,14 +134,14 @@ func Test_cellToBBox_comprehensive_parity(t *testing.T) {
 				}
 
 				// If both succeeded, compare the bounding boxes
-				if goErr == E_SUCCESS && cErr == E_SUCCESS {
+				if goErr == eSuccess && cErr == eSuccess {
 					tolerance := 1e-12
 
 					if math.Abs(float64(goBBox.North-cBBox.North)) > tolerance ||
 						math.Abs(float64(goBBox.South-cBBox.South)) > tolerance ||
 						math.Abs(float64(goBBox.East-cBBox.East)) > tolerance ||
 						math.Abs(float64(goBBox.West-cBBox.West)) > tolerance {
-						t.Errorf("BaseCell %d, coverChildren=%v: BBox mismatch\n"+
+						t.Errorf("BaseCell %d, coverChildren=%v: bbox mismatch\n"+
 							"  Go:  N=%.15f, S=%.15f, E=%.15f, W=%.15f\n"+
 							"  C:   N=%.15f, S=%.15f, E=%.15f, W=%.15f",
 							baseCell, coverChildren,
@@ -159,13 +159,13 @@ func Test_cellToBBox_pole_cells_parity(t *testing.T) {
 	for res := int32(0); res <= 5; res++ { // Test first few resolutions
 		t.Run("Poles_res_"+string(rune(res+'0')), func(t *testing.T) {
 			// Test north pole cell
-			northCell := NORTH_POLE_CELLS[res]
+			northCell := northPoleCells[res]
 			goBBoxN, goErrN := cellToBBox(northCell, false)
 			cBBoxN, cErrN := cellToBBoxC(northCell, false)
 
 			if goErrN != cErrN {
 				t.Errorf("North pole res %d: Error mismatch: Go=%v, C=%v", res, goErrN, cErrN)
-			} else if goErrN == E_SUCCESS {
+			} else if goErrN == eSuccess {
 				// For north pole cells, the north boundary should be π/2
 				if goBBoxN.North != PiOver2 {
 					t.Errorf("North pole res %d: Go north boundary should be π/2, got %.15f", res, float64(goBBoxN.North))
@@ -181,13 +181,13 @@ func Test_cellToBBox_pole_cells_parity(t *testing.T) {
 			}
 
 			// Test south pole cell
-			southCell := SOUTH_POLE_CELLS[res]
+			southCell := southPoleCells[res]
 			goBBoxS, goErrS := cellToBBox(southCell, false)
 			cBBoxS, cErrS := cellToBBoxC(southCell, false)
 
 			if goErrS != cErrS {
 				t.Errorf("South pole res %d: Error mismatch: Go=%v, C=%v", res, goErrS, cErrS)
-			} else if goErrS == E_SUCCESS {
+			} else if goErrS == eSuccess {
 				// For south pole cells, the south boundary should be -π/2
 				if goBBoxS.South != -PiOver2 {
 					t.Errorf("South pole res %d: Go south boundary should be -π/2, got %.15f", res, float64(goBBoxS.South))

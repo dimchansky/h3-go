@@ -10,25 +10,25 @@ func TestToErrMapping(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		code H3Error
+		code h3Error
 		want error
 	}{
-		{E_SUCCESS, nil},
-		{E_FAILED, ErrFailed},
-		{E_DOMAIN, ErrDomain},
-		{E_LATLNG_DOMAIN, ErrLatLngDomain},
-		{E_RES_DOMAIN, ErrResolutionDomain},
-		{E_CELL_INVALID, ErrCellInvalid},
-		{E_DIR_EDGE_INVALID, ErrDirectedEdgeInvalid},
-		{E_UNDIR_EDGE_INVALID, ErrUndirectedEdgeInvalid},
-		{E_VERTEX_INVALID, ErrVertexInvalid},
-		{E_PENTAGON, ErrPentagon},
-		{E_DUPLICATE_INPUT, ErrDuplicateInput},
-		{E_NOT_NEIGHBORS, ErrNotNeighbors},
-		{E_RES_MISMATCH, ErrResolutionMismatch},
-		{E_MEMORY_ALLOC, ErrMemoryAlloc},
-		{E_MEMORY_BOUNDS, ErrMemoryBounds},
-		{E_OPTION_INVALID, ErrOptionInvalid},
+		{eSuccess, nil},
+		{eFailed, ErrFailed},
+		{eDomain, ErrDomain},
+		{eLatlngDomain, ErrLatLngDomain},
+		{eResDomain, ErrResolutionDomain},
+		{eCellInvalid, ErrCellInvalid},
+		{eDirEdgeInvalid, ErrDirectedEdgeInvalid},
+		{eUndirEdgeInvalid, ErrUndirectedEdgeInvalid},
+		{eVertexInvalid, ErrVertexInvalid},
+		{ePentagon, ErrPentagon},
+		{eDuplicateInput, ErrDuplicateInput},
+		{eNotNeighbors, ErrNotNeighbors},
+		{eResMismatch, ErrResolutionMismatch},
+		{eMemoryAlloc, ErrMemoryAlloc},
+		{eMemoryBounds, ErrMemoryBounds},
+		{eOptionInvalid, ErrOptionInvalid},
 	}
 	for _, c := range cases {
 		got := toErr(c.code)
@@ -44,10 +44,10 @@ func TestToErrMapping(t *testing.T) {
 	}
 
 	// Unknown codes map to ErrFailed.
-	if got := toErr(H3Error(42)); !errors.Is(got, ErrFailed) {
+	if got := toErr(h3Error(42)); !errors.Is(got, ErrFailed) {
 		t.Errorf("toErr(42) = %v, want ErrFailed", got)
 	}
-	if got := toErr(H3Error(16)); !errors.Is(got, ErrFailed) {
+	if got := toErr(h3Error(16)); !errors.Is(got, ErrFailed) {
 		t.Errorf("toErr(16) = %v, want ErrFailed", got)
 	}
 }
@@ -56,7 +56,7 @@ func TestSentinelMessages(t *testing.T) {
 	t.Parallel()
 
 	// Every sentinel carries the C describeH3Error text with an "h3: " prefix.
-	for code := H3Error(1); code <= 15; code++ {
+	for code := h3Error(1); code <= 15; code++ {
 		err := toErr(code)
 		if err == nil {
 			t.Fatalf("toErr(%d) = nil", code)
@@ -71,8 +71,8 @@ func TestSentinelMessages(t *testing.T) {
 func TestSentinelsDistinct(t *testing.T) {
 	t.Parallel()
 
-	seen := map[error]H3Error{}
-	for code := H3Error(1); code <= 15; code++ {
+	seen := map[error]h3Error{}
+	for code := h3Error(1); code <= 15; code++ {
 		err := toErr(code)
 		if prev, dup := seen[err]; dup {
 			t.Errorf("codes %d and %d map to the same sentinel %v", prev, code, err)
@@ -83,27 +83,27 @@ func TestSentinelsDistinct(t *testing.T) {
 
 func TestToErrDoesNotAllocate(t *testing.T) {
 	allocs := testing.AllocsPerRun(100, func() {
-		_ = toErr(E_PENTAGON)
-		_ = toErr(E_SUCCESS)
+		_ = toErr(ePentagon)
+		_ = toErr(eSuccess)
 	})
 	if allocs != 0 {
 		t.Errorf("toErr allocates %v times per run, want 0", allocs)
 	}
 }
 
-// TestAliasTypeIdentity pins the architectural keystone: H3Index is an alias
+// TestAliasTypeIdentity pins the architectural keystone: h3Index is an alias
 // of Cell, so slices of the two are the very same type and pass through the
 // ported layer with zero conversion (docs/public-api-architecture.md DR-003).
 func TestAliasTypeIdentity(t *testing.T) {
 	t.Parallel()
 
 	cells := []Cell{0x8f2830828052d25}
-	// Passing []Cell where []H3Index is expected compiles only because the
+	// Passing []Cell where []h3Index is expected compiles only because the
 	// two are the same type; the write must be visible through both.
-	takesIndexes := func(idx []H3Index) { idx[0] = 0 }
+	takesIndexes := func(idx []h3Index) { idx[0] = 0 }
 	takesIndexes(cells)
 	if cells[0] != 0 {
-		t.Fatal("[]H3Index and []Cell must share storage")
+		t.Fatal("[]h3Index and []Cell must share storage")
 	}
 
 	// Scalar conversions between the index types are representation-preserving.

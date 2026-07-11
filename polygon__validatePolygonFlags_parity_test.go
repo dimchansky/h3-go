@@ -9,19 +9,19 @@ func Test_validatePolygonFlags_parity(t *testing.T) {
 		name  string
 		flags uint32
 	}{
-		{"valid_center", uint32(CONTAINMENT_CENTER)},
-		{"valid_full", uint32(CONTAINMENT_FULL)},
-		{"valid_overlapping", uint32(CONTAINMENT_OVERLAPPING)},
-		{"valid_overlapping_bbox", uint32(CONTAINMENT_OVERLAPPING_BBOX)},
-		{"invalid_containment", uint32(CONTAINMENT_INVALID)},
-		{"invalid_flag_bit_4", 16},                            // Bit 4 set (outside mask)
-		{"invalid_flag_bit_5", 32},                            // Bit 5 set
-		{"invalid_flag_bit_31", 1 << 31},                      // High bit set
-		{"invalid_combined", uint32(CONTAINMENT_CENTER) | 16}, // Valid containment + invalid flag
-		{"invalid_high_containment", 8},                       // Containment value above INVALID
-		{"all_mask_bits", FLAG_CONTAINMENT_MODE_MASK},         // All containment bits set
-		{"zero_flags", 0},                                     // No flags set (CONTAINMENT_CENTER)
-		{"max_uint32", ^uint32(0)},                            // All bits set
+		{"valid_center", uint32(ContainmentCenter)},
+		{"valid_full", uint32(ContainmentFull)},
+		{"valid_overlapping", uint32(ContainmentOverlapping)},
+		{"valid_overlapping_bbox", uint32(ContainmentOverlappingBBox)},
+		{"invalid_containment", uint32(ContainmentInvalid)},
+		{"invalid_flag_bit_4", 16},                           // Bit 4 set (outside mask)
+		{"invalid_flag_bit_5", 32},                           // Bit 5 set
+		{"invalid_flag_bit_31", 1 << 31},                     // High bit set
+		{"invalid_combined", uint32(ContainmentCenter) | 16}, // Valid containment + invalid flag
+		{"invalid_high_containment", 8},                      // Containment value above INVALID
+		{"all_mask_bits", flagContainmentModeMask},           // All containment bits set
+		{"zero_flags", 0},                                    // No flags set (ContainmentCenter)
+		{"max_uint32", ^uint32(0)},                           // All bits set
 	}
 
 	for _, tt := range tests {
@@ -42,15 +42,15 @@ func Test_validatePolygonFlags_parity(t *testing.T) {
 	// Test specific flag combinations that are important
 	t.Run("comprehensive_flag_tests", func(t *testing.T) {
 		flagCombinations := []uint32{
-			0,  // CONTAINMENT_CENTER (valid)
-			1,  // CONTAINMENT_FULL (valid)
-			2,  // CONTAINMENT_OVERLAPPING (valid)
-			3,  // CONTAINMENT_OVERLAPPING_BBOX (valid)
-			4,  // CONTAINMENT_INVALID (invalid)
-			5,  // Above CONTAINMENT_INVALID (invalid)
+			0,  // ContainmentCenter (valid)
+			1,  // ContainmentFull (valid)
+			2,  // ContainmentOverlapping (valid)
+			3,  // ContainmentOverlappingBBox (valid)
+			4,  // ContainmentInvalid (invalid)
+			5,  // Above ContainmentInvalid (invalid)
 			15, // All containment bits set (invalid)
 			16, // First bit outside mask (invalid)
-			17, // CONTAINMENT_FULL + invalid bit (invalid)
+			17, // ContainmentFull + invalid bit (invalid)
 			31, // High bits within range (invalid)
 		}
 
@@ -71,10 +71,10 @@ func Test_validatePolygonFlags_parity(t *testing.T) {
 			flags       uint32
 			expectValid bool
 		}{
-			{"boundary_valid_max", uint32(CONTAINMENT_OVERLAPPING_BBOX), true},
-			{"boundary_invalid_min", uint32(CONTAINMENT_INVALID), false},
-			{"mask_boundary", FLAG_CONTAINMENT_MODE_MASK, false},
-			{"just_above_mask", FLAG_CONTAINMENT_MODE_MASK + 1, false},
+			{"boundary_valid_max", uint32(ContainmentOverlappingBBox), true},
+			{"boundary_invalid_min", uint32(ContainmentInvalid), false},
+			{"mask_boundary", flagContainmentModeMask, false},
+			{"just_above_mask", flagContainmentModeMask + 1, false},
 		}
 
 		for _, tc := range edgeCases {
@@ -89,7 +89,7 @@ func Test_validatePolygonFlags_parity(t *testing.T) {
 
 				expectedResult := uint32(0)
 				if !tc.expectValid {
-					expectedResult = uint32(E_OPTION_INVALID)
+					expectedResult = uint32(eOptionInvalid)
 				}
 
 				if goResult != expectedResult {

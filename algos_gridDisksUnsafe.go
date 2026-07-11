@@ -5,15 +5,15 @@ package h3
 // k-ring (0 to max), with no guaranteed sorting within each k-ring group.
 // The memory block should be equal to maxGridDiskSize(k) * length
 // Ported from H3 C: algos.c::gridDisksUnsafe.
-func gridDisksUnsafe(h3Set []H3Index, k int32, out []H3Index) H3Error {
+func gridDisksUnsafe(h3Set []h3Index, k int32, out []h3Index) h3Error {
 	if len(h3Set) == 0 || len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
 
 	length := int32(len(h3Set))
 	var segmentSize int64
 	err := maxGridDiskSize(k, &segmentSize)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		return err
 	}
 
@@ -22,9 +22,9 @@ func gridDisksUnsafe(h3Set []H3Index, k int32, out []H3Index) H3Error {
 		segmentStart := i * int32(segmentSize)
 		segment := out[segmentStart : segmentStart+int32(segmentSize)]
 		failed := gridDiskUnsafe(h3Set[i], k, segment)
-		if failed != E_SUCCESS {
+		if failed != eSuccess {
 			return failed
 		}
 	}
-	return E_SUCCESS
+	return eSuccess
 }

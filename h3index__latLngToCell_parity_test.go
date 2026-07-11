@@ -44,8 +44,8 @@ func Test_h3index_latLngToCell_ParityWithC(t *testing.T) {
 	for _, tc := range testCases {
 		g := &LatLng{Lat: Deg(tc.lat), Lng: Deg(tc.lng)}
 
-		var goOut H3Index
-		var cOut H3Index
+		var goOut h3Index
+		var cOut h3Index
 
 		goErr := latLngToCell(g, tc.res, &goOut)
 		cErr := latLngToCellC(g, tc.res, &cOut)
@@ -76,8 +76,8 @@ func Test_h3index_latLngToCell_ErrorCases_ParityWithC(t *testing.T) {
 	for _, tc := range errorCases {
 		g := &LatLng{Lat: Deg(tc.lat), Lng: Deg(tc.lng)}
 
-		var goOut H3Index
-		var cOut H3Index
+		var goOut h3Index
+		var cOut h3Index
 
 		goErr := latLngToCell(g, tc.res, &goOut)
 		cErr := latLngToCellC(g, tc.res, &cOut)
@@ -88,7 +88,7 @@ func Test_h3index_latLngToCell_ErrorCases_ParityWithC(t *testing.T) {
 		}
 
 		// Both should return error
-		if goErr == E_SUCCESS {
+		if goErr == eSuccess {
 			t.Fatalf("latLngToCell should return error for %s", tc.desc)
 		}
 	}

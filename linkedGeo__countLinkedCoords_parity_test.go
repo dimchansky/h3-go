@@ -9,12 +9,12 @@ import (
 func Test_countLinkedCoords_parity(t *testing.T) {
 	testCases := []struct {
 		name  string
-		loop  *LinkedGeoLoop
+		loop  *linkedGeoLoop
 		count int32
 	}{
 		{
 			name: "empty loop",
-			loop: &LinkedGeoLoop{
+			loop: &linkedGeoLoop{
 				First: nil,
 				Last:  nil,
 				Next:  nil,
@@ -23,8 +23,8 @@ func Test_countLinkedCoords_parity(t *testing.T) {
 		},
 		{
 			name: "single coordinate",
-			loop: &LinkedGeoLoop{
-				First: &LinkedLatLng{
+			loop: &linkedGeoLoop{
+				First: &linkedLatLng{
 					Vertex: LatLng{Lat: 37.775, Lng: -122.418},
 					Next:   nil,
 				},
@@ -87,19 +87,19 @@ func Test_countLinkedCoords_parity(t *testing.T) {
 }
 
 // Helper function to create a test loop from coordinates
-func createTestLoop(coords []LatLng) *LinkedGeoLoop {
+func createTestLoop(coords []LatLng) *linkedGeoLoop {
 	if len(coords) == 0 {
-		return &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
+		return &linkedGeoLoop{First: nil, Last: nil, Next: nil}
 	}
 
-	first := &LinkedLatLng{
+	first := &linkedLatLng{
 		Vertex: coords[0],
 		Next:   nil,
 	}
 
 	current := first
 	for i := 1; i < len(coords); i++ {
-		next := &LinkedLatLng{
+		next := &linkedLatLng{
 			Vertex: coords[i],
 			Next:   nil,
 		}
@@ -107,7 +107,7 @@ func createTestLoop(coords []LatLng) *LinkedGeoLoop {
 		current = next
 	}
 
-	return &LinkedGeoLoop{
+	return &linkedGeoLoop{
 		First: first,
 		Last:  current,
 		Next:  nil,

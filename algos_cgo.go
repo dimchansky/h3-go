@@ -119,25 +119,25 @@ static H3Error cellsToLinkedMultiPolygon_c_wrapper(const H3Index *h3Set, const i
 import "C"
 
 // h3NeighborRotationsC calls the original C implementation.
-func h3NeighborRotationsC(origin H3Index, dir Direction, rotations *int32) (H3Index, H3Error) {
+func h3NeighborRotationsC(origin h3Index, dir direction, rotations *int32) (h3Index, h3Error) {
 	var out C.H3Index
 	cRotations := C.int(*rotations)
-	err := H3Error(C.h3NeighborRotations_c_wrapper(C.H3Index(origin), C.Direction(dir), &cRotations, &out))
+	err := h3Error(C.h3NeighborRotations_c_wrapper(C.H3Index(origin), C.Direction(dir), &cRotations, &out))
 	*rotations = int32(cRotations) // Update the rotations value
-	return H3Index(out), err
+	return h3Index(out), err
 }
 
 // directionForNeighborC calls the original C implementation.
-func directionForNeighborC(origin H3Index, destination H3Index) Direction {
-	return Direction(C.directionForNeighbor_c_wrapper(C.H3Index(origin), C.H3Index(destination)))
+func directionForNeighborC(origin h3Index, destination h3Index) direction {
+	return direction(C.directionForNeighbor_c_wrapper(C.H3Index(origin), C.H3Index(destination)))
 }
 
 // _gridDiskDistancesInternalC calls the original C implementation.
-func _gridDiskDistancesInternalC(origin H3Index, k int32, out []H3Index, distances []int32, maxIdx int64, curK int32) H3Error {
+func _gridDiskDistancesInternalC(origin h3Index, k int32, out []h3Index, distances []int32, maxIdx int64, curK int32) h3Error {
 	if len(out) == 0 || len(distances) == 0 {
-		return E_FAILED
+		return eFailed
 	}
-	return H3Error(C._gridDiskDistancesInternal_c_wrapper(
+	return h3Error(C._gridDiskDistancesInternal_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -148,20 +148,20 @@ func _gridDiskDistancesInternalC(origin H3Index, k int32, out []H3Index, distanc
 }
 
 // maxGridDiskSizeC calls the original C implementation.
-func maxGridDiskSizeC(k int32, out *int64) H3Error {
-	return H3Error(C.maxGridDiskSize_c_wrapper(C.int(k), (*C.int64_t)(out)))
+func maxGridDiskSizeC(k int32, out *int64) h3Error {
+	return h3Error(C.maxGridDiskSize_c_wrapper(C.int(k), (*C.int64_t)(out)))
 }
 
 // gridDiskDistancesUnsafeC calls the original C implementation.
-func gridDiskDistancesUnsafeC(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+func gridDiskDistancesUnsafeC(origin h3Index, k int32, out []h3Index, distances []int32) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
 	var distPtr *C.int
 	if len(distances) > 0 {
 		distPtr = (*C.int)(&distances[0])
 	}
-	return H3Error(C.gridDiskDistancesUnsafe_c_wrapper(
+	return h3Error(C.gridDiskDistancesUnsafe_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -170,15 +170,15 @@ func gridDiskDistancesUnsafeC(origin H3Index, k int32, out []H3Index, distances 
 }
 
 // gridDiskDistancesC calls the original C implementation.
-func gridDiskDistancesC(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+func gridDiskDistancesC(origin h3Index, k int32, out []h3Index, distances []int32) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
 	var distPtr *C.int
 	if len(distances) > 0 {
 		distPtr = (*C.int)(&distances[0])
 	}
-	return H3Error(C.gridDiskDistances_c_wrapper(
+	return h3Error(C.gridDiskDistances_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -187,11 +187,11 @@ func gridDiskDistancesC(origin H3Index, k int32, out []H3Index, distances []int3
 }
 
 // gridDiskC calls the original C implementation.
-func gridDiskC(origin H3Index, k int32, out []H3Index) H3Error {
+func gridDiskC(origin h3Index, k int32, out []h3Index) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
-	return H3Error(C.gridDisk_c_wrapper(
+	return h3Error(C.gridDisk_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -199,11 +199,11 @@ func gridDiskC(origin H3Index, k int32, out []H3Index) H3Error {
 }
 
 // gridDiskUnsafeC calls the original C implementation.
-func gridDiskUnsafeC(origin H3Index, k int32, out []H3Index) H3Error {
+func gridDiskUnsafeC(origin h3Index, k int32, out []h3Index) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
-	return H3Error(C.gridDiskUnsafe_c_wrapper(
+	return h3Error(C.gridDiskUnsafe_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -211,15 +211,15 @@ func gridDiskUnsafeC(origin H3Index, k int32, out []H3Index) H3Error {
 }
 
 // gridDiskDistancesSafeC calls the original C implementation.
-func gridDiskDistancesSafeC(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+func gridDiskDistancesSafeC(origin h3Index, k int32, out []h3Index, distances []int32) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
 	var distPtr *C.int
 	if len(distances) > 0 {
 		distPtr = (*C.int)(&distances[0])
 	}
-	return H3Error(C.gridDiskDistancesSafe_c_wrapper(
+	return h3Error(C.gridDiskDistancesSafe_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -228,16 +228,16 @@ func gridDiskDistancesSafeC(origin H3Index, k int32, out []H3Index, distances []
 }
 
 // maxGridRingSizeC calls the original C implementation.
-func maxGridRingSizeC(k int32, out *int64) H3Error {
-	return H3Error(C.maxGridRingSize_c_wrapper(C.int(k), (*C.int64_t)(out)))
+func maxGridRingSizeC(k int32, out *int64) h3Error {
+	return h3Error(C.maxGridRingSize_c_wrapper(C.int(k), (*C.int64_t)(out)))
 }
 
 // gridRingUnsafeC calls the original C implementation.
-func gridRingUnsafeC(origin H3Index, k int32, out []H3Index) H3Error {
+func gridRingUnsafeC(origin h3Index, k int32, out []h3Index) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
-	return H3Error(C.gridRingUnsafe_c_wrapper(
+	return h3Error(C.gridRingUnsafe_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -245,11 +245,11 @@ func gridRingUnsafeC(origin H3Index, k int32, out []H3Index) H3Error {
 }
 
 // _gridRingInternalC calls the original C implementation.
-func _gridRingInternalC(origin H3Index, k int32, out []H3Index) H3Error {
+func _gridRingInternalC(origin h3Index, k int32, out []h3Index) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
-	return H3Error(C._gridRingInternal_c_wrapper(
+	return h3Error(C._gridRingInternal_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -257,11 +257,11 @@ func _gridRingInternalC(origin H3Index, k int32, out []H3Index) H3Error {
 }
 
 // gridRingC calls the original C implementation.
-func gridRingC(origin H3Index, k int32, out []H3Index) H3Error {
+func gridRingC(origin h3Index, k int32, out []h3Index) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
-	return H3Error(C.gridRing_c_wrapper(
+	return h3Error(C.gridRing_c_wrapper(
 		C.H3Index(origin),
 		C.int(k),
 		(*C.H3Index)(&out[0]),
@@ -269,11 +269,11 @@ func gridRingC(origin H3Index, k int32, out []H3Index) H3Error {
 }
 
 // gridDisksUnsafeC calls the original C implementation.
-func gridDisksUnsafeC(h3Set []H3Index, k int32, out []H3Index) H3Error {
+func gridDisksUnsafeC(h3Set []h3Index, k int32, out []h3Index) h3Error {
 	if len(h3Set) == 0 || len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
-	return H3Error(C.gridDisksUnsafe_c_wrapper(
+	return h3Error(C.gridDisksUnsafe_c_wrapper(
 		(*C.H3Index)(&h3Set[0]),
 		C.int(len(h3Set)),
 		C.int(k),
@@ -282,16 +282,16 @@ func gridDisksUnsafeC(h3Set []H3Index, k int32, out []H3Index) H3Error {
 }
 
 // _getEdgeHexagonsC calls the original C implementation.
-func _getEdgeHexagonsC(geoloop []LatLng, numHexagons int64, res int32, numSearchHexes *int64, search []H3Index, found []H3Index) H3Error {
+func _getEdgeHexagonsC(geoloop []LatLng, numHexagons int64, res int32, numSearchHexes *int64, search []h3Index, found []h3Index) h3Error {
 	if len(search) == 0 || len(found) == 0 {
-		return E_FAILED
+		return eFailed
 	}
 
 	cGeoloop, freeFn := toCGeoLoop(geoloop)
 	defer freeFn()
 
 	cNumSearchHexes := C.int64_t(*numSearchHexes)
-	err := H3Error(C._getEdgeHexagons_c_wrapper(
+	err := h3Error(C._getEdgeHexagons_c_wrapper(
 		&cGeoloop,
 		C.int64_t(numHexagons),
 		C.int(res),
@@ -304,11 +304,11 @@ func _getEdgeHexagonsC(geoloop []LatLng, numHexagons int64, res int32, numSearch
 }
 
 // maxPolygonToCellsSizeC calls the original C implementation.
-func maxPolygonToCellsSizeC(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) H3Error {
+func maxPolygonToCellsSizeC(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) h3Error {
 	cGeoPolygon, freeFn := toCGeoPolygon(*geoPolygon)
 	defer freeFn()
 
-	return H3Error(C.maxPolygonToCellsSize_c_wrapper(
+	return h3Error(C.maxPolygonToCellsSize_c_wrapper(
 		&cGeoPolygon,
 		C.int(res),
 		C.uint32_t(flags),
@@ -317,15 +317,15 @@ func maxPolygonToCellsSizeC(geoPolygon *GeoPolygon, res int32, flags uint32, out
 }
 
 // polygonToCellsC calls the original C implementation.
-func polygonToCellsC(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Index) H3Error {
+func polygonToCellsC(geoPolygon *GeoPolygon, res int32, flags uint32, out []h3Index) h3Error {
 	if len(out) == 0 {
-		return E_FAILED
+		return eFailed
 	}
 
 	cGeoPolygon, freeFn := toCGeoPolygon(*geoPolygon)
 	defer freeFn()
 
-	return H3Error(C.polygonToCells_c_wrapper(
+	return h3Error(C.polygonToCells_c_wrapper(
 		&cGeoPolygon,
 		C.int(res),
 		C.uint32_t(flags),
@@ -341,11 +341,11 @@ func _vertexGraphToLinkedGeoC(graph *C.VertexGraph, out *C.LinkedGeoPolygon) {
 }
 
 // h3SetToVertexGraphC calls the original C implementation.
-func h3SetToVertexGraphC(h3Set []H3Index, graph *C.VertexGraph) H3Error {
+func h3SetToVertexGraphC(h3Set []h3Index, graph *C.VertexGraph) h3Error {
 	if len(h3Set) == 0 {
-		return E_SUCCESS
+		return eSuccess
 	}
-	return H3Error(C.h3SetToVertexGraph_c_wrapper(
+	return h3Error(C.h3SetToVertexGraph_c_wrapper(
 		(*C.H3Index)(&h3Set[0]),
 		C.int(len(h3Set)),
 		graph,
@@ -353,11 +353,11 @@ func h3SetToVertexGraphC(h3Set []H3Index, graph *C.VertexGraph) H3Error {
 }
 
 // cellsToLinkedMultiPolygonC calls the original C implementation.
-func cellsToLinkedMultiPolygonC(h3Set []H3Index, out *C.LinkedGeoPolygon) H3Error {
+func cellsToLinkedMultiPolygonC(h3Set []h3Index, out *C.LinkedGeoPolygon) h3Error {
 	if len(h3Set) == 0 {
-		return E_SUCCESS
+		return eSuccess
 	}
-	return H3Error(C.cellsToLinkedMultiPolygon_c_wrapper(
+	return h3Error(C.cellsToLinkedMultiPolygon_c_wrapper(
 		(*C.H3Index)(&h3Set[0]),
 		C.int(len(h3Set)),
 		out,
@@ -366,21 +366,21 @@ func cellsToLinkedMultiPolygonC(h3Set []H3Index, out *C.LinkedGeoPolygon) H3Erro
 
 // cellsToLinkedMultiPolygonCErrorOnly calls the C implementation and returns only the error code.
 // Used for parity testing error codes without needing to handle the complex output structure.
-func cellsToLinkedMultiPolygonCErrorOnly(h3Set []H3Index) H3Error {
+func cellsToLinkedMultiPolygonCErrorOnly(h3Set []h3Index) h3Error {
 	if len(h3Set) == 0 {
-		return E_SUCCESS
+		return eSuccess
 	}
 	var out C.LinkedGeoPolygon
-	return H3Error(C.cellsToLinkedMultiPolygon_c_wrapper(
+	return h3Error(C.cellsToLinkedMultiPolygon_c_wrapper(
 		(*C.H3Index)(&h3Set[0]),
 		C.int(len(h3Set)),
 		&out,
 	))
 }
 
-// VertexGraphCResult holds the basic properties of a C VertexGraph for parity testing.
-type VertexGraphCResult struct {
-	Err        H3Error
+// vertexGraphCResult holds the basic properties of a C vertexGraph for parity testing.
+type vertexGraphCResult struct {
+	Err        h3Error
 	Size       int32
 	NumBuckets int32
 	Res        int32
@@ -388,24 +388,24 @@ type VertexGraphCResult struct {
 
 // h3SetToVertexGraphCForParity calls the C implementation and returns basic graph properties.
 // Used for parity testing without exposing C types to test files.
-func h3SetToVertexGraphCForParity(h3Set []H3Index) VertexGraphCResult {
+func h3SetToVertexGraphCForParity(h3Set []h3Index) vertexGraphCResult {
 	if len(h3Set) == 0 {
-		return VertexGraphCResult{Err: E_SUCCESS, Size: 0, NumBuckets: 0, Res: 0}
+		return vertexGraphCResult{Err: eSuccess, Size: 0, NumBuckets: 0, Res: 0}
 	}
 
 	var cGraph C.VertexGraph
-	err := H3Error(C.h3SetToVertexGraph_c_wrapper(
+	err := h3Error(C.h3SetToVertexGraph_c_wrapper(
 		(*C.H3Index)(&h3Set[0]),
 		C.int(len(h3Set)),
 		&cGraph,
 	))
 
-	result := VertexGraphCResult{
+	result := vertexGraphCResult{
 		Err: err,
 	}
 
 	// Only read properties and clean up if the operation succeeded
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		result.Size = int32(cGraph.size)
 		result.NumBuckets = int32(cGraph.numBuckets)
 		result.Res = int32(cGraph.res)

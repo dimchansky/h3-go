@@ -7,10 +7,10 @@ import (
 )
 
 func Test_h3ToFaceIjkWithInitializedFijk_Parity(t *testing.T) {
-	// Test with a variety of H3 indexes and initialized FaceIJK addresses
+	// Test with a variety of H3 indexes and initialized faceIJK addresses
 	testCases := []struct {
 		name    string
-		h       H3Index
+		h       h3Index
 		face    int32
 		i, j, k int32
 	}{
@@ -23,16 +23,16 @@ func Test_h3ToFaceIjkWithInitializedFijk_Parity(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Initialize FaceIJK for Go test
-			goFijk := FaceIJK{
+			// Initialize faceIJK for Go test
+			goFijk := faceIJK{
 				Face:  tc.face,
-				Coord: CoordIJK{I: tc.i, J: tc.j, K: tc.k},
+				Coord: coordIJK{I: tc.i, J: tc.j, K: tc.k},
 			}
 
-			// Initialize FaceIJK for C test
-			cFijk := FaceIJK{
+			// Initialize faceIJK for C test
+			cFijk := faceIJK{
 				Face:  tc.face,
-				Coord: CoordIJK{I: tc.i, J: tc.j, K: tc.k},
+				Coord: coordIJK{I: tc.i, J: tc.j, K: tc.k},
 			}
 
 			// Run both implementations
@@ -65,8 +65,8 @@ func Test_h3ToFaceIjkWithInitializedFijk_Parity(t *testing.T) {
 
 func Test_h3ToFaceIjkWithInitializedFijk_EdgeCases(t *testing.T) {
 	// Test pentagon handling
-	pentagonH := H3Index(0x820843fffffffff) // Base cell 4 (pentagon)
-	fijk := FaceIJK{Face: 1, Coord: CoordIJK{I: 0, J: 0, K: 0}}
+	pentagonH := h3Index(0x820843fffffffff) // Base cell 4 (pentagon)
+	fijk := faceIJK{Face: 1, Coord: coordIJK{I: 0, J: 0, K: 0}}
 
 	goResult := _h3ToFaceIjkWithInitializedFijk(pentagonH, &fijk)
 
@@ -76,8 +76,8 @@ func Test_h3ToFaceIjkWithInitializedFijk_EdgeCases(t *testing.T) {
 	}
 
 	// Test resolution 0 hexagon (should have no overage)
-	hexRes0 := H3Index(0x8001fffffffffff) // Base cell 0, res 0
-	fijk2 := FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}}
+	hexRes0 := h3Index(0x8001fffffffffff) // Base cell 0, res 0
+	fijk2 := faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}}
 
 	goResult2 := _h3ToFaceIjkWithInitializedFijk(hexRes0, &fijk2)
 

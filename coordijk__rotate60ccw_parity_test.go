@@ -7,19 +7,19 @@ import "testing"
 func Test_rotate60ccw_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		digit Direction
+		digit direction
 	}{
 		// Valid direction rotations (counter-clockwise)
-		{"K -> IK", K_AXES_DIGIT},
-		{"IK -> I", IK_AXES_DIGIT},
-		{"I -> IJ", I_AXES_DIGIT},
-		{"IJ -> J", IJ_AXES_DIGIT},
-		{"J -> JK", J_AXES_DIGIT},
-		{"JK -> K", JK_AXES_DIGIT},
+		{"K -> IK", kAxesDigit},
+		{"IK -> I", ikAxesDigit},
+		{"I -> quadIJ", iAxesDigit},
+		{"quadIJ -> J", ijAxesDigit},
+		{"J -> quadJK", jAxesDigit},
+		{"quadJK -> K", jkAxesDigit},
 
 		// Center digit and invalid digit should return unchanged
-		{"center unchanged", CENTER_DIGIT},
-		{"invalid unchanged", INVALID_DIGIT},
+		{"center unchanged", centerDigit},
+		{"invalid unchanged", invalidDigit},
 
 		// Test edge cases and invalid values (but avoid negative due to type conversion)
 		{"large value unchanged", 100},
@@ -44,7 +44,7 @@ func Test_rotate60ccw_parity(t *testing.T) {
 
 	// Test that 6 rotations return to original
 	t.Run("six_rotations", func(t *testing.T) {
-		validDigits := []Direction{K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT}
+		validDigits := []direction{kAxesDigit, ikAxesDigit, iAxesDigit, ijAxesDigit, jAxesDigit, jkAxesDigit}
 
 		for _, original := range validDigits {
 			digit := original
@@ -61,7 +61,7 @@ func Test_rotate60ccw_parity(t *testing.T) {
 
 	// Test that it's the inverse of clockwise rotation
 	t.Run("inverse_of_clockwise", func(t *testing.T) {
-		validDigits := []Direction{K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT}
+		validDigits := []direction{kAxesDigit, ikAxesDigit, iAxesDigit, ijAxesDigit, jAxesDigit, jkAxesDigit}
 
 		for _, digit := range validDigits {
 			// Apply counter-clockwise then clockwise

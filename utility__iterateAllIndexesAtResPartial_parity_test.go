@@ -17,7 +17,7 @@ func Test__iterateAllIndexesAtResPartial_parity(t *testing.T) {
 		{"res0_5cells", 0, 5},
 		{"res0_10cells", 0, 10},
 		{"res0_50cells", 0, 50},
-		{"res0_allcells", 0, NUM_BASE_CELLS},
+		{"res0_allcells", 0, numBaseCells},
 
 		{"res1_1cell", 1, 1},
 		{"res1_5cells", 1, 5},
@@ -32,8 +32,8 @@ func Test__iterateAllIndexesAtResPartial_parity(t *testing.T) {
 		{"res0_0cells", 0, 0},
 		{"res1_0cells", 1, 0},
 
-		// Test exactly NUM_BASE_CELLS (maximum valid value)
-		{"res0_maxcells", 0, NUM_BASE_CELLS},
+		// Test exactly numBaseCells (maximum valid value)
+		{"res0_maxcells", 0, numBaseCells},
 	}
 
 	for _, tc := range testCases {
@@ -50,13 +50,13 @@ func Test__iterateAllIndexesAtResPartial_parity(t *testing.T) {
 			}
 
 			// Collect Go results
-			goResults := make([]H3Index, 0, bufferSize)
-			_iterateAllIndexesAtResPartial(tc.res, func(h H3Index) {
+			goResults := make([]h3Index, 0, bufferSize)
+			_iterateAllIndexesAtResPartial(tc.res, func(h h3Index) {
 				goResults = append(goResults, h)
 			}, tc.baseCells)
 
 			// Collect C results
-			cBuffer := make([]H3Index, bufferSize)
+			cBuffer := make([]h3Index, bufferSize)
 			cCount := iterateAllIndexesAtResPartialC(tc.res, tc.baseCells, cBuffer)
 			cResults := cBuffer[:cCount]
 

@@ -10,7 +10,7 @@ func Test_gridRing_parity(t *testing.T) {
 	// Test with valid cells at different resolutions
 	testCases := []struct {
 		name   string
-		origin H3Index
+		origin h3Index
 		k      int32
 	}{
 		// Basic tests
@@ -48,8 +48,8 @@ func Test_gridRing_parity(t *testing.T) {
 			}
 
 			// Create output buffers
-			goOut := make([]H3Index, size)
-			cOut := make([]H3Index, size)
+			goOut := make([]h3Index, size)
+			cOut := make([]h3Index, size)
 
 			// Call Go implementation
 			goErr := gridRing(tc.origin, tc.k, goOut)
@@ -64,10 +64,10 @@ func Test_gridRing_parity(t *testing.T) {
 			}
 
 			// If successful, compare outputs
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				// Create maps to compare unordered sets
-				goMap := make(map[H3Index]int)
-				cMap := make(map[H3Index]int)
+				goMap := make(map[h3Index]int)
+				cMap := make(map[h3Index]int)
 
 				for _, h := range goOut {
 					if h != 0 {
@@ -106,23 +106,23 @@ func Test_gridRing_parity(t *testing.T) {
 
 	// Test error cases
 	t.Run("negative_k", func(t *testing.T) {
-		out := make([]H3Index, 1)
+		out := make([]h3Index, 1)
 		goErr := gridRing(0x85283473fffffff, -1, out)
 		cErr := gridRingC(0x85283473fffffff, -1, out)
 
 		if goErr != cErr {
 			t.Errorf("Error mismatch for negative k: Go=%v, C=%v", goErr, cErr)
 		}
-		if goErr != E_DOMAIN {
-			t.Errorf("Expected E_DOMAIN for negative k, got %v", goErr)
+		if goErr != eDomain {
+			t.Errorf("Expected eDomain for negative k, got %v", goErr)
 		}
 	})
 
 	// Test with pentagon - should successfully handle it using fallback
 	t.Run("pentagon_origin", func(t *testing.T) {
 		// Use a known pentagon index at resolution 5
-		pentagonIndex := H3Index(0x85080003fffffff)
-		out := make([]H3Index, 6)
+		pentagonIndex := h3Index(0x85080003fffffff)
+		out := make([]h3Index, 6)
 
 		goErr := gridRing(pentagonIndex, 1, out)
 		cErr := gridRingC(pentagonIndex, 1, out)
@@ -138,7 +138,7 @@ func Test_gridRing_parity(t *testing.T) {
 	t.Run("near_pentagon", func(t *testing.T) {
 		// Test a cell that's close to a pentagon with larger k values
 		testCases := []struct {
-			origin H3Index
+			origin h3Index
 			k      int32
 		}{
 			{0x85080107fffffff, 5}, // Near pentagon, k=5
@@ -153,8 +153,8 @@ func Test_gridRing_parity(t *testing.T) {
 				size = 6 * int64(tc.k)
 			}
 
-			goOut := make([]H3Index, size)
-			cOut := make([]H3Index, size)
+			goOut := make([]h3Index, size)
+			cOut := make([]h3Index, size)
 
 			goErr := gridRing(tc.origin, tc.k, goOut)
 			cErr := gridRingC(tc.origin, tc.k, cOut)
@@ -166,10 +166,10 @@ func Test_gridRing_parity(t *testing.T) {
 			}
 
 			// If successful, compare outputs
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				// Create maps to compare unordered sets
-				goMap := make(map[H3Index]int)
-				cMap := make(map[H3Index]int)
+				goMap := make(map[h3Index]int)
+				cMap := make(map[h3Index]int)
 
 				for _, h := range goOut {
 					if h != 0 {
@@ -193,12 +193,12 @@ func Test_gridRing_parity(t *testing.T) {
 
 	// Test invalid cell
 	t.Run("invalid_cell", func(t *testing.T) {
-		out := make([]H3Index, 6)
+		out := make([]h3Index, 6)
 		goErr := gridRing(0xffffffffffffffff, 1, out)
 		cErr := gridRingC(0xffffffffffffffff, 1, out)
 
 		// Both should return an error for invalid cell
-		if goErr == E_SUCCESS || cErr == E_SUCCESS {
+		if goErr == eSuccess || cErr == eSuccess {
 			t.Errorf("Expected error for invalid cell: Go=%v, C=%v", goErr, cErr)
 		}
 	})

@@ -3,7 +3,7 @@ package h3
 // _ijkNormalize normalizes IJK coordinates by removing negative values.
 // Mirrors H3's coordijk.c::_ijkNormalize behavior.
 // Ported from H3 C: coordijk.c::_ijkNormalize.
-func _ijkNormalize(c *CoordIJK) {
+func _ijkNormalize(c *coordIJK) {
 	// remove any negative values
 	if c.I < 0 {
 		c.J -= c.I

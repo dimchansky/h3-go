@@ -13,7 +13,7 @@ func TestGeoAlmostEqualThreshold(t *testing.T) {
 	// same point
 	a := LatLng{Lat: Rad(15), Lng: Rad(10)}
 	b := LatLng{Lat: Rad(15), Lng: Rad(10)}
-	if !geoAlmostEqualThreshold(&a, &b, 2.2204460492503131e-16) { // DBL_EPSILON
+	if !geoAlmostEqualThreshold(&a, &b, 2.2204460492503131e-16) { // dblEpsilon
 		t.Error("same point should be equal")
 	}
 
@@ -168,7 +168,7 @@ func TestGeoAzDistanceRadsInvertible(t *testing.T) {
 	distance := degsToRads(15)
 
 	_geoAzDistanceRads(&start, azimuth, distance, &out)
-	if math.Abs(greatCircleDistanceRads(&start, &out)-distance) >= EPSILON_RAD {
+	if math.Abs(greatCircleDistanceRads(&start, &out)-distance) >= epsilonRad {
 		t.Error("moved distance should be as expected")
 	}
 

@@ -5,7 +5,7 @@ import "math"
 // cubeRound rounds cube coordinates to the nearest integer cube coordinates.
 // Maintains the constraint that i + j + k = 0 for valid cube coordinates.
 // Ported from H3 C: localij.c::cubeRound.
-func cubeRound(i, j, k float64, ijk *CoordIJK) {
+func cubeRound(i, j, k float64, ijk *coordIJK) {
 	ri := int32(math.Round(i))
 	rj := int32(math.Round(j))
 	rk := int32(math.Round(k))

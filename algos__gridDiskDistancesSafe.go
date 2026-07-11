@@ -13,10 +13,10 @@ package h3
 // the output array may be left zero, as can happen when crossing a pentagon.
 //
 // Ported from H3 C: algos.c::gridDiskDistancesSafe.
-func gridDiskDistancesSafe(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+func gridDiskDistancesSafe(origin h3Index, k int32, out []h3Index, distances []int32) h3Error {
 	var maxIdx int64
 	err := maxGridDiskSize(k, &maxIdx)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		return err
 	}
 	return _gridDiskDistancesInternal(origin, k, out, distances, maxIdx, 0)

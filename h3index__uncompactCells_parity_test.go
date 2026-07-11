@@ -9,7 +9,7 @@ import (
 func Test_uncompactCells_parity(t *testing.T) {
 	tests := []struct {
 		name         string
-		compactedSet []H3Index
+		compactedSet []h3Index
 		numCompacted int64
 		numOut       int64
 		res          int32
@@ -17,7 +17,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 	}{
 		{
 			name:         "empty set",
-			compactedSet: []H3Index{},
+			compactedSet: []h3Index{},
 			numCompacted: 0,
 			numOut:       0,
 			res:          5,
@@ -25,7 +25,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 		},
 		{
 			name:         "single cell res 0 to res 1",
-			compactedSet: []H3Index{0x8001fffffffffff},
+			compactedSet: []h3Index{0x8001fffffffffff},
 			numCompacted: 1,
 			numOut:       7,
 			res:          1,
@@ -33,7 +33,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 		},
 		{
 			name:         "single cell res 0 to res 2",
-			compactedSet: []H3Index{0x8001fffffffffff},
+			compactedSet: []h3Index{0x8001fffffffffff},
 			numCompacted: 1,
 			numOut:       49,
 			res:          2,
@@ -41,7 +41,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 		},
 		{
 			name:         "single cell res 1 to res 2",
-			compactedSet: []H3Index{0x8101fffffffffff},
+			compactedSet: []h3Index{0x8101fffffffffff},
 			numCompacted: 1,
 			numOut:       7,
 			res:          2,
@@ -49,7 +49,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 		},
 		{
 			name:         "pentagon cell res 0 to res 1",
-			compactedSet: []H3Index{0x8083fffffffffff}, // Base cell 4 (pentagon)
+			compactedSet: []h3Index{0x8083fffffffffff}, // Base cell 4 (pentagon)
 			numCompacted: 1,
 			numOut:       7, // Pentagon has 6 children + itself logic -> need to check exact count
 			res:          1,
@@ -57,36 +57,36 @@ func Test_uncompactCells_parity(t *testing.T) {
 		},
 		{
 			name:         "multiple cells different types",
-			compactedSet: []H3Index{0x8001fffffffffff, 0x8083fffffffffff},
+			compactedSet: []h3Index{0x8001fffffffffff, 0x8083fffffffffff},
 			numCompacted: 2,
 			numOut:       14, // 7 + 7 from above
 			res:          1,
 			desc:         "Mixed hexagon and pentagon base cells",
 		},
 		{
-			name:         "with H3_NULL entries",
-			compactedSet: []H3Index{0x8001fffffffffff, H3_NULL, 0x8083fffffffffff},
+			name:         "with h3Null entries",
+			compactedSet: []h3Index{0x8001fffffffffff, h3Null, 0x8083fffffffffff},
 			numCompacted: 3,
-			numOut:       14, // Should skip H3_NULL, same as above
+			numOut:       14, // Should skip h3Null, same as above
 			res:          1,
-			desc:         "Compacted set with H3_NULL entries (should be skipped by hasChildAtRes check)",
+			desc:         "Compacted set with h3Null entries (should be skipped by hasChildAtRes check)",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Prepare input slices
-			inputCompacted := make([]H3Index, len(tt.compactedSet))
+			inputCompacted := make([]h3Index, len(tt.compactedSet))
 			copy(inputCompacted, tt.compactedSet)
 
 			// Prepare Go output slice
-			goOutSet := make([]H3Index, tt.numOut)
+			goOutSet := make([]h3Index, tt.numOut)
 			goErr := uncompactCells(inputCompacted, tt.numCompacted, goOutSet, tt.numOut, tt.res)
 
 			// Prepare C output slice
-			cOutSet := make([]H3Index, tt.numOut)
+			cOutSet := make([]h3Index, tt.numOut)
 			cErrCode := uncompactCellsC(inputCompacted, tt.numCompacted, cOutSet, tt.numOut, tt.res)
-			cErr := H3Error(cErrCode)
+			cErr := h3Error(cErrCode)
 
 			// Compare errors
 			if goErr != cErr {
@@ -94,7 +94,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 				return
 			}
 
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				t.Logf("Expected error for %s: %d", tt.desc, goErr)
 				return
 			}
@@ -115,7 +115,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 				// Count non-null results for logging
 				count := int64(0)
 				for i := int64(0); i < tt.numOut; i++ {
-					if goOutSet[i] != H3_NULL {
+					if goOutSet[i] != h3Null {
 						count++
 					}
 				}
@@ -128,7 +128,7 @@ func Test_uncompactCells_parity(t *testing.T) {
 func Test_uncompactCells_invalid_input_parity(t *testing.T) {
 	invalidCases := []struct {
 		name         string
-		compactedSet []H3Index
+		compactedSet []h3Index
 		numCompacted int64
 		numOut       int64
 		res          int32
@@ -136,7 +136,7 @@ func Test_uncompactCells_invalid_input_parity(t *testing.T) {
 	}{
 		{
 			name:         "invalid resolution domain",
-			compactedSet: []H3Index{0x8001fffffffffff},
+			compactedSet: []h3Index{0x8001fffffffffff},
 			numCompacted: 1,
 			numOut:       7,
 			res:          -1,
@@ -144,15 +144,15 @@ func Test_uncompactCells_invalid_input_parity(t *testing.T) {
 		},
 		{
 			name:         "resolution too high",
-			compactedSet: []H3Index{0x8001fffffffffff},
+			compactedSet: []h3Index{0x8001fffffffffff},
 			numCompacted: 1,
 			numOut:       100,
 			res:          20,
-			desc:         "Resolution beyond MAX_H3_RES should cause domain error",
+			desc:         "Resolution beyond maxH3Res should cause domain error",
 		},
 		{
 			name:         "parent resolution higher than target",
-			compactedSet: []H3Index{0x8301fffffffffff}, // Resolution 3
+			compactedSet: []h3Index{0x8301fffffffffff}, // Resolution 3
 			numCompacted: 1,
 			numOut:       10,
 			res:          2, // Lower than parent
@@ -160,7 +160,7 @@ func Test_uncompactCells_invalid_input_parity(t *testing.T) {
 		},
 		{
 			name:         "output buffer too small",
-			compactedSet: []H3Index{0x8001fffffffffff}, // Should expand to 7 cells
+			compactedSet: []h3Index{0x8001fffffffffff}, // Should expand to 7 cells
 			numCompacted: 1,
 			numOut:       3, // Too small
 			res:          1,
@@ -168,7 +168,7 @@ func Test_uncompactCells_invalid_input_parity(t *testing.T) {
 		},
 		{
 			name:         "invalid H3 cell",
-			compactedSet: []H3Index{0x1001fffffffffff}, // Invalid mode bits
+			compactedSet: []h3Index{0x1001fffffffffff}, // Invalid mode bits
 			numCompacted: 1,
 			numOut:       10,
 			res:          5,
@@ -179,24 +179,24 @@ func Test_uncompactCells_invalid_input_parity(t *testing.T) {
 	for _, tt := range invalidCases {
 		t.Run(tt.name, func(t *testing.T) {
 			// Prepare input slices
-			inputCompacted := make([]H3Index, len(tt.compactedSet))
+			inputCompacted := make([]h3Index, len(tt.compactedSet))
 			copy(inputCompacted, tt.compactedSet)
 
 			// Prepare Go output slice
-			goOutSet := make([]H3Index, tt.numOut)
+			goOutSet := make([]h3Index, tt.numOut)
 			goErr := uncompactCells(inputCompacted, tt.numCompacted, goOutSet, tt.numOut, tt.res)
 
 			// Prepare C output slice
-			cOutSet := make([]H3Index, tt.numOut)
+			cOutSet := make([]h3Index, tt.numOut)
 			cErrCode := uncompactCellsC(inputCompacted, tt.numCompacted, cOutSet, tt.numOut, tt.res)
-			cErr := H3Error(cErrCode)
+			cErr := h3Error(cErrCode)
 
 			// Compare errors
 			if goErr != cErr {
 				t.Errorf("Error mismatch for %s: Go=%d, C=%d", tt.desc, goErr, cErr)
 			}
 
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				t.Logf("Unexpected success for invalid input %s", tt.desc)
 			} else {
 				t.Logf("Expected error for %s: %d", tt.desc, goErr)

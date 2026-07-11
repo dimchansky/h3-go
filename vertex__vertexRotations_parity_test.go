@@ -8,7 +8,7 @@ import (
 
 func Test_vertexRotations_parity(t *testing.T) {
 	// Test with various cells including hexagons and pentagons
-	testCells := []H3Index{
+	testCells := []h3Index{
 		0x85283473fffffff, // res 5 hexagon
 		0x8928308280fffff, // res 9 hexagon
 		0x8a2a1072b587fff, // res 10 hexagon
@@ -51,7 +51,7 @@ func Test_vertexRotations_parity(t *testing.T) {
 			continue
 		}
 
-		if goErr == E_SUCCESS && goOut != cOut {
+		if goErr == eSuccess && goOut != cOut {
 			t.Errorf("vertexRotations(0x%x) output mismatch: Go=%d, C=%d", cell, goOut, cOut)
 		}
 	}
@@ -60,7 +60,7 @@ func Test_vertexRotations_parity(t *testing.T) {
 func Test_vertexRotations_parity_pentagons(t *testing.T) {
 	// Test all pentagons at different resolutions
 	for res := 0; res <= 15; res++ {
-		pentagons := make([]H3Index, NUM_PENTAGONS)
+		pentagons := make([]h3Index, numPentagons)
 		getPentagons(int32(res), pentagons)
 
 		for _, pentagon := range pentagons {
@@ -74,7 +74,7 @@ func Test_vertexRotations_parity_pentagons(t *testing.T) {
 				continue
 			}
 
-			if goErr == E_SUCCESS && goOut != cOut {
+			if goErr == eSuccess && goOut != cOut {
 				t.Errorf("vertexRotations(pentagon 0x%x res=%d) output mismatch: Go=%d, C=%d",
 					pentagon, res, goOut, cOut)
 			}
@@ -84,7 +84,7 @@ func Test_vertexRotations_parity_pentagons(t *testing.T) {
 
 func Test_vertexRotations_parity_neighbors(t *testing.T) {
 	// Test cells and their neighbors to exercise the rotation logic
-	baseCells := []H3Index{
+	baseCells := []h3Index{
 		0x85283473fffffff, // res 5 hexagon
 		0x8528342bfffffff, // res 5 hexagon
 		0x85283447fffffff, // res 5 hexagon
@@ -107,13 +107,13 @@ func Test_vertexRotations_parity_neighbors(t *testing.T) {
 			continue
 		}
 
-		if goErr == E_SUCCESS && goOut != cOut {
+		if goErr == eSuccess && goOut != cOut {
 			t.Errorf("vertexRotations(0x%x) output mismatch: Go=%d, C=%d", cell, goOut, cOut)
 			continue
 		}
 
 		// Test with some additional cells for coverage
-		additionalCells := []H3Index{
+		additionalCells := []h3Index{
 			cell + 1, // Adjacent cell
 			cell - 1, // Adjacent cell
 		}
@@ -133,7 +133,7 @@ func Test_vertexRotations_parity_neighbors(t *testing.T) {
 				continue
 			}
 
-			if goErrAdd == E_SUCCESS && goOutAdd != cOutAdd {
+			if goErrAdd == eSuccess && goOutAdd != cOutAdd {
 				t.Errorf("vertexRotations(additional 0x%x) output mismatch: Go=%d, C=%d",
 					additionalCell, goOutAdd, cOutAdd)
 			}

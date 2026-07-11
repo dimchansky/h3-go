@@ -9,7 +9,7 @@ import (
 func Test_cellToVertex_parity(t *testing.T) {
 	testCases := []struct {
 		name      string
-		cell      H3Index
+		cell      h3Index
 		vertexNum int32
 	}{
 		{
@@ -102,7 +102,7 @@ func Test_cellToVertex_parity(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Call Go implementation
-			var goOut H3Index
+			var goOut h3Index
 			goErr := cellToVertex(tc.cell, tc.vertexNum, &goOut)
 
 			// Call C implementation
@@ -116,7 +116,7 @@ func Test_cellToVertex_parity(t *testing.T) {
 			}
 
 			// If no error, compare outputs
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut != cOut {
 					t.Errorf("cellToVertex(%#016x, %d) = %#016x, want %#016x",
 						tc.cell, tc.vertexNum, goOut, cOut)
@@ -128,7 +128,7 @@ func Test_cellToVertex_parity(t *testing.T) {
 
 func Test_cellToVertex_extensive_parity(t *testing.T) {
 	// Test a variety of cells across different resolutions
-	testCells := []H3Index{
+	testCells := []h3Index{
 		0x8001fffffffffff, // Resolution 0
 		0x8107fffffffffff, // Resolution 1
 		0x8230062ffffffff, // Resolution 2
@@ -147,14 +147,14 @@ func Test_cellToVertex_extensive_parity(t *testing.T) {
 
 	for _, cell := range testCells {
 		isPent := isPentagon(cell)
-		maxVertex := int32(NUM_HEX_VERTS)
+		maxVertex := int32(numHexVerts)
 		if isPent {
-			maxVertex = NUM_PENT_VERTS
+			maxVertex = numPentVerts
 		}
 
 		for vertexNum := int32(0); vertexNum < maxVertex; vertexNum++ {
 			// Call Go implementation
-			var goOut H3Index
+			var goOut h3Index
 			goErr := cellToVertex(cell, vertexNum, &goOut)
 
 			// Call C implementation
@@ -168,7 +168,7 @@ func Test_cellToVertex_extensive_parity(t *testing.T) {
 			}
 
 			// If no error, compare outputs
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut != cOut {
 					t.Errorf("cellToVertex(%#016x, %d) = %#016x, want %#016x",
 						cell, vertexNum, goOut, cOut)

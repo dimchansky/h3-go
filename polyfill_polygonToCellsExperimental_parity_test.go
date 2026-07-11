@@ -22,7 +22,7 @@ func Test_polygonToCellsExperimental_parity(t *testing.T) {
 				Holes:   nil,
 			},
 			res:      6,
-			flags:    uint32(CONTAINMENT_CENTER),
+			flags:    uint32(ContainmentCenter),
 			maxCells: 0,
 		},
 		{
@@ -37,7 +37,7 @@ func Test_polygonToCellsExperimental_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:      9,
-			flags:    uint32(CONTAINMENT_CENTER),
+			flags:    uint32(ContainmentCenter),
 			maxCells: 1000,
 		},
 		{
@@ -53,7 +53,7 @@ func Test_polygonToCellsExperimental_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:      7,
-			flags:    uint32(CONTAINMENT_CENTER),
+			flags:    uint32(ContainmentCenter),
 			maxCells: 2000,
 		},
 		{
@@ -77,16 +77,16 @@ func Test_polygonToCellsExperimental_parity(t *testing.T) {
 				},
 			},
 			res:      6,
-			flags:    uint32(CONTAINMENT_CENTER),
+			flags:    uint32(ContainmentCenter),
 			maxCells: 500,
 		},
 	}
 
 	for _, mode := range []ContainmentMode{
-		CONTAINMENT_CENTER,
-		CONTAINMENT_FULL,
-		CONTAINMENT_OVERLAPPING,
-		CONTAINMENT_OVERLAPPING_BBOX,
+		ContainmentCenter,
+		ContainmentFull,
+		ContainmentOverlapping,
+		ContainmentOverlappingBBox,
 	} {
 		for _, tt := range tests {
 			t.Run(tt.name+"_mode_"+string(rune(mode+'0')), func(t *testing.T) {
@@ -99,8 +99,8 @@ func Test_polygonToCellsExperimental_parity(t *testing.T) {
 				}
 
 				// Allocate buffers
-				goOut := make([]H3Index, maxCells)
-				cOut := make([]H3Index, maxCells)
+				goOut := make([]h3Index, maxCells)
+				cOut := make([]h3Index, maxCells)
 
 				// Call Go implementation
 				goErr := polygonToCellsExperimental(&tt.polygon, tt.res, flags, maxCells, goOut)
@@ -115,15 +115,15 @@ func Test_polygonToCellsExperimental_parity(t *testing.T) {
 				}
 
 				// If both succeeded, compare results
-				if goErr == E_SUCCESS {
+				if goErr == eSuccess {
 					// Count non-null cells in each result
 					goCount := 0
 					cCount := 0
 					for i := int64(0); i < maxCells; i++ {
-						if goOut[i] != H3_NULL {
+						if goOut[i] != h3Null {
 							goCount++
 						}
-						if cOut[i] != H3_NULL {
+						if cOut[i] != h3Null {
 							cCount++
 						}
 					}
@@ -135,16 +135,16 @@ func Test_polygonToCellsExperimental_parity(t *testing.T) {
 					// For non-empty results, check that all Go cells are in C results
 					if goCount > 0 && cCount > 0 {
 						// Create maps for faster lookup
-						cCells := make(map[H3Index]bool)
+						cCells := make(map[h3Index]bool)
 						for i := 0; i < cCount && i < len(cOut); i++ {
-							if cOut[i] != H3_NULL {
+							if cOut[i] != h3Null {
 								cCells[cOut[i]] = true
 							}
 						}
 
 						missingCount := 0
 						for i := 0; i < goCount && i < len(goOut); i++ {
-							if goOut[i] != H3_NULL && !cCells[goOut[i]] {
+							if goOut[i] != h3Null && !cCells[goOut[i]] {
 								missingCount++
 								if missingCount <= 5 { // Only show first 5 mismatches
 									t.Errorf("Go cell %016x not found in C results", goOut[i])
@@ -168,47 +168,47 @@ func Test_polygonToCellsExperimental_invalid_inputs_parity(t *testing.T) {
 		res       int32
 		flags     uint32
 		maxCells  int64
-		expectErr H3Error
+		expectErr h3Error
 	}{
 		{
 			name:      "Negative resolution",
 			polygon:   &GeoPolygon{GeoLoop: GeoLoop{{Lat: 0, Lng: 0}}},
 			res:       -1,
-			flags:     uint32(CONTAINMENT_CENTER),
+			flags:     uint32(ContainmentCenter),
 			maxCells:  100,
-			expectErr: E_RES_DOMAIN,
+			expectErr: eResDomain,
 		},
 		{
 			name:      "Too high resolution",
 			polygon:   &GeoPolygon{GeoLoop: GeoLoop{{Lat: 0, Lng: 0}}},
-			res:       MAX_H3_RES + 1,
-			flags:     uint32(CONTAINMENT_CENTER),
+			res:       maxH3Res + 1,
+			flags:     uint32(ContainmentCenter),
 			maxCells:  100,
-			expectErr: E_RES_DOMAIN,
+			expectErr: eResDomain,
 		},
 		{
 			name:      "Invalid containment mode",
 			polygon:   &GeoPolygon{GeoLoop: GeoLoop{{Lat: 0, Lng: 0}}},
 			res:       5,
-			flags:     uint32(CONTAINMENT_INVALID),
+			flags:     uint32(ContainmentInvalid),
 			maxCells:  100,
-			expectErr: E_OPTION_INVALID,
+			expectErr: eOptionInvalid,
 		},
 		{
 			name:      "Zero max cells",
 			polygon:   &GeoPolygon{GeoLoop: GeoLoop{{Lat: 0, Lng: 0}}},
 			res:       5,
-			flags:     uint32(CONTAINMENT_CENTER),
+			flags:     uint32(ContainmentCenter),
 			maxCells:  0,
-			expectErr: E_SUCCESS, // No cells to write, so no overflow
+			expectErr: eSuccess, // No cells to write, so no overflow
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Allocate buffer
-			goOut := make([]H3Index, maxInt(1, int(tt.maxCells)))
-			cOut := make([]H3Index, maxInt(1, int(tt.maxCells)))
+			goOut := make([]h3Index, maxInt(1, int(tt.maxCells)))
+			cOut := make([]h3Index, maxInt(1, int(tt.maxCells)))
 
 			// Call Go implementation
 			goErr := polygonToCellsExperimental(tt.polygon, tt.res, tt.flags, tt.maxCells, goOut)
@@ -255,15 +255,15 @@ func Test_polygonToCellsExperimental_large_polygon_parity(t *testing.T) {
 		Holes: nil,
 	}
 
-	for _, mode := range []ContainmentMode{CONTAINMENT_CENTER, CONTAINMENT_OVERLAPPING_BBOX} {
+	for _, mode := range []ContainmentMode{ContainmentCenter, ContainmentOverlappingBBox} {
 		for _, res := range []int32{6, 7, 8} {
 			t.Run("sf_polygon", func(t *testing.T) {
 				flags := uint32(mode)
 				maxCells := int64(10000)
 
 				// Allocate buffers
-				goOut := make([]H3Index, maxCells)
-				cOut := make([]H3Index, maxCells)
+				goOut := make([]h3Index, maxCells)
+				cOut := make([]h3Index, maxCells)
 
 				// Call Go implementation
 				goErr := polygonToCellsExperimental(&polygon, res, flags, maxCells, goOut)
@@ -277,15 +277,15 @@ func Test_polygonToCellsExperimental_large_polygon_parity(t *testing.T) {
 					return
 				}
 
-				if goErr == E_SUCCESS {
+				if goErr == eSuccess {
 					// Count cells
 					goCount := 0
 					cCount := 0
 					for i := 0; i < len(goOut); i++ {
-						if goOut[i] != H3_NULL {
+						if goOut[i] != h3Null {
 							goCount++
 						}
-						if cOut[i] != H3_NULL {
+						if cOut[i] != h3Null {
 							cCount++
 						}
 					}

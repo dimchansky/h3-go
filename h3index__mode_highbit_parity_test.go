@@ -5,7 +5,7 @@ package h3
 import "testing"
 
 func Test_h3index_mode_highbit_ParityWithC(t *testing.T) {
-	hs := []H3Index{0x0000000000000000, 0x8928308280fffff, 0x821c07fffffffff, 0xffffffffffffffff}
+	hs := []h3Index{0x0000000000000000, 0x8928308280fffff, 0x821c07fffffffff, 0xffffffffffffffff}
 	// getMode / setMode parity
 	for _, h := range hs {
 		if getMode(h) != getModeC(h) {

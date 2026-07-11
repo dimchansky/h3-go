@@ -138,7 +138,7 @@ func Test_baseCellToFaceIjk_parity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var goResult FaceIJK
+			var goResult faceIJK
 			_baseCellToFaceIjk(tt.baseCell, &goResult)
 
 			cResult := _baseCellToFaceIjkC(tt.baseCell)

@@ -7,10 +7,10 @@ import (
 
 func TestH3SetToVertexGraphInternal_empty(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
+	var graph vertexGraph
 
 	err := h3SetToVertexGraph(nil, 0, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("h3SetToVertexGraph failed with error: %v", err)
 	}
 
@@ -23,12 +23,12 @@ func TestH3SetToVertexGraphInternal_empty(t *testing.T) {
 
 func TestH3SetToVertexGraphInternal_singleHex(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
-	set := []H3Index{0x890dab6220bffff}
+	var graph vertexGraph
+	set := []h3Index{0x890dab6220bffff}
 	numHexes := int32(len(set))
 
 	err := h3SetToVertexGraph(set, numHexes, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("h3SetToVertexGraph failed with error: %v", err)
 	}
 
@@ -41,12 +41,12 @@ func TestH3SetToVertexGraphInternal_singleHex(t *testing.T) {
 
 func TestH3SetToVertexGraphInternal_nonContiguous2(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
-	set := []H3Index{0x8928308291bffff, 0x89283082943ffff}
+	var graph vertexGraph
+	set := []h3Index{0x8928308291bffff, 0x89283082943ffff}
 	numHexes := int32(len(set))
 
 	err := h3SetToVertexGraph(set, numHexes, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("h3SetToVertexGraph failed with error: %v", err)
 	}
 
@@ -59,12 +59,12 @@ func TestH3SetToVertexGraphInternal_nonContiguous2(t *testing.T) {
 
 func TestH3SetToVertexGraphInternal_contiguous2(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
-	set := []H3Index{0x8928308291bffff, 0x89283082957ffff}
+	var graph vertexGraph
+	set := []h3Index{0x8928308291bffff, 0x89283082957ffff}
 	numHexes := int32(len(set))
 
 	err := h3SetToVertexGraph(set, numHexes, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("h3SetToVertexGraph failed with error: %v", err)
 	}
 
@@ -77,12 +77,12 @@ func TestH3SetToVertexGraphInternal_contiguous2(t *testing.T) {
 
 func TestH3SetToVertexGraphInternal_contiguous2distorted(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
-	set := []H3Index{0x894cc5365afffff, 0x894cc536537ffff}
+	var graph vertexGraph
+	set := []h3Index{0x894cc5365afffff, 0x894cc536537ffff}
 	numHexes := int32(len(set))
 
 	err := h3SetToVertexGraph(set, numHexes, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("h3SetToVertexGraph failed with error: %v", err)
 	}
 
@@ -95,12 +95,12 @@ func TestH3SetToVertexGraphInternal_contiguous2distorted(t *testing.T) {
 
 func TestH3SetToVertexGraphInternal_contiguous3(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
-	set := []H3Index{0x8928308288bffff, 0x892830828d7ffff, 0x8928308289bffff}
+	var graph vertexGraph
+	set := []h3Index{0x8928308288bffff, 0x892830828d7ffff, 0x8928308289bffff}
 	numHexes := int32(len(set))
 
 	err := h3SetToVertexGraph(set, numHexes, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("h3SetToVertexGraph failed with error: %v", err)
 	}
 
@@ -114,8 +114,8 @@ func TestH3SetToVertexGraphInternal_contiguous3(t *testing.T) {
 
 func TestH3SetToVertexGraphInternal_hole(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
-	set := []H3Index{
+	var graph vertexGraph
+	set := []h3Index{
 		0x892830828c7ffff, 0x892830828d7ffff,
 		0x8928308289bffff, 0x89283082813ffff,
 		0x8928308288fffff, 0x89283082883ffff,
@@ -123,7 +123,7 @@ func TestH3SetToVertexGraphInternal_hole(t *testing.T) {
 	numHexes := int32(len(set))
 
 	err := h3SetToVertexGraph(set, numHexes, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("h3SetToVertexGraph failed with error: %v", err)
 	}
 

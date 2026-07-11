@@ -49,13 +49,13 @@ func Test__iterateBaseCellIndexesAtRes_parity(t *testing.T) {
 			}
 
 			// Collect Go results
-			goResults := make([]H3Index, 0, bufferSize)
-			_iterateBaseCellIndexesAtRes(tc.res, func(h H3Index) {
+			goResults := make([]h3Index, 0, bufferSize)
+			_iterateBaseCellIndexesAtRes(tc.res, func(h h3Index) {
 				goResults = append(goResults, h)
 			}, tc.baseCell)
 
 			// Collect C results
-			cBuffer := make([]H3Index, bufferSize)
+			cBuffer := make([]h3Index, bufferSize)
 			cCount := iterateBaseCellIndexesAtResC(tc.res, tc.baseCell, cBuffer)
 			cResults := cBuffer[:cCount]
 

@@ -22,9 +22,9 @@ func TestLatLngToCellExtremeCoordinates(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(fmt.Sprintf("lat_%v_lng_%v_res_%d", tc.lat, tc.lng, tc.res), func(t *testing.T) {
 			g := LatLng{Lat: Rad(tc.lat), Lng: Rad(tc.lng)}
-			var h H3Index
+			var h h3Index
 			err := latLngToCell(&g, tc.res, &h)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Errorf("latLngToCell failed with extreme coordinates: %v", err)
 			}
 		})
@@ -33,12 +33,12 @@ func TestLatLngToCellExtremeCoordinates(t *testing.T) {
 
 func TestIsValidCellAtResolution(t *testing.T) {
 	t.Parallel()
-	for i := int32(0); i <= MAX_H3_RES; i++ {
+	for i := int32(0); i <= maxH3Res; i++ {
 		t.Run(fmt.Sprintf("res_%d", i), func(t *testing.T) {
 			g := LatLng{Lat: Rad(0), Lng: Rad(0)}
-			var h3 H3Index
+			var h3 h3Index
 			err := latLngToCell(&g, i, &h3)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("latLngToCell failed: %v", err)
 			}
 			if !isValidCell(h3) {
@@ -51,9 +51,9 @@ func TestIsValidCellAtResolution(t *testing.T) {
 func TestIsValidCellDigits(t *testing.T) {
 	t.Parallel()
 	g := LatLng{Lat: Rad(0), Lng: Rad(0)}
-	var h3 H3Index
+	var h3 h3Index
 	err := latLngToCell(&g, 1, &h3)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 	// Set a bit for an unused digit to something else.
@@ -65,10 +65,10 @@ func TestIsValidCellDigits(t *testing.T) {
 
 func TestIsValidCellBaseCell(t *testing.T) {
 	t.Parallel()
-	for i := int32(0); i < NUM_BASE_CELLS; i++ {
+	for i := int32(0); i < numBaseCells; i++ {
 		t.Run(fmt.Sprintf("base_cell_%d", i), func(t *testing.T) {
-			h := H3Index(H3_INIT)
-			h = setMode(h, H3_CELL_MODE)
+			h := h3Index(h3Init)
+			h = setMode(h, h3CellMode)
 			h = setBaseCell(h, i)
 
 			if !isValidCell(h) {
@@ -84,9 +84,9 @@ func TestIsValidCellBaseCell(t *testing.T) {
 
 func TestIsValidCellBaseCellInvalid(t *testing.T) {
 	t.Parallel()
-	hWrongBaseCell := H3Index(0)
-	hWrongBaseCell = setMode(hWrongBaseCell, H3_CELL_MODE)
-	hWrongBaseCell = setBaseCell(hWrongBaseCell, NUM_BASE_CELLS)
+	hWrongBaseCell := h3Index(0)
+	hWrongBaseCell = setMode(hWrongBaseCell, h3CellMode)
+	hWrongBaseCell = setBaseCell(hWrongBaseCell, numBaseCells)
 	if isValidCell(hWrongBaseCell) {
 		t.Error("isValidCell failed on invalid base cell")
 	}
@@ -96,9 +96,9 @@ func TestIsValidCellWithMode(t *testing.T) {
 	t.Parallel()
 	for i := int32(0); i <= 0xf; i++ {
 		t.Run(fmt.Sprintf("mode_%d", i), func(t *testing.T) {
-			h := H3Index(H3_INIT)
+			h := h3Index(h3Init)
 			h = setMode(h, i)
-			if i == H3_CELL_MODE {
+			if i == h3CellMode {
 				if !isValidCell(h) {
 					t.Error("isValidCell should succeed on valid mode")
 				}
@@ -115,8 +115,8 @@ func TestIsValidCellReservedBits(t *testing.T) {
 	t.Parallel()
 	for i := int32(0); i < 8; i++ {
 		t.Run(fmt.Sprintf("reserved_bits_%d", i), func(t *testing.T) {
-			h := H3Index(H3_INIT)
-			h = setMode(h, H3_CELL_MODE)
+			h := h3Index(h3Init)
+			h = setMode(h, h3CellMode)
 			h = setReservedBits(h, i)
 			if i == 0 {
 				if !isValidCell(h) {
@@ -133,8 +133,8 @@ func TestIsValidCellReservedBits(t *testing.T) {
 
 func TestIsValidCellHighBit(t *testing.T) {
 	t.Parallel()
-	h := H3Index(H3_INIT)
-	h = setMode(h, H3_CELL_MODE)
+	h := h3Index(h3Init)
+	h = setMode(h, h3CellMode)
 	h = setHighBit(h, 1)
 	if isValidCell(h) {
 		t.Error("isValidCell failed on high bit")
@@ -143,9 +143,9 @@ func TestIsValidCellHighBit(t *testing.T) {
 
 func TestH3BadDigitInvalid(t *testing.T) {
 	t.Parallel()
-	h := H3Index(0)
+	h := h3Index(0)
 	// By default the first index digit is out of range.
-	h = setMode(h, H3_CELL_MODE)
+	h = setMode(h, h3CellMode)
 	h = setResolution(h, 1)
 	if isValidCell(h) {
 		t.Error("isValidCell failed on too large digit")
@@ -155,8 +155,8 @@ func TestH3BadDigitInvalid(t *testing.T) {
 func TestH3DeletedSubsequenceInvalid(t *testing.T) {
 	t.Parallel()
 	// Create an index located in a deleted subsequence of a pentagon.
-	var h H3Index
-	setH3Index(&h, 1, 4, int32(K_AXES_DIGIT))
+	var h h3Index
+	setH3Index(&h, 1, 4, int32(kAxesDigit))
 	if isValidCell(h) {
 		t.Error("isValidCell failed on deleted subsequence")
 	}
@@ -164,12 +164,12 @@ func TestH3DeletedSubsequenceInvalid(t *testing.T) {
 
 func TestMoreDeletedSubsequenceInvalid(t *testing.T) {
 	t.Parallel()
-	p := H3Index(0x80c3fffffffffff) // res 0 pentagon
+	p := h3Index(0x80c3fffffffffff) // res 0 pentagon
 
 	for res := int32(1); res <= 15; res++ {
 		t.Run(fmt.Sprintf("res_%d", res), func(t *testing.T) {
 			h, err := cellToCenterChild(p, res)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("cellToCenterChild failed: %v", err)
 			}
 			if !isValidCell(h) {
@@ -199,7 +199,7 @@ func TestH3ToString(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		h        H3Index
+		h        h3Index
 		expected string
 	}{
 		{
@@ -240,7 +240,7 @@ func TestStringToH3(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    string
-		expected H3Index
+		expected h3Index
 		wantErr  bool
 	}{
 		{
@@ -266,13 +266,13 @@ func TestStringToH3(t *testing.T) {
 			h3, err := stringToH3(tc.input)
 
 			if tc.wantErr {
-				if err == E_SUCCESS {
+				if err == eSuccess {
 					t.Error("expected error but got success")
 				}
 				return
 			}
 
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Errorf("stringToH3 failed with error %v", err)
 				return
 			}
@@ -286,7 +286,7 @@ func TestStringToH3(t *testing.T) {
 
 func TestSetH3Index(t *testing.T) {
 	t.Parallel()
-	var h H3Index
+	var h h3Index
 	setH3Index(&h, 5, 12, 1)
 
 	if getResolution(h) != 5 {
@@ -295,8 +295,8 @@ func TestSetH3Index(t *testing.T) {
 	if getBaseCellNumber(h) != 12 {
 		t.Errorf("base cell: got %d, expected 12", getBaseCellNumber(h))
 	}
-	if getMode(h) != H3_CELL_MODE {
-		t.Errorf("mode: got %d, expected %d", getMode(h), H3_CELL_MODE)
+	if getMode(h) != h3CellMode {
+		t.Errorf("mode: got %d, expected %d", getMode(h), h3CellMode)
 	}
 
 	for i := int32(1); i <= 5; i++ {
@@ -305,9 +305,9 @@ func TestSetH3Index(t *testing.T) {
 		}
 	}
 
-	for i := int32(6); i <= MAX_H3_RES; i++ {
-		if getIndexDigit(h, i) != int32(INVALID_DIGIT) {
-			t.Errorf("blanked digit %d: got %d, expected %d", i, getIndexDigit(h, i), INVALID_DIGIT)
+	for i := int32(6); i <= maxH3Res; i++ {
+		if getIndexDigit(h, i) != int32(invalidDigit) {
+			t.Errorf("blanked digit %d: got %d, expected %d", i, getIndexDigit(h, i), invalidDigit)
 		}
 	}
 
@@ -319,11 +319,11 @@ func TestSetH3Index(t *testing.T) {
 func TestIsResClassIII(t *testing.T) {
 	t.Parallel()
 	coord := LatLng{Lat: Rad(0), Lng: Rad(0)}
-	for i := int32(0); i <= MAX_H3_RES; i++ {
+	for i := int32(0); i <= maxH3Res; i++ {
 		t.Run(fmt.Sprintf("res_%d", i), func(t *testing.T) {
-			var h H3Index
+			var h h3Index
 			err := latLngToCell(&coord, i, &h)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("latLngToCell failed: %v", err)
 			}
 

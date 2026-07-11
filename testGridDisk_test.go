@@ -6,25 +6,25 @@ import (
 )
 
 // Test helper that checks gridDisk output matches gridDiskDistancesSafe output.
-func gridDisk_equals_gridDiskDistancesSafe_assertions(t *testing.T, h3 H3Index) {
+func gridDisk_equals_gridDiskDistancesSafe_assertions(t *testing.T, h3 h3Index) {
 	for k := int32(0); k < 3; k++ {
 		var kSz int64
 		err := maxGridDiskSize(k, &kSz)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("maxGridDiskSize failed: %v", err)
 		}
 
-		neighbors := make([]H3Index, kSz)
+		neighbors := make([]h3Index, kSz)
 		distances := make([]int32, kSz)
 		err = gridDiskDistances(h3, k, neighbors, distances)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("gridDiskDistances failed: %v", err)
 		}
 
-		internalNeighbors := make([]H3Index, kSz)
+		internalNeighbors := make([]h3Index, kSz)
 		internalDistances := make([]int32, kSz)
 		err = gridDiskDistancesSafe(h3, k, internalNeighbors, internalDistances)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("gridDiskDistancesSafe failed: %v", err)
 		}
 
@@ -60,21 +60,21 @@ func TestGridDisk0(t *testing.T) {
 
 	// Convert from radians to degrees
 	sf := LatLng{Lat: Angle(0.659966917655), Lng: Angle(2*3.14159 - 2.1364398519396)}
-	var sfHex0 H3Index
+	var sfHex0 h3Index
 	err := latLngToCell(&sf, 0, &sfHex0)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
-	k1 := make([]H3Index, 7)
+	k1 := make([]h3Index, 7)
 	k1Dist := make([]int32, 7)
-	expectedK1 := []H3Index{0x8029fffffffffff, 0x801dfffffffffff,
+	expectedK1 := []h3Index{0x8029fffffffffff, 0x801dfffffffffff,
 		0x8013fffffffffff, 0x8027fffffffffff,
 		0x8049fffffffffff, 0x8051fffffffffff,
 		0x8037fffffffffff}
 
 	err = gridDiskDistances(sfHex0, 1, k1, k1Dist)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDiskDistances failed: %v", err)
 	}
 
@@ -104,11 +104,11 @@ func TestGridDisk0(t *testing.T) {
 func TestGridDisk0_PolarPentagon(t *testing.T) {
 	t.Parallel()
 
-	var polar H3Index
+	var polar h3Index
 	setH3Index(&polar, 0, 4, 0)
-	k2 := make([]H3Index, 7)
+	k2 := make([]h3Index, 7)
 	k2Dist := make([]int32, 7)
-	expectedK2 := []H3Index{0x8009fffffffffff,
+	expectedK2 := []h3Index{0x8009fffffffffff,
 		0x8007fffffffffff,
 		0x8001fffffffffff,
 		0x8011fffffffffff,
@@ -117,7 +117,7 @@ func TestGridDisk0_PolarPentagon(t *testing.T) {
 		0}
 
 	err := gridDiskDistances(polar, 1, k2, k2Dist)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDiskDistances failed: %v", err)
 	}
 
@@ -151,11 +151,11 @@ func TestGridDisk0_PolarPentagon(t *testing.T) {
 func TestGridDisk1_PolarPentagon(t *testing.T) {
 	t.Parallel()
 
-	var polar H3Index
+	var polar h3Index
 	setH3Index(&polar, 1, 4, 0)
-	k2 := make([]H3Index, 7)
+	k2 := make([]h3Index, 7)
 	k2Dist := make([]int32, 7)
-	expectedK2 := []H3Index{0x81083ffffffffff,
+	expectedK2 := []h3Index{0x81083ffffffffff,
 		0x81093ffffffffff,
 		0x81097ffffffffff,
 		0x8108fffffffffff,
@@ -164,7 +164,7 @@ func TestGridDisk1_PolarPentagon(t *testing.T) {
 		0}
 
 	err := gridDiskDistances(polar, 1, k2, k2Dist)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDiskDistances failed: %v", err)
 	}
 
@@ -198,11 +198,11 @@ func TestGridDisk1_PolarPentagon(t *testing.T) {
 func TestGridDisk1_PolarPentagon_k3(t *testing.T) {
 	t.Parallel()
 
-	var polar H3Index
+	var polar h3Index
 	setH3Index(&polar, 1, 4, 0)
-	k2 := make([]H3Index, 37)
+	k2 := make([]h3Index, 37)
 	k2Dist := make([]int32, 37)
-	expectedK2 := []H3Index{0x81013ffffffffff,
+	expectedK2 := []h3Index{0x81013ffffffffff,
 		0x811fbffffffffff,
 		0x81193ffffffffff,
 		0x81097ffffffffff,
@@ -244,7 +244,7 @@ func TestGridDisk1_PolarPentagon_k3(t *testing.T) {
 		2, 3, 1, 3, 3, 0, 0, 0, 0, 0, 0}
 
 	err := gridDiskDistances(polar, 3, k2, k2Dist)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDiskDistances failed: %v", err)
 	}
 
@@ -274,18 +274,18 @@ func TestGridDisk1_PolarPentagon_k3(t *testing.T) {
 func TestGridDisk1_Pentagon_k4(t *testing.T) {
 	t.Parallel()
 
-	var pent H3Index
+	var pent h3Index
 	setH3Index(&pent, 1, 14, 0)
 
 	var maxSize int64
 	err := maxGridDiskSize(4, &maxSize)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
 
-	k2 := make([]H3Index, maxSize)
+	k2 := make([]h3Index, maxSize)
 	k2Dist := make([]int32, maxSize)
-	expectedK2 := []H3Index{0x811d7ffffffffff,
+	expectedK2 := []h3Index{0x811d7ffffffffff,
 		0x810c7ffffffffff,
 		0x81227ffffffffff,
 		0x81293ffffffffff,
@@ -340,7 +340,7 @@ func TestGridDisk1_Pentagon_k4(t *testing.T) {
 		0}
 
 	err = gridDiskDistances(pent, 4, k2, k2Dist)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDiskDistances failed: %v", err)
 	}
 
@@ -371,7 +371,7 @@ func TestGridDisk_equals_gridDiskDistancesSafe(t *testing.T) {
 
 	for res := int32(0); res < 2; res++ {
 		t.Run("", func(t *testing.T) {
-			_iterateAllIndexesAtRes(res, func(h3 H3Index) {
+			_iterateAllIndexesAtRes(res, func(h3 h3Index) {
 				gridDisk_equals_gridDiskDistancesSafe_assertions(t, h3)
 			})
 		})
@@ -384,13 +384,13 @@ func TestGridDiskInvalid(t *testing.T) {
 	k := int32(1000)
 	var kSz int64
 	err := maxGridDiskSize(k, &kSz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
-	neighbors := make([]H3Index, kSz)
+	neighbors := make([]h3Index, kSz)
 	err = gridDisk(0x7fffffffffffffff, k, neighbors)
-	if err != E_CELL_INVALID {
-		t.Errorf("gridDisk should return E_CELL_INVALID for invalid input, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("gridDisk should return eCellInvalid for invalid input, got %v", err)
 	}
 }
 
@@ -400,33 +400,33 @@ func TestGridDiskInvalidDigit(t *testing.T) {
 	k := int32(2)
 	var kSz int64
 	err := maxGridDiskSize(k, &kSz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
-	neighbors := make([]H3Index, kSz)
+	neighbors := make([]h3Index, kSz)
 	err = gridDisk(0x4d4b00fe5c5c3030, k, neighbors)
-	if err != E_CELL_INVALID {
-		t.Errorf("gridDisk should return E_CELL_INVALID for invalid input, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("gridDisk should return eCellInvalid for invalid input, got %v", err)
 	}
 }
 
 func TestGridDiskDistances_invalidK(t *testing.T) {
 	t.Parallel()
 
-	index := H3Index(0x811d7ffffffffff)
+	index := h3Index(0x811d7ffffffffff)
 	err := gridDiskDistances(index, -1, nil, nil)
-	if err != E_DOMAIN {
-		t.Errorf("gridDiskDistances should return E_DOMAIN for invalid k, got %v", err)
+	if err != eDomain {
+		t.Errorf("gridDiskDistances should return eDomain for invalid k, got %v", err)
 	}
 
 	err = gridDiskDistancesUnsafe(index, -1, nil, nil)
-	if err != E_DOMAIN {
-		t.Errorf("gridDiskDistancesUnsafe should return E_DOMAIN for invalid k, got %v", err)
+	if err != eDomain {
+		t.Errorf("gridDiskDistancesUnsafe should return eDomain for invalid k, got %v", err)
 	}
 
 	err = gridDiskDistancesSafe(index, -1, nil, nil)
-	if err != E_DOMAIN {
-		t.Errorf("gridDiskDistancesSafe should return E_DOMAIN for invalid k, got %v", err)
+	if err != eDomain {
+		t.Errorf("gridDiskDistancesSafe should return eDomain for invalid k, got %v", err)
 	}
 }
 
@@ -435,8 +435,8 @@ func TestMaxGridDiskSize_invalid(t *testing.T) {
 
 	var sz int64
 	err := maxGridDiskSize(-1, &sz)
-	if err != E_DOMAIN {
-		t.Errorf("maxGridDiskSize should return E_DOMAIN for negative k, got %v", err)
+	if err != eDomain {
+		t.Errorf("maxGridDiskSize should return eDomain for negative k, got %v", err)
 	}
 }
 
@@ -445,7 +445,7 @@ func TestMaxGridDiskSize_large(t *testing.T) {
 
 	var sz int64
 	err := maxGridDiskSize(26755, &sz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
 	if sz != 2147570341 {
@@ -460,14 +460,14 @@ func TestMaxGridDiskSize_numCells(t *testing.T) {
 	prev := int64(0)
 	var maxCells int64
 	maxCells, err := getNumCells(15)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("getNumCells failed: %v", err)
 	}
 
 	// 13780510 will produce values above max
 	for k := int32(13780510 - 100); k < 13780510+100; k++ {
 		err = maxGridDiskSize(k, &sz)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("maxGridDiskSize failed for k=%d: %v", k, err)
 		}
 		if sz > maxCells {
@@ -479,11 +479,11 @@ func TestMaxGridDiskSize_numCells(t *testing.T) {
 		prev = sz
 	}
 
-	err = maxGridDiskSize(INT32_MAX, &sz)
-	if err != E_SUCCESS {
-		t.Fatalf("maxGridDiskSize failed for INT32_MAX: %v", err)
+	err = maxGridDiskSize(int32Max, &sz)
+	if err != eSuccess {
+		t.Fatalf("maxGridDiskSize failed for int32Max: %v", err)
 	}
 	if sz != maxCells {
-		t.Errorf("maxGridDiskSize of INT32_MAX should produce valid result: expected %d, got %d", maxCells, sz)
+		t.Errorf("maxGridDiskSize of int32Max should produce valid result: expected %d, got %d", maxCells, sz)
 	}
 }

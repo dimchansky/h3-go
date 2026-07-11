@@ -9,44 +9,44 @@ import (
 func Test_faceIjkToBaseCell_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		h    FaceIJK
+		h    faceIJK
 	}{
 		// Test all valid combinations for each face
 		// Face 0
-		{"face_0_000", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}}},
-		{"face_0_001", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 1}}},
-		{"face_0_002", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 2}}},
-		{"face_0_010", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 1, K: 0}}},
-		{"face_0_011", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 1, K: 1}}},
-		{"face_0_012", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 1, K: 2}}},
-		{"face_0_020", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 2, K: 0}}},
-		{"face_0_021", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 2, K: 1}}},
-		{"face_0_022", FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 2, K: 2}}},
-		{"face_0_100", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 0, K: 0}}},
-		{"face_0_101", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 0, K: 1}}},
-		{"face_0_102", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 0, K: 2}}},
-		{"face_0_110", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 1, K: 0}}},
-		{"face_0_111", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 1, K: 1}}},
-		{"face_0_112", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 1, K: 2}}},
-		{"face_0_120", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 2, K: 0}}},
-		{"face_0_121", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 2, K: 1}}},
-		{"face_0_122", FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 2, K: 2}}},
-		{"face_0_200", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 0, K: 0}}},
-		{"face_0_201", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 0, K: 1}}},
-		{"face_0_202", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 0, K: 2}}},
-		{"face_0_210", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 1, K: 0}}},
-		{"face_0_211", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 1, K: 1}}},
-		{"face_0_212", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 1, K: 2}}},
-		{"face_0_220", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 2, K: 0}}},
-		{"face_0_221", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 2, K: 1}}},
-		{"face_0_222", FaceIJK{Face: 0, Coord: CoordIJK{I: 2, J: 2, K: 2}}},
+		{"face_0_000", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}}},
+		{"face_0_001", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 1}}},
+		{"face_0_002", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 2}}},
+		{"face_0_010", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 1, K: 0}}},
+		{"face_0_011", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 1, K: 1}}},
+		{"face_0_012", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 1, K: 2}}},
+		{"face_0_020", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 2, K: 0}}},
+		{"face_0_021", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 2, K: 1}}},
+		{"face_0_022", faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 2, K: 2}}},
+		{"face_0_100", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 0, K: 0}}},
+		{"face_0_101", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 0, K: 1}}},
+		{"face_0_102", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 0, K: 2}}},
+		{"face_0_110", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 1, K: 0}}},
+		{"face_0_111", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 1, K: 1}}},
+		{"face_0_112", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 1, K: 2}}},
+		{"face_0_120", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 2, K: 0}}},
+		{"face_0_121", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 2, K: 1}}},
+		{"face_0_122", faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 2, K: 2}}},
+		{"face_0_200", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 0, K: 0}}},
+		{"face_0_201", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 0, K: 1}}},
+		{"face_0_202", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 0, K: 2}}},
+		{"face_0_210", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 1, K: 0}}},
+		{"face_0_211", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 1, K: 1}}},
+		{"face_0_212", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 1, K: 2}}},
+		{"face_0_220", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 2, K: 0}}},
+		{"face_0_221", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 2, K: 1}}},
+		{"face_0_222", faceIJK{Face: 0, Coord: coordIJK{I: 2, J: 2, K: 2}}},
 
 		// Test a few from other faces
-		{"face_5_111", FaceIJK{Face: 5, Coord: CoordIJK{I: 1, J: 1, K: 1}}},
-		{"face_10_111", FaceIJK{Face: 10, Coord: CoordIJK{I: 1, J: 1, K: 1}}},
-		{"face_15_111", FaceIJK{Face: 15, Coord: CoordIJK{I: 1, J: 1, K: 1}}},
-		{"face_19_111", FaceIJK{Face: 19, Coord: CoordIJK{I: 1, J: 1, K: 1}}},
-		{"face_19_222", FaceIJK{Face: 19, Coord: CoordIJK{I: 2, J: 2, K: 2}}},
+		{"face_5_111", faceIJK{Face: 5, Coord: coordIJK{I: 1, J: 1, K: 1}}},
+		{"face_10_111", faceIJK{Face: 10, Coord: coordIJK{I: 1, J: 1, K: 1}}},
+		{"face_15_111", faceIJK{Face: 15, Coord: coordIJK{I: 1, J: 1, K: 1}}},
+		{"face_19_111", faceIJK{Face: 19, Coord: coordIJK{I: 1, J: 1, K: 1}}},
+		{"face_19_222", faceIJK{Face: 19, Coord: coordIJK{I: 2, J: 2, K: 2}}},
 	}
 
 	for _, tt := range tests {
@@ -68,9 +68,9 @@ func Test_faceIjkToBaseCell_all_faces(t *testing.T) {
 		for i := 0; i <= 2; i++ {
 			for j := 0; j <= 2; j++ {
 				for k := 0; k <= 2; k++ {
-					h := FaceIJK{
+					h := faceIJK{
 						Face:  int32(face),
-						Coord: CoordIJK{I: int32(i), J: int32(j), K: int32(k)},
+						Coord: coordIJK{I: int32(i), J: int32(j), K: int32(k)},
 					}
 
 					goResult := _faceIjkToBaseCell(&h)

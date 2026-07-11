@@ -1,9 +1,9 @@
 package h3
 
-// _hasAny7UptoRes checks if any digit from 1 to `res` is 7 (INVALID_DIGIT).
+// _hasAny7UptoRes checks if any digit from 1 to `res` is 7 (invalidDigit).
 // Uses efficient bit manipulation to check for invalid digits without looping.
 // Ported from H3 C: h3Index.c::_hasAny7UptoRes.
-func _hasAny7UptoRes(h H3Index, res int32) bool {
+func _hasAny7UptoRes(h h3Index, res int32) bool {
 	// Shift to zero out digits beyond resolution
 	shift := 3 * (15 - res)
 
@@ -22,7 +22,7 @@ func _hasAny7UptoRes(h H3Index, res int32) bool {
 
 	h >>= shift
 	h <<= shift
-	h = (h & H3_DIGIT_CHECK_MHI & (^h - H3_DIGIT_CHECK_MLO))
+	h = (h & h3DigitCheckMhi & (^h - h3DigitCheckMlo))
 
 	return h != 0
 }

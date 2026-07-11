@@ -7,22 +7,22 @@ import (
 // _geoAzDistanceRads computes the point p2 at azimuth az and distance from p1.
 // Ported from H3 C: latLng.c::_geoAzDistanceRads.
 func _geoAzDistanceRads(p1 *LatLng, az, distance float64, p2 *LatLng) {
-	if distance < EPSILON {
+	if distance < epsilon {
 		*p2 = *p1
 		return
 	}
 	az = _posAngleRads(az)
-	if az < EPSILON || math.Abs(az-math.Pi) < EPSILON {
+	if az < epsilon || math.Abs(az-math.Pi) < epsilon {
 		// Due north or south
-		if az < EPSILON {
+		if az < epsilon {
 			p2.Lat = p1.Lat + Rad(distance)
 		} else {
 			p2.Lat = p1.Lat - Rad(distance)
 		}
-		if math.Abs((p2.Lat - PiOver2).Rad()) < EPSILON {
+		if math.Abs((p2.Lat - PiOver2).Rad()) < epsilon {
 			p2.Lat = PiOver2
 			p2.Lng = 0
-		} else if math.Abs((p2.Lat + PiOver2).Rad()) < EPSILON {
+		} else if math.Abs((p2.Lat + PiOver2).Rad()) < epsilon {
 			p2.Lat = -PiOver2
 			p2.Lng = 0
 		} else {
@@ -45,11 +45,11 @@ func _geoAzDistanceRads(p1 *LatLng, az, distance float64, p2 *LatLng) {
 		sinlat = -1.0
 	}
 	p2.Lat = Rad(math.Asin(sinlat))
-	if math.Abs((p2.Lat - PiOver2).Rad()) < EPSILON {
+	if math.Abs((p2.Lat - PiOver2).Rad()) < epsilon {
 		p2.Lat = PiOver2
 		p2.Lng = 0
 		return
-	} else if math.Abs((p2.Lat + PiOver2).Rad()) < EPSILON {
+	} else if math.Abs((p2.Lat + PiOver2).Rad()) < epsilon {
 		p2.Lat = -PiOver2
 		p2.Lng = 0
 		return

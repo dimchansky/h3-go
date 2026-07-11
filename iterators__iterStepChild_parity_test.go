@@ -9,7 +9,7 @@ import (
 func Test_iterStepChild_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		parent   H3Index
+		parent   h3Index
 		childRes int32
 		numSteps int // Number of steps to test
 	}{
@@ -42,11 +42,11 @@ func Test_iterStepChild_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Initialize Go iterator
-			var goIter IterCellsChildren
+			var goIter iterCellsChildren
 			iterInitParent(tt.parent, tt.childRes, &goIter)
 
 			// Initialize C iterator
-			var cIter IterCellsChildren
+			var cIter iterCellsChildren
 			iterInitParentC(tt.parent, tt.childRes, &cIter)
 
 			// Compare initial state
@@ -77,8 +77,8 @@ func Test_iterStepChild_parity(t *testing.T) {
 					t.Errorf("Step %d: SkipDigit mismatch: Go=%d, C=%d", i+1, goIter.SkipDigit, cIter.SkipDigit)
 				}
 
-				// If we hit H3_NULL, we're done iterating
-				if goIter.H == H3_NULL {
+				// If we hit h3Null, we're done iterating
+				if goIter.H == h3Null {
 					break
 				}
 			}
@@ -90,7 +90,7 @@ func Test_iterStepChild_parity(t *testing.T) {
 func Test_iterStepChild_exhaustive_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		parent   H3Index
+		parent   h3Index
 		childRes int32
 	}{
 		{
@@ -113,19 +113,19 @@ func Test_iterStepChild_exhaustive_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Collect all children using Go implementation
-			var goChildren []H3Index
-			var goIter IterCellsChildren
+			var goChildren []h3Index
+			var goIter iterCellsChildren
 			iterInitParent(tt.parent, tt.childRes, &goIter)
-			for goIter.H != H3_NULL {
+			for goIter.H != h3Null {
 				goChildren = append(goChildren, goIter.H)
 				iterStepChild(&goIter)
 			}
 
 			// Collect all children using C implementation
-			var cChildren []H3Index
-			var cIter IterCellsChildren
+			var cChildren []h3Index
+			var cIter iterCellsChildren
 			iterInitParentC(tt.parent, tt.childRes, &cIter)
-			for cIter.H != H3_NULL {
+			for cIter.H != h3Null {
 				cChildren = append(cChildren, cIter.H)
 				iterStepChildC(&cIter)
 			}

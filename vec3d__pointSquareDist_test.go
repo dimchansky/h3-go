@@ -9,11 +9,11 @@ import (
 func Test_pointSquareDist(t *testing.T) {
 	t.Parallel()
 
-	v1 := &Vec3d{0, 0, 0}
-	v2 := &Vec3d{1, 0, 0}
-	v3 := &Vec3d{0, 1, 1}
-	v4 := &Vec3d{1, 1, 1}
-	v5 := &Vec3d{1, 1, 2}
+	v1 := &vec3d{0, 0, 0}
+	v2 := &vec3d{1, 0, 0}
+	v3 := &vec3d{0, 1, 1}
+	v4 := &vec3d{1, 1, 1}
+	v5 := &vec3d{1, 1, 2}
 
 	const dblEpsilon = 2.220446049250313e-16
 

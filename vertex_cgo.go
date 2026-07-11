@@ -14,47 +14,47 @@ extern H3Error vertexRotations_wrapper(H3Index cell, int *out);
 import "C"
 
 // vertexRotationsC wraps the C vertexRotations function.
-func vertexRotationsC(cell H3Index, out *int32) H3Error {
+func vertexRotationsC(cell h3Index, out *int32) h3Error {
 	var cOut C.int
-	err := H3Error(C.vertexRotations_wrapper(C.H3Index(cell), &cOut))
+	err := h3Error(C.vertexRotations_wrapper(C.H3Index(cell), &cOut))
 	*out = int32(cOut)
 	return err
 }
 
 // vertexNumForDirectionC wraps the C vertexNumForDirection function.
-func vertexNumForDirectionC(origin H3Index, direction Direction) int32 {
+func vertexNumForDirectionC(origin h3Index, direction direction) int32 {
 	return int32(C.vertexNumForDirection(C.H3Index(origin), C.Direction(direction)))
 }
 
 // directionForVertexNumC wraps the C directionForVertexNum function.
-func directionForVertexNumC(origin H3Index, vertexNum int32) Direction {
-	return Direction(C.directionForVertexNum(C.H3Index(origin), C.int(vertexNum)))
+func directionForVertexNumC(origin h3Index, vertexNum int32) direction {
+	return direction(C.directionForVertexNum(C.H3Index(origin), C.int(vertexNum)))
 }
 
 // cellToVertexC wraps the C cellToVertex function.
-func cellToVertexC(cell H3Index, vertexNum int32) (H3Index, H3Error) {
+func cellToVertexC(cell h3Index, vertexNum int32) (h3Index, h3Error) {
 	var out C.H3Index
-	err := H3Error(C.cellToVertex(C.H3Index(cell), C.int(vertexNum), &out))
-	return H3Index(out), err
+	err := h3Error(C.cellToVertex(C.H3Index(cell), C.int(vertexNum), &out))
+	return h3Index(out), err
 }
 
 // cellToVertexesC wraps the C cellToVertexes function.
-func cellToVertexesC(cell H3Index, vertexes *[6]H3Index) H3Error {
+func cellToVertexesC(cell h3Index, vertexes *[6]h3Index) h3Error {
 	var cVertexes [6]C.H3Index
-	err := H3Error(C.cellToVertexes(C.H3Index(cell), &cVertexes[0]))
-	if err == E_SUCCESS {
+	err := h3Error(C.cellToVertexes(C.H3Index(cell), &cVertexes[0]))
+	if err == eSuccess {
 		for i := 0; i < 6; i++ {
-			(*vertexes)[i] = H3Index(cVertexes[i])
+			(*vertexes)[i] = h3Index(cVertexes[i])
 		}
 	}
 	return err
 }
 
 // vertexToLatLngC wraps the C vertexToLatLng function.
-func vertexToLatLngC(vertex H3Index, coord *LatLng) H3Error {
+func vertexToLatLngC(vertex h3Index, coord *LatLng) h3Error {
 	var cCoord C.LatLng
-	err := H3Error(C.vertexToLatLng(C.H3Index(vertex), &cCoord))
-	if err == E_SUCCESS {
+	err := h3Error(C.vertexToLatLng(C.H3Index(vertex), &cCoord))
+	if err == eSuccess {
 		coord.Lat = Rad(float64(cCoord.lat))
 		coord.Lng = Rad(float64(cCoord.lng))
 	}
@@ -62,6 +62,6 @@ func vertexToLatLngC(vertex H3Index, coord *LatLng) H3Error {
 }
 
 // isValidVertexC wraps the C isValidVertex function.
-func isValidVertexC(vertex H3Index) bool {
+func isValidVertexC(vertex h3Index) bool {
 	return C.isValidVertex(C.H3Index(vertex)) != 0
 }

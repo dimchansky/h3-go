@@ -107,7 +107,7 @@ func greatCircleDistanceMC(a, b LatLng) float64 {
 }
 
 // normalizeLngC calls the original C implementation.
-func normalizeLngC(lng float64, normalization LongitudeNormalization) float64 {
+func normalizeLngC(lng float64, normalization longitudeNormalization) float64 {
 	return float64(C.normalizeLng(C.double(lng), C.LongitudeNormalization(normalization)))
 }
 
@@ -170,78 +170,78 @@ func geoAlmostEqualC(a, b LatLng) bool {
 }
 
 // cellAreaRads2C calls the original C implementation.
-func cellAreaRads2C(cell H3Index) (float64, H3Error) {
+func cellAreaRads2C(cell h3Index) (float64, h3Error) {
 	var out C.double
-	err := H3Error(C.cellAreaRads2(C.H3Index(cell), &out))
+	err := h3Error(C.cellAreaRads2(C.H3Index(cell), &out))
 	return float64(out), err
 }
 
 // cellAreaKm2C calls the original C implementation.
-func cellAreaKm2C(cell H3Index) (float64, H3Error) {
+func cellAreaKm2C(cell h3Index) (float64, h3Error) {
 	var out C.double
-	err := H3Error(C.cellAreaKm2(C.H3Index(cell), &out))
+	err := h3Error(C.cellAreaKm2(C.H3Index(cell), &out))
 	return float64(out), err
 }
 
 // cellAreaM2C calls the original C implementation.
-func cellAreaM2C(cell H3Index) (float64, H3Error) {
+func cellAreaM2C(cell h3Index) (float64, h3Error) {
 	var out C.double
-	err := H3Error(C.cellAreaM2(C.H3Index(cell), &out))
+	err := h3Error(C.cellAreaM2(C.H3Index(cell), &out))
 	return float64(out), err
 }
 
 // getNumCellsC calls the original C implementation.
-func getNumCellsC(res int32) (int64, H3Error) {
+func getNumCellsC(res int32) (int64, h3Error) {
 	var out C.int64_t
-	err := H3Error(C.getNumCells(C.int(res), &out))
+	err := h3Error(C.getNumCells(C.int(res), &out))
 	return int64(out), err
 }
 
 // edgeLengthRadsC calls the original C implementation.
-func edgeLengthRadsC(edge H3Index) (float64, H3Error) {
+func edgeLengthRadsC(edge h3Index) (float64, h3Error) {
 	var length C.double
-	err := H3Error(C.edgeLengthRads(C.H3Index(edge), &length))
+	err := h3Error(C.edgeLengthRads(C.H3Index(edge), &length))
 	return float64(length), err
 }
 
 // edgeLengthKmC calls the original C implementation.
-func edgeLengthKmC(edge H3Index) (float64, H3Error) {
+func edgeLengthKmC(edge h3Index) (float64, h3Error) {
 	var length C.double
-	err := H3Error(C.edgeLengthKm(C.H3Index(edge), &length))
+	err := h3Error(C.edgeLengthKm(C.H3Index(edge), &length))
 	return float64(length), err
 }
 
 // edgeLengthMC calls the original C implementation.
-func edgeLengthMC(edge H3Index) (float64, H3Error) {
+func edgeLengthMC(edge h3Index) (float64, h3Error) {
 	var length C.double
-	err := H3Error(C.edgeLengthM(C.H3Index(edge), &length))
+	err := h3Error(C.edgeLengthM(C.H3Index(edge), &length))
 	return float64(length), err
 }
 
 // getHexagonAreaAvgKm2C calls the original C implementation.
-func getHexagonAreaAvgKm2C(res int32) (float64, H3Error) {
+func getHexagonAreaAvgKm2C(res int32) (float64, h3Error) {
 	var out C.double
-	err := H3Error(C.getHexagonAreaAvgKm2(C.int(res), &out))
+	err := h3Error(C.getHexagonAreaAvgKm2(C.int(res), &out))
 	return float64(out), err
 }
 
 // getHexagonAreaAvgM2C calls the original C implementation.
-func getHexagonAreaAvgM2C(res int32) (float64, H3Error) {
+func getHexagonAreaAvgM2C(res int32) (float64, h3Error) {
 	var out C.double
-	err := H3Error(C.getHexagonAreaAvgM2(C.int(res), &out))
+	err := h3Error(C.getHexagonAreaAvgM2(C.int(res), &out))
 	return float64(out), err
 }
 
 // getHexagonEdgeLengthAvgKmC calls the original C implementation.
-func getHexagonEdgeLengthAvgKmC(res int32) (float64, H3Error) {
+func getHexagonEdgeLengthAvgKmC(res int32) (float64, h3Error) {
 	var out C.double
-	err := H3Error(C.getHexagonEdgeLengthAvgKm(C.int(res), &out))
+	err := h3Error(C.getHexagonEdgeLengthAvgKm(C.int(res), &out))
 	return float64(out), err
 }
 
 // getHexagonEdgeLengthAvgMC calls the original C implementation.
-func getHexagonEdgeLengthAvgMC(res int32) (float64, H3Error) {
+func getHexagonEdgeLengthAvgMC(res int32) (float64, h3Error) {
 	var out C.double
-	err := H3Error(C.getHexagonEdgeLengthAvgM(C.int(res), &out))
+	err := h3Error(C.getHexagonEdgeLengthAvgM(C.int(res), &out))
 	return float64(out), err
 }

@@ -7,20 +7,20 @@ import (
 )
 
 // Test_vertexGraphToLinkedGeo_parity tests behavioral equivalence for _vertexGraphToLinkedGeo.
-// This function creates a LinkedGeoPolygon from a vertex graph.
+// This function creates a linkedGeoPolygon from a vertex graph.
 // Due to the complexity of converting entire graph structures between Go and C,
 // this test focuses on verifying the behavior through integration tests.
 func Test_vertexGraphToLinkedGeo_parity(t *testing.T) {
 	// Test 1: Empty graph produces empty polygon
 	t.Run("empty_graph", func(t *testing.T) {
-		graph := &VertexGraph{
+		graph := &vertexGraph{
 			Buckets:    nil,
 			NumBuckets: 0,
 			Size:       0,
 			Res:        0,
 		}
 
-		var out LinkedGeoPolygon
+		var out linkedGeoPolygon
 		_vertexGraphToLinkedGeo(graph, &out)
 
 		// Verify the output is empty
@@ -38,8 +38,8 @@ func Test_vertexGraphToLinkedGeo_parity(t *testing.T) {
 	// Test 2: Single edge creates a simple loop
 	t.Run("single_edge", func(t *testing.T) {
 		// Create a simple triangle graph
-		graph := &VertexGraph{
-			Buckets:    make([]*VertexNode, 3),
+		graph := &vertexGraph{
+			Buckets:    make([]*vertexNode, 3),
 			NumBuckets: 3,
 			Size:       3,
 			Res:        9,
@@ -51,9 +51,9 @@ func Test_vertexGraphToLinkedGeo_parity(t *testing.T) {
 		v3 := LatLng{Lat: 0.2, Lng: 0.1}
 
 		// Build a simple closed triangle
-		node1 := &VertexNode{From: v1, To: v2, Next: nil}
-		node2 := &VertexNode{From: v2, To: v3, Next: nil}
-		node3 := &VertexNode{From: v3, To: v1, Next: nil}
+		node1 := &vertexNode{From: v1, To: v2, Next: nil}
+		node2 := &vertexNode{From: v2, To: v3, Next: nil}
+		node3 := &vertexNode{From: v3, To: v1, Next: nil}
 
 		// Place nodes in buckets based on hash
 		idx1 := _hashVertex(&v1, graph.Res, graph.NumBuckets)
@@ -82,7 +82,7 @@ func Test_vertexGraphToLinkedGeo_parity(t *testing.T) {
 			graph.Buckets[idx3] = node3
 		}
 
-		var out LinkedGeoPolygon
+		var out linkedGeoPolygon
 		_vertexGraphToLinkedGeo(graph, &out)
 
 		// Verify we got a polygon with one loop
@@ -115,8 +115,8 @@ func Test_vertexGraphToLinkedGeo_parity(t *testing.T) {
 	// Test 3: Multiple disconnected edges create multiple loops
 	t.Run("multiple_loops", func(t *testing.T) {
 		// Create a graph with two disconnected triangles
-		graph := &VertexGraph{
-			Buckets:    make([]*VertexNode, 10),
+		graph := &vertexGraph{
+			Buckets:    make([]*vertexNode, 10),
 			NumBuckets: 10,
 			Size:       6,
 			Res:        9,
@@ -133,17 +133,17 @@ func Test_vertexGraphToLinkedGeo_parity(t *testing.T) {
 		v3b := LatLng{Lat: 0.6, Lng: 0.5}
 
 		// Build first triangle
-		node1a := &VertexNode{From: v1a, To: v2a, Next: nil}
-		node2a := &VertexNode{From: v2a, To: v3a, Next: nil}
-		node3a := &VertexNode{From: v3a, To: v1a, Next: nil}
+		node1a := &vertexNode{From: v1a, To: v2a, Next: nil}
+		node2a := &vertexNode{From: v2a, To: v3a, Next: nil}
+		node3a := &vertexNode{From: v3a, To: v1a, Next: nil}
 
 		// Build second triangle
-		node1b := &VertexNode{From: v1b, To: v2b, Next: nil}
-		node2b := &VertexNode{From: v2b, To: v3b, Next: nil}
-		node3b := &VertexNode{From: v3b, To: v1b, Next: nil}
+		node1b := &vertexNode{From: v1b, To: v2b, Next: nil}
+		node2b := &vertexNode{From: v2b, To: v3b, Next: nil}
+		node3b := &vertexNode{From: v3b, To: v1b, Next: nil}
 
 		// Add all nodes to buckets
-		nodes := []*VertexNode{node1a, node2a, node3a, node1b, node2b, node3b}
+		nodes := []*vertexNode{node1a, node2a, node3a, node1b, node2b, node3b}
 		for _, node := range nodes {
 			idx := _hashVertex(&node.From, graph.Res, graph.NumBuckets)
 			if graph.Buckets[idx] == nil {
@@ -154,7 +154,7 @@ func Test_vertexGraphToLinkedGeo_parity(t *testing.T) {
 			}
 		}
 
-		var out LinkedGeoPolygon
+		var out linkedGeoPolygon
 		_vertexGraphToLinkedGeo(graph, &out)
 
 		// Verify we got a polygon with loops

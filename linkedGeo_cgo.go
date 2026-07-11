@@ -31,8 +31,8 @@ import (
 )
 
 // countLinkedCoordsC wraps the C countLinkedCoords function for parity testing.
-func countLinkedCoordsC(loop *LinkedGeoLoop) int32 {
-	// Create a minimal C LinkedGeoLoop for testing
+func countLinkedCoordsC(loop *linkedGeoLoop) int32 {
+	// Create a minimal C linkedGeoLoop for testing
 	var firstNode *C.LinkedLatLng
 	var currentGoCoord = loop.First
 	var prevCNode *C.LinkedLatLng
@@ -54,7 +54,7 @@ func countLinkedCoordsC(loop *LinkedGeoLoop) int32 {
 		currentGoCoord = currentGoCoord.Next
 	}
 
-	// Create C LinkedGeoLoop
+	// Create C linkedGeoLoop
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	cLoop.first = firstNode
 	cLoop.last = prevCNode
@@ -76,7 +76,7 @@ func countLinkedCoordsC(loop *LinkedGeoLoop) int32 {
 }
 
 // countLinkedPolygonsC wraps the C countLinkedPolygons function for parity testing.
-func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int32 {
+func countLinkedPolygonsC(polygon *linkedGeoPolygon) int32 {
 	// Create C structures to mirror the Go linked list
 	if polygon == nil {
 		return int32(C.countLinkedPolygonsC(nil))
@@ -118,8 +118,8 @@ func countLinkedPolygonsC(polygon *LinkedGeoPolygon) int32 {
 }
 
 // countLinkedLoopsC wraps the C countLinkedLoops function for parity testing.
-func countLinkedLoopsC(polygon *LinkedGeoPolygon) int32 {
-	// Create a minimal C LinkedGeoPolygon for testing
+func countLinkedLoopsC(polygon *linkedGeoPolygon) int32 {
+	// Create a minimal C linkedGeoPolygon for testing
 	var firstLoop *C.LinkedGeoLoop
 	var currentGoLoop = polygon.First
 	var prevCLoop *C.LinkedGeoLoop
@@ -143,7 +143,7 @@ func countLinkedLoopsC(polygon *LinkedGeoPolygon) int32 {
 		currentGoLoop = currentGoLoop.Next
 	}
 
-	// Create C LinkedGeoPolygon
+	// Create C linkedGeoPolygon
 	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 	cPolygon.first = firstLoop
 	cPolygon.last = prevCLoop
@@ -165,8 +165,8 @@ func countLinkedLoopsC(polygon *LinkedGeoPolygon) int32 {
 }
 
 // bboxFromLinkedGeoLoopC wraps the C bboxFromLinkedGeoLoop function for parity testing.
-func bboxFromLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox) {
-	// Create a minimal C LinkedGeoLoop for testing
+func bboxFromLinkedGeoLoopC(loop *linkedGeoLoop, bbox *bbox) {
+	// Create a minimal C linkedGeoLoop for testing
 	var firstNode *C.LinkedLatLng
 	var currentGoCoord = loop.First
 	var prevCNode *C.LinkedLatLng
@@ -188,19 +188,19 @@ func bboxFromLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox) {
 		currentGoCoord = currentGoCoord.Next
 	}
 
-	// Create C LinkedGeoLoop
+	// Create C linkedGeoLoop
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	cLoop.first = firstNode
 	cLoop.last = prevCNode
 	cLoop.next = nil
 
-	// Create C BBox for result
+	// Create C bbox for result
 	cBbox := (*C.BBox)(C.malloc(C.size_t(C.sizeof_BBox)))
 
 	// Call C function
 	C.bboxFromLinkedGeoLoopC(cLoop, cBbox)
 
-	// Convert C BBox back to Go BBox
+	// Convert C bbox back to Go bbox
 	bbox.North = Rad(float64(cBbox.north))
 	bbox.South = Rad(float64(cBbox.south))
 	bbox.East = Rad(float64(cBbox.east))
@@ -218,8 +218,8 @@ func bboxFromLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox) {
 }
 
 // pointInsideLinkedGeoLoopC wraps the C pointInsideLinkedGeoLoop function for parity testing.
-func pointInsideLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bool {
-	// Create a minimal C LinkedGeoLoop for testing
+func pointInsideLinkedGeoLoopC(loop *linkedGeoLoop, bbox *bbox, coord *LatLng) bool {
+	// Create a minimal C linkedGeoLoop for testing
 	var firstNode *C.LinkedLatLng
 	var currentGoCoord = loop.First
 	var prevCNode *C.LinkedLatLng
@@ -241,13 +241,13 @@ func pointInsideLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) b
 		currentGoCoord = currentGoCoord.Next
 	}
 
-	// Create C LinkedGeoLoop
+	// Create C linkedGeoLoop
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	cLoop.first = firstNode
 	cLoop.last = prevCNode
 	cLoop.next = nil
 
-	// Create C BBox
+	// Create C bbox
 	cBbox := (*C.BBox)(C.malloc(C.size_t(C.sizeof_BBox)))
 	cBbox.north = C.double(bbox.North)
 	cBbox.south = C.double(bbox.South)
@@ -277,8 +277,8 @@ func pointInsideLinkedGeoLoopC(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) b
 }
 
 // isClockwiseLinkedGeoLoopC wraps the C isClockwiseLinkedGeoLoop function for parity testing.
-func isClockwiseLinkedGeoLoopC(loop *LinkedGeoLoop) bool {
-	// Create a minimal C LinkedGeoLoop for testing
+func isClockwiseLinkedGeoLoopC(loop *linkedGeoLoop) bool {
+	// Create a minimal C linkedGeoLoop for testing
 	var firstNode *C.LinkedLatLng
 	var currentGoCoord = loop.First
 	var prevCNode *C.LinkedLatLng
@@ -300,7 +300,7 @@ func isClockwiseLinkedGeoLoopC(loop *LinkedGeoLoop) bool {
 		currentGoCoord = currentGoCoord.Next
 	}
 
-	// Create C LinkedGeoLoop
+	// Create C linkedGeoLoop
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	cLoop.first = firstNode
 	cLoop.last = prevCNode
@@ -322,8 +322,8 @@ func isClockwiseLinkedGeoLoopC(loop *LinkedGeoLoop) bool {
 }
 
 // addNewLinkedPolygonC wraps the C addNewLinkedPolygon function for parity testing.
-func addNewLinkedPolygonC(polygon *LinkedGeoPolygon) *LinkedGeoPolygon {
-	// Create a minimal C LinkedGeoPolygon structure
+func addNewLinkedPolygonC(polygon *linkedGeoPolygon) *linkedGeoPolygon {
+	// Create a minimal C linkedGeoPolygon structure
 	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 	cPolygon.first = nil
 	cPolygon.last = nil
@@ -333,7 +333,7 @@ func addNewLinkedPolygonC(polygon *LinkedGeoPolygon) *LinkedGeoPolygon {
 	cResult := C.addNewLinkedPolygonC(cPolygon)
 
 	// Convert result back to Go
-	goResult := &LinkedGeoPolygon{
+	goResult := &linkedGeoPolygon{
 		First: nil,
 		Last:  nil,
 		Next:  nil,
@@ -372,7 +372,7 @@ func addLinkedLoopC(wasEmpty bool, polygonHadLoop bool) (returnsLoop bool, setsF
 	}
 	cPolygon.next = nil
 
-	// Create C LinkedGeoLoop for the new loop
+	// Create C linkedGeoLoop for the new loop
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	defer C.free(unsafe.Pointer(cLoop))
 	cLoop.first = nil
@@ -475,7 +475,7 @@ func addLinkedCoordC(wasEmpty bool, loopHadCoord bool, vertex LatLng) (returnsCo
 }
 
 // countContainersC wraps the C countContainers function for parity testing.
-func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes []*BBox) int32 {
+func countContainersC(loop *linkedGeoLoop, polygons []*linkedGeoPolygon, bboxes []*bbox) int32 {
 	if len(polygons) != len(bboxes) {
 		panic("countContainersC: polygons and bboxes must have same length")
 	}
@@ -617,7 +617,7 @@ func countContainersC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes 
 }
 
 // findDeepestContainerC wraps the C findDeepestContainer function for parity testing.
-func findDeepestContainerC(polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon {
+func findDeepestContainerC(polygons []*linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon {
 	if len(polygons) != len(bboxes) {
 		panic("findDeepestContainerC: polygons and bboxes must have same length")
 	}
@@ -704,7 +704,7 @@ func findDeepestContainerC(polygons []*LinkedGeoPolygon, bboxes []*BBox) *Linked
 	cResult := C.findDeepestContainerC(cPolygons, cBboxes, C.int(polygonCount))
 
 	// Find which Go polygon corresponds to the C result
-	var result *LinkedGeoPolygon
+	var result *linkedGeoPolygon
 	if cResult != nil {
 		for i := 0; i < polygonCount; i++ {
 			if allocatedPolygons[i] == cResult {
@@ -736,7 +736,7 @@ func findDeepestContainerC(polygons []*LinkedGeoPolygon, bboxes []*BBox) *Linked
 }
 
 // findPolygonForHoleC wraps the C findPolygonForHole function for parity testing.
-func findPolygonForHoleC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon {
+func findPolygonForHoleC(loop *linkedGeoLoop, polygons []*linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon {
 	if len(polygons) != len(bboxes) {
 		panic("findPolygonForHoleC: polygons and bboxes must have same length")
 	}
@@ -857,7 +857,7 @@ func findPolygonForHoleC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bbox
 	cResult := C.findPolygonForHoleC(cLoop, firstCPolygon, cBboxes, C.int(polygonCount))
 
 	// Find which Go polygon corresponds to the C result
-	var result *LinkedGeoPolygon
+	var result *linkedGeoPolygon
 	if cResult != nil {
 		for i := 0; i < polygonCount; i++ {
 			if allocatedPolygons[i] == cResult {
@@ -886,14 +886,14 @@ func findPolygonForHoleC(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bbox
 }
 
 // normalizeMultiPolygonC wraps the C normalizeMultiPolygon function for parity testing.
-func normalizeMultiPolygonC(root *LinkedGeoPolygon) H3Error {
+func normalizeMultiPolygonC(root *linkedGeoPolygon) h3Error {
 	if root == nil {
 		// C function expects a valid pointer, so passing nil will cause segfault
-		// Based on the Go implementation, nil input should return E_FAILED
-		return E_FAILED
+		// Based on the Go implementation, nil input should return eFailed
+		return eFailed
 	}
 
-	// Convert Go LinkedGeoPolygon to C structure
+	// Convert Go linkedGeoPolygon to C structure
 	cPolygon := (*C.LinkedGeoPolygon)(C.malloc(C.size_t(C.sizeof_LinkedGeoPolygon)))
 	defer C.free(unsafe.Pointer(cPolygon))
 
@@ -901,8 +901,8 @@ func normalizeMultiPolygonC(root *LinkedGeoPolygon) H3Error {
 	var allocatedLoops []*C.LinkedGeoLoop
 	var allocatedCoords []*C.LinkedLatLng
 
-	// Helper function to convert Go LinkedGeoLoop to C LinkedGeoLoop
-	convertLoop := func(goLoop *LinkedGeoLoop) *C.LinkedGeoLoop {
+	// Helper function to convert Go linkedGeoLoop to C linkedGeoLoop
+	convertLoop := func(goLoop *linkedGeoLoop) *C.LinkedGeoLoop {
 		if goLoop == nil {
 			return nil
 		}
@@ -991,23 +991,23 @@ func normalizeMultiPolygonC(root *LinkedGeoPolygon) H3Error {
 	// causes double-free errors and crashes.
 	//
 	// The C function:
-	// 1. Zeros out the root polygon: *root = (LinkedGeoPolygon){0}
+	// 1. Zeros out the root polygon: *root = (linkedGeoPolygon){0}
 	// 2. Restructures all the loops into new polygons
 	// 3. May call destroyLinkedGeoLoop() and free() on orphaned holes
 	//
 	// Since the function modifies the structure in-place and manages
 	// its own memory, we should not attempt to free anything we allocated.
 
-	return H3Error(result)
+	return h3Error(result)
 }
 
 // destroyLinkedGeoLoopC wraps the C destroyLinkedGeoLoop function for parity testing.
-func destroyLinkedGeoLoopC(loop *LinkedGeoLoop) {
+func destroyLinkedGeoLoopC(loop *linkedGeoLoop) {
 	if loop == nil {
 		return
 	}
 
-	// Create a minimal C LinkedGeoLoop for testing
+	// Create a minimal C linkedGeoLoop for testing
 	var firstNode *C.LinkedLatLng
 	var currentGoCoord = loop.First
 	var prevCNode *C.LinkedLatLng
@@ -1029,7 +1029,7 @@ func destroyLinkedGeoLoopC(loop *LinkedGeoLoop) {
 		currentGoCoord = currentGoCoord.Next
 	}
 
-	// Create C LinkedGeoLoop
+	// Create C linkedGeoLoop
 	cLoop := (*C.LinkedGeoLoop)(C.malloc(C.size_t(C.sizeof_LinkedGeoLoop)))
 	cLoop.first = firstNode
 	cLoop.last = prevCNode
@@ -1043,14 +1043,14 @@ func destroyLinkedGeoLoopC(loop *LinkedGeoLoop) {
 }
 
 // destroyLinkedMultiPolygonC wraps the C destroyLinkedMultiPolygon function for parity testing.
-func destroyLinkedMultiPolygonC(polygon *LinkedGeoPolygon) {
+func destroyLinkedMultiPolygonC(polygon *linkedGeoPolygon) {
 	if polygon == nil {
 		// The C function handles NULL pointers, but it would likely segfault
 		C.destroyLinkedMultiPolygon(nil)
 		return
 	}
 
-	// Convert Go LinkedGeoPolygon to C structure
+	// Convert Go linkedGeoPolygon to C structure
 	// Note: This function must create the complete structure because it will be destroyed
 
 	// Keep track of allocated memory - the C function will free most of this
@@ -1058,8 +1058,8 @@ func destroyLinkedMultiPolygonC(polygon *LinkedGeoPolygon) {
 	var allocatedLoops []*C.LinkedGeoLoop
 	var allocatedCoords []*C.LinkedLatLng
 
-	// Helper function to convert Go LinkedGeoLoop to C LinkedGeoLoop
-	convertLoop := func(goLoop *LinkedGeoLoop) *C.LinkedGeoLoop {
+	// Helper function to convert Go linkedGeoLoop to C linkedGeoLoop
+	convertLoop := func(goLoop *linkedGeoLoop) *C.LinkedGeoLoop {
 		if goLoop == nil {
 			return nil
 		}

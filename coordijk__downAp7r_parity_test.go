@@ -7,23 +7,23 @@ import "testing"
 func Test_downAp7r_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
+		coord coordIJK
 	}{
-		{"origin", CoordIJK{0, 0, 0}},
-		{"unit i", CoordIJK{1, 0, 0}},
-		{"unit j", CoordIJK{0, 1, 0}},
-		{"unit k", CoordIJK{0, 0, 1}},
-		{"positive coords", CoordIJK{1, 2, 3}},
-		{"mixed coords", CoordIJK{3, -2, 5}},
-		{"large coords", CoordIJK{5, 4, 6}},
-		{"negative coords", CoordIJK{-1, -2, -3}},
-		{"asymmetric", CoordIJK{2, 3, 1}},
-		{"small values", CoordIJK{1, 1, 1}},
-		{"normalized", CoordIJK{2, 1, 0}},
-		{"needs normalization", CoordIJK{5, 3, 2}},
-		{"zero i", CoordIJK{0, 2, 1}},
-		{"zero j", CoordIJK{2, 0, 1}},
-		{"zero k", CoordIJK{2, 1, 0}},
+		{"origin", coordIJK{0, 0, 0}},
+		{"unit i", coordIJK{1, 0, 0}},
+		{"unit j", coordIJK{0, 1, 0}},
+		{"unit k", coordIJK{0, 0, 1}},
+		{"positive coords", coordIJK{1, 2, 3}},
+		{"mixed coords", coordIJK{3, -2, 5}},
+		{"large coords", coordIJK{5, 4, 6}},
+		{"negative coords", coordIJK{-1, -2, -3}},
+		{"asymmetric", coordIJK{2, 3, 1}},
+		{"small values", coordIJK{1, 1, 1}},
+		{"normalized", coordIJK{2, 1, 0}},
+		{"needs normalization", coordIJK{5, 3, 2}},
+		{"zero i", coordIJK{0, 2, 1}},
+		{"zero j", coordIJK{2, 0, 1}},
+		{"zero k", coordIJK{2, 1, 0}},
 	}
 
 	for _, tt := range tests {
@@ -46,7 +46,7 @@ func Test_downAp7r_parity(t *testing.T) {
 
 	// Test that transformation is deterministic
 	t.Run("deterministic", func(t *testing.T) {
-		coord := CoordIJK{1, 2, 3}
+		coord := coordIJK{1, 2, 3}
 
 		// Apply transformation twice
 		result1 := coord
@@ -63,7 +63,7 @@ func Test_downAp7r_parity(t *testing.T) {
 
 	// Test that up and down are somewhat inverse operations (for some values)
 	t.Run("up_down_relationship", func(t *testing.T) {
-		testCoords := []CoordIJK{
+		testCoords := []coordIJK{
 			{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0},
 		}
 

@@ -86,9 +86,9 @@ import (
 
 // polygonToCellsExperimentalC calls the C polygonToCellsExperimental function
 func polygonToCellsExperimentalC(polygon *GeoPolygon, res int32, flags uint32,
-	size int64, out []H3Index) H3Error {
+	size int64, out []h3Index) h3Error {
 	if len(out) == 0 || int64(len(out)) < size {
-		return E_MEMORY_BOUNDS
+		return eMemoryBounds
 	}
 
 	// Use a simple approach similar to other polygon functions
@@ -98,7 +98,7 @@ func polygonToCellsExperimentalC(polygon *GeoPolygon, res int32, flags uint32,
 	mainLoop := polygon.GeoLoop
 	if len(mainLoop) == 0 {
 		// Empty polygon case
-		return H3Error(C.polygonToCellsExperimental_c_wrapper(
+		return h3Error(C.polygonToCellsExperimental_c_wrapper(
 			nil, 0, nil, nil, 0, C.int(res), C.uint32_t(flags),
 			C.int64_t(size), (*C.H3Index)(unsafe.Pointer(&out[0]))))
 	}
@@ -107,7 +107,7 @@ func polygonToCellsExperimentalC(polygon *GeoPolygon, res int32, flags uint32,
 	// to avoid CGO pointer issues
 	if len(polygon.Holes) > 0 {
 		// TODO: Implement hole handling once basic case works
-		return H3Error(C.polygonToCellsExperimental_c_wrapper(
+		return h3Error(C.polygonToCellsExperimental_c_wrapper(
 			(*C.LatLng)(unsafe.Pointer(&mainLoop[0])),
 			C.int(len(mainLoop)),
 			nil, nil, 0,
@@ -125,15 +125,15 @@ func polygonToCellsExperimentalC(polygon *GeoPolygon, res int32, flags uint32,
 		C.int64_t(size),
 		(*C.H3Index)(unsafe.Pointer(&out[0])))
 
-	return H3Error(result)
+	return h3Error(result)
 }
 
 // cellToBBoxC calls the C cellToBBox function
-func cellToBBoxC(cell H3Index, coverChildren bool) (BBox, H3Error) {
+func cellToBBoxC(cell h3Index, coverChildren bool) (bbox, h3Error) {
 	var cBBox C.BBox
-	err := H3Error(C.cellToBBox(C.H3Index(cell), &cBBox, C.bool(coverChildren)))
+	err := h3Error(C.cellToBBox(C.H3Index(cell), &cBBox, C.bool(coverChildren)))
 
-	goBBox := BBox{
+	goBBox := bbox{
 		North: Angle(cBBox.north),
 		South: Angle(cBBox.south),
 		East:  Angle(cBBox.east),
@@ -144,7 +144,7 @@ func cellToBBoxC(cell H3Index, coverChildren bool) (BBox, H3Error) {
 }
 
 // bboxToCellBoundaryC calls the C bboxToCellBoundary function
-func bboxToCellBoundaryC(bbox *BBox) CellBoundary {
+func bboxToCellBoundaryC(bbox *bbox) CellBoundary {
 	cBBox := C.BBox{
 		north: C.double(bbox.North),
 		south: C.double(bbox.South),
@@ -171,9 +171,9 @@ func bboxToCellBoundaryC(bbox *BBox) CellBoundary {
 }
 
 // maxPolygonToCellsSizeExperimentalC calls the C maxPolygonToCellsSizeExperimental function
-func maxPolygonToCellsSizeExperimentalC(polygon *GeoPolygon, res int32, flags uint32) (int64, H3Error) {
+func maxPolygonToCellsSizeExperimentalC(polygon *GeoPolygon, res int32, flags uint32) (int64, h3Error) {
 	if len(polygon.GeoLoop) == 0 {
-		return 0, E_SUCCESS
+		return 0, eSuccess
 	}
 
 	// Convert Go GeoPolygon to C GeoPolygon
@@ -200,5 +200,5 @@ func maxPolygonToCellsSizeExperimentalC(polygon *GeoPolygon, res int32, flags ui
 			C.int(res), C.uint32_t(flags), &out)
 	}
 
-	return int64(out), H3Error(result)
+	return int64(out), h3Error(result)
 }

@@ -21,13 +21,13 @@ func TestBaseCellToCCWrot60(t *testing.T) {
 
 func TestBaseCellToCCWrot60_invalid(t *testing.T) {
 	t.Parallel()
-	if _baseCellToCCWrot60(16, 42) != INVALID_ROTATIONS {
+	if _baseCellToCCWrot60(16, 42) != invalidRotations {
 		t.Error("Should return invalid rotation for invalid face")
 	}
-	if _baseCellToCCWrot60(16, -1) != INVALID_ROTATIONS {
+	if _baseCellToCCWrot60(16, -1) != invalidRotations {
 		t.Error("Should return invalid rotation for invalid face (negative)")
 	}
-	if _baseCellToCCWrot60(1, 0) != INVALID_ROTATIONS {
+	if _baseCellToCCWrot60(1, 0) != invalidRotations {
 		t.Error("Should return invalid rotation for base cell not appearing on face")
 	}
 }

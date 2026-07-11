@@ -7,41 +7,41 @@ import "testing"
 func Test_unitIjkToDigit_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
+		coord coordIJK
 	}{
-		{"center", CoordIJK{0, 0, 0}},
-		{"k unit", CoordIJK{0, 0, 1}},
-		{"j unit", CoordIJK{0, 1, 0}},
-		{"jk unit", CoordIJK{0, 1, 1}},
-		{"i unit", CoordIJK{1, 0, 0}},
-		{"ik unit", CoordIJK{1, 0, 1}},
-		{"ij unit", CoordIJK{1, 1, 0}},
+		{"center", coordIJK{0, 0, 0}},
+		{"k unit", coordIJK{0, 0, 1}},
+		{"j unit", coordIJK{0, 1, 0}},
+		{"jk unit", coordIJK{0, 1, 1}},
+		{"i unit", coordIJK{1, 0, 0}},
+		{"ik unit", coordIJK{1, 0, 1}},
+		{"ij unit", coordIJK{1, 1, 0}},
 
 		// Test various scaled coordinates
-		{"scaled k", CoordIJK{0, 0, 3}},
-		{"scaled j", CoordIJK{0, 2, 0}},
-		{"scaled jk", CoordIJK{0, 2, 2}},
-		{"scaled i", CoordIJK{5, 0, 0}},
-		{"scaled ik", CoordIJK{3, 0, 3}},
-		{"scaled ij", CoordIJK{4, 4, 0}},
+		{"scaled k", coordIJK{0, 0, 3}},
+		{"scaled j", coordIJK{0, 2, 0}},
+		{"scaled jk", coordIJK{0, 2, 2}},
+		{"scaled i", coordIJK{5, 0, 0}},
+		{"scaled ik", coordIJK{3, 0, 3}},
+		{"scaled ij", coordIJK{4, 4, 0}},
 
 		// Test coordinates that need normalization
-		{"needs norm k", CoordIJK{1, 1, 2}},
-		{"needs norm j", CoordIJK{1, 2, 1}},
-		{"needs norm i", CoordIJK{2, 1, 1}},
+		{"needs norm k", coordIJK{1, 1, 2}},
+		{"needs norm j", coordIJK{1, 2, 1}},
+		{"needs norm i", coordIJK{2, 1, 1}},
 
 		// Test various other coordinates
-		{"random 1", CoordIJK{1, 2, 3}},
-		{"random 2", CoordIJK{2, 1, 3}},
-		{"random 3", CoordIJK{1, 0, 2}},
-		{"negative", CoordIJK{-1, -2, -3}},
-		{"mixed", CoordIJK{2, -1, 3}},
+		{"random 1", coordIJK{1, 2, 3}},
+		{"random 2", coordIJK{2, 1, 3}},
+		{"random 3", coordIJK{1, 0, 2}},
+		{"negative", coordIJK{-1, -2, -3}},
+		{"mixed", coordIJK{2, -1, 3}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Call C implementation
-			gotC := Direction(_unitIjkToDigitC(&tt.coord))
+			gotC := direction(_unitIjkToDigitC(&tt.coord))
 
 			// Call Go implementation
 			gotGo := _unitIjkToDigit(&tt.coord)
@@ -56,10 +56,10 @@ func Test_unitIjkToDigit_parity(t *testing.T) {
 
 	// Test all unit vectors directly
 	t.Run("all_unit_vectors", func(t *testing.T) {
-		for digit := CENTER_DIGIT; digit < NUM_DIGITS; digit++ {
-			coord := UNIT_VECS[digit]
+		for digit := centerDigit; digit < numDigits; digit++ {
+			coord := unitVecs[digit]
 
-			gotC := Direction(_unitIjkToDigitC(&coord))
+			gotC := direction(_unitIjkToDigitC(&coord))
 			gotGo := _unitIjkToDigit(&coord)
 
 			if gotGo != gotC {

@@ -7,7 +7,7 @@ import "testing"
 func Test_hasDeletedSubsequence_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		h        H3Index
+		h        h3Index
 		baseCell int32
 	}{
 		// Pentagon base cells (4, 14, 24, 38, 49, 58, 63, 72, 83, 97, 107, 117)
@@ -31,7 +31,7 @@ func Test_hasDeletedSubsequence_parity(t *testing.T) {
 		{"non-pentagon 100", 0x8a01fffffffffff, 100}, // Not pentagon
 
 		// Pentagon with various digit patterns
-		{"pentagon 4 with 1 digit", 0x8201200000000000, 4}, // Has K_AXES_DIGIT (1)
+		{"pentagon 4 with 1 digit", 0x8201200000000000, 4}, // Has kAxesDigit (1)
 		{"pentagon 4 all zeros", 0x8200000000000000, 4},    // All zeros after base cell
 		{"pentagon 14 mixed", 0x821c076543210000, 14},
 
@@ -61,7 +61,7 @@ func Test_hasDeletedSubsequence_parity(t *testing.T) {
 	// Test all pentagon base cells
 	t.Run("all_pentagon_base_cells", func(t *testing.T) {
 		pentagons := []int32{4, 14, 24, 38, 49, 58, 63, 72, 83, 97, 107, 117}
-		h := H3Index(0x8201fffffffffff)
+		h := h3Index(0x8201fffffffffff)
 
 		for _, baseCell := range pentagons {
 			gotC := hasDeletedSubsequenceC(h, baseCell)
@@ -75,7 +75,7 @@ func Test_hasDeletedSubsequence_parity(t *testing.T) {
 
 	// Test all non-pentagon base cells (should return false)
 	t.Run("all_non_pentagon_base_cells", func(t *testing.T) {
-		h := H3Index(0x8001fffffffffff)
+		h := h3Index(0x8001fffffffffff)
 		pentagons := map[int32]bool{4: true, 14: true, 24: true, 38: true, 49: true, 58: true, 63: true, 72: true, 83: true, 97: true, 107: true, 117: true}
 
 		for baseCell := int32(0); baseCell < 122; baseCell++ {

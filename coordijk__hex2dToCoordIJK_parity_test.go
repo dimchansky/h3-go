@@ -7,23 +7,23 @@ import "testing"
 func Test_hex2dToCoordIJK_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		vec  Vec2d
+		vec  vec2d
 	}{
-		{"origin", Vec2d{0, 0}},
-		{"unit x", Vec2d{1, 0}},
-		{"unit y", Vec2d{0, 1}},
-		{"positive coords", Vec2d{1.5, 2.3}},
-		{"negative x", Vec2d{-1.5, 2.3}},
-		{"negative y", Vec2d{1.5, -2.3}},
-		{"both negative", Vec2d{-1.5, -2.3}},
-		{"small coords", Vec2d{0.1, 0.1}},
-		{"large coords", Vec2d{10.5, 20.7}},
-		{"hex center", Vec2d{1.0, 1.732050808}}, // approx hex center
-		{"fractional", Vec2d{0.333, 0.577}},
-		{"hex boundary", Vec2d{0.5, 0.866}},
-		{"asymmetric", Vec2d{3.14, 2.71}},
-		{"zero x", Vec2d{0, 5.2}},
-		{"zero y", Vec2d{3.8, 0}},
+		{"origin", vec2d{0, 0}},
+		{"unit x", vec2d{1, 0}},
+		{"unit y", vec2d{0, 1}},
+		{"positive coords", vec2d{1.5, 2.3}},
+		{"negative x", vec2d{-1.5, 2.3}},
+		{"negative y", vec2d{1.5, -2.3}},
+		{"both negative", vec2d{-1.5, -2.3}},
+		{"small coords", vec2d{0.1, 0.1}},
+		{"large coords", vec2d{10.5, 20.7}},
+		{"hex center", vec2d{1.0, 1.732050808}}, // approx hex center
+		{"fractional", vec2d{0.333, 0.577}},
+		{"hex boundary", vec2d{0.5, 0.866}},
+		{"asymmetric", vec2d{3.14, 2.71}},
+		{"zero x", vec2d{0, 5.2}},
+		{"zero y", vec2d{3.8, 0}},
 	}
 
 	for _, tt := range tests {
@@ -32,7 +32,7 @@ func Test_hex2dToCoordIJK_parity(t *testing.T) {
 			gotC := _hex2dToCoordIJKC(&tt.vec)
 
 			// Call Go implementation
-			var gotGo CoordIJK
+			var gotGo coordIJK
 			_hex2dToCoordIJK(&tt.vec, &gotGo)
 
 			// Compare results
@@ -46,10 +46,10 @@ func Test_hex2dToCoordIJK_parity(t *testing.T) {
 
 	// Test that transformation is deterministic
 	t.Run("deterministic", func(t *testing.T) {
-		vec := Vec2d{3.14, 2.71}
+		vec := vec2d{3.14, 2.71}
 
 		// Apply transformation twice
-		var result1, result2 CoordIJK
+		var result1, result2 coordIJK
 		_hex2dToCoordIJK(&vec, &result1)
 		_hex2dToCoordIJK(&vec, &result2)
 
@@ -61,17 +61,17 @@ func Test_hex2dToCoordIJK_parity(t *testing.T) {
 
 	// Test round-trip consistency for simple cases
 	t.Run("round_trip", func(t *testing.T) {
-		testCoords := []CoordIJK{
+		testCoords := []coordIJK{
 			{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1},
 			{1, 1, 0}, {1, 0, 1}, {0, 1, 1},
 		}
 
 		for _, orig := range testCoords {
 			// Convert IJK -> hex2d -> IJK
-			var v Vec2d
+			var v vec2d
 			_ijkToHex2d(&orig, &v)
 
-			var result CoordIJK
+			var result coordIJK
 			_hex2dToCoordIJK(&v, &result)
 
 			// For simple unit vectors, we should get back something reasonable

@@ -5,9 +5,9 @@ package h3
 // Ported from H3 C: mathExtensions.h::ADD_INT32S_OVERFLOWS.
 func addInt32sOverflows(a, b int32) bool {
 	if a > 0 {
-		return INT32_MAX-int32(a) < b
+		return int32Max-int32(a) < b
 	} else {
-		return INT32_MIN-int32(a) > b
+		return int32Min-int32(a) > b
 	}
 }
 
@@ -16,8 +16,8 @@ func addInt32sOverflows(a, b int32) bool {
 // Ported from H3 C: mathExtensions.h::SUB_INT32S_OVERFLOWS.
 func subInt32sOverflows(a, b int32) bool {
 	if a >= 0 {
-		return INT32_MIN+int32(a) >= b
+		return int32Min+int32(a) >= b
 	} else {
-		return INT32_MAX+int32(a)+1 < b
+		return int32Max+int32(a)+1 < b
 	}
 }

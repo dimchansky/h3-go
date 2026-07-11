@@ -38,62 +38,62 @@ extern void iterStepRes(IterCellsResolution *iter);
 import "C"
 
 // incrementResDigitC calls the C wrapper for _incrementResDigit.
-func incrementResDigitC(h *H3Index, res int32) {
+func incrementResDigitC(h *h3Index, res int32) {
 	ch := C.H3Index(*h)
 	C.incrementResDigitWrapper(&ch, C.int(res))
-	*h = H3Index(ch)
+	*h = h3Index(ch)
 }
 
 // nullIterC calls the C wrapper for _null_iter.
-func nullIterC() IterCellsChildren {
+func nullIterC() iterCellsChildren {
 	citer := C.nullIterWrapper()
-	return IterCellsChildren{
-		H:         H3Index(citer.h),
+	return iterCellsChildren{
+		H:         h3Index(citer.h),
 		ParentRes: int32(citer._parentRes),
 		SkipDigit: int32(citer._skipDigit),
 	}
 }
 
 // iterInitParentC calls the original C _iterInitParent function.
-func iterInitParentC(h H3Index, childRes int32, iter *IterCellsChildren) {
+func iterInitParentC(h h3Index, childRes int32, iter *iterCellsChildren) {
 	var citer C.IterCellsChildren
 	C._iterInitParent(C.H3Index(h), C.int(childRes), &citer)
-	iter.H = H3Index(citer.h)
+	iter.H = h3Index(citer.h)
 	iter.ParentRes = int32(citer._parentRes)
 	iter.SkipDigit = int32(citer._skipDigit)
 }
 
 // iterStepChildC calls the original C iterStepChild function.
-func iterStepChildC(iter *IterCellsChildren) {
+func iterStepChildC(iter *iterCellsChildren) {
 	var citer C.IterCellsChildren
 	citer.h = C.H3Index(iter.H)
 	citer._parentRes = C.int(iter.ParentRes)
 	citer._skipDigit = C.int(iter.SkipDigit)
 	C.iterStepChild(&citer)
-	iter.H = H3Index(citer.h)
+	iter.H = h3Index(citer.h)
 	iter.ParentRes = int32(citer._parentRes)
 	iter.SkipDigit = int32(citer._skipDigit)
 }
 
 // iterInitBaseCellNumC calls the original C iterInitBaseCellNum function.
-func iterInitBaseCellNumC(baseCellNum int32, childRes int32) IterCellsChildren {
+func iterInitBaseCellNumC(baseCellNum int32, childRes int32) iterCellsChildren {
 	citer := C.iterInitBaseCellNum(C.int(baseCellNum), C.int(childRes))
-	return IterCellsChildren{
-		H:         H3Index(citer.h),
+	return iterCellsChildren{
+		H:         h3Index(citer.h),
 		ParentRes: int32(citer._parentRes),
 		SkipDigit: int32(citer._skipDigit),
 	}
 }
 
 // iterInitResC calls the original C iterInitRes function.
-func iterInitResC(res int32) IterCellsResolution {
+func iterInitResC(res int32) iterCellsResolution {
 	citer := C.iterInitRes(C.int(res))
-	return IterCellsResolution{
-		H:           H3Index(citer.h),
+	return iterCellsResolution{
+		H:           h3Index(citer.h),
 		baseCellNum: int32(citer._baseCellNum),
 		res:         int32(citer._res),
-		itC: IterCellsChildren{
-			H:         H3Index(citer._itC.h),
+		itC: iterCellsChildren{
+			H:         h3Index(citer._itC.h),
 			ParentRes: int32(citer._itC._parentRes),
 			SkipDigit: int32(citer._itC._skipDigit),
 		},
@@ -101,7 +101,7 @@ func iterInitResC(res int32) IterCellsResolution {
 }
 
 // iterStepResC calls the original C iterStepRes function.
-func iterStepResC(iter *IterCellsResolution) {
+func iterStepResC(iter *iterCellsResolution) {
 	var citer C.IterCellsResolution
 	citer.h = C.H3Index(iter.H)
 	citer._baseCellNum = C.int(iter.baseCellNum)
@@ -112,10 +112,10 @@ func iterStepResC(iter *IterCellsResolution) {
 
 	C.iterStepRes(&citer)
 
-	iter.H = H3Index(citer.h)
+	iter.H = h3Index(citer.h)
 	iter.baseCellNum = int32(citer._baseCellNum)
 	iter.res = int32(citer._res)
-	iter.itC.H = H3Index(citer._itC.h)
+	iter.itC.H = h3Index(citer._itC.h)
 	iter.itC.ParentRes = int32(citer._itC._parentRes)
 	iter.itC.SkipDigit = int32(citer._itC._skipDigit)
 }

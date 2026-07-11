@@ -1,14 +1,14 @@
 package h3
 
 // addLinkedCoord adds a new coordinate to the current loop's linked list.
-// This function allocates a new LinkedLatLng node, copies the vertex data,
+// This function allocates a new linkedLatLng node, copies the vertex data,
 // and manages the loop's first/last pointers to maintain the linked list structure.
 // If the loop is empty, the coordinate becomes both first and last.
 // Otherwise, it's appended after the current last coordinate.
 // Ported from H3 C: linkedGeo.c::addLinkedCoord.
-func addLinkedCoord(loop *LinkedGeoLoop, vertex *LatLng) *LinkedLatLng {
+func addLinkedCoord(loop *linkedGeoLoop, vertex *LatLng) *linkedLatLng {
 	// Create a new coordinate node (equivalent to H3_MEMORY(malloc)(sizeof(*coord)))
-	coord := &LinkedLatLng{
+	coord := &linkedLatLng{
 		Vertex: *vertex, // Copy the vertex value
 		Next:   nil,
 	}

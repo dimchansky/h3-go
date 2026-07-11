@@ -9,57 +9,57 @@ import (
 func Test_compactCells_parity(t *testing.T) {
 	tests := []struct {
 		name   string
-		h3Set  []H3Index
+		h3Set  []h3Index
 		numHex int64
 		desc   string
 	}{
 		{
 			name:   "empty set",
-			h3Set:  []H3Index{},
+			h3Set:  []h3Index{},
 			numHex: 0,
 			desc:   "Empty input set",
 		},
 		{
 			name:   "single hexagon res 0",
-			h3Set:  []H3Index{0x8001fffffffffff},
+			h3Set:  []h3Index{0x8001fffffffffff},
 			numHex: 1,
 			desc:   "Single resolution 0 hexagon (no compaction possible)",
 		},
 		{
 			name:   "single hexagon res 1",
-			h3Set:  []H3Index{0x8101fffffffffff},
+			h3Set:  []h3Index{0x8101fffffffffff},
 			numHex: 1,
 			desc:   "Single resolution 1 hexagon",
 		},
 		{
 			name:   "resolution 2 siblings",
-			h3Set:  []H3Index{0x8220000ffffffff, 0x8220001ffffffff, 0x8220002ffffffff, 0x8220003ffffffff, 0x8220004ffffffff, 0x8220005ffffffff, 0x8220006ffffffff},
+			h3Set:  []h3Index{0x8220000ffffffff, 0x8220001ffffffff, 0x8220002ffffffff, 0x8220003ffffffff, 0x8220004ffffffff, 0x8220005ffffffff, 0x8220006ffffffff},
 			numHex: 7,
 			desc:   "Seven resolution 2 children that should compact to parent",
 		},
 		{
 			name:   "mixed resolutions (invalid for compacting)",
-			h3Set:  []H3Index{0x8001fffffffffff, 0x8101fffffffffff},
+			h3Set:  []h3Index{0x8001fffffffffff, 0x8101fffffffffff},
 			numHex: 2,
 			desc:   "Mixed resolution cells (should fail or handle gracefully)",
 		},
 		{
 			name:   "pentagon children",
-			h3Set:  []H3Index{0x81083ffffffffff, 0x81087ffffffffff, 0x8108bffffffffff, 0x8108fffffffffff, 0x81093ffffffffff, 0x81097ffffffffff},
+			h3Set:  []h3Index{0x81083ffffffffff, 0x81087ffffffffff, 0x8108bffffffffff, 0x8108fffffffffff, 0x81093ffffffffff, 0x81097ffffffffff},
 			numHex: 6,
 			desc:   "Pentagon children that should compact (only 6 children for pentagon)",
 		},
 		{
 			name:   "partial set - no compaction",
-			h3Set:  []H3Index{0x8220000ffffffff, 0x8220001ffffffff, 0x8220002ffffffff},
+			h3Set:  []h3Index{0x8220000ffffffff, 0x8220001ffffffff, 0x8220002ffffffff},
 			numHex: 3,
 			desc:   "Incomplete set of children, no compaction should occur",
 		},
 		{
 			name:   "duplicate cells",
-			h3Set:  []H3Index{0x8220000ffffffff, 0x8220000ffffffff},
+			h3Set:  []h3Index{0x8220000ffffffff, 0x8220000ffffffff},
 			numHex: 2,
-			desc:   "Duplicate input cells should return E_DUPLICATE_INPUT",
+			desc:   "Duplicate input cells should return eDuplicateInput",
 		},
 	}
 
@@ -71,12 +71,12 @@ func Test_compactCells_parity(t *testing.T) {
 			}
 
 			// Prepare Go compacted result
-			goCompactedSet := make([]H3Index, max(tt.numHex, 1)) // Ensure at least size 1
+			goCompactedSet := make([]h3Index, max(tt.numHex, 1)) // Ensure at least size 1
 			goErr := compactCells(tt.h3Set, goCompactedSet, tt.numHex)
 
 			// Prepare C compacted result
-			cCompactedSet := make([]H3Index, max(tt.numHex, 1)) // Ensure at least size 1
-			cErr := H3Error(compactCellsC(tt.h3Set, cCompactedSet, tt.numHex))
+			cCompactedSet := make([]h3Index, max(tt.numHex, 1)) // Ensure at least size 1
+			cErr := h3Error(compactCellsC(tt.h3Set, cCompactedSet, tt.numHex))
 
 			// Compare errors
 			if goErr != cErr {
@@ -84,7 +84,7 @@ func Test_compactCells_parity(t *testing.T) {
 				return
 			}
 
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				t.Logf("Expected error for %s: %d", tt.desc, goErr)
 				return
 			}
@@ -154,19 +154,19 @@ func Test_compactCells_parity(t *testing.T) {
 func Test_compactCells_invalid_input_parity(t *testing.T) {
 	invalidCases := []struct {
 		name   string
-		h3Set  []H3Index
+		h3Set  []h3Index
 		numHex int64
 		desc   string
 	}{
 		{
 			name:   "invalid cell in set",
-			h3Set:  []H3Index{0x1001fffffffffff}, // Invalid mode bits
+			h3Set:  []h3Index{0x1001fffffffffff}, // Invalid mode bits
 			numHex: 1,
 			desc:   "Set contains invalid H3 cell",
 		},
 		{
 			name:   "reserved bits set",
-			h3Set:  []H3Index{0x8201fffffffffff | (1 << 56)}, // Reserved bits set
+			h3Set:  []h3Index{0x8201fffffffffff | (1 << 56)}, // Reserved bits set
 			numHex: 1,
 			desc:   "Cell with reserved bits already set",
 		},
@@ -175,19 +175,19 @@ func Test_compactCells_invalid_input_parity(t *testing.T) {
 	for _, tt := range invalidCases {
 		t.Run(tt.name, func(t *testing.T) {
 			// Prepare Go compacted result
-			goCompactedSet := make([]H3Index, max(tt.numHex, 1))
+			goCompactedSet := make([]h3Index, max(tt.numHex, 1))
 			goErr := compactCells(tt.h3Set, goCompactedSet, tt.numHex)
 
 			// Prepare C compacted result
-			cCompactedSet := make([]H3Index, max(tt.numHex, 1))
-			cErr := H3Error(compactCellsC(tt.h3Set, cCompactedSet, tt.numHex))
+			cCompactedSet := make([]h3Index, max(tt.numHex, 1))
+			cErr := h3Error(compactCellsC(tt.h3Set, cCompactedSet, tt.numHex))
 
 			// Compare errors
 			if goErr != cErr {
 				t.Errorf("Error mismatch for %s: Go=%d, C=%d", tt.desc, goErr, cErr)
 			}
 
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				t.Logf("Unexpected success for invalid input %s", tt.desc)
 			} else {
 				t.Logf("Expected error for %s: %d", tt.desc, goErr)

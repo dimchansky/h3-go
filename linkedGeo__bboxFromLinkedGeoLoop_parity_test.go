@@ -10,11 +10,11 @@ import (
 func Test_bboxFromLinkedGeoLoop_parity(t *testing.T) {
 	testCases := []struct {
 		name string
-		loop *LinkedGeoLoop
+		loop *linkedGeoLoop
 	}{
 		{
 			name: "empty loop",
-			loop: &LinkedGeoLoop{
+			loop: &linkedGeoLoop{
 				First: nil,
 				Last:  nil,
 				Next:  nil,
@@ -66,12 +66,12 @@ func Test_bboxFromLinkedGeoLoop_parity(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test Go implementation
-			var goBbox BBox
+			var goBbox bbox
 			bboxFromLinkedGeoLoop(tc.loop, &goBbox)
 
 			// Test C implementation (skip empty loop as it would cause issues with C malloc/free)
 			if tc.loop.First != nil {
-				var cBbox BBox
+				var cBbox bbox
 				bboxFromLinkedGeoLoopC(tc.loop, &cBbox)
 
 				const tolerance = 1e-15
@@ -93,7 +93,7 @@ func Test_bboxFromLinkedGeoLoop_parity(t *testing.T) {
 			// Verify expected properties for specific test cases
 			switch tc.name {
 			case "empty loop":
-				if goBbox != (BBox{}) {
+				if goBbox != (bbox{}) {
 					t.Errorf("Empty loop should produce zero bbox, got %+v", goBbox)
 				}
 			case "simple rectangle":

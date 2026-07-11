@@ -4,13 +4,13 @@ package h3
 // for loops crossing the antimeridian. This is a helper function that handles the core
 // algorithm for winding order detection.
 // Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(isClockwiseNormalized) -> isClockwiseLinkedGeoLoopNormalized.
-func isClockwiseLinkedGeoLoopNormalized(loop *LinkedGeoLoop, isTransmeridian bool) bool {
+func isClockwiseLinkedGeoLoopNormalized(loop *linkedGeoLoop, isTransmeridian bool) bool {
 	sum := 0.0
 	var a, b LatLng
 
 	// Initialize iteration variables (INIT_ITERATION)
-	var currentCoord *LinkedLatLng = nil
-	var nextCoord *LinkedLatLng
+	var currentCoord *linkedLatLng = nil
+	var nextCoord *linkedLatLng
 
 	for {
 		// ITERATE(loop, a, b) macro expansion:
@@ -56,6 +56,6 @@ func isClockwiseLinkedGeoLoopNormalized(loop *LinkedGeoLoop, isTransmeridian boo
 // This function uses the shoelace formula to calculate the signed area and determine
 // orientation, with proper handling of transmeridian polygons.
 // Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(isClockwise) -> isClockwiseLinkedGeoLoop.
-func isClockwiseLinkedGeoLoop(loop *LinkedGeoLoop) bool {
+func isClockwiseLinkedGeoLoop(loop *linkedGeoLoop) bool {
 	return isClockwiseLinkedGeoLoopNormalized(loop, false)
 }

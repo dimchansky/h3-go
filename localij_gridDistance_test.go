@@ -8,21 +8,21 @@ import (
 func Test_gridDistance_testIndexDistance(t *testing.T) {
 	t.Parallel()
 
-	bc := H3Index(H3_INIT)
+	bc := h3Index(h3Init)
 	setH3Index(&bc, 1, 17, 0)
-	p := H3Index(H3_INIT)
+	p := h3Index(h3Init)
 	setH3Index(&p, 1, 14, 0)
-	p2 := H3Index(H3_INIT)
+	p2 := h3Index(h3Init)
 	setH3Index(&p2, 1, 14, 2)
-	p3 := H3Index(H3_INIT)
+	p3 := h3Index(h3Init)
 	setH3Index(&p3, 1, 14, 3)
-	p6 := H3Index(H3_INIT)
+	p6 := h3Index(h3Init)
 	setH3Index(&p6, 1, 14, 6)
 
 	var distance int64
 
 	err := gridDistance(bc, p, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 3 {
@@ -30,7 +30,7 @@ func Test_gridDistance_testIndexDistance(t *testing.T) {
 	}
 
 	err = gridDistance(bc, p2, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 2 {
@@ -38,7 +38,7 @@ func Test_gridDistance_testIndexDistance(t *testing.T) {
 	}
 
 	err = gridDistance(bc, p3, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 3 {
@@ -48,7 +48,7 @@ func Test_gridDistance_testIndexDistance(t *testing.T) {
 	// TODO: p4 and p5 tests are commented out in C due to pentagon distortion
 
 	err = gridDistance(bc, p6, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 2 {
@@ -59,19 +59,19 @@ func Test_gridDistance_testIndexDistance(t *testing.T) {
 func Test_gridDistance_testIndexDistance2(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x820c4ffffffffff)
+	origin := h3Index(0x820c4ffffffffff)
 	// Destination is on the other side of the pentagon
-	destination := H3Index(0x821ce7ffffffffff)
+	destination := h3Index(0x821ce7ffffffffff)
 
 	// TODO doesn't work because of pentagon distortion. Both should be 5.
 	var distance int64
 	err := gridDistance(destination, origin, &distance)
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		t.Errorf("Expected failure for distance in res 2 across pentagon, but got success")
 	}
 
 	err = gridDistance(origin, destination, &distance)
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		t.Errorf("Expected failure for distance in res 2 across pentagon (reversed), but got success")
 	}
 }
@@ -81,22 +81,22 @@ func Test_gridDistance_baseCells(t *testing.T) {
 
 	// Some indexes that represent base cells. Base cells
 	// are hexagons except for `pent1`.
-	bc1 := H3Index(H3_INIT)
+	bc1 := h3Index(h3Init)
 	setH3Index(&bc1, 0, 15, 0)
 
-	bc2 := H3Index(H3_INIT)
+	bc2 := h3Index(h3Init)
 	setH3Index(&bc2, 0, 8, 0)
 
-	bc3 := H3Index(H3_INIT)
+	bc3 := h3Index(h3Init)
 	setH3Index(&bc3, 0, 31, 0)
 
-	pent1 := H3Index(H3_INIT)
+	pent1 := h3Index(h3Init)
 	setH3Index(&pent1, 0, 4, 0)
 
 	var distance int64
 
 	err := gridDistance(bc1, pent1, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 1 {
@@ -104,7 +104,7 @@ func Test_gridDistance_baseCells(t *testing.T) {
 	}
 
 	err = gridDistance(bc1, bc2, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 1 {
@@ -112,7 +112,7 @@ func Test_gridDistance_baseCells(t *testing.T) {
 	}
 
 	err = gridDistance(bc1, bc3, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 1 {
@@ -120,7 +120,7 @@ func Test_gridDistance_baseCells(t *testing.T) {
 	}
 
 	err = gridDistance(pent1, bc3, &distance)
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		t.Errorf("Expected distance to neighbor to be invalid, but got success")
 	}
 }
@@ -129,21 +129,21 @@ func Test_gridDistance_resolutionMismatch(t *testing.T) {
 	t.Parallel()
 
 	var distance int64
-	err := gridDistance(H3Index(0x832830fffffffff), H3Index(0x822837fffffffff), &distance)
-	if err != E_RES_MISMATCH {
-		t.Errorf("Expected E_RES_MISMATCH for different resolutions, got %v", err)
+	err := gridDistance(h3Index(0x832830fffffffff), h3Index(0x822837fffffffff), &distance)
+	if err != eResMismatch {
+		t.Errorf("Expected eResMismatch for different resolutions, got %v", err)
 	}
 }
 
 func Test_gridDistance_edge(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x832830fffffffff)
-	dest := H3Index(0x832834fffffffff)
+	origin := h3Index(0x832830fffffffff)
+	dest := h3Index(0x832834fffffffff)
 
 	// First check if these cells are actually neighbors
 	areNeighbors, neighborErr := areNeighborCells(origin, dest)
-	if neighborErr != E_SUCCESS {
+	if neighborErr != eSuccess {
 		t.Fatalf("areNeighborCells failed: %v", neighborErr)
 	}
 	if !areNeighbors {
@@ -151,7 +151,7 @@ func Test_gridDistance_edge(t *testing.T) {
 	}
 
 	edge, err := cellsToDirectedEdge(origin, dest)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToDirectedEdge failed: %v", err)
 	}
 	if edge == 0 {
@@ -161,7 +161,7 @@ func Test_gridDistance_edge(t *testing.T) {
 	var distance int64
 
 	err = gridDistance(edge, origin, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 0 {
@@ -169,7 +169,7 @@ func Test_gridDistance_edge(t *testing.T) {
 	}
 
 	err = gridDistance(origin, edge, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 0 {
@@ -177,7 +177,7 @@ func Test_gridDistance_edge(t *testing.T) {
 	}
 
 	err = gridDistance(edge, dest, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 1 {
@@ -185,7 +185,7 @@ func Test_gridDistance_edge(t *testing.T) {
 	}
 
 	err = gridDistance(dest, edge, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 1 {
@@ -198,19 +198,19 @@ func Test_gridDistance_invalid(t *testing.T) {
 
 	// Some indexes that represent base cells. Base cells
 	// are hexagons except for `pent1`.
-	bc1 := H3Index(H3_INIT)
+	bc1 := h3Index(h3Init)
 	setH3Index(&bc1, 0, 15, 0)
 
-	invalid := H3Index(0xffffffffffffffff)
+	invalid := h3Index(0xffffffffffffffff)
 	var distance int64
 
 	err := gridDistance(invalid, invalid, &distance)
-	if err != E_CELL_INVALID {
-		t.Errorf("Expected E_CELL_INVALID for distance from invalid cell, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("Expected eCellInvalid for distance from invalid cell, got %v", err)
 	}
 
 	err = gridDistance(bc1, invalid, &distance)
-	if err != E_RES_MISMATCH {
-		t.Errorf("Expected E_RES_MISMATCH for distance to invalid cell, got %v", err)
+	if err != eResMismatch {
+		t.Errorf("Expected eResMismatch for distance to invalid cell, got %v", err)
 	}
 }

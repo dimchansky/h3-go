@@ -53,7 +53,7 @@ func Test_lineHexEstimate_parity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.res < 0 || tt.res > MAX_H3_RES {
+			if tt.res < 0 || tt.res > maxH3Res {
 				t.Skipf("Invalid resolution: %d", tt.res)
 			}
 
@@ -68,7 +68,7 @@ func Test_lineHexEstimate_parity(t *testing.T) {
 			}
 
 			// If there was an error, both should agree on the error
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				return
 			}
 
@@ -92,28 +92,28 @@ func Test_lineHexEstimate_edge_cases_parity(t *testing.T) {
 		origin      LatLng
 		destination LatLng
 		res         int32
-		expectErr   H3Error
+		expectErr   h3Error
 	}{
 		{
 			name:        "invalid_res_negative",
 			origin:      LatLng{Lat: 0, Lng: 0},
 			destination: LatLng{Lat: Deg(1), Lng: Deg(1)},
 			res:         -1,
-			expectErr:   E_RES_DOMAIN,
+			expectErr:   eResDomain,
 		},
 		{
 			name:        "invalid_res_too_high",
 			origin:      LatLng{Lat: 0, Lng: 0},
 			destination: LatLng{Lat: Deg(1), Lng: Deg(1)},
 			res:         16,
-			expectErr:   E_RES_DOMAIN,
+			expectErr:   eResDomain,
 		},
 		{
 			name:        "north_pole_to_south_pole",
 			origin:      LatLng{Lat: Deg(89.9), Lng: 0},
 			destination: LatLng{Lat: Deg(-89.9), Lng: 0},
 			res:         1,
-			expectErr:   E_SUCCESS,
+			expectErr:   eSuccess,
 		},
 	}
 
@@ -129,7 +129,7 @@ func Test_lineHexEstimate_edge_cases_parity(t *testing.T) {
 				return
 			}
 
-			if tt.expectErr != E_SUCCESS {
+			if tt.expectErr != eSuccess {
 				if goErr != tt.expectErr {
 					t.Errorf("Expected error %v, got Go=%v", tt.expectErr, goErr)
 				}

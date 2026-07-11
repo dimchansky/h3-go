@@ -9,7 +9,7 @@ import (
 func Test_gridDisk_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
+		origin h3Index
 		k      int32
 	}{
 		// Test basic cases
@@ -48,13 +48,13 @@ func Test_gridDisk_parity(t *testing.T) {
 			// Get the size for allocating arrays
 			var maxSize int64
 			err := maxGridDiskSize(tc.k, &maxSize)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("maxGridDiskSize failed: %v", err)
 			}
 
 			// Allocate output arrays
-			goOut := make([]H3Index, maxSize)
-			cOut := make([]H3Index, maxSize)
+			goOut := make([]h3Index, maxSize)
+			cOut := make([]h3Index, maxSize)
 
 			// Call Go implementation
 			goErr := gridDisk(tc.origin, tc.k, goOut)
@@ -68,7 +68,7 @@ func Test_gridDisk_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare outputs
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				// Compare the cell arrays
 				for i := int64(0); i < maxSize; i++ {
 					if goOut[i] != cOut[i] {
@@ -83,7 +83,7 @@ func Test_gridDisk_parity(t *testing.T) {
 	t.Run("error_cases", func(t *testing.T) {
 		// Test with invalid k value
 		t.Run("negative_k", func(t *testing.T) {
-			out := make([]H3Index, 1)
+			out := make([]h3Index, 1)
 
 			goErr := gridDisk(0x802bfffffffffff, -1, out)
 			cErr := gridDiskC(0x802bfffffffffff, -1, out)

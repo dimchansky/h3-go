@@ -25,7 +25,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:   5,
-			flags: uint32(CONTAINMENT_CENTER),
+			flags: uint32(ContainmentCenter),
 		},
 		{
 			name: "square_polygon",
@@ -39,7 +39,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:   7,
-			flags: uint32(CONTAINMENT_FULL),
+			flags: uint32(ContainmentFull),
 		},
 		{
 			name: "polygon_with_hole",
@@ -60,7 +60,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				},
 			},
 			res:   6,
-			flags: uint32(CONTAINMENT_OVERLAPPING),
+			flags: uint32(ContainmentOverlapping),
 		},
 		{
 			name: "single_point_polygon",
@@ -71,7 +71,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:   10,
-			flags: uint32(CONTAINMENT_CENTER),
+			flags: uint32(ContainmentCenter),
 		},
 		{
 			name: "large_polygon_low_res",
@@ -85,7 +85,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:   2,
-			flags: uint32(CONTAINMENT_OVERLAPPING_BBOX),
+			flags: uint32(ContainmentOverlappingBBox),
 		},
 		{
 			name: "tiny_polygon_high_res",
@@ -98,7 +98,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:   12,
-			flags: uint32(CONTAINMENT_CENTER),
+			flags: uint32(ContainmentCenter),
 		},
 		{
 			name: "multiple_holes",
@@ -125,7 +125,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				},
 			},
 			res:   8,
-			flags: uint32(CONTAINMENT_CENTER),
+			flags: uint32(ContainmentCenter),
 		},
 		{
 			name: "empty_polygon",
@@ -134,7 +134,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 				Holes:   nil,
 			},
 			res:   5,
-			flags: uint32(CONTAINMENT_CENTER),
+			flags: uint32(ContainmentCenter),
 		},
 	}
 
@@ -151,11 +151,11 @@ func Test_polygonToCells_parity(t *testing.T) {
 				return
 			}
 
-			if goSizeErr != E_SUCCESS {
+			if goSizeErr != eSuccess {
 				// Both failed with same error - polygonToCells should also fail the same way
 				// But let's test it anyway to make sure
-				goOut := make([]H3Index, 1) // Small buffer to test error handling
-				cOut := make([]H3Index, 1)
+				goOut := make([]h3Index, 1) // Small buffer to test error handling
+				cOut := make([]h3Index, 1)
 
 				goErr := polygonToCells(&tt.geoPolygon, tt.res, tt.flags, goOut)
 				cErr := polygonToCellsC(&tt.geoPolygon, tt.res, tt.flags, cOut)
@@ -173,8 +173,8 @@ func Test_polygonToCells_parity(t *testing.T) {
 			}
 
 			// Allocate output buffers
-			goOut := make([]H3Index, goSize)
-			cOut := make([]H3Index, cSize)
+			goOut := make([]h3Index, goSize)
+			cOut := make([]h3Index, cSize)
 
 			// Call Go implementation
 			goErr := polygonToCells(&tt.geoPolygon, tt.res, tt.flags, goOut)
@@ -189,7 +189,7 @@ func Test_polygonToCells_parity(t *testing.T) {
 			}
 
 			// If both failed, we're done
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				return
 			}
 
@@ -225,11 +225,11 @@ func Test_polygonToCells_parity(t *testing.T) {
 	}
 }
 
-// extractValidCells filters out H3_NULL values from a slice of H3Index
-func extractValidCells(cells []H3Index) []H3Index {
-	var valid []H3Index
+// extractValidCells filters out h3Null values from a slice of h3Index
+func extractValidCells(cells []h3Index) []h3Index {
+	var valid []h3Index
 	for _, cell := range cells {
-		if cell != H3_NULL {
+		if cell != h3Null {
 			valid = append(valid, cell)
 		}
 	}

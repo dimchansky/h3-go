@@ -9,16 +9,16 @@ func Test_gridRingUnsafe_negativeK(t *testing.T) {
 	t.Parallel()
 
 	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
-	var sfHex H3Index
+	var sfHex h3Index
 	err := latLngToCell(&sf, 9, &sfHex)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
-	k0 := []H3Index{0}
+	k0 := []h3Index{0}
 	result := gridRingUnsafe(sfHex, -1, k0)
-	if result != E_DOMAIN {
-		t.Errorf("Expected E_DOMAIN for negative k, got %v", result)
+	if result != eDomain {
+		t.Errorf("Expected eDomain for negative k, got %v", result)
 	}
 }
 
@@ -26,15 +26,15 @@ func Test_gridRingUnsafe_identityGridRing(t *testing.T) {
 	t.Parallel()
 
 	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
-	var sfHex H3Index
+	var sfHex h3Index
 	err := latLngToCell(&sf, 9, &sfHex)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
-	k0 := []H3Index{0}
+	k0 := []h3Index{0}
 	result := gridRingUnsafe(sfHex, 0, k0)
-	if result != E_SUCCESS {
+	if result != eSuccess {
 		t.Fatalf("gridRingUnsafe failed: %v", result)
 	}
 	if k0[0] != sfHex {
@@ -46,19 +46,19 @@ func Test_gridRingUnsafe_ring1(t *testing.T) {
 	t.Parallel()
 
 	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
-	var sfHex H3Index
+	var sfHex h3Index
 	err := latLngToCell(&sf, 9, &sfHex)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
-	k1 := []H3Index{0, 0, 0, 0, 0, 0}
-	expectedK1 := []H3Index{0x89283080ddbffff, 0x89283080c37ffff,
+	k1 := []h3Index{0, 0, 0, 0, 0, 0}
+	expectedK1 := []h3Index{0x89283080ddbffff, 0x89283080c37ffff,
 		0x89283080c27ffff, 0x89283080d53ffff,
 		0x89283080dcfffff, 0x89283080dc3ffff}
 
 	result := gridRingUnsafe(sfHex, 1, k1)
-	if result != E_SUCCESS {
+	if result != eSuccess {
 		t.Fatalf("gridRingUnsafe failed: %v", result)
 	}
 
@@ -84,21 +84,21 @@ func Test_gridRingUnsafe_ring2(t *testing.T) {
 	t.Parallel()
 
 	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
-	var sfHex H3Index
+	var sfHex h3Index
 	err := latLngToCell(&sf, 9, &sfHex)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
-	k2 := []H3Index{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	expectedK2 := []H3Index{
+	k2 := []h3Index{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	expectedK2 := []h3Index{
 		0x89283080ca7ffff, 0x89283080cafffff, 0x89283080c33ffff,
 		0x89283080c23ffff, 0x89283080c2fffff, 0x89283080d5bffff,
 		0x89283080d43ffff, 0x89283080d57ffff, 0x89283080d1bffff,
 		0x89283080dc7ffff, 0x89283080dd7ffff, 0x89283080dd3ffff}
 
 	result := gridRingUnsafe(sfHex, 2, k2)
-	if result != E_SUCCESS {
+	if result != eSuccess {
 		t.Fatalf("gridRingUnsafe failed: %v", result)
 	}
 
@@ -123,37 +123,37 @@ func Test_gridRingUnsafe_ring2(t *testing.T) {
 func Test_gridRingUnsafe_nearPentagonRing1(t *testing.T) {
 	t.Parallel()
 
-	nearPentagon := H3Index(0x837405fffffffff)
-	kp1 := []H3Index{0, 0, 0, 0, 0, 0}
+	nearPentagon := h3Index(0x837405fffffffff)
+	kp1 := []h3Index{0, 0, 0, 0, 0, 0}
 
 	result := gridRingUnsafe(nearPentagon, 1, kp1)
-	if result != E_PENTAGON {
-		t.Errorf("Expected E_PENTAGON when hitting a pentagon, got %v", result)
+	if result != ePentagon {
+		t.Errorf("Expected ePentagon when hitting a pentagon, got %v", result)
 	}
 }
 
 func Test_gridRingUnsafe_nearPentagonRing2(t *testing.T) {
 	t.Parallel()
 
-	nearPentagon := H3Index(0x837405fffffffff)
-	kp2 := []H3Index{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	nearPentagon := h3Index(0x837405fffffffff)
+	kp2 := []h3Index{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 	result := gridRingUnsafe(nearPentagon, 2, kp2)
-	if result != E_PENTAGON {
-		t.Errorf("Expected E_PENTAGON when hitting a pentagon, got %v", result)
+	if result != ePentagon {
+		t.Errorf("Expected ePentagon when hitting a pentagon, got %v", result)
 	}
 }
 
 func Test_gridRingUnsafe_onPentagon(t *testing.T) {
 	t.Parallel()
 
-	var nearPentagon H3Index
+	var nearPentagon h3Index
 	setH3Index(&nearPentagon, 0, 4, 0)
-	kp2 := []H3Index{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	kp2 := []h3Index{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 	result := gridRingUnsafe(nearPentagon, 2, kp2)
-	if result != E_PENTAGON {
-		t.Errorf("Expected E_PENTAGON when starting at a pentagon, got %v", result)
+	if result != ePentagon {
+		t.Errorf("Expected ePentagon when starting at a pentagon, got %v", result)
 	}
 }
 
@@ -161,18 +161,18 @@ func Test_gridRingUnsafe_matches_gridDiskDistancesSafe(t *testing.T) {
 	t.Parallel()
 
 	for res := int32(0); res < 2; res++ {
-		for i := int32(0); i < NUM_BASE_CELLS; i++ {
-			var bc H3Index
+		for i := int32(0); i < numBaseCells; i++ {
+			var bc h3Index
 			setH3Index(&bc, 0, i, 0)
 
-			childrenSz, err := uncompactCellsSize([]H3Index{bc}, 1, res)
-			if err != E_SUCCESS {
+			childrenSz, err := uncompactCellsSize([]h3Index{bc}, 1, res)
+			if err != eSuccess {
 				t.Fatalf("uncompactCellsSize failed: %v", err)
 			}
 
-			children := make([]H3Index, childrenSz)
-			err = uncompactCells([]H3Index{bc}, 1, children, childrenSz, res)
-			if err != E_SUCCESS {
+			children := make([]h3Index, childrenSz)
+			err = uncompactCells([]h3Index{bc}, 1, children, childrenSz, res)
+			if err != eSuccess {
 				t.Fatalf("uncompactCells failed: %v", err)
 			}
 
@@ -184,25 +184,25 @@ func Test_gridRingUnsafe_matches_gridDiskDistancesSafe(t *testing.T) {
 				for k := int32(0); k < 3; k++ {
 					var kSz int64
 					err := maxGridDiskSize(k, &kSz)
-					if err != E_SUCCESS {
+					if err != eSuccess {
 						t.Fatalf("maxGridDiskSize failed: %v", err)
 					}
 
 					var ringSize int64
 					err = _maxGridRingSize(k, &ringSize)
-					if err != E_SUCCESS {
+					if err != eSuccess {
 						t.Fatalf("_maxGridRingSize failed: %v", err)
 					}
 
-					ring := make([]H3Index, ringSize)
+					ring := make([]h3Index, ringSize)
 					failed := gridRingUnsafe(children[j], k, ring)
 
-					if failed == E_SUCCESS {
-						internalNeighbors := make([]H3Index, kSz)
+					if failed == eSuccess {
+						internalNeighbors := make([]h3Index, kSz)
 						internalDistances := make([]int32, kSz)
 
 						err := gridDiskDistancesSafe(children[j], k, internalNeighbors, internalDistances)
-						if err != E_SUCCESS {
+						if err != eSuccess {
 							t.Fatalf("gridDiskDistancesSafe failed: %v", err)
 						}
 

@@ -1,17 +1,17 @@
 package h3
 
-// _vertexGraphToLinkedGeo creates a LinkedGeoPolygon from a vertex graph.
+// _vertexGraphToLinkedGeo creates a linkedGeoPolygon from a vertex graph.
 // It walks the graph extracting edges into closed loops. As edges are consumed
 // from the graph (removed via removeVertexNode), connected edges form loops.
-// Each loop becomes a LinkedGeoLoop in the output LinkedGeoPolygon. The function
+// Each loop becomes a linkedGeoLoop in the output linkedGeoPolygon. The function
 // continues until all edges have been consumed from the graph.
 // Ported from H3 C: algos.c::_vertexGraphToLinkedGeo.
-func _vertexGraphToLinkedGeo(graph *VertexGraph, out *LinkedGeoPolygon) {
+func _vertexGraphToLinkedGeo(graph *vertexGraph, out *linkedGeoPolygon) {
 	// Initialize the output polygon to empty
-	*out = LinkedGeoPolygon{}
+	*out = linkedGeoPolygon{}
 
-	var loop *LinkedGeoLoop
-	var edge *VertexNode
+	var loop *linkedGeoLoop
+	var edge *vertexNode
 	var nextVtx LatLng
 
 	// Find the next unused entry point

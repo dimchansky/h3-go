@@ -15,19 +15,19 @@ const (
 	// MaxResolution is the finest (highest) H3 resolution. Resolutions run
 	// from 0 (coarsest) to MaxResolution (finest).
 	// H3 C API: MAX_H3_RES.
-	MaxResolution = MAX_H3_RES
+	MaxResolution = maxH3Res
 
 	// NumBaseCells is the number of resolution-0 base cells.
 	// H3 C API: NUM_BASE_CELLS.
-	NumBaseCells = NUM_BASE_CELLS
+	NumBaseCells = numBaseCells
 
 	// NumRes0Cells is the number of resolution-0 cells, equal to NumBaseCells.
 	// H3 C API: res0CellCount.
-	NumRes0Cells = NUM_BASE_CELLS
+	NumRes0Cells = numBaseCells
 
 	// NumPentagons is the number of pentagonal cells per resolution.
 	// H3 C API: pentagonCount.
-	NumPentagons = NUM_PENTAGONS
+	NumPentagons = numPentagons
 
 	// MaxCellBoundaryVerts is the maximum number of vertices a cell boundary
 	// can have (pentagon cells crossing icosahedron edges produce up to 10).
@@ -37,7 +37,7 @@ const (
 	// VersionMajor, VersionMinor and VersionPatch identify the H3 C release
 	// this library is behaviorally equivalent to.
 	// H3 C API: H3_VERSION_MAJOR, H3_VERSION_MINOR, H3_VERSION_PATCH.
-	VersionMajor = H3_VERSION_MAJOR
-	VersionMinor = H3_VERSION_MINOR
-	VersionPatch = H3_VERSION_PATCH
+	VersionMajor = h3VersionMajor
+	VersionMinor = h3VersionMinor
+	VersionPatch = h3VersionPatch
 )

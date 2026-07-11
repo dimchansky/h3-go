@@ -5,7 +5,7 @@ package h3
 // Mirrors static _geoToClosestFace in faceijk.c
 // Ported from H3 C: faceijk.c::_geoToClosestFace.
 func _geoToClosestFace(g *LatLng, face *int32, sqd *float64) {
-	var v3d Vec3d
+	var v3d vec3d
 	_geoToVec3d(g, &v3d)
 
 	// determine the icosahedron face
@@ -13,7 +13,7 @@ func _geoToClosestFace(g *LatLng, face *int32, sqd *float64) {
 	// The distance between two farthest points is 2.0, therefore the square of
 	// the distance between two points should always be less or equal than 4.0 .
 	*sqd = 5.0
-	for f := int32(0); f < NUM_ICOSA_FACES; f++ {
+	for f := int32(0); f < numIcosaFaces; f++ {
 		sqdT := _pointSquareDist(&faceCenterPoint[f], &v3d)
 		if sqdT < *sqd {
 			*face = f

@@ -10,8 +10,8 @@ import (
 func Test_cellToLocalIj_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
-		index  H3Index
+		origin h3Index
+		index  h3Index
 		mode   uint32
 	}{
 		// Same cell - should return (0,0)
@@ -84,7 +84,7 @@ func Test_cellToLocalIj_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare results
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut.I != cOut.I || goOut.J != cOut.J {
 					t.Errorf("Result mismatch:\nGo:  {I:%d, J:%d}\nC:   {I:%d, J:%d}",
 						goOut.I, goOut.J,
@@ -99,8 +99,8 @@ func Test_cellToLocalIj_parity(t *testing.T) {
 func Test_cellToLocalIj_errors_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
-		index  H3Index
+		origin h3Index
+		index  h3Index
 		mode   uint32
 	}{
 		{
@@ -150,8 +150,8 @@ func Test_cellToLocalIj_errors_parity(t *testing.T) {
 				t.Errorf("Error mismatch: Go=%v, C=%v", goErr, cErr)
 			}
 
-			// Both should return error (not E_SUCCESS)
-			if goErr == E_SUCCESS || cErr == E_SUCCESS {
+			// Both should return error (not eSuccess)
+			if goErr == eSuccess || cErr == eSuccess {
 				t.Errorf("Expected error but got: Go=%v, C=%v", goErr, cErr)
 			}
 		})
@@ -161,7 +161,7 @@ func Test_cellToLocalIj_errors_parity(t *testing.T) {
 // Test pentagon cases specifically
 func Test_cellToLocalIj_pentagon_parity(t *testing.T) {
 	// Pentagon base cell indices (24 different base cells)
-	pentagonBaseCells := []H3Index{
+	pentagonBaseCells := []h3Index{
 		0x8007fffffffffff, // 4
 		0x800ffffffffffff, // 14
 		0x8017fffffffffff, // 24
@@ -184,7 +184,7 @@ func Test_cellToLocalIj_pentagon_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare results
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut.I != cOut.I || goOut.J != cOut.J {
 					t.Errorf("Result mismatch:\nGo:  {I:%d, J:%d}\nC:   {I:%d, J:%d}",
 						goOut.I, goOut.J,

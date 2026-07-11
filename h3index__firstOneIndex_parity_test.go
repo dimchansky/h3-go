@@ -7,7 +7,7 @@ import "testing"
 func Test_firstOneIndex_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		h    H3Index
+		h    h3Index
 	}{
 		{"zero", 0},
 		{"single bit 0", 1},
@@ -43,7 +43,7 @@ func Test_firstOneIndex_parity(t *testing.T) {
 
 	// Test edge case where h=0 should return -1 for Go, but C behavior may vary
 	t.Run("zero_edge_case", func(t *testing.T) {
-		h := H3Index(0)
+		h := h3Index(0)
 		gotC := firstOneIndexC(h)
 		gotGo := _firstOneIndex(h)
 

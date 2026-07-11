@@ -8,7 +8,7 @@ import (
 
 func Test_vertexNumForDirection_parity(t *testing.T) {
 	// Test with various cells including hexagons and pentagons
-	testCells := []H3Index{
+	testCells := []h3Index{
 		0x85283473fffffff, // res 5 hexagon
 		0x8928308280fffff, // res 9 hexagon
 		0x8a2a1072b587fff, // res 10 hexagon
@@ -38,9 +38,9 @@ func Test_vertexNumForDirection_parity(t *testing.T) {
 	}
 
 	// Test all valid directions
-	testDirections := []Direction{
-		CENTER_DIGIT, K_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT,
-		I_AXES_DIGIT, IK_AXES_DIGIT, IJ_AXES_DIGIT, INVALID_DIGIT,
+	testDirections := []direction{
+		centerDigit, kAxesDigit, jAxesDigit, jkAxesDigit,
+		iAxesDigit, ikAxesDigit, ijAxesDigit, invalidDigit,
 	}
 
 	for _, cell := range testCells {
@@ -62,17 +62,17 @@ func Test_vertexNumForDirection_parity(t *testing.T) {
 func Test_vertexNumForDirection_parity_pentagons(t *testing.T) {
 	// Test all pentagons at different resolutions
 	for res := int32(0); res <= 15; res++ {
-		pentagons := make([]H3Index, NUM_PENTAGONS)
+		pentagons := make([]h3Index, numPentagons)
 		err := getPentagons(res, pentagons)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("getPentagons failed for res=%d: %v", res, err)
 		}
 
 		for _, pentagon := range pentagons {
 			// Test all valid directions
-			testDirections := []Direction{
-				CENTER_DIGIT, K_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT,
-				I_AXES_DIGIT, IK_AXES_DIGIT, IJ_AXES_DIGIT, INVALID_DIGIT,
+			testDirections := []direction{
+				centerDigit, kAxesDigit, jAxesDigit, jkAxesDigit,
+				iAxesDigit, ikAxesDigit, ijAxesDigit, invalidDigit,
 			}
 
 			for _, direction := range testDirections {
@@ -89,19 +89,19 @@ func Test_vertexNumForDirection_parity_pentagons(t *testing.T) {
 }
 
 func Test_vertexNumForDirection_parity_invalid_cases(t *testing.T) {
-	// Test invalid cases that should return INVALID_VERTEX_NUM
+	// Test invalid cases that should return invalidVertexNum
 	testCases := []struct {
-		cell      H3Index
-		direction Direction
+		cell      h3Index
+		direction direction
 		desc      string
 	}{
-		{0x85283473fffffff, CENTER_DIGIT, "CENTER_DIGIT on hexagon"},
-		{0x85283473fffffff, INVALID_DIGIT, "INVALID_DIGIT on hexagon"},
-		{0x821c07fffffffff, CENTER_DIGIT, "CENTER_DIGIT on pentagon"},
-		{0x821c07fffffffff, K_AXES_DIGIT, "K_AXES_DIGIT on pentagon"},
-		{0x821c07fffffffff, INVALID_DIGIT, "INVALID_DIGIT on pentagon"},
-		{H3_NULL, J_AXES_DIGIT, "NULL cell"},
-		{0xffffffffffffffff, J_AXES_DIGIT, "invalid cell"},
+		{0x85283473fffffff, centerDigit, "centerDigit on hexagon"},
+		{0x85283473fffffff, invalidDigit, "invalidDigit on hexagon"},
+		{0x821c07fffffffff, centerDigit, "centerDigit on pentagon"},
+		{0x821c07fffffffff, kAxesDigit, "kAxesDigit on pentagon"},
+		{0x821c07fffffffff, invalidDigit, "invalidDigit on pentagon"},
+		{h3Null, jAxesDigit, "NULL cell"},
+		{0xffffffffffffffff, jAxesDigit, "invalid cell"},
 	}
 
 	for _, tc := range testCases {
@@ -112,7 +112,7 @@ func Test_vertexNumForDirection_parity_invalid_cases(t *testing.T) {
 			t.Errorf("vertexNumForDirection(%s) output mismatch: Go=%d, C=%d", tc.desc, goOut, cOut)
 		}
 
-		// Note: The C implementation doesn't necessarily return INVALID_VERTEX_NUM for all invalid cells
+		// Note: The C implementation doesn't necessarily return invalidVertexNum for all invalid cells
 		// as it may process them through the calculation logic. We only test for parity between Go and C.
 	}
 }

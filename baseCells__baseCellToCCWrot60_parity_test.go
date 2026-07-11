@@ -14,7 +14,7 @@ func Test_baseCellToCCWrot60_parity(t *testing.T) {
 	}{
 		// Test edge cases
 		{"invalid_face_negative", 0, -1},
-		{"invalid_face_too_large", 0, NUM_ICOSA_FACES + 1},
+		{"invalid_face_too_large", 0, numIcosaFaces + 1},
 		{"invalid_face_way_too_large", 0, 100},
 
 		// Test a selection of valid base cell/face combinations
@@ -22,7 +22,7 @@ func Test_baseCellToCCWrot60_parity(t *testing.T) {
 		{"base_cell_0_face_0", 0, 0},
 		{"base_cell_0_face_1", 0, 1},
 		{"base_cell_0_face_2", 0, 2},
-		{"base_cell_0_face_3", 0, 3}, // Should return INVALID_ROTATIONS
+		{"base_cell_0_face_3", 0, 3}, // Should return invalidRotations
 
 		// Base cell 4 (pentagon) appears on faces 0, 1, 2, 3, 4
 		{"base_cell_4_face_0", 4, 0},
@@ -30,13 +30,13 @@ func Test_baseCellToCCWrot60_parity(t *testing.T) {
 		{"base_cell_4_face_2", 4, 2},
 		{"base_cell_4_face_3", 4, 3},
 		{"base_cell_4_face_4", 4, 4},
-		{"base_cell_4_face_5", 4, 5}, // Should return INVALID_ROTATIONS
+		{"base_cell_4_face_5", 4, 5}, // Should return invalidRotations
 
 		// Test some more base cells across different faces
 		{"base_cell_16_face_0", 16, 0},
 		{"base_cell_16_face_1", 16, 1},
 		{"base_cell_16_face_4", 16, 4},
-		{"base_cell_16_face_5", 16, 5}, // Should return INVALID_ROTATIONS
+		{"base_cell_16_face_5", 16, 5}, // Should return invalidRotations
 
 		{"base_cell_24_face_0", 24, 0},
 		{"base_cell_24_face_1", 24, 1},
@@ -72,8 +72,8 @@ func Test_baseCellToCCWrot60_parity(t *testing.T) {
 
 func Test_baseCellToCCWrot60_all_valid_combinations(t *testing.T) {
 	// Test all base cells against all faces to ensure comprehensive coverage
-	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
-		for face := int32(0); face < NUM_ICOSA_FACES; face++ {
+	for baseCell := int32(0); baseCell < numBaseCells; baseCell++ {
+		for face := int32(0); face < numIcosaFaces; face++ {
 			t.Run("", func(t *testing.T) {
 				goResult := _baseCellToCCWrot60(baseCell, face)
 				cResult := _baseCellToCCWrot60C(baseCell, face)

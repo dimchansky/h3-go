@@ -4,11 +4,11 @@ package h3
 // The length is calculated by summing the great circle distances between
 // consecutive vertices of the edge boundary.
 // Ported from H3 C: latLng.c::H3_EXPORT(edgeLengthRads).
-func edgeLengthRads(edge H3Index, length *float64) H3Error {
+func edgeLengthRads(edge h3Index, length *float64) h3Error {
 	var cb CellBoundary
 
 	err := directedEdgeToBoundary(edge, &cb)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		return err
 	}
 
@@ -17,5 +17,5 @@ func edgeLengthRads(edge H3Index, length *float64) H3Error {
 		*length += greatCircleDistanceRads(&cb.Verts[i], &cb.Verts[i+1])
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

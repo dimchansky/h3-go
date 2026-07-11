@@ -10,7 +10,7 @@ import (
 func Test_h3Rotate60cw_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		h    H3Index
+		h    h3Index
 	}{
 		{"res_0", 0x8001fffffffffff},
 		{"res_5", 0x850dab63fffffff},
@@ -35,7 +35,7 @@ func Test_h3Rotate60cw_parity(t *testing.T) {
 
 func Test_h3Rotate60cw_all_resolutions(t *testing.T) {
 	// Test a representative index at each resolution
-	testIndices := []H3Index{
+	testIndices := []h3Index{
 		0x8001fffffffffff, // res 0
 		0x81083ffffffffff, // res 1
 		0x820807fffffffff, // res 2

@@ -11,11 +11,11 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 	// Test case 1: Empty set - compare Go vs C behavior
 	t.Run("empty_set", func(t *testing.T) {
 		// Test Go implementation
-		var goGraph VertexGraph
-		goErr := h3SetToVertexGraph([]H3Index{}, 0, &goGraph)
+		var goGraph vertexGraph
+		goErr := h3SetToVertexGraph([]h3Index{}, 0, &goGraph)
 
 		// Test C implementation
-		cResult := h3SetToVertexGraphCForParity([]H3Index{})
+		cResult := h3SetToVertexGraphCForParity([]h3Index{})
 
 		// Compare error codes
 		if goErr != cResult.Err {
@@ -23,8 +23,8 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 		}
 
 		// Both should succeed
-		if goErr != E_SUCCESS {
-			t.Errorf("Go: Expected E_SUCCESS for empty set, got %v", goErr)
+		if goErr != eSuccess {
+			t.Errorf("Go: Expected eSuccess for empty set, got %v", goErr)
 		}
 
 		// Compare graph properties
@@ -43,16 +43,16 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 	t.Run("single_hexagon", func(t *testing.T) {
 		// Create a valid H3 index by converting lat/lng to cell
 		testPoint := LatLng{Lat: 37.775, Lng: -122.418} // San Francisco
-		var h3Index H3Index
-		err := latLngToCell(&testPoint, 7, &h3Index) // Resolution 7
-		if err != E_SUCCESS {
+		var idx h3Index
+		err := latLngToCell(&testPoint, 7, &idx) // Resolution 7
+		if err != eSuccess {
 			t.Skipf("Could not create H3 index: %v", err)
 		}
 
-		h3Set := []H3Index{h3Index}
+		h3Set := []h3Index{idx}
 
 		// Test Go implementation
-		var goGraph VertexGraph
+		var goGraph vertexGraph
 		goErr := h3SetToVertexGraph(h3Set, 1, &goGraph)
 
 		// Test C implementation
@@ -64,8 +64,8 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 		}
 
 		// Both should succeed
-		if goErr != E_SUCCESS {
-			t.Errorf("Go: Expected E_SUCCESS for single hexagon, got %v", goErr)
+		if goErr != eSuccess {
+			t.Errorf("Go: Expected eSuccess for single hexagon, got %v", goErr)
 		}
 
 		// Compare graph properties - both should have same size and bucket count
@@ -96,24 +96,24 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 	t.Run("two_adjacent_hexagons", func(t *testing.T) {
 		// Create a valid H3 index
 		testPoint := LatLng{Lat: 37.775, Lng: -122.418} // San Francisco
-		var origin H3Index
+		var origin h3Index
 		err := latLngToCell(&testPoint, 7, &origin) // Resolution 7
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Skipf("Could not create H3 index: %v", err)
 		}
 
 		// Get a neighbor of the origin
-		var neighbor H3Index
+		var neighbor h3Index
 		rotations := int32(0)
-		neighborErr := h3NeighborRotations(origin, K_AXES_DIGIT, &rotations, &neighbor)
-		if neighborErr != E_SUCCESS {
+		neighborErr := h3NeighborRotations(origin, kAxesDigit, &rotations, &neighbor)
+		if neighborErr != eSuccess {
 			t.Skipf("Could not get neighbor: %v", neighborErr)
 		}
 
-		h3Set := []H3Index{origin, neighbor}
+		h3Set := []h3Index{origin, neighbor}
 
 		// Test Go implementation
-		var goGraph VertexGraph
+		var goGraph vertexGraph
 		goErr := h3SetToVertexGraph(h3Set, 2, &goGraph)
 
 		// Test C implementation
@@ -125,8 +125,8 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 		}
 
 		// Both should succeed
-		if goErr != E_SUCCESS {
-			t.Errorf("Go: Expected E_SUCCESS for two adjacent hexagons, got %v", goErr)
+		if goErr != eSuccess {
+			t.Errorf("Go: Expected eSuccess for two adjacent hexagons, got %v", goErr)
 		}
 
 		// Compare graph properties
@@ -156,11 +156,11 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 	// Test case 4: Invalid hexagon - compare Go vs C error handling
 	t.Run("invalid_hexagon", func(t *testing.T) {
 		// Use an invalid H3 index that should cause both implementations to fail
-		invalidH3 := H3Index(0xfffffffffffffff)
-		h3Set := []H3Index{invalidH3}
+		invalidH3 := h3Index(0xfffffffffffffff)
+		h3Set := []h3Index{invalidH3}
 
 		// Test Go implementation
-		var goGraph VertexGraph
+		var goGraph vertexGraph
 		goErr := h3SetToVertexGraph(h3Set, 1, &goGraph)
 
 		// Test C implementation
@@ -172,11 +172,11 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 		}
 
 		// Both should fail due to invalid H3 index
-		if goErr == E_SUCCESS {
-			t.Errorf("Go: Expected error for invalid H3 index, got E_SUCCESS")
+		if goErr == eSuccess {
+			t.Errorf("Go: Expected error for invalid H3 index, got eSuccess")
 		}
-		if cResult.Err == E_SUCCESS {
-			t.Errorf("C: Expected error for invalid H3 index, got E_SUCCESS")
+		if cResult.Err == eSuccess {
+			t.Errorf("C: Expected error for invalid H3 index, got eSuccess")
 		}
 
 		// Clean up Go graph if it was partially initialized
@@ -193,16 +193,16 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 			t.Run(fmt.Sprintf("resolution_%d", res), func(t *testing.T) {
 				// Create a valid H3 index at this resolution
 				testPoint := LatLng{Lat: 40.689, Lng: -74.045} // New York
-				var h3Index H3Index
-				err := latLngToCell(&testPoint, res, &h3Index)
-				if err != E_SUCCESS {
+				var idx h3Index
+				err := latLngToCell(&testPoint, res, &idx)
+				if err != eSuccess {
 					t.Skipf("Could not create H3 index at resolution %d: %v", res, err)
 				}
 
-				h3Set := []H3Index{h3Index}
+				h3Set := []h3Index{idx}
 
 				// Test Go implementation
-				var goGraph VertexGraph
+				var goGraph vertexGraph
 				goErr := h3SetToVertexGraph(h3Set, 1, &goGraph)
 
 				// Test C implementation
@@ -212,7 +212,7 @@ func Test_h3SetToVertexGraph_parity(t *testing.T) {
 				if goErr != cResult.Err {
 					t.Errorf("Resolution %d: Error code mismatch: Go=%v, C=%v", res, goErr, cResult.Err)
 				}
-				if goErr != E_SUCCESS {
+				if goErr != eSuccess {
 					t.Errorf("Resolution %d: Go implementation failed: %v", res, goErr)
 				}
 

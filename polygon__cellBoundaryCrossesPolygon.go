@@ -3,7 +3,7 @@ package h3
 // cellBoundaryCrossesPolygon reports whether any part of a cell boundary crosses a polygon.
 // Ported from polygon.c::cellBoundaryCrossesPolygon
 // Ported from H3 C: polygon.c::cellBoundaryCrossesPolygon.
-func cellBoundaryCrossesPolygon(poly GeoPolygon, bboxes []BBox, boundary *CellBoundary, boundaryBBox *BBox) bool {
+func cellBoundaryCrossesPolygon(poly GeoPolygon, bboxes []bbox, boundary *CellBoundary, boundaryBBox *bbox) bool {
 	if cellBoundaryCrossesGeoLoop(poly.GeoLoop, &bboxes[0], boundary, boundaryBBox) {
 		return true
 	}

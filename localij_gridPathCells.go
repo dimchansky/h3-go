@@ -15,9 +15,9 @@ package h3
 //     lines or great arcs.
 //
 // Ported from H3 C: localij.c::gridPathCells.
-func gridPathCells(out []H3Index, start H3Index, end H3Index) H3Error {
+func gridPathCells(out []h3Index, start h3Index, end h3Index) h3Error {
 	var distance int64
-	if err := gridDistance(start, end, &distance); err != E_SUCCESS {
+	if err := gridDistance(start, end, &distance); err != eSuccess {
 		// Early exit if we can't calculate the line
 		return err
 	}
@@ -25,16 +25,16 @@ func gridPathCells(out []H3Index, start H3Index, end H3Index) H3Error {
 	required := distance + 1
 	if int64(len(out)) < required {
 		// Mirror C contract (caller allocates) but keep Go safe.
-		return E_FAILED
+		return eFailed
 	}
 
 	// Get IJK coords for the start and end.
-	var startIjk, endIjk CoordIJK
-	if err := cellToLocalIjk(start, start, &startIjk); err != E_SUCCESS {
+	var startIjk, endIjk coordIJK
+	if err := cellToLocalIjk(start, start, &startIjk); err != eSuccess {
 		// Unreachable in C path (was already validated by gridDistance)
 		return err
 	}
-	if err := cellToLocalIjk(start, end, &endIjk); err != E_SUCCESS {
+	if err := cellToLocalIjk(start, end, &endIjk); err != eSuccess {
 		// Unreachable in C path (was already validated by gridDistance)
 		return err
 	}
@@ -52,7 +52,7 @@ func gridPathCells(out []H3Index, start H3Index, end H3Index) H3Error {
 	jStep := float64(endIjk.J-startIjk.J) * invDistance
 	kStep := float64(endIjk.K-startIjk.K) * invDistance
 
-	currentIjk := CoordIJK{I: startIjk.I, J: startIjk.J, K: startIjk.K}
+	currentIjk := coordIJK{I: startIjk.I, J: startIjk.J, K: startIjk.K}
 	for n := int64(0); n <= distance; n++ {
 		cubeRound(
 			float64(startIjk.I)+iStep*float64(n),
@@ -62,11 +62,11 @@ func gridPathCells(out []H3Index, start H3Index, end H3Index) H3Error {
 		)
 		// Convert cube -> ijk -> H3 index
 		cubeToIjk(&currentIjk)
-		if err := localIjkToCell(start, &currentIjk, &out[n]); err != E_SUCCESS {
+		if err := localIjkToCell(start, &currentIjk, &out[n]); err != eSuccess {
 			// Cells between start and end may cross pentagon distortion.
 			return err
 		}
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

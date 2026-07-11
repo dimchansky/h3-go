@@ -9,11 +9,11 @@ import (
 func Test_gridDiskDistancesInternal_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		origin   H3Index
+		origin   h3Index
 		k        int32
 		maxIdx   int64
 		curK     int32
-		wantErr  H3Error
+		wantErr  h3Error
 		skipTest bool
 		reason   string
 	}{
@@ -41,7 +41,7 @@ func Test_gridDiskDistancesInternal_parity(t *testing.T) {
 			maxIdx: 19, // Formula: 3*k*(k+1)+1 = 3*2*3+1 = 19
 			curK:   0,
 		},
-		// Test with pentagon base cell (should handle E_PENTAGON gracefully)
+		// Test with pentagon base cell (should handle ePentagon gracefully)
 		{
 			name:   "pentagon base cell",
 			origin: 0x80428b7ffffffff, // Pentagon base cell 4
@@ -90,11 +90,11 @@ func Test_gridDiskDistancesInternal_parity(t *testing.T) {
 			}
 
 			// Initialize output arrays for Go implementation
-			outGo := make([]H3Index, tt.maxIdx)
+			outGo := make([]h3Index, tt.maxIdx)
 			distancesGo := make([]int32, tt.maxIdx)
 
 			// Initialize output arrays for C implementation
-			outC := make([]H3Index, tt.maxIdx)
+			outC := make([]h3Index, tt.maxIdx)
 			distancesC := make([]int32, tt.maxIdx)
 
 			// Call Go implementation
@@ -114,7 +114,7 @@ func Test_gridDiskDistancesInternal_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare results
-			if errGo == E_SUCCESS && errC == E_SUCCESS {
+			if errGo == eSuccess && errC == eSuccess {
 				// Count non-zero entries in both arrays
 				countGo := 0
 				countC := 0
@@ -132,8 +132,8 @@ func Test_gridDiskDistancesInternal_parity(t *testing.T) {
 				}
 
 				// Convert to sets for comparison (order doesn't matter in hash table)
-				setGo := make(map[H3Index]int32)
-				setC := make(map[H3Index]int32)
+				setGo := make(map[h3Index]int32)
+				setC := make(map[h3Index]int32)
 
 				for i := int64(0); i < tt.maxIdx; i++ {
 					if outGo[i] != 0 {
@@ -171,7 +171,7 @@ func Test_gridDiskDistancesInternal_parity(t *testing.T) {
 func Test_gridDiskDistancesInternal_edge_cases_parity(t *testing.T) {
 	tests := []struct {
 		name     string
-		origin   H3Index
+		origin   h3Index
 		k        int32
 		maxIdx   int64
 		curK     int32
@@ -211,9 +211,9 @@ func Test_gridDiskDistancesInternal_edge_cases_parity(t *testing.T) {
 			}
 
 			// Initialize output arrays
-			outGo := make([]H3Index, tt.maxIdx)
+			outGo := make([]h3Index, tt.maxIdx)
 			distancesGo := make([]int32, tt.maxIdx)
-			outC := make([]H3Index, tt.maxIdx)
+			outC := make([]h3Index, tt.maxIdx)
 			distancesC := make([]int32, tt.maxIdx)
 
 			// Call both implementations
@@ -226,7 +226,7 @@ func Test_gridDiskDistancesInternal_edge_cases_parity(t *testing.T) {
 			}
 
 			// Both should handle edge cases the same way
-			if errGo == E_SUCCESS && errC == E_SUCCESS {
+			if errGo == eSuccess && errC == eSuccess {
 				// Basic sanity check - both should have same number of non-zero entries
 				countGo := 0
 				countC := 0

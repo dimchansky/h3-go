@@ -1,11 +1,11 @@
 package h3
 
-// _adjustOverageClassII adjusts a FaceIJK address for overage to an adjacent face.
+// _adjustOverageClassII adjusts a faceIJK address for overage to an adjacent face.
 // This handles coordinate transformations when IJK coordinates exceed the face boundary.
-// Returns the overage status: NO_OVERAGE, FACE_EDGE, or NEW_FACE.
+// Returns the overage status: noOverage, faceEdge, or newFace.
 // Ported from H3 C: faceijk.c::_adjustOverageClassII.
-func _adjustOverageClassII(fijk *FaceIJK, res int32, pentLeading4 bool, substrate bool) Overage {
-	overage := NO_OVERAGE
+func _adjustOverageClassII(fijk *faceIJK, res int32, pentLeading4 bool, substrate bool) overage {
+	overage := noOverage
 	ijk := &fijk.Coord
 
 	// Get the maximum dimension value; scale if a substrate grid
@@ -16,22 +16,22 @@ func _adjustOverageClassII(fijk *FaceIJK, res int32, pentLeading4 bool, substrat
 
 	// Check for overage
 	if substrate && ijk.I+ijk.J+ijk.K == maxDim { // on edge
-		overage = FACE_EDGE
+		overage = faceEdge
 	} else if ijk.I+ijk.J+ijk.K > maxDim { // overage
-		overage = NEW_FACE
+		overage = newFace
 
-		var fijkOrient *FaceOrientIJK
+		var fijkOrient *faceOrientIJK
 		if ijk.K > 0 {
 			if ijk.J > 0 { // jk "quadrant"
-				fijkOrient = &faceNeighbors[fijk.Face][JK]
+				fijkOrient = &faceNeighbors[fijk.Face][quadJK]
 			} else { // ik "quadrant"
-				fijkOrient = &faceNeighbors[fijk.Face][KI]
+				fijkOrient = &faceNeighbors[fijk.Face][quadKI]
 
 				// Adjust for the pentagonal missing sequence
 				if pentLeading4 {
 					// Translate origin to center of pentagon
-					origin := CoordIJK{maxDim, 0, 0}
-					var tmp CoordIJK
+					origin := coordIJK{maxDim, 0, 0}
+					var tmp coordIJK
 					_ijkSub(ijk, &origin, &tmp)
 					// Rotate to adjust for the missing sequence
 					_ijkRotate60cw(&tmp)
@@ -40,7 +40,7 @@ func _adjustOverageClassII(fijk *FaceIJK, res int32, pentLeading4 bool, substrat
 				}
 			}
 		} else { // ij "quadrant"
-			fijkOrient = &faceNeighbors[fijk.Face][IJ]
+			fijkOrient = &faceNeighbors[fijk.Face][quadIJ]
 		}
 
 		fijk.Face = fijkOrient.Face
@@ -59,9 +59,9 @@ func _adjustOverageClassII(fijk *FaceIJK, res int32, pentLeading4 bool, substrat
 		_ijkAdd(ijk, &transVec, ijk)
 		_ijkNormalize(ijk)
 
-		// Overage points on pentagon boundaries can end up on edges
+		// overage points on pentagon boundaries can end up on edges
 		if substrate && ijk.I+ijk.J+ijk.K == maxDim { // on edge
-			overage = FACE_EDGE
+			overage = faceEdge
 		}
 	}
 

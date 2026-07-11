@@ -3,14 +3,14 @@ package h3
 // isValidVertex determines whether the input is a valid H3 vertex.
 // Returns true if the vertex index is valid, false otherwise.
 // Ported from H3 C: vertex.c::isValidVertex.
-func isValidVertex(vertex H3Index) bool {
-	if getMode(vertex) != H3_VERTEX_MODE {
+func isValidVertex(vertex h3Index) bool {
+	if getMode(vertex) != h3VertexMode {
 		return false
 	}
 
 	vertexNum := getReservedBits(vertex)
 	owner := vertex
-	owner = setMode(owner, H3_CELL_MODE)
+	owner = setMode(owner, h3CellMode)
 	owner = setReservedBits(owner, 0)
 
 	if !isValidCell(owner) {
@@ -19,8 +19,8 @@ func isValidVertex(vertex H3Index) bool {
 
 	// The easiest way to ensure that the owner + vertex number is valid,
 	// and that the vertex is canonical, is to recreate and compare.
-	var canonical H3Index
-	if cellToVertex(owner, vertexNum, &canonical) != E_SUCCESS {
+	var canonical h3Index
+	if cellToVertex(owner, vertexNum, &canonical) != eSuccess {
 		return false
 	}
 

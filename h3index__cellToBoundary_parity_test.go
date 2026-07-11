@@ -9,7 +9,7 @@ import (
 func Test_cellToBoundary_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		h3   H3Index
+		h3   h3Index
 		desc string
 	}{
 		{
@@ -78,7 +78,7 @@ func Test_cellToBoundary_parity(t *testing.T) {
 			goErr := cellToBoundary(tt.h3, &goBoundary)
 
 			// Call C implementation
-			cErr := H3Error(cellToBoundaryC(tt.h3, &cBoundary))
+			cErr := h3Error(cellToBoundaryC(tt.h3, &cBoundary))
 
 			// Compare errors
 			if goErr != cErr {
@@ -86,7 +86,7 @@ func Test_cellToBoundary_parity(t *testing.T) {
 				return
 			}
 
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				t.Logf("Expected error for %s: %d", tt.desc, goErr)
 				return
 			}
@@ -127,7 +127,7 @@ func Test_cellToBoundary_parity(t *testing.T) {
 				}
 			}
 
-			t.Logf("Generated %d vertices for %s (H3Index: 0x%x)",
+			t.Logf("Generated %d vertices for %s (h3Index: 0x%x)",
 				goBoundary.NumVerts, tt.desc, uint64(tt.h3))
 		})
 	}
@@ -136,11 +136,11 @@ func Test_cellToBoundary_parity(t *testing.T) {
 func Test_cellToBoundary_invalid_cells_parity(t *testing.T) {
 	invalidCells := []struct {
 		name string
-		h3   H3Index
+		h3   h3Index
 		desc string
 	}{
 		{
-			name: "H3_NULL",
+			name: "h3Null",
 			h3:   0,
 			desc: "Null H3 index",
 		},
@@ -170,14 +170,14 @@ func Test_cellToBoundary_invalid_cells_parity(t *testing.T) {
 			goErr := cellToBoundary(tt.h3, &goBoundary)
 
 			// Call C implementation
-			cErr := H3Error(cellToBoundaryC(tt.h3, &cBoundary))
+			cErr := h3Error(cellToBoundaryC(tt.h3, &cBoundary))
 
 			// Compare errors
 			if goErr != cErr {
 				t.Errorf("Error mismatch for %s: Go=%d, C=%d", tt.desc, goErr, cErr)
 			}
 
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				t.Logf("Unexpected success for invalid cell %s", tt.desc)
 			}
 		})

@@ -9,8 +9,8 @@ import (
 func Test_gridDistance_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
-		index  H3Index
+		origin h3Index
+		index  h3Index
 	}{
 		// Same cell - should return distance 0
 		{
@@ -96,8 +96,8 @@ func Test_gridDistance_parity(t *testing.T) {
 func Test_gridDistance_error_cases_parity(t *testing.T) {
 	errorCases := []struct {
 		name   string
-		origin H3Index
-		index  H3Index
+		origin h3Index
+		index  h3Index
 	}{
 		{
 			"Different resolutions",
@@ -106,13 +106,13 @@ func Test_gridDistance_error_cases_parity(t *testing.T) {
 		},
 		{
 			"Invalid origin",
-			0x0000000000000000, // Invalid H3Index
+			0x0000000000000000, // Invalid h3Index
 			0x85283473fffffff,
 		},
 		{
 			"Invalid index",
 			0x85283473fffffff,
-			0x0000000000000000, // Invalid H3Index
+			0x0000000000000000, // Invalid h3Index
 		},
 	}
 

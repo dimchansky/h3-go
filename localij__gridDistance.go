@@ -5,8 +5,8 @@ package h3
 // example if they are very far apart. It may also fail when finding
 // distances for indexes on opposite sides of a pentagon.
 // Ported from H3 C: localij.c::gridDistance.
-func gridDistance(origin H3Index, index H3Index, out *int64) H3Error {
-	var originIjk, h3Ijk CoordIJK
+func gridDistance(origin h3Index, index h3Index, out *int64) h3Error {
+	var originIjk, h3Ijk coordIJK
 
 	originError := cellToLocalIjk(origin, origin, &originIjk)
 	if originError != 0 {
@@ -19,5 +19,5 @@ func gridDistance(origin H3Index, index H3Index, out *int64) H3Error {
 	}
 
 	*out = int64(ijkDistance(&originIjk, &h3Ijk))
-	return 0 // E_SUCCESS
+	return 0 // eSuccess
 }

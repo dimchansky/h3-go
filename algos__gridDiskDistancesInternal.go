@@ -9,7 +9,7 @@ package h3
 // recursively exploring neighbors up to distance k from the origin.
 //
 // Ported from H3 C: algos.c::_gridDiskDistancesInternal.
-func _gridDiskDistancesInternal(origin H3Index, k int32, out []H3Index, distances []int32, maxIdx int64, curK int32) H3Error {
+func _gridDiskDistancesInternal(origin h3Index, k int32, out []h3Index, distances []int32, maxIdx int64, curK int32) h3Error {
 	// Put origin in the output array. out is used as a hash set.
 	// Note: In C, this is int64_t off = origin % maxIdx; where origin is uint64_t
 	// The C behavior with signed/unsigned conversion is preserved here
@@ -22,7 +22,7 @@ func _gridDiskDistancesInternal(origin H3Index, k int32, out []H3Index, distance
 	// We might need to process the duplicate anyways because we got
 	// here on a longer path before.
 	if out[off] == origin && distances[off] <= curK {
-		return E_SUCCESS
+		return eSuccess
 	}
 
 	out[off] = origin
@@ -30,25 +30,25 @@ func _gridDiskDistancesInternal(origin H3Index, k int32, out []H3Index, distance
 
 	// Base case: reached an index k away from the origin.
 	if curK >= k {
-		return E_SUCCESS
+		return eSuccess
 	}
 
 	// Recurse to all neighbors in no particular order.
 	for i := 0; i < 6; i++ {
 		rotations := int32(0)
-		var nextNeighbor H3Index
-		neighborResult := h3NeighborRotations(origin, DIRECTIONS[i], &rotations, &nextNeighbor)
-		if neighborResult != E_PENTAGON {
-			// E_PENTAGON is an expected case when trying to traverse off of
+		var nextNeighbor h3Index
+		neighborResult := h3NeighborRotations(origin, algosDirections[i], &rotations, &nextNeighbor)
+		if neighborResult != ePentagon {
+			// ePentagon is an expected case when trying to traverse off of
 			// pentagons.
-			if neighborResult != E_SUCCESS {
+			if neighborResult != eSuccess {
 				return neighborResult
 			}
 			neighborResult = _gridDiskDistancesInternal(nextNeighbor, k, out, distances, maxIdx, curK+1)
-			if neighborResult != E_SUCCESS {
+			if neighborResult != eSuccess {
 				return neighborResult
 			}
 		}
 	}
-	return E_SUCCESS
+	return eSuccess
 }

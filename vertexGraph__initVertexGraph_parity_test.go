@@ -52,11 +52,11 @@ func Test_initVertexGraph_parity(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test Go implementation
-			var goGraph VertexGraph
+			var goGraph vertexGraph
 			initVertexGraph(&goGraph, tc.numBuckets, tc.res)
 
 			// Test C implementation
-			var cGraph VertexGraph
+			var cGraph vertexGraph
 			initVertexGraphC(&cGraph, tc.numBuckets, tc.res)
 
 			// Compare results

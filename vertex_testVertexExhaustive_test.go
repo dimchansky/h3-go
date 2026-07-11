@@ -6,12 +6,12 @@ import (
 )
 
 // Helper function to iterate all indexes at a given resolution.
-func iterateAllIndexesAtRes(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
+func iterateAllIndexesAtRes(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index)) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
@@ -26,17 +26,17 @@ func iterateAllIndexesAtRes(t *testing.T, res int32, testFunc func(t *testing.T,
 	// For higher resolutions, get children of each base cell
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue // Some cells might not have children at certain resolutions
 		}
 
-		children := make([]H3Index, childrenSize)
-		if err := cellToChildren(baseCell, res, children); err != E_SUCCESS {
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(baseCell, res, children); err != eSuccess {
 			continue
 		}
 
 		for _, child := range children {
-			if child != H3_NULL {
+			if child != h3Null {
 				testFunc(t, child)
 			}
 		}
@@ -44,12 +44,12 @@ func iterateAllIndexesAtRes(t *testing.T, res int32, testFunc func(t *testing.T,
 }
 
 // Helper function to iterate base cell indexes at a specific resolution.
-func iterateBaseCellIndexesAtRes(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), baseCell int32) {
+func iterateBaseCellIndexesAtRes(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index), baseCell int32) {
 	t.Helper()
 
 	// Create base cell index
-	baseCellIndex := H3Index(H3_INIT)
-	baseCellIndex = setMode(baseCellIndex, H3_CELL_MODE)
+	baseCellIndex := h3Index(h3Init)
+	baseCellIndex = setMode(baseCellIndex, h3CellMode)
 	baseCellIndex = setBaseCell(baseCellIndex, baseCell)
 
 	if res == 0 {
@@ -59,36 +59,36 @@ func iterateBaseCellIndexesAtRes(t *testing.T, res int32, testFunc func(t *testi
 
 	// Get children at the specified resolution
 	childrenSize, err := cellToChildrenSize(baseCellIndex, res)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("Failed to get children size for base cell %d at res %d: %v", baseCell, res, err)
 	}
 
-	children := make([]H3Index, childrenSize)
-	if err := cellToChildren(baseCellIndex, res, children); err != E_SUCCESS {
+	children := make([]h3Index, childrenSize)
+	if err := cellToChildren(baseCellIndex, res, children); err != eSuccess {
 		t.Fatalf("Failed to get children for base cell %d at res %d: %v", baseCell, res, err)
 	}
 
 	for _, child := range children {
-		if child != H3_NULL {
+		if child != h3Null {
 			testFunc(t, child)
 		}
 	}
 }
 
-func directionForVertexNum_symmetry_assertions(t *testing.T, h3 H3Index) {
+func directionForVertexNum_symmetry_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
-	numVerts := int32(NUM_HEX_VERTS)
+	numVerts := int32(numHexVerts)
 	isPent := isPentagon(h3)
 	if isPent {
-		numVerts = NUM_PENT_VERTS
+		numVerts = numPentVerts
 	}
 
 	for i := int32(0); i < numVerts; i++ {
 		dir := directionForVertexNum(h3, i)
 		vertexNum := vertexNumForDirection(h3, dir)
 		if vertexNum != i {
-			t.Errorf("Direction symmetry failed for cell %#016x (res=%d, %s):\n"+
+			t.Errorf("direction symmetry failed for cell %#016x (res=%d, %s):\n"+
 				"  vertexNum=%d -> direction=%d -> vertexNum=%d (expected %d)",
 				h3, getResolution(h3),
 				map[bool]string{true: "pentagon", false: "hexagon"}[isPent],
@@ -97,19 +97,19 @@ func directionForVertexNum_symmetry_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-func cellToVertex_point_assertions(t *testing.T, h3 H3Index) {
+func cellToVertex_point_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
 	var gb CellBoundary
-	if err := cellToBoundary(h3, &gb); err != E_SUCCESS {
+	if err := cellToBoundary(h3, &gb); err != eSuccess {
 		t.Skipf("Failed to get cell boundary for h3=%#016x: %v", h3, err)
 		return
 	}
 
-	numVerts := int32(NUM_HEX_VERTS)
+	numVerts := int32(numHexVerts)
 	isPent := isPentagon(h3)
 	if isPent {
-		numVerts = NUM_PENT_VERTS
+		numVerts = numPentVerts
 	}
 
 	// This test won't work if there are distortion vertexes in the boundary
@@ -119,8 +119,8 @@ func cellToVertex_point_assertions(t *testing.T, h3 H3Index) {
 
 	var coord LatLng
 	for i := int32(0); i < numVerts; i++ {
-		var vertex H3Index
-		if err := cellToVertex(h3, i, &vertex); err != E_SUCCESS {
+		var vertex h3Index
+		if err := cellToVertex(h3, i, &vertex); err != eSuccess {
 			t.Errorf("cellToVertex failed for cell %#016x (res=%d, %s), vertexNum=%d: error=%v",
 				h3, getResolution(h3),
 				map[bool]string{true: "pentagon", false: "hexagon"}[isPent],
@@ -128,7 +128,7 @@ func cellToVertex_point_assertions(t *testing.T, h3 H3Index) {
 			continue
 		}
 
-		if err := vertexToLatLng(vertex, &coord); err != E_SUCCESS {
+		if err := vertexToLatLng(vertex, &coord); err != eSuccess {
 			t.Errorf("vertexToLatLng failed for vertex %#016x (from cell %#016x, vertexNum=%d): error=%v",
 				vertex, h3, i, err)
 			continue
@@ -152,19 +152,19 @@ func cellToVertex_point_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-func cellToVertex_uniqueness_assertions(t *testing.T, h3 H3Index) {
+func cellToVertex_uniqueness_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
-	var originVerts [NUM_HEX_VERTS]H3Index
-	if err := cellToVertexes(h3, &originVerts); err != E_SUCCESS {
+	var originVerts [numHexVerts]h3Index
+	if err := cellToVertexes(h3, &originVerts); err != eSuccess {
 		t.Skipf("Failed to get vertexes for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
 		return
 	}
 
 	isPent := isPentagon(h3)
-	for v1 := 0; v1 < NUM_HEX_VERTS-1; v1++ {
-		for v2 := v1 + 1; v2 < NUM_HEX_VERTS; v2++ {
-			if originVerts[v1] != H3_NULL && originVerts[v2] != H3_NULL && originVerts[v1] == originVerts[v2] {
+	for v1 := 0; v1 < numHexVerts-1; v1++ {
+		for v2 := v1 + 1; v2 < numHexVerts; v2++ {
+			if originVerts[v1] != h3Null && originVerts[v2] != h3Null && originVerts[v1] == originVerts[v2] {
 				t.Errorf("Duplicate vertex found for cell %#016x (res=%d, %s):\n"+
 					"  vertex[%d] = %#016x\n"+
 					"  vertex[%d] = %#016x (duplicate)",
@@ -176,23 +176,23 @@ func cellToVertex_uniqueness_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-func cellToVertex_validity_assertions(t *testing.T, h3 H3Index) {
+func cellToVertex_validity_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
-	var verts [NUM_HEX_VERTS]H3Index
-	if err := cellToVertexes(h3, &verts); err != E_SUCCESS {
+	var verts [numHexVerts]h3Index
+	if err := cellToVertexes(h3, &verts); err != eSuccess {
 		t.Skipf("Failed to get vertexes for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
 		return
 	}
 
 	isPent := isPentagon(h3)
-	maxVerts := NUM_HEX_VERTS
+	maxVerts := numHexVerts
 	if isPent {
-		maxVerts = NUM_PENT_VERTS
+		maxVerts = numPentVerts
 	}
 
-	for i := 0; i < NUM_HEX_VERTS; i++ {
-		if verts[i] != H3_NULL {
+	for i := 0; i < numHexVerts; i++ {
+		if verts[i] != h3Null {
 			if !isValidVertex(verts[i]) {
 				t.Errorf("Invalid vertex for cell %#016x (res=%d, %s):\n"+
 					"  position: %d (of %d vertices)\n"+
@@ -202,26 +202,26 @@ func cellToVertex_validity_assertions(t *testing.T, h3 H3Index) {
 					h3, getResolution(h3),
 					map[bool]string{true: "pentagon", false: "hexagon"}[isPent],
 					i, maxVerts, verts[i],
-					getMode(verts[i]), H3_VERTEX_MODE,
+					getMode(verts[i]), h3VertexMode,
 					getReservedBits(verts[i]))
 			}
 		}
 	}
 }
 
-func cellToVertex_neighbor_assertions(t *testing.T, h3 H3Index) {
+func cellToVertex_neighbor_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
-	neighbors := make([]H3Index, 7)
-	var originVerts [NUM_HEX_VERTS]H3Index
-	var neighborVerts [NUM_HEX_VERTS]H3Index
+	neighbors := make([]h3Index, 7)
+	var originVerts [numHexVerts]h3Index
+	var neighborVerts [numHexVerts]h3Index
 
-	if err := gridDisk(h3, 1, neighbors); err != E_SUCCESS {
+	if err := gridDisk(h3, 1, neighbors); err != eSuccess {
 		t.Skipf("Failed to get neighbors for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
 		return
 	}
 
-	if err := cellToVertexes(h3, &originVerts); err != E_SUCCESS {
+	if err := cellToVertexes(h3, &originVerts); err != eSuccess {
 		t.Skipf("Failed to get vertexes for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
 		return
 	}
@@ -229,20 +229,20 @@ func cellToVertex_neighbor_assertions(t *testing.T, h3 H3Index) {
 	isPent := isPentagon(h3)
 	for i := 0; i < 7; i++ {
 		neighbor := neighbors[i]
-		if neighbor == H3_NULL || neighbor == h3 {
+		if neighbor == h3Null || neighbor == h3 {
 			continue
 		}
 
-		if err := cellToVertexes(neighbor, &neighborVerts); err != E_SUCCESS {
+		if err := cellToVertexes(neighbor, &neighborVerts); err != eSuccess {
 			continue
 		}
 
 		// Calculate the set intersection
 		intersection := 0
-		var sharedVerts []H3Index
-		for v1 := 0; v1 < NUM_HEX_VERTS; v1++ {
-			for v2 := 0; v2 < NUM_HEX_VERTS; v2++ {
-				if neighborVerts[v1] != H3_NULL && originVerts[v2] != H3_NULL && neighborVerts[v1] == originVerts[v2] {
+		var sharedVerts []h3Index
+		for v1 := 0; v1 < numHexVerts; v1++ {
+			for v2 := 0; v2 < numHexVerts; v2++ {
+				if neighborVerts[v1] != h3Null && originVerts[v2] != h3Null && neighborVerts[v1] == originVerts[v2] {
 					intersection++
 					sharedVerts = append(sharedVerts, neighborVerts[v1])
 				}

@@ -4,7 +4,7 @@ package h3
 // Iterates through the linked list of coordinates, counting each node.
 // Returns the total count of coordinates in the loop.
 // Ported from H3 C: linkedGeo.c::countLinkedCoords.
-func countLinkedCoords(loop *LinkedGeoLoop) int32 {
+func countLinkedCoords(loop *linkedGeoLoop) int32 {
 	coord := loop.First
 	count := int32(0)
 	for coord != nil {

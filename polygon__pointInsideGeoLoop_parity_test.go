@@ -6,7 +6,7 @@ import "testing"
 
 func Test_pointInsideGeoLoop_ParityWithC(t *testing.T) {
 	loop := []LatLng{{0.0, 0.0}, {0.0, 1.0}, {1.0, 1.0}, {1.0, 0.0}}
-	var bbox BBox
+	var bbox bbox
 	bboxFromGeoLoop(loop, &bbox)
 	pts := []LatLng{{0.5, 0.5}, {1.5, 0.5}, {0.5, -0.5}, {0.1, 0.9}}
 	for _, p := range pts {

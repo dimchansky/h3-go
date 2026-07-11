@@ -6,7 +6,7 @@ import "testing"
 func Test_ijkToIj_zero(t *testing.T) {
 	t.Parallel()
 
-	ijk := CoordIJK{0, 0, 0}
+	ijk := coordIJK{0, 0, 0}
 	ij := CoordIJ{0, 0}
 
 	ijkToIj(&ijk, &ij)
@@ -21,15 +21,15 @@ func Test_ijkToIj_zero(t *testing.T) {
 func Test_ijkToIj_roundtrip(t *testing.T) {
 	t.Parallel()
 
-	for dir := CENTER_DIGIT; dir < NUM_DIGITS; dir++ {
-		ijk := CoordIJK{0, 0, 0}
+	for dir := centerDigit; dir < numDigits; dir++ {
+		ijk := coordIJK{0, 0, 0}
 		_neighbor(&ijk, dir)
 
 		ij := CoordIJ{0, 0}
 		ijkToIj(&ijk, &ij)
 
-		recovered := CoordIJK{0, 0, 0}
-		if err := ijToIjk(&ij, &recovered); err != E_SUCCESS {
+		recovered := coordIJK{0, 0, 0}
+		if err := ijToIjk(&ij, &recovered); err != eSuccess {
 			t.Errorf("ijToIjk failed for direction %v: %v", dir, err)
 		}
 

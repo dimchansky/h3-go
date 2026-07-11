@@ -7,7 +7,7 @@ import "testing"
 func Test_hasGoodTopBits_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		h    H3Index
+		h    h3Index
 	}{
 		// Valid H3 indexes (should have good top bits)
 		{"valid h3 index", 0x8a1fb46622dffff},
@@ -50,7 +50,7 @@ func Test_hasGoodTopBits_parity(t *testing.T) {
 	// Test the exact bit pattern that should pass
 	t.Run("expected_pattern", func(t *testing.T) {
 		// Create an index with exactly the right top 8 bits: 0b00001000
-		h := H3Index(0x0800000000000000) // Top 8 bits = 0b00001000
+		h := h3Index(0x0800000000000000) // Top 8 bits = 0b00001000
 
 		gotC := hasGoodTopBitsC(h)
 		gotGo := _hasGoodTopBits(h)

@@ -9,42 +9,42 @@ import (
 func Test_faceIjkPentToCellBoundary_parity(t *testing.T) {
 	tests := []struct {
 		name   string
-		fijk   FaceIJK
+		fijk   faceIJK
 		res    int32
 		start  int32
 		length int32
 	}{
 		{
 			name:   "pentagon face 0 res 0",
-			fijk:   FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}},
+			fijk:   faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}},
 			res:    0,
 			start:  0,
-			length: NUM_PENT_VERTS,
+			length: numPentVerts,
 		},
 		{
 			name:   "pentagon face 2 res 2 class II",
-			fijk:   FaceIJK{Face: 2, Coord: CoordIJK{I: 0, J: 1, K: 0}},
+			fijk:   faceIJK{Face: 2, Coord: coordIJK{I: 0, J: 1, K: 0}},
 			res:    2,
 			start:  0,
-			length: NUM_PENT_VERTS,
+			length: numPentVerts,
 		},
 		{
 			name:   "pentagon face 10 res 4 class II",
-			fijk:   FaceIJK{Face: 10, Coord: CoordIJK{I: 1, J: 1, K: 1}},
+			fijk:   faceIJK{Face: 10, Coord: coordIJK{I: 1, J: 1, K: 1}},
 			res:    4,
 			start:  0,
-			length: NUM_PENT_VERTS,
+			length: numPentVerts,
 		},
 		{
 			name:   "partial pentagon boundary starting at vertex 1, length 3",
-			fijk:   FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}},
+			fijk:   faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}},
 			res:    0,
 			start:  1,
 			length: 3,
 		},
 		{
 			name:   "single pentagon vertex",
-			fijk:   FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}},
+			fijk:   faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}},
 			res:    0,
 			start:  0,
 			length: 1,
@@ -113,12 +113,12 @@ func Test_faceIjkPentToCellBoundary_parity(t *testing.T) {
 // Class III pentagon boundary generation involves complex edge-crossing logic when
 // pentagon edges cross icosahedron face boundaries. The current implementation
 // encounters assertion failures in the C reference during testing, specifically:
-//   assert(adjacentFaceDir[tmpFijk.face][fijk.face] == KI)
+//   assert(adjacentFaceDir[tmpFijk.face][fijk.face] == quadKI)
 //
 // This suggests that the edge-crossing logic assumes specific adjacency relationships
 // between faces that may not hold for all pentagon vertex combinations. Further
 // investigation is needed to:
-//   1. Identify valid Class III pentagon FaceIJK coordinates that satisfy adjacency requirements
+//   1. Identify valid Class III pentagon faceIJK coordinates that satisfy adjacency requirements
 //   2. Understand the geometric constraints that cause the assertion failure
 //   3. Determine if this is a limitation of the test data or the algorithm itself
 //

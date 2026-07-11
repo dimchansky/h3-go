@@ -5,7 +5,7 @@ package h3
 // This function may not behave well for extreme values, and should be used
 // within a reasonable domain, and does not guarantee reasonable results for extreme values.
 // Ported from H3 C: bbox.c::scaleBBox.
-func scaleBBox(bbox *BBox, scale float64) {
+func scaleBBox(bbox *bbox, scale float64) {
 	width := bboxWidthRads(bbox)
 	height := bboxHeightRads(bbox)
 	widthBuffer := (width*scale - width) * 0.5

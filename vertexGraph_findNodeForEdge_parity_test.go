@@ -120,8 +120,8 @@ func Test_findNodeForEdge_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Initialize Go graph
-			goGraph := &VertexGraph{
-				Buckets:    make([]*VertexNode, tt.numBuckets),
+			goGraph := &vertexGraph{
+				Buckets:    make([]*vertexNode, tt.numBuckets),
 				NumBuckets: tt.numBuckets,
 				Size:       0,
 				Res:        tt.res,
@@ -186,8 +186,8 @@ func Test_findNodeForEdge_linked_list_traversal_parity(t *testing.T) {
 	numBuckets := int32(1) // Force all items into same bucket
 	res := int32(9)
 
-	goGraph := &VertexGraph{
-		Buckets:    make([]*VertexNode, numBuckets),
+	goGraph := &vertexGraph{
+		Buckets:    make([]*vertexNode, numBuckets),
 		NumBuckets: numBuckets,
 		Size:       0,
 		Res:        res,

@@ -68,8 +68,8 @@ func Test_addVertexNode_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Initialize Go graph
-			goGraph := &VertexGraph{
-				Buckets:    make([]*VertexNode, tt.numBuckets),
+			goGraph := &vertexGraph{
+				Buckets:    make([]*vertexNode, tt.numBuckets),
 				NumBuckets: tt.numBuckets,
 				Size:       0,
 				Res:        tt.res,
@@ -139,8 +139,8 @@ func Test_addVertexNode_hash_collision_parity(t *testing.T) {
 	numBuckets := int32(1) // Force all items into same bucket
 	res := int32(9)
 
-	goGraph := &VertexGraph{
-		Buckets:    make([]*VertexNode, numBuckets),
+	goGraph := &vertexGraph{
+		Buckets:    make([]*vertexNode, numBuckets),
 		NumBuckets: numBuckets,
 		Size:       0,
 		Res:        res,
@@ -156,7 +156,7 @@ func Test_addVertexNode_hash_collision_parity(t *testing.T) {
 		{LatLng{Lat: 37.785, Lng: -122.425}, LatLng{Lat: 37.786, Lng: -122.426}},
 	}
 
-	nodes := make([]*VertexNode, len(edges))
+	nodes := make([]*vertexNode, len(edges))
 
 	// Add all edges
 	for i, edge := range edges {

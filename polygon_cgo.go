@@ -64,16 +64,16 @@ func toCGeoLoop(verts []LatLng) (C.GeoLoop, func()) {
 }
 
 // bboxFromGeoLoopC calls C bboxFromGeoLoop on a Go slice of LatLng.
-func bboxFromGeoLoopC(loop []LatLng) BBox {
+func bboxFromGeoLoopC(loop []LatLng) bbox {
 	cg, freeFn := toCGeoLoop(loop)
 	defer freeFn()
 	var cb C.BBox
 	C.bboxFromGeoLoop(&cg, &cb)
-	return BBox{North: Rad(float64(cb.north)), South: Rad(float64(cb.south)), East: Rad(float64(cb.east)), West: Rad(float64(cb.west))}
+	return bbox{North: Rad(float64(cb.north)), South: Rad(float64(cb.south)), East: Rad(float64(cb.east)), West: Rad(float64(cb.west))}
 }
 
-// pointInsideGeoLoopC calls C pointInsideGeoLoop for a point within a GeoLoop + BBox.
-func pointInsideGeoLoopC(loop []LatLng, bbox BBox, p LatLng) bool {
+// pointInsideGeoLoopC calls C pointInsideGeoLoop for a point within a GeoLoop + bbox.
+func pointInsideGeoLoopC(loop []LatLng, bbox bbox, p LatLng) bool {
 	cg, freeFn := toCGeoLoop(loop)
 	defer freeFn()
 	var cb C.BBox
@@ -127,7 +127,7 @@ func toCGeoPolygon(poly GeoPolygon) (C.GeoPolygon, func()) {
 }
 
 // pointInsidePolygonC calls C pointInsidePolygon for a GeoPolygon.
-func pointInsidePolygonC(poly GeoPolygon, bboxes []BBox, p LatLng) bool {
+func pointInsidePolygonC(poly GeoPolygon, bboxes []bbox, p LatLng) bool {
 	cp, freePoly := toCGeoPolygon(poly)
 	defer freePoly()
 	// Prepare bboxes array
@@ -157,7 +157,7 @@ func pointInsidePolygonC(poly GeoPolygon, bboxes []BBox, p LatLng) bool {
 }
 
 // cellBoundaryCrossesGeoLoopC calls the C implementation.
-func cellBoundaryCrossesGeoLoopC(geoloop GeoLoop, loopBBox BBox, boundary CellBoundary, boundaryBBox BBox) bool {
+func cellBoundaryCrossesGeoLoopC(geoloop GeoLoop, loopBBox bbox, boundary CellBoundary, boundaryBBox bbox) bool {
 	cg, freeFn := toCGeoLoop(geoloop)
 	defer freeFn()
 	var cLoopBBox C.BBox
@@ -192,7 +192,7 @@ func cellBoundaryCrossesGeoLoopC(geoloop GeoLoop, loopBBox BBox, boundary CellBo
 }
 
 // cellBoundaryInsidePolygonC calls C cellBoundaryInsidePolygon for a GeoPolygon.
-func cellBoundaryInsidePolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBoundary, boundaryBBox BBox) bool {
+func cellBoundaryInsidePolygonC(poly GeoPolygon, bboxes []bbox, boundary CellBoundary, boundaryBBox bbox) bool {
 	cp, freePoly := toCGeoPolygon(poly)
 	defer freePoly()
 	// bboxes
@@ -238,7 +238,7 @@ func cellBoundaryInsidePolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBou
 }
 
 // cellBoundaryCrossesPolygonC calls C cellBoundaryCrossesPolygon for a GeoPolygon.
-func cellBoundaryCrossesPolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBoundary, boundaryBBox BBox) bool {
+func cellBoundaryCrossesPolygonC(poly GeoPolygon, bboxes []bbox, boundary CellBoundary, boundaryBBox bbox) bool {
 	cp, freePoly := toCGeoPolygon(poly)
 	defer freePoly()
 	// bboxes
@@ -284,7 +284,7 @@ func cellBoundaryCrossesPolygonC(poly GeoPolygon, bboxes []BBox, boundary CellBo
 }
 
 // bboxesFromGeoPolygonC calls the original C implementation.
-func bboxesFromGeoPolygonC(polygon *GeoPolygon, bboxes []BBox) {
+func bboxesFromGeoPolygonC(polygon *GeoPolygon, bboxes []bbox) {
 	// Convert polygon to C struct
 	cp, freePoly := toCGeoPolygon(*polygon)
 	defer freePoly()

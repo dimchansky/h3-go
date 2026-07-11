@@ -1,0 +1,56 @@
+const ContainmentCenter
+const ContainmentFull
+const ContainmentInvalid
+const ContainmentOverlapping
+const ContainmentOverlappingBBox
+const DegPerRad
+const MaxCellBoundaryVerts
+const MaxResolution
+const NumBaseCells
+const NumPentagons
+const NumRes0Cells
+const Pi
+const PiOver2
+const RadPerDeg
+const TwoPi
+const VersionMajor
+const VersionMinor
+const VersionPatch
+func Deg
+func Rad
+method (Angle) Abs
+method (Angle) Cos
+method (Angle) Deg
+method (Angle) Div
+method (Angle) EqualApprox
+method (Angle) Mul
+method (Angle) Rad
+method (Angle) Sin
+method (Angle) SinCos
+method (Angle) String
+method (Angle) Tan
+type Angle
+type Cell
+type CellBoundary
+type ContainmentMode
+type CoordIJ
+type DirectedEdge
+type GeoLoop
+type GeoPolygon
+type LatLng
+type Vertex
+var ErrCellInvalid
+var ErrDirectedEdgeInvalid
+var ErrDomain
+var ErrDuplicateInput
+var ErrFailed
+var ErrLatLngDomain
+var ErrMemoryAlloc
+var ErrMemoryBounds
+var ErrNotNeighbors
+var ErrOptionInvalid
+var ErrPentagon
+var ErrResolutionDomain
+var ErrResolutionMismatch
+var ErrUndirectedEdgeInvalid
+var ErrVertexInvalid

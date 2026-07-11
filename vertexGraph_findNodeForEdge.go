@@ -3,9 +3,9 @@ package h3
 // findNodeForEdge finds the Vertex node for a given edge, if it exists.
 // Searches the graph for an edge from fromVtx to toVtx. If toVtx is nil,
 // matches any edge starting from fromVtx (wildcard search).
-// Returns the matching VertexNode or nil if not found.
+// Returns the matching vertexNode or nil if not found.
 // Ported from H3 C: vertexGraph.c::findNodeForEdge.
-func findNodeForEdge(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode {
+func findNodeForEdge(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode {
 	// Determine location using hash function
 	index := _hashVertex(fromVtx, graph.Res, graph.NumBuckets)
 

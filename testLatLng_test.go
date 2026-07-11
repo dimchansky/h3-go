@@ -9,12 +9,12 @@ import (
 
 // testDecreasingFunction tests a function for all resolutions, where the value should be decreasing as
 // resolution increases.
-func testDecreasingFunction(t *testing.T, function func(int32, *float64) H3Error, message string) {
+func testDecreasingFunction(t *testing.T, function func(int32, *float64) h3Error, message string) {
 	last := 0.0
 	var next float64
-	for i := int32(MAX_H3_RES); i >= 0; i-- {
+	for i := int32(maxH3Res); i >= 0; i-- {
 		err := function(i, &next)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("Function failed for resolution %d: %v", i, err)
 			return
 		}
@@ -31,7 +31,7 @@ func TestRadsToDegs(t *testing.T) {
 	originalRads := 1.0
 	degs := radsToDegs(originalRads)
 	rads := degsToRads(degs)
-	if math.Abs(rads-originalRads) >= EPSILON_RAD {
+	if math.Abs(rads-originalRads) >= epsilonRad {
 		t.Error("radsToDegs/degsToRads should be invertible")
 	}
 }
@@ -44,13 +44,13 @@ func TestDistanceRads(t *testing.T) {
 	setGeoDegs(&p2, 0, 10)
 
 	// TODO: Epsilon is relatively large
-	if greatCircleDistanceRads(&p1, &p1) >= EPSILON_RAD*1000 {
+	if greatCircleDistanceRads(&p1, &p1) >= epsilonRad*1000 {
 		t.Error("0 distance as expected")
 	}
 
 	expectedDist := degsToRads(10)
 	actualDist := greatCircleDistanceRads(&p1, &p2)
-	if math.Abs(actualDist-expectedDist) >= EPSILON_RAD*1000 {
+	if math.Abs(actualDist-expectedDist) >= epsilonRad*1000 {
 		t.Error("distance along longitude as expected")
 	}
 }
@@ -62,12 +62,12 @@ func TestDistanceRadsWrappedLongitude(t *testing.T) {
 	zero := LatLng{Lat: 0, Lng: 0}
 
 	dist1 := greatCircleDistanceRads(&negativeLongitude, &zero)
-	if math.Abs(math.Pi/2-dist1) >= EPSILON_RAD {
+	if math.Abs(math.Pi/2-dist1) >= epsilonRad {
 		t.Error("Distance with wrapped longitude")
 	}
 
 	dist2 := greatCircleDistanceRads(&zero, &negativeLongitude)
-	if math.Abs(math.Pi/2-dist2) >= EPSILON_RAD {
+	if math.Abs(math.Pi/2-dist2) >= epsilonRad {
 		t.Error("Distance with wrapped longitude and swapped arguments")
 	}
 }
@@ -87,28 +87,28 @@ func TestDoubleConstantsErrors(t *testing.T) {
 
 	var out float64
 
-	if getHexagonAreaAvgKm2(-1, &out) != E_RES_DOMAIN {
+	if getHexagonAreaAvgKm2(-1, &out) != eResDomain {
 		t.Error("getHexagonAreaAvgKm2 resolution negative")
 	}
-	if getHexagonAreaAvgKm2(16, &out) != E_RES_DOMAIN {
+	if getHexagonAreaAvgKm2(16, &out) != eResDomain {
 		t.Error("getHexagonAreaAvgKm2 resolution too high")
 	}
-	if getHexagonAreaAvgM2(-1, &out) != E_RES_DOMAIN {
+	if getHexagonAreaAvgM2(-1, &out) != eResDomain {
 		t.Error("getHexagonAreaAvgM2 resolution negative")
 	}
-	if getHexagonAreaAvgM2(16, &out) != E_RES_DOMAIN {
+	if getHexagonAreaAvgM2(16, &out) != eResDomain {
 		t.Error("getHexagonAreaAvgM2 resolution too high")
 	}
-	if getHexagonEdgeLengthAvgKm(-1, &out) != E_RES_DOMAIN {
+	if getHexagonEdgeLengthAvgKm(-1, &out) != eResDomain {
 		t.Error("getHexagonEdgeLengthAvgKm resolution negative")
 	}
-	if getHexagonEdgeLengthAvgKm(16, &out) != E_RES_DOMAIN {
+	if getHexagonEdgeLengthAvgKm(16, &out) != eResDomain {
 		t.Error("getHexagonEdgeLengthAvgKm resolution too high")
 	}
-	if getHexagonEdgeLengthAvgM(-1, &out) != E_RES_DOMAIN {
+	if getHexagonEdgeLengthAvgM(-1, &out) != eResDomain {
 		t.Error("getHexagonEdgeLengthAvgM resolution negative")
 	}
-	if getHexagonEdgeLengthAvgM(16, &out) != E_RES_DOMAIN {
+	if getHexagonEdgeLengthAvgM(16, &out) != eResDomain {
 		t.Error("getHexagonEdgeLengthAvgM resolution too high")
 	}
 }
@@ -118,9 +118,9 @@ func TestIntConstants(t *testing.T) {
 
 	// Simple checks for ordering of values
 	last := int64(0)
-	for i := int32(0); i <= MAX_H3_RES; i++ {
+	for i := int32(0); i <= maxH3Res; i++ {
 		next, err := getNumCells(i)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("getNumCells failed for resolution %d: %v", i, err)
 			return
 		}
@@ -135,12 +135,12 @@ func TestIntConstantsErrors(t *testing.T) {
 	t.Parallel()
 
 	_, err := getNumCells(-1)
-	if err != E_RES_DOMAIN {
+	if err != eResDomain {
 		t.Error("getNumCells resolution negative")
 	}
 
 	_, err = getNumCells(16)
-	if err != E_RES_DOMAIN {
+	if err != eResDomain {
 		t.Error("getNumCells resolution too high")
 	}
 }
@@ -155,9 +155,9 @@ func TestNumHexagons(t *testing.T) {
 		11626681248842, 81386768741882, 569707381193162,
 	}
 
-	for r := int32(0); r <= MAX_H3_RES; r++ {
+	for r := int32(0); r <= maxH3Res; r++ {
 		num, err := getNumCells(r)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("getNumCells failed for resolution %d: %v", r, err)
 			continue
 		}

@@ -7,7 +7,7 @@ import (
 )
 
 func Test_h3Print_parity(t *testing.T) {
-	testCases := []H3Index{
+	testCases := []h3Index{
 		0x85283473fffffff,
 		0x8a2a1072b59ffff,
 		0x8f734e64992abb7f,
@@ -26,7 +26,7 @@ func Test_h3Print_parity(t *testing.T) {
 }
 
 func Test_coordIjkPrint_parity(t *testing.T) {
-	testCases := []*CoordIJK{
+	testCases := []*coordIJK{
 		{I: 0, J: 0, K: 0},
 		{I: 1, J: 0, K: 0},
 		{I: 0, J: 1, K: 0},
@@ -156,7 +156,7 @@ func Test_cellBoundaryPrint_parity(t *testing.T) {
 }
 
 func Test_bboxPrint_parity(t *testing.T) {
-	testCases := []*BBox{
+	testCases := []*bbox{
 		{
 			North: Rad(1.0),
 			South: Rad(0.0),

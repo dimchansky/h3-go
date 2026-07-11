@@ -12,7 +12,7 @@ package h3
 // - Used in polygon normalization to find parent polygons for holes
 //
 // Ported from H3 C: linkedGeo.c::findDeepestContainer (static function).
-func findDeepestContainer(polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon {
+func findDeepestContainer(polygons []*linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon {
 	if len(polygons) != len(bboxes) {
 		panic("findDeepestContainer: polygons and bboxes must have same length")
 	}
@@ -20,7 +20,7 @@ func findDeepestContainer(polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedG
 	polygonCount := len(polygons)
 
 	// Set the initial return value to the first candidate
-	var parent *LinkedGeoPolygon
+	var parent *linkedGeoPolygon
 	if polygonCount > 0 {
 		parent = polygons[0]
 	}

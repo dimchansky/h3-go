@@ -11,29 +11,29 @@ package h3
 // The algorithm follows a point-in-polygon approach for center points to ensure
 // that adjacent polygons with zero overlap have zero overlapping hexagons.
 // Ported from H3 C: algos.c::polygonToCells.
-func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Index) H3Error {
+func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []h3Index) h3Error {
 	flagErr := validatePolygonFlags(flags)
-	if flagErr != E_SUCCESS {
+	if flagErr != eSuccess {
 		return flagErr
 	}
 
 	// Get the bounding boxes for the polygon and any holes
-	bboxes := make([]BBox, len(geoPolygon.Holes)+1)
+	bboxes := make([]bbox, len(geoPolygon.Holes)+1)
 	bboxesFromGeoPolygon(geoPolygon, bboxes)
 
 	// Get the estimated number of hexagons and allocate temporary memory
 	var numHexagons int64
 	numHexagonsError := maxPolygonToCellsSize(geoPolygon, res, flags, &numHexagons)
-	if numHexagonsError != E_SUCCESS {
+	if numHexagonsError != eSuccess {
 		return numHexagonsError
 	}
 
-	search := make([]H3Index, numHexagons)
-	found := make([]H3Index, numHexagons)
+	search := make([]h3Index, numHexagons)
+	found := make([]h3Index, numHexagons)
 
 	// Clear out array
 	for i := range out {
-		out[i] = H3_NULL
+		out[i] = h3Null
 	}
 
 	// Some metadata for tracking the state of the search and found memory blocks
@@ -47,7 +47,7 @@ func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Ind
 	geoloop := geoPolygon.GeoLoop
 	edgeHexError := _getEdgeHexagons(geoloop, numHexagons, res,
 		&numSearchHexes, search, found)
-	if edgeHexError != E_SUCCESS {
+	if edgeHexError != eSuccess {
 		return edgeHexError
 	}
 
@@ -60,14 +60,14 @@ func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Ind
 		hole := geoPolygon.Holes[i]
 		edgeHexError = _getEdgeHexagons(hole, numHexagons, res, &numSearchHexes,
 			search, found)
-		if edgeHexError != E_SUCCESS {
+		if edgeHexError != eSuccess {
 			return edgeHexError
 		}
 	}
 
 	// 3. Re-zero the found hash so it can be used in the main loop below
 	for i := int64(0); i < numHexagons; i++ {
-		found[i] = H3_NULL
+		found[i] = h3Null
 	}
 
 	// 4. Begin main loop. While the search hash is not empty do the following
@@ -78,15 +78,15 @@ func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Ind
 		var currentSearchNum int64
 		var i int64
 		for currentSearchNum < numSearchHexes {
-			ring := make([]H3Index, MAX_ONE_RING_SIZE)
+			ring := make([]h3Index, maxOneRingSize)
 			searchHex := search[i]
 			gridDiskErr := gridDisk(searchHex, 1, ring)
-			if gridDiskErr != E_SUCCESS {
+			if gridDiskErr != eSuccess {
 				return gridDiskErr
 			}
 
-			for j := 0; j < MAX_ONE_RING_SIZE; j++ {
-				if ring[j] == H3_NULL {
+			for j := 0; j < maxOneRingSize; j++ {
+				if ring[j] == h3Null {
 					continue // Skip if this was a pentagon and only had 5 neighbors
 				}
 
@@ -95,13 +95,13 @@ func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Ind
 				// A simple hash to store the hexagon, or move to another place
 				// if needed. This MUST be done before the point-in-poly check
 				// since that's far more expensive
-				loc := int64(hex % H3Index(numHexagons))
+				loc := int64(hex % h3Index(numHexagons))
 				var loopCount int64
-				for out[loc] != H3_NULL {
+				for out[loc] != h3Null {
 					// If this branch is reached, we have exceeded the maximum
 					// number of hexagons possible
 					if loopCount > numHexagons {
-						return E_FAILED
+						return eFailed
 					}
 					if out[loc] == hex {
 						break // Skip duplicates found
@@ -116,7 +116,7 @@ func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Ind
 				// Check if the hexagon is in the polygon or not
 				var hexCenter LatLng
 				cellToLatLngErr := cellToLatLng(hex, &hexCenter)
-				if cellToLatLngErr != E_SUCCESS {
+				if cellToLatLngErr != eSuccess {
 					return cellToLatLngErr
 				}
 
@@ -140,12 +140,12 @@ func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Ind
 		// search hex count, and zero everything related to the found memory.
 		search, found = found, search
 		for j := int64(0); j < numSearchHexes; j++ {
-			found[j] = H3_NULL
+			found[j] = h3Null
 		}
 		numSearchHexes = numFoundHexes
 		numFoundHexes = 0
 		// Repeat until no new hexagons are found
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

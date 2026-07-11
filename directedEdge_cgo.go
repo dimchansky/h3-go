@@ -55,44 +55,44 @@ static H3Error areNeighborCells_c_wrapper(H3Index origin, H3Index destination, i
 import "C"
 
 // getDirectedEdgeOriginC calls the original C implementation.
-func getDirectedEdgeOriginC(edge H3Index) (H3Index, H3Error) {
+func getDirectedEdgeOriginC(edge h3Index) (h3Index, h3Error) {
 	var out C.H3Index
-	err := H3Error(C.getDirectedEdgeOrigin_c_wrapper(C.H3Index(edge), &out))
-	return H3Index(out), err
+	err := h3Error(C.getDirectedEdgeOrigin_c_wrapper(C.H3Index(edge), &out))
+	return h3Index(out), err
 }
 
 // isValidDirectedEdgeC calls the original C implementation.
-func isValidDirectedEdgeC(edge H3Index) bool {
+func isValidDirectedEdgeC(edge h3Index) bool {
 	return C.isValidDirectedEdge_c_wrapper(C.H3Index(edge)) != 0
 }
 
 // originToDirectedEdgesC calls the original C implementation.
-func originToDirectedEdgesC(origin H3Index, edges []H3Index) H3Error {
+func originToDirectedEdgesC(origin h3Index, edges []h3Index) h3Error {
 	// Convert to C array
 	cEdges := make([]C.H3Index, 6)
-	err := H3Error(C.originToDirectedEdges_c_wrapper(C.H3Index(origin), &cEdges[0]))
+	err := h3Error(C.originToDirectedEdges_c_wrapper(C.H3Index(origin), &cEdges[0]))
 	// Copy back to Go slice
 	for i := 0; i < 6; i++ {
-		edges[i] = H3Index(cEdges[i])
+		edges[i] = h3Index(cEdges[i])
 	}
 	return err
 }
 
 // getDirectedEdgeDestinationC calls the original C implementation.
-func getDirectedEdgeDestinationC(edge H3Index) (H3Index, H3Error) {
+func getDirectedEdgeDestinationC(edge h3Index) (h3Index, h3Error) {
 	var out C.H3Index
-	err := H3Error(C.getDirectedEdgeDestination_c_wrapper(C.H3Index(edge), &out))
-	return H3Index(out), err
+	err := h3Error(C.getDirectedEdgeDestination_c_wrapper(C.H3Index(edge), &out))
+	return h3Index(out), err
 }
 
 // directedEdgeToBoundaryC calls the original C implementation.
-func directedEdgeToBoundaryC(edge H3Index, cb *CellBoundary) H3Error {
+func directedEdgeToBoundaryC(edge h3Index, cb *CellBoundary) h3Error {
 	var cCb C.CellBoundary
 	cCb.numVerts = 0
 
-	err := H3Error(C.directedEdgeToBoundary_c_wrapper(C.H3Index(edge), &cCb))
+	err := h3Error(C.directedEdgeToBoundary_c_wrapper(C.H3Index(edge), &cCb))
 
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		// Copy results back to Go struct
 		cb.NumVerts = int32(cCb.numVerts)
 
@@ -112,28 +112,28 @@ func directedEdgeToBoundaryC(edge H3Index, cb *CellBoundary) H3Error {
 }
 
 // directedEdgeToCellsC calls the original C implementation.
-func directedEdgeToCellsC(edge H3Index, originDestination []H3Index) H3Error {
+func directedEdgeToCellsC(edge h3Index, originDestination []h3Index) h3Error {
 	// Convert to C array
 	var cCells [2]C.H3Index
-	err := H3Error(C.directedEdgeToCells_c_wrapper(C.H3Index(edge), &cCells[0]))
+	err := h3Error(C.directedEdgeToCells_c_wrapper(C.H3Index(edge), &cCells[0]))
 	// Copy back to Go slice
-	if err == E_SUCCESS {
-		originDestination[0] = H3Index(cCells[0])
-		originDestination[1] = H3Index(cCells[1])
+	if err == eSuccess {
+		originDestination[0] = h3Index(cCells[0])
+		originDestination[1] = h3Index(cCells[1])
 	}
 	return err
 }
 
 // cellsToDirectedEdgeC calls the original C implementation.
-func cellsToDirectedEdgeC(origin, destination H3Index) (H3Index, H3Error) {
+func cellsToDirectedEdgeC(origin, destination h3Index) (h3Index, h3Error) {
 	var out C.H3Index
-	err := H3Error(C.cellsToDirectedEdge_c_wrapper(C.H3Index(origin), C.H3Index(destination), &out))
-	return H3Index(out), err
+	err := h3Error(C.cellsToDirectedEdge_c_wrapper(C.H3Index(origin), C.H3Index(destination), &out))
+	return h3Index(out), err
 }
 
 // areNeighborCellsC calls the original C implementation.
-func areNeighborCellsC(origin, destination H3Index) (bool, H3Error) {
+func areNeighborCellsC(origin, destination h3Index) (bool, h3Error) {
 	var out C.int
-	err := H3Error(C.areNeighborCells_c_wrapper(C.H3Index(origin), C.H3Index(destination), &out))
+	err := h3Error(C.areNeighborCells_c_wrapper(C.H3Index(origin), C.H3Index(destination), &out))
 	return out != 0, err
 }

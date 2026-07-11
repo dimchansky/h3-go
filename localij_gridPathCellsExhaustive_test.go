@@ -9,12 +9,12 @@ import (
 var maxDistances = []int32{1, 2, 5, 12, 19, 26}
 
 // Helper function to iterate all indexes at a given resolution (reused from other tests).
-func iterateAllIndexesAtResForGridPath(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
+func iterateAllIndexesAtResForGridPath(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index)) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
@@ -29,17 +29,17 @@ func iterateAllIndexesAtResForGridPath(t *testing.T, res int32, testFunc func(t 
 	// For higher resolutions, get children of each base cell
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue // Some cells might not have children at certain resolutions
 		}
 
-		children := make([]H3Index, childrenSize)
-		if err := cellToChildren(baseCell, res, children); err != E_SUCCESS {
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(baseCell, res, children); err != eSuccess {
 			continue
 		}
 
 		for _, child := range children {
-			if child != H3_NULL {
+			if child != h3Null {
 				testFunc(t, child)
 			}
 		}
@@ -47,12 +47,12 @@ func iterateAllIndexesAtResForGridPath(t *testing.T, res int32, testFunc func(t 
 }
 
 // Helper function to iterate partial indexes at a given resolution (limit to first N base cells).
-func iterateAllIndexesAtResPartial(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), maxBaseCells int32) {
+func iterateAllIndexesAtResPartial(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index), maxBaseCells int32) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
@@ -74,17 +74,17 @@ func iterateAllIndexesAtResPartial(t *testing.T, res int32, testFunc func(t *tes
 	for i := int32(0); i < limit; i++ {
 		baseCell := baseCells[i]
 		childrenSize, err := cellToChildrenSize(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue // Some cells might not have children at certain resolutions
 		}
 
-		children := make([]H3Index, childrenSize)
-		if err := cellToChildren(baseCell, res, children); err != E_SUCCESS {
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(baseCell, res, children); err != eSuccess {
 			continue
 		}
 
 		for _, child := range children {
-			if child != H3_NULL {
+			if child != h3Null {
 				testFunc(t, child)
 			}
 		}
@@ -92,21 +92,21 @@ func iterateAllIndexesAtResPartial(t *testing.T, res int32, testFunc func(t *tes
 }
 
 // Property-based testing of gridPathCells output (ported from gridPathCells_assertions).
-func gridPathCells_assertions(t *testing.T, start, end H3Index) {
+func gridPathCells_assertions(t *testing.T, start, end h3Index) {
 	t.Helper()
 
 	var sz int64
 	err := gridPathCellsSize(start, end, &sz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridPathCellsSize failed: %v", err)
 	}
 	if sz <= 0 {
 		t.Fatalf("Expected valid size > 0, got %d", sz)
 	}
 
-	line := make([]H3Index, sz)
+	line := make([]h3Index, sz)
 	err = gridPathCells(line, start, end)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridPathCells failed: %v", err)
 	}
 
@@ -123,7 +123,7 @@ func gridPathCells_assertions(t *testing.T, start, end H3Index) {
 		}
 
 		isNeighbor, err := areNeighborCells(line[i], line[i-1])
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("areNeighborCells failed: %v", err)
 		}
 		if !isNeighbor {
@@ -132,7 +132,7 @@ func gridPathCells_assertions(t *testing.T, start, end H3Index) {
 
 		if i > 1 {
 			isNeighbor, err := areNeighborCells(line[i], line[i-2])
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Errorf("areNeighborCells failed: %v", err)
 			}
 			if isNeighbor {
@@ -143,24 +143,24 @@ func gridPathCells_assertions(t *testing.T, start, end H3Index) {
 }
 
 // Tests for invalid gridPathCells input (ported from gridPathCells_invalid_assertions).
-func gridPathCells_invalid_assertions(t *testing.T, start, end H3Index) {
+func gridPathCells_invalid_assertions(t *testing.T, start, end h3Index) {
 	t.Helper()
 
 	var sz int64
 	err := gridPathCellsSize(start, end, &sz)
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		t.Errorf("Line size should be marked as invalid, but got success")
 	}
 
-	line := make([]H3Index, 1) // Small buffer, doesn't matter since it should fail
+	line := make([]h3Index, 1) // Small buffer, doesn't matter since it should fail
 	err = gridPathCells(line, start, end)
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		t.Errorf("Line should be marked as invalid, but got success")
 	}
 }
 
 // Test for lines from an index to all neighbors within a gridDisk (ported from gridPathCells_gridDisk_assertions).
-func gridPathCells_gridDisk_assertions(t *testing.T, h3 H3Index) {
+func gridPathCells_gridDisk_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
 	r := getResolution(h3)
@@ -171,7 +171,7 @@ func gridPathCells_gridDisk_assertions(t *testing.T, h3 H3Index) {
 
 	var sz int64
 	err := maxGridDiskSize(maxK, &sz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
 
@@ -179,9 +179,9 @@ func gridPathCells_gridDisk_assertions(t *testing.T, h3 H3Index) {
 		return // Skip pentagons as in C code
 	}
 
-	neighbors := make([]H3Index, sz)
+	neighbors := make([]h3Index, sz)
 	err = gridDisk(h3, maxK, neighbors)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDisk failed: %v", err)
 	}
 
@@ -192,7 +192,7 @@ func gridPathCells_gridDisk_assertions(t *testing.T, h3 H3Index) {
 
 		var distance int64
 		distanceError := gridDistance(h3, neighbors[i], &distance)
-		if distanceError == E_SUCCESS {
+		if distanceError == eSuccess {
 			gridPathCells_assertions(t, h3, neighbors[i])
 		} else {
 			gridPathCells_invalid_assertions(t, h3, neighbors[i])

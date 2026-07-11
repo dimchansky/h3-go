@@ -17,32 +17,32 @@ type TestOutput struct {
 }
 
 // doCell tests gridDiskUnsafe vs gridDiskDistancesSafe for a specific cell at various k values.
-func doCell(t *testing.T, h H3Index, maxK int32, testOutput *TestOutput) {
+func doCell(t *testing.T, h h3Index, maxK int32, testOutput *TestOutput) {
 	for k := int32(0); k < maxK; k++ {
 		var maxSz int64
 		err := maxGridDiskSize(k, &maxSz)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("maxGridDiskSize failed: %v", err)
 		}
 
-		gridDiskInternalOutput := make([]H3Index, maxSz)
-		gridDiskUnsafeOutput := make([]H3Index, maxSz)
+		gridDiskInternalOutput := make([]h3Index, maxSz)
+		gridDiskUnsafeOutput := make([]h3Index, maxSz)
 		gridDiskInternalDistances := make([]int32, maxSz)
 
 		// Call gridDiskDistancesSafe (equivalent to gridDiskDistancesInternal in C)
 		err = gridDiskDistancesSafe(h, k, gridDiskInternalOutput, gridDiskInternalDistances)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("gridDiskDistancesSafe failed: %v", err)
 		}
 
 		// Call gridDiskUnsafe
 		gridDiskUnsafeFailed := gridDiskUnsafe(h, k, gridDiskUnsafeOutput)
 
-		if gridDiskUnsafeFailed == E_FAILED {
+		if gridDiskUnsafeFailed == eFailed {
 			// TODO: Unreachable
 			testOutput.ret2++
 			continue
-		} else if gridDiskUnsafeFailed == E_SUCCESS {
+		} else if gridDiskUnsafeFailed == eSuccess {
 			testOutput.ret0++
 			startIdx := 0
 			// i is the current ring number
@@ -76,7 +76,7 @@ func doCell(t *testing.T, h H3Index, maxK int32, testOutput *TestOutput) {
 
 				startIdx += int(n)
 			}
-		} else if gridDiskUnsafeFailed == E_PENTAGON {
+		} else if gridDiskUnsafeFailed == ePentagon {
 			testOutput.ret1++
 			foundPent := false
 			for i := int64(0); i < maxSz; i++ {
@@ -98,13 +98,13 @@ func doCell(t *testing.T, h H3Index, maxK int32, testOutput *TestOutput) {
 }
 
 // recursiveH3IndexToGeo recursively generates all valid H3 indexes at a given resolution.
-func recursiveH3IndexToGeo(t *testing.T, h H3Index, res int32, maxK int32, testOutput *TestOutput) {
+func recursiveH3IndexToGeo(t *testing.T, h h3Index, res int32, maxK int32, testOutput *TestOutput) {
 	for d := int32(0); d < 7; d++ {
 		current := setIndexDigit(h, res, d)
 
 		// skip the pentagonal deleted subsequence
 		if _isBaseCellPentagon(int32(getBaseCell(current))) &&
-			Direction(_h3LeadingNonZeroDigit(current)) == K_AXES_DIGIT {
+			direction(_h3LeadingNonZeroDigit(current)) == kAxesDigit {
 			continue
 		}
 
@@ -129,8 +129,8 @@ func TestH3NeighborRotations(t *testing.T) {
 	testOutput := &TestOutput{0, 0, 0, 0, 0}
 
 	// Generate test cases for all base cells
-	for bc := int32(0); bc < NUM_BASE_CELLS; bc++ {
-		rootCell := H3Index(H3_CELL_MODE << H3_MODE_OFFSET)
+	for bc := int32(0); bc < numBaseCells; bc++ {
+		rootCell := h3Index(h3CellMode << h3ModeOffset)
 		rootCell = setBaseCell(rootCell, bc)
 
 		if resolution == 0 {
@@ -170,13 +170,13 @@ func TestH3NeighborRotationsMultipleResolutions(t *testing.T) {
 			testOutput := &TestOutput{0, 0, 0, 0, 0}
 
 			// Test a subset of base cells for higher resolutions
-			maxBaseCells := NUM_BASE_CELLS
+			maxBaseCells := numBaseCells
 			if resolution > 1 {
 				maxBaseCells = 10 // Limit to first 10 base cells for performance
 			}
 
 			for bc := int32(0); bc < int32(maxBaseCells); bc++ {
-				rootCell := H3Index(H3_CELL_MODE << H3_MODE_OFFSET)
+				rootCell := h3Index(h3CellMode << h3ModeOffset)
 				rootCell = setBaseCell(rootCell, bc)
 
 				if resolution == 0 {

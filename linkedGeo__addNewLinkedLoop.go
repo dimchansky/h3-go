@@ -5,7 +5,7 @@ package h3
 // linked list structure. If the polygon is empty, the loop becomes both first
 // and last. Otherwise, it's appended after the current last loop.
 // Ported from H3 C: linkedGeo.c::addLinkedLoop.
-func addLinkedLoop(polygon *LinkedGeoPolygon, loop *LinkedGeoLoop) *LinkedGeoLoop {
+func addLinkedLoop(polygon *linkedGeoPolygon, loop *linkedGeoLoop) *linkedGeoLoop {
 	last := polygon.Last
 	if last == nil {
 		// Assert that polygon.first is also nil (equivalent to assert(polygon->first == NULL))
@@ -21,13 +21,13 @@ func addLinkedLoop(polygon *LinkedGeoPolygon, loop *LinkedGeoLoop) *LinkedGeoLoo
 }
 
 // addNewLinkedLoop creates a new linked loop and adds it to the current polygon.
-// The function allocates a new LinkedGeoLoop with zero-initialized fields,
+// The function allocates a new linkedGeoLoop with zero-initialized fields,
 // then uses addLinkedLoop to properly link it into the polygon's loop chain.
 // This is a convenience function that combines allocation and linking.
 // Ported from H3 C: linkedGeo.c::addNewLinkedLoop.
-func addNewLinkedLoop(polygon *LinkedGeoPolygon) *LinkedGeoLoop {
+func addNewLinkedLoop(polygon *linkedGeoPolygon) *linkedGeoLoop {
 	// Create a new loop (equivalent to H3_MEMORY(calloc)(1, sizeof(*loop)))
-	loop := &LinkedGeoLoop{
+	loop := &linkedGeoLoop{
 		First: nil,
 		Last:  nil,
 		Next:  nil,

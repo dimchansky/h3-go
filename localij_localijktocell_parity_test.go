@@ -9,90 +9,90 @@ import (
 func Test_localIjkToCell_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
-		ijk    CoordIJK
+		origin h3Index
+		ijk    coordIJK
 	}{
 		// Basic resolution 0 tests
 		{
 			name:   "res0_center",
 			origin: 0x8001fffffffffff, // resolution 0 base cell 1
-			ijk:    CoordIJK{0, 0, 0},
+			ijk:    coordIJK{0, 0, 0},
 		},
 		{
 			name:   "res0_neighbor_i",
 			origin: 0x8001fffffffffff,
-			ijk:    CoordIJK{1, 0, 0},
+			ijk:    coordIJK{1, 0, 0},
 		},
 		{
 			name:   "res0_neighbor_j",
 			origin: 0x8001fffffffffff,
-			ijk:    CoordIJK{0, 1, 0},
+			ijk:    coordIJK{0, 1, 0},
 		},
 		{
 			name:   "res0_neighbor_k",
 			origin: 0x8001fffffffffff,
-			ijk:    CoordIJK{0, 0, 1},
+			ijk:    coordIJK{0, 0, 1},
 		},
 
 		// Basic resolution 1 tests
 		{
 			name:   "res1_center",
 			origin: 0x8101fffffffffff, // resolution 1
-			ijk:    CoordIJK{0, 0, 0},
+			ijk:    coordIJK{0, 0, 0},
 		},
 		{
 			name:   "res1_neighbor",
 			origin: 0x8101fffffffffff,
-			ijk:    CoordIJK{1, 1, 0},
+			ijk:    coordIJK{1, 1, 0},
 		},
 
 		// Higher resolution tests
 		{
 			name:   "res5_center",
 			origin: 0x8501fffffffffff, // resolution 5
-			ijk:    CoordIJK{0, 0, 0},
+			ijk:    coordIJK{0, 0, 0},
 		},
 		{
 			name:   "res5_nearby",
 			origin: 0x8501fffffffffff,
-			ijk:    CoordIJK{2, -1, -1},
+			ijk:    coordIJK{2, -1, -1},
 		},
 
 		// Pentagon base cell tests (base cell 4 is pentagon)
 		{
 			name:   "pentagon_res0",
 			origin: 0x8004fffffffffff, // resolution 0 base cell 4 (pentagon)
-			ijk:    CoordIJK{0, 0, 0},
+			ijk:    coordIJK{0, 0, 0},
 		},
 		{
 			name:   "pentagon_res1",
 			origin: 0x8104fffffffffff, // resolution 1 base cell 4 (pentagon)
-			ijk:    CoordIJK{0, 0, 0},
+			ijk:    coordIJK{0, 0, 0},
 		},
 
 		// More challenging coordinate ranges (let's see what happens)
 		{
 			name:   "large_coordinates",
 			origin: 0x8101fffffffffff,
-			ijk:    CoordIJK{10, 10, 10},
+			ijk:    coordIJK{10, 10, 10},
 		},
 
 		// Edge cases
 		{
 			name:   "null_origin",
 			origin: 0x0,
-			ijk:    CoordIJK{0, 0, 0},
+			ijk:    coordIJK{0, 0, 0},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test Go implementation
-			var goResult H3Index
+			var goResult h3Index
 			goErr := localIjkToCell(tc.origin, &tc.ijk, &goResult)
 
 			// Test C implementation
-			var cResult H3Index
+			var cResult h3Index
 			cErr := _localIjkToCellC(tc.origin, &tc.ijk, &cResult)
 
 			// Compare errors
@@ -102,7 +102,7 @@ func Test_localIjkToCell_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare results
-			if goErr == E_SUCCESS && cErr == E_SUCCESS {
+			if goErr == eSuccess && cErr == eSuccess {
 				if goResult != cResult {
 					t.Errorf("Result mismatch - Go: %x, C: %x", goResult, cResult)
 				}
@@ -116,7 +116,7 @@ func Test_localIjkToCell_parity(t *testing.T) {
 
 func Test_localIjkToCell_extensive_parity(t *testing.T) {
 	// Test with various origins and coordinate ranges
-	origins := []H3Index{
+	origins := []h3Index{
 		0x8001fffffffffff, // res 0 base cell 1
 		0x8101fffffffffff, // res 1 base cell 1
 		0x8201fffffffffff, // res 2 base cell 1
@@ -126,7 +126,7 @@ func Test_localIjkToCell_extensive_parity(t *testing.T) {
 	}
 
 	// Test coordinate ranges
-	coords := []CoordIJK{
+	coords := []coordIJK{
 		{0, 0, 0},   // center
 		{1, 0, 0},   // i-axis
 		{0, 1, 0},   // j-axis
@@ -147,11 +147,11 @@ func Test_localIjkToCell_extensive_parity(t *testing.T) {
 
 			t.Run(name, func(t *testing.T) {
 				// Test Go implementation
-				var goResult H3Index
+				var goResult h3Index
 				goErr := localIjkToCell(origin, &ijk, &goResult)
 
 				// Test C implementation
-				var cResult H3Index
+				var cResult h3Index
 				cErr := _localIjkToCellC(origin, &ijk, &cResult)
 
 				// Compare errors
@@ -161,7 +161,7 @@ func Test_localIjkToCell_extensive_parity(t *testing.T) {
 				}
 
 				// If both succeeded, compare results
-				if goErr == E_SUCCESS && cErr == E_SUCCESS {
+				if goErr == eSuccess && cErr == eSuccess {
 					if goResult != cResult {
 						t.Errorf("Result mismatch for origin %x, ijk %+v - Go: %x, C: %x", origin, ijk, goResult, cResult)
 					}

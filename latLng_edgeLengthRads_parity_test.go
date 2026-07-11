@@ -11,7 +11,7 @@ import (
 func Test_edgeLengthRads_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		edge H3Index
+		edge h3Index
 	}{
 		// Valid directed edges at various resolutions
 		{"hex_edge_r0", 0x11001fffffffffff},
@@ -44,7 +44,7 @@ func Test_edgeLengthRads_parity(t *testing.T) {
 			}
 
 			// If there was an error, we're done
-			if cErr != E_SUCCESS {
+			if cErr != eSuccess {
 				return
 			}
 
@@ -71,7 +71,7 @@ func Test_edgeLengthRads_parity(t *testing.T) {
 func Test_edgeLengthRads_invalidEdges_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		edge H3Index
+		edge h3Index
 	}{
 		{"invalid_mode", 0x8001fffffffffff},           // cell mode instead of edge
 		{"zero_edge", 0x0},                            // zero
@@ -93,7 +93,7 @@ func Test_edgeLengthRads_invalidEdges_parity(t *testing.T) {
 			}
 
 			// If both returned success (shouldn't happen for these invalid cases), check lengths match
-			if goErr == E_SUCCESS && cErr == E_SUCCESS {
+			if goErr == eSuccess && cErr == eSuccess {
 				if math.Abs(cLength-goLength) > 5e-15 {
 					t.Errorf("Length mismatch for invalid edge: C=%.17e, Go=%.17e", cLength, goLength)
 				}
@@ -104,7 +104,7 @@ func Test_edgeLengthRads_invalidEdges_parity(t *testing.T) {
 
 func Test_edgeLengthRads_comprehensive_parity(t *testing.T) {
 	// Test various directed edges created from valid cells
-	testCells := []H3Index{
+	testCells := []h3Index{
 		0x8001fffffffffff, // resolution 0 hex
 		0x8008001ffffffff, // resolution 1 hex
 		0x800c001ffffffff, // resolution 2 hex
@@ -116,15 +116,15 @@ func Test_edgeLengthRads_comprehensive_parity(t *testing.T) {
 		cellName := fmt.Sprintf("cell_0x%x", cell)
 		t.Run(cellName, func(t *testing.T) {
 			// Get all directed edges for this cell
-			var edges [6]H3Index
+			var edges [6]h3Index
 			err := originToDirectedEdges(cell, edges[:])
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("Failed to get directed edges: %v", err)
 			}
 
 			// Test edge length for each valid edge
 			for i, edge := range edges {
-				if edge == H3_NULL {
+				if edge == h3Null {
 					continue // Skip null edges (pentagon case)
 				}
 
@@ -140,7 +140,7 @@ func Test_edgeLengthRads_comprehensive_parity(t *testing.T) {
 					continue
 				}
 
-				if goErr != E_SUCCESS {
+				if goErr != eSuccess {
 					continue
 				}
 

@@ -5,30 +5,30 @@ package h3
 // The boundary may contain additional distortion vertices if the edge crosses
 // an icosahedral face edge.
 // Ported from H3 C: directedEdge.c::directedEdgeToBoundary.
-func directedEdgeToBoundary(edge H3Index, cb *CellBoundary) H3Error {
+func directedEdgeToBoundary(edge h3Index, cb *CellBoundary) h3Error {
 	// Get the origin and neighbor direction from the edge
-	direction := getReservedBits(edge)
+	dir := getReservedBits(edge)
 	origin, originResult := getDirectedEdgeOrigin(edge)
-	if originResult != E_SUCCESS {
+	if originResult != eSuccess {
 		return originResult
 	}
 
 	// Get the start vertex for the edge
-	startVertex := vertexNumForDirection(origin, Direction(direction))
-	if startVertex == INVALID_VERTEX_NUM {
+	startVertex := vertexNumForDirection(origin, direction(dir))
+	if startVertex == invalidVertexNum {
 		// This is not actually an edge (i.e. no valid direction),
 		// so return no vertices.
 		cb.NumVerts = 0
-		return E_DIR_EDGE_INVALID
+		return eDirEdgeInvalid
 	}
 
 	// Get the geo boundary for the appropriate vertexes of the origin. Note
 	// that while there are always 2 topological vertexes per edge, the
 	// resulting edge boundary may have an additional distortion vertex if it
 	// crosses an edge of the icosahedron.
-	var fijk FaceIJK
+	var fijk faceIJK
 	fijkResult := _h3ToFaceIjk(origin, &fijk)
-	if fijkResult != E_SUCCESS {
+	if fijkResult != eSuccess {
 		return fijkResult
 	}
 	res := getResolution(origin)
@@ -39,5 +39,5 @@ func directedEdgeToBoundary(edge H3Index, cb *CellBoundary) H3Error {
 	} else {
 		_faceIjkToCellBoundary(&fijk, res, startVertex, 2, cb)
 	}
-	return E_SUCCESS
+	return eSuccess
 }

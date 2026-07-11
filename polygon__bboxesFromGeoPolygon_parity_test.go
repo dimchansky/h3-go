@@ -93,8 +93,8 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 			numBboxes := 1 + len(tt.polygon.Holes)
 
 			// Create arrays for both implementations
-			bboxesC := make([]BBox, numBboxes)
-			bboxesGo := make([]BBox, numBboxes)
+			bboxesC := make([]bbox, numBboxes)
+			bboxesGo := make([]bbox, numBboxes)
 
 			// Call C implementation
 			bboxesFromGeoPolygonC(&tt.polygon, bboxesC)
@@ -141,8 +141,8 @@ func Test_bboxesFromGeoPolygon_parity(t *testing.T) {
 			},
 		}
 
-		bboxes1 := make([]BBox, 2)
-		bboxes2 := make([]BBox, 2)
+		bboxes1 := make([]bbox, 2)
+		bboxes2 := make([]bbox, 2)
 
 		bboxesFromGeoPolygon(&polygon, bboxes1)
 		bboxesFromGeoPolygon(&polygon, bboxes2)

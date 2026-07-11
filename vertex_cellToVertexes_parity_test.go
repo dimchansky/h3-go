@@ -9,7 +9,7 @@ import (
 func Test_cellToVertexes_parity(t *testing.T) {
 	testCases := []struct {
 		name string
-		cell H3Index
+		cell h3Index
 	}{
 		{
 			name: "hex cell",
@@ -36,11 +36,11 @@ func Test_cellToVertexes_parity(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Call Go implementation
-			var goVertexes [6]H3Index
+			var goVertexes [6]h3Index
 			goErr := cellToVertexes(tc.cell, &goVertexes)
 
 			// Call C implementation
-			var cVertexes [6]H3Index
+			var cVertexes [6]h3Index
 			cErr := cellToVertexesC(tc.cell, &cVertexes)
 
 			// Compare error codes
@@ -51,7 +51,7 @@ func Test_cellToVertexes_parity(t *testing.T) {
 			}
 
 			// If no error, compare outputs
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				for i := 0; i < 6; i++ {
 					if goVertexes[i] != cVertexes[i] {
 						t.Errorf("cellToVertexes(%#016x)[%d] = %#016x, want %#016x",
@@ -65,7 +65,7 @@ func Test_cellToVertexes_parity(t *testing.T) {
 
 func Test_cellToVertexes_extensive_parity(t *testing.T) {
 	// Test a variety of cells across different resolutions
-	testCells := []H3Index{
+	testCells := []h3Index{
 		0x8001fffffffffff, // Resolution 0
 		0x8107fffffffffff, // Resolution 1
 		0x8230062ffffffff, // Resolution 2
@@ -87,11 +87,11 @@ func Test_cellToVertexes_extensive_parity(t *testing.T) {
 
 	for _, cell := range testCells {
 		// Call Go implementation
-		var goVertexes [6]H3Index
+		var goVertexes [6]h3Index
 		goErr := cellToVertexes(cell, &goVertexes)
 
 		// Call C implementation
-		var cVertexes [6]H3Index
+		var cVertexes [6]h3Index
 		cErr := cellToVertexesC(cell, &cVertexes)
 
 		// Compare error codes
@@ -102,7 +102,7 @@ func Test_cellToVertexes_extensive_parity(t *testing.T) {
 		}
 
 		// If no error, compare outputs
-		if goErr == E_SUCCESS {
+		if goErr == eSuccess {
 			for i := 0; i < 6; i++ {
 				if goVertexes[i] != cVertexes[i] {
 					t.Errorf("cellToVertexes(%#016x)[%d] = %#016x, want %#016x",

@@ -17,7 +17,7 @@ func Test_h3index_setH3Index_ParityWithC(t *testing.T) {
 		{10, 99, 2},
 	}
 	for _, c := range cases {
-		var goH H3Index
+		var goH h3Index
 		setH3Index(&goH, c.res, c.base, c.init)
 		cH := setH3IndexC(c.res, c.base, c.init)
 		if goH != cH {

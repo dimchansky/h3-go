@@ -1,15 +1,15 @@
 package h3
 
-// FaceIJK represents a face number and IJK coordinates on that face-centered coordinate system.
-// Mirrors the FaceIJK struct from faceijk.h.
-type FaceIJK struct {
+// faceIJK represents a face number and IJK coordinates on that face-centered coordinate system.
+// Mirrors the faceIJK struct from faceijk.h.
+type faceIJK struct {
 	Face  int32    // face number
-	Coord CoordIJK // ijk coordinates on that face
+	Coord coordIJK // ijk coordinates on that face
 }
 
-// faceCenterPoint mirrors the static Vec3d faceCenterPoint array from faceijk.c
+// faceCenterPoint mirrors the static vec3d faceCenterPoint array from faceijk.c
 // These are icosahedron face centers in x/y/z coordinates on the unit sphere.
-var faceCenterPoint = [NUM_ICOSA_FACES]Vec3d{
+var faceCenterPoint = [numIcosaFaces]vec3d{
 	{0.2199307791404606, 0.6583691780274996, 0.7198475378926182},    // face  0
 	{-0.2139234834501421, 0.1478171829550703, 0.9656017935214205},   // face  1
 	{0.1092625278784797, -0.4811951572873210, 0.8697775121287253},   // face  2
@@ -34,7 +34,7 @@ var faceCenterPoint = [NUM_ICOSA_FACES]Vec3d{
 
 // faceCenterGeo mirrors the LatLng faceCenterGeo array from faceijk.c
 // These are icosahedron face centers in lat/lng radians.
-var faceCenterGeo = [NUM_ICOSA_FACES]LatLng{
+var faceCenterGeo = [numIcosaFaces]LatLng{
 	{0.803582649718989942, 1.248397419617396099},   // face  0
 	{1.307747883455638156, 2.536945009877921159},   // face  1
 	{1.054751253523952054, -1.347517358900396623},  // face  2
@@ -59,7 +59,7 @@ var faceCenterGeo = [NUM_ICOSA_FACES]LatLng{
 
 // faceAxesAzRadsCII mirrors the static faceAxesAzRadsCII array from faceijk.c
 // These are the azimuth angles for the class II i-axes for each icosahedral face.
-var faceAxesAzRadsCII = [NUM_ICOSA_FACES][3]float64{
+var faceAxesAzRadsCII = [numIcosaFaces][3]float64{
 	{5.619958268523939882, 3.525563166130744542, 1.431168063737548730}, // face  0
 	{5.760339081714187279, 3.665943979320991689, 1.571548876927796127}, // face  1
 	{0.780213654393430055, 4.969003859179821079, 2.874608756786625655}, // face  2

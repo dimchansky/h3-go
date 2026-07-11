@@ -9,7 +9,7 @@ import (
 func Test_getIcosahedronFaces_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		h3   H3Index
+		h3   h3Index
 	}{
 		{
 			name: "regular hexagon res 0",
@@ -54,7 +54,7 @@ func Test_getIcosahedronFaces_parity(t *testing.T) {
 			}
 
 			var actualFaceCount int32
-			if err := maxFaceCount(tt.h3, &actualFaceCount); err != E_SUCCESS {
+			if err := maxFaceCount(tt.h3, &actualFaceCount); err != eSuccess {
 				t.Fatalf("maxFaceCount failed: %d", err)
 			}
 
@@ -72,7 +72,7 @@ func Test_getIcosahedronFaces_parity(t *testing.T) {
 			}
 
 			// Call Go implementation
-			if err := getIcosahedronFaces(tt.h3, goFaces); err != E_SUCCESS {
+			if err := getIcosahedronFaces(tt.h3, goFaces); err != eSuccess {
 				t.Fatalf("getIcosahedronFaces failed: %d", err)
 			}
 
@@ -82,13 +82,13 @@ func Test_getIcosahedronFaces_parity(t *testing.T) {
 			cSet := make(map[int32]bool)
 
 			for _, face := range goFaces {
-				if face != INVALID_FACE {
+				if face != invalidFace {
 					goSet[face] = true
 				}
 			}
 
 			for _, face := range cFaces {
-				if face != INVALID_FACE {
+				if face != invalidFace {
 					cSet[face] = true
 				}
 			}
@@ -110,7 +110,7 @@ func Test_getIcosahedronFaces_parity(t *testing.T) {
 				}
 			}
 
-			t.Logf("H3Index %x: faces Go=%v, C=%v", tt.h3, goFaces, cFaces)
+			t.Logf("h3Index %x: faces Go=%v, C=%v", tt.h3, goFaces, cFaces)
 		})
 	}
 }

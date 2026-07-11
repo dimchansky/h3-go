@@ -4,16 +4,16 @@ package h3
 // This function handles edge-crossing vertices for Class III resolutions when
 // hexagon edges cross icosahedron face boundaries requiring interpolation.
 // Ported from H3 C: faceijk.c::_faceIjkToCellBoundary.
-func _faceIjkToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary) {
+func _faceIjkToCellBoundary(h *faceIJK, res int32, start int32, length int32, g *CellBoundary) {
 	adjRes := res
 	centerIJK := *h
-	var fijkVerts [NUM_HEX_VERTS]FaceIJK
+	var fijkVerts [numHexVerts]faceIJK
 	_faceIjkToVerts(&centerIJK, &adjRes, fijkVerts[:])
 
 	// If we're returning the entire loop, we need one more iteration in case
 	// of a distortion vertex on the last edge
 	additionalIteration := int32(0)
-	if length == NUM_HEX_VERTS {
+	if length == numHexVerts {
 		additionalIteration = 1
 	}
 
@@ -22,10 +22,10 @@ func _faceIjkToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g 
 	// edge-crossing vertices as needed
 	g.NumVerts = 0
 	lastFace := int32(-1)
-	lastOverage := NO_OVERAGE
+	lastOverage := noOverage
 
 	for vert := start; vert < start+length+additionalIteration; vert++ {
-		v := vert % NUM_HEX_VERTS
+		v := vert % numHexVerts
 		fijk := fijkVerts[v]
 		pentLeading4 := false
 		overage := _adjustOverageClassII(&fijk, adjRes, pentLeading4, true)
@@ -40,34 +40,34 @@ func _faceIjkToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g 
 			edge, with no edge line intersections.
 		*/
 		if isResolutionClassIII(res) && vert > start &&
-			fijk.Face != lastFace && lastOverage != FACE_EDGE {
+			fijk.Face != lastFace && lastOverage != faceEdge {
 			// find hex2d of the two vertexes on original face
-			lastV := (v + 5) % NUM_HEX_VERTS
-			var orig2d0 Vec2d
+			lastV := (v + 5) % numHexVerts
+			var orig2d0 vec2d
 			_ijkToHex2d(&fijkVerts[lastV].Coord, &orig2d0)
-			var orig2d1 Vec2d
+			var orig2d1 vec2d
 			_ijkToHex2d(&fijkVerts[v].Coord, &orig2d1)
 
 			// find the appropriate icosa face edge vertexes
 			maxDim := float64(maxDimByCIIres[adjRes])
-			v0 := Vec2d{3.0 * maxDim, 0.0}
-			v1 := Vec2d{-1.5 * maxDim, 3.0 * M_SQRT3_2 * maxDim}
-			v2 := Vec2d{-1.5 * maxDim, -3.0 * M_SQRT3_2 * maxDim}
+			v0 := vec2d{3.0 * maxDim, 0.0}
+			v1 := vec2d{-1.5 * maxDim, 3.0 * mSqrt32 * maxDim}
+			v2 := vec2d{-1.5 * maxDim, -3.0 * mSqrt32 * maxDim}
 
 			face2 := lastFace
 			if lastFace == centerIJK.Face {
 				face2 = fijk.Face
 			}
 
-			var edge0, edge1 *Vec2d
+			var edge0, edge1 *vec2d
 			switch adjacentFaceDir[centerIJK.Face][face2] {
-			case IJ:
+			case quadIJ:
 				edge0 = &v0
 				edge1 = &v1
-			case JK:
+			case quadJK:
 				edge0 = &v1
 				edge1 = &v2
-			default: // KI case
+			default: // quadKI case
 				edge0 = &v2
 				edge1 = &v0
 			}
@@ -96,9 +96,9 @@ func _faceIjkToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g 
 		}
 
 		// convert vertex to lat/lng and add to the result
-		// vert == start + NUM_HEX_VERTS is only used to test for possible
+		// vert == start + numHexVerts is only used to test for possible
 		// intersection on last edge
-		if vert < start+NUM_HEX_VERTS {
+		if vert < start+numHexVerts {
 			// Ensure we have space in the boundary
 			if len(g.Verts) <= int(g.NumVerts) {
 				// Extend the slice if needed
@@ -106,7 +106,7 @@ func _faceIjkToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g 
 				copy(newVerts, g.Verts)
 				g.Verts = newVerts
 			}
-			var vec Vec2d
+			var vec vec2d
 			_ijkToHex2d(&fijk.Coord, &vec)
 			_hex2dToGeo(&vec, fijk.Face, adjRes, 1, &g.Verts[g.NumVerts])
 			g.NumVerts++

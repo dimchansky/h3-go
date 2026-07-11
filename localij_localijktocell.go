@@ -5,35 +5,35 @@ package h3
 // due to pentagonal distortion. Failure may occur if the coordinates are too far
 // away from the origin or if the index is on the other side of a pentagon.
 // Ported from H3 C: localij.c::localIjkToCell.
-func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
+func localIjkToCell(origin h3Index, ijk *coordIJK, out *h3Index) h3Error {
 	res := getResolution(origin)
 	originBaseCell := getBaseCell(origin)
-	if originBaseCell < 0 || originBaseCell >= NUM_BASE_CELLS {
-		return E_CELL_INVALID
+	if originBaseCell < 0 || originBaseCell >= numBaseCells {
+		return eCellInvalid
 	}
 	originOnPent := _isBaseCellPentagon(originBaseCell)
 
 	// This logic is very similar to faceIjkToH3
 	// initialize the index
-	*out = H3Index(H3_INIT)
-	*out = setMode(*out, H3_CELL_MODE)
+	*out = h3Index(h3Init)
+	*out = setMode(*out, h3CellMode)
 	*out = setResolution(*out, res)
 
 	// check for res 0/base cell
 	if res == 0 {
 		dir := _unitIjkToDigit(ijk)
-		if dir == INVALID_DIGIT {
+		if dir == invalidDigit {
 			// out of range input - not a unit vector or zero vector
-			return E_FAILED
+			return eFailed
 		}
 
 		newBaseCell := _getBaseCellNeighbor(originBaseCell, dir)
-		if newBaseCell == INVALID_BASE_CELL {
+		if newBaseCell == invalidBaseCell {
 			// Moving in an invalid direction off a pentagon.
-			return E_FAILED
+			return eFailed
 		}
 		*out = setBaseCell(*out, newBaseCell)
-		return E_SUCCESS
+		return eSuccess
 	}
 
 	// we need to find the correct base cell offset (if any) for this H3 index;
@@ -41,16 +41,16 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 	// in that base cell's coordinate system
 	ijkCopy := *ijk
 
-	// build the H3Index from finest res up
+	// build the h3Index from finest res up
 	// adjust r for the fact that the res 0 base cell offsets the indexing
 	// digits
 	for r := res - 1; r >= 0; r-- {
 		lastIJK := ijkCopy
-		var lastCenter CoordIJK
+		var lastCenter coordIJK
 		if isResolutionClassIII(r + 1) {
 			// rotate ccw
 			upAp7Error := _upAp7Checked(&ijkCopy)
-			if upAp7Error != E_SUCCESS {
+			if upAp7Error != eSuccess {
 				return upAp7Error
 			}
 			lastCenter = ijkCopy
@@ -58,14 +58,14 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 		} else {
 			// rotate cw
 			upAp7rError := _upAp7rChecked(&ijkCopy)
-			if upAp7rError != E_SUCCESS {
+			if upAp7rError != eSuccess {
 				return upAp7rError
 			}
 			lastCenter = ijkCopy
 			_downAp7r(&lastCenter)
 		}
 
-		var diff CoordIJK
+		var diff coordIJK
 		_ijkSub(&lastIJK, &lastCenter, &diff)
 		_ijkNormalize(&diff)
 
@@ -77,7 +77,7 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 
 	if ijkCopy.I > 1 || ijkCopy.J > 1 || ijkCopy.K > 1 {
 		// out of range input
-		return E_FAILED
+		return eFailed
 	}
 
 	// lookup the correct base cell
@@ -87,41 +87,41 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 	// pentagon, and because pentagon base cells do not border each other,
 	// baseCell must not be a pentagon.
 	var indexOnPent bool
-	if baseCell == INVALID_BASE_CELL {
+	if baseCell == invalidBaseCell {
 		indexOnPent = false
 	} else {
 		indexOnPent = _isBaseCellPentagon(baseCell)
 	}
 
-	if dir != CENTER_DIGIT {
+	if dir != centerDigit {
 		// If the index is in a warped direction, we need to unwarp the base
 		// cell direction. There may be further need to rotate the index digits.
 		var pentagonRotations int32 = 0
 		if originOnPent {
 			originLeadingDigit := _h3LeadingNonZeroDigit(origin)
-			if originLeadingDigit == int32(INVALID_DIGIT) {
-				return E_CELL_INVALID
+			if originLeadingDigit == int32(invalidDigit) {
+				return eCellInvalid
 			}
-			pentagonRotations = PENTAGON_ROTATIONS_REVERSE[originLeadingDigit][dir]
+			pentagonRotations = pentagonRotationsReverse[originLeadingDigit][dir]
 			for i := int32(0); i < pentagonRotations; i++ {
 				dir = _rotate60ccw(dir)
 			}
 			// The pentagon rotations are being chosen so that dir is not the
 			// deleted direction. If it still happens, it means we're moving
 			// into a deleted subsequence, so there is no index here.
-			if dir == K_AXES_DIGIT {
-				return E_PENTAGON
+			if dir == kAxesDigit {
+				return ePentagon
 			}
 			baseCell = _getBaseCellNeighbor(originBaseCell, dir)
 
 			// indexOnPent does not need to be checked again since no pentagon
 			// base cells border each other.
-			if baseCell == INVALID_BASE_CELL {
-				return E_CELL_INVALID
+			if baseCell == invalidBaseCell {
+				return eCellInvalid
 			}
 			indexOnPent = _isBaseCellPentagon(baseCell)
 			if indexOnPent {
-				return E_CELL_INVALID
+				return eCellInvalid
 			}
 		}
 
@@ -129,7 +129,7 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 		// cell.
 		baseCellRotations := int32(baseCellNeighbor60CCWRots[originBaseCell][dir])
 		if baseCellRotations < 0 {
-			return E_CELL_INVALID
+			return eCellInvalid
 		}
 
 		// Adjust for pentagon warping within the base cell. The base cell
@@ -138,8 +138,8 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 		// double mapping.
 		if indexOnPent {
 			revDir := _getBaseCellDirection(baseCell, originBaseCell)
-			if revDir == INVALID_DIGIT {
-				return E_CELL_INVALID
+			if revDir == invalidDigit {
+				return eCellInvalid
 			}
 
 			// Adjust for the different coordinate space in the two base cells.
@@ -152,19 +152,19 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 			indexLeadingDigit := _h3LeadingNonZeroDigit(*out)
 			// This case should be unreachable because this function is building
 			// *out, and should never generate an invalid digit, above.
-			if indexLeadingDigit == int32(INVALID_DIGIT) {
-				return E_CELL_INVALID
+			if indexLeadingDigit == int32(invalidDigit) {
+				return eCellInvalid
 			}
 			if _isBaseCellPolarPentagon(baseCell) {
-				pentagonRotations = PENTAGON_ROTATIONS_REVERSE_POLAR[revDir][indexLeadingDigit]
+				pentagonRotations = pentagonRotationsReversePolar[revDir][indexLeadingDigit]
 			} else {
-				pentagonRotations = PENTAGON_ROTATIONS_REVERSE_NONPOLAR[revDir][indexLeadingDigit]
+				pentagonRotations = pentagonRotationsReverseNonpolar[revDir][indexLeadingDigit]
 			}
 			// For this to occur, revDir would need to be 1. Since revDir is
 			// from the index base cell (which is a pentagon) towards the
 			// origin, this should never be the case.
 			if pentagonRotations < 0 {
-				return E_CELL_INVALID
+				return eCellInvalid
 			}
 
 			for i := int32(0); i < pentagonRotations; i++ {
@@ -172,7 +172,7 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 			}
 		} else {
 			if pentagonRotations < 0 {
-				return E_CELL_INVALID
+				return eCellInvalid
 			}
 			for i := int32(0); i < pentagonRotations; i++ {
 				*out = _h3Rotate60ccw(*out)
@@ -187,13 +187,13 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 		originLeadingDigit := _h3LeadingNonZeroDigit(origin)
 		indexLeadingDigit := _h3LeadingNonZeroDigit(*out)
 
-		if originLeadingDigit == int32(INVALID_DIGIT) || indexLeadingDigit == int32(INVALID_DIGIT) {
-			return E_CELL_INVALID
+		if originLeadingDigit == int32(invalidDigit) || indexLeadingDigit == int32(invalidDigit) {
+			return eCellInvalid
 		}
-		withinPentagonRotations := PENTAGON_ROTATIONS_REVERSE[originLeadingDigit][indexLeadingDigit]
+		withinPentagonRotations := pentagonRotationsReverse[originLeadingDigit][indexLeadingDigit]
 		if withinPentagonRotations < 0 {
 			// This occurs when an invalid K axis digit is present
-			return E_CELL_INVALID
+			return eCellInvalid
 		}
 
 		for i := int32(0); i < withinPentagonRotations; i++ {
@@ -205,11 +205,11 @@ func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 		// TODO: There are cases in cellToLocalIjk which are failed but not
 		// accounted for here - instead just fail if the recovered index is
 		// invalid.
-		if _h3LeadingNonZeroDigit(*out) == int32(K_AXES_DIGIT) {
-			return E_PENTAGON
+		if _h3LeadingNonZeroDigit(*out) == int32(kAxesDigit) {
+			return ePentagon
 		}
 	}
 
 	*out = setBaseCell(*out, baseCell)
-	return E_SUCCESS
+	return eSuccess
 }

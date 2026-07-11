@@ -7,9 +7,9 @@ func Test_ijToIjk_zero(t *testing.T) {
 	t.Parallel()
 
 	ij := CoordIJ{0, 0}
-	ijk := CoordIJK{0, 0, 0}
+	ijk := coordIJK{0, 0, 0}
 
-	if err := ijToIjk(&ij, &ijk); err != E_SUCCESS {
+	if err := ijToIjk(&ij, &ijk); err != eSuccess {
 		t.Errorf("ijToIjk failed: %v", err)
 	}
 

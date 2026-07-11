@@ -3,11 +3,11 @@ package h3
 // cellBoundaryCrossesGeoLoop reports whether any segment of the boundary crosses the loop.
 // Ported from polygon.c::cellBoundaryCrossesGeoLoop
 // Ported from H3 C: polygon.c::cellBoundaryCrossesGeoLoop.
-func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellBoundary, boundaryBBox *BBox) bool {
+func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *bbox, boundary *CellBoundary, boundaryBBox *bbox) bool {
 	if !bboxOverlapsBBox(loopBBox, boundaryBBox) {
 		return false
 	}
-	var loopNorm, boundNorm LongitudeNormalization
+	var loopNorm, boundNorm longitudeNormalization
 	bboxNormalization(loopBBox, boundaryBBox, &loopNorm, &boundNorm)
 	// Normalize boundary longitudes
 	normalBoundary := CellBoundary{NumVerts: boundary.NumVerts, Verts: make([]LatLng, boundary.NumVerts)}
@@ -15,7 +15,7 @@ func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellB
 	for i := int32(0); i < normalBoundary.NumVerts; i++ {
 		normalBoundary.Verts[i].Lng = normalizeLng(normalBoundary.Verts[i].Lng, boundNorm)
 	}
-	normalBoundaryBBox := BBox{
+	normalBoundaryBBox := bbox{
 		North: boundaryBBox.North,
 		South: boundaryBBox.South,
 		East:  normalizeLng(boundaryBBox.East, boundNorm),

@@ -4,9 +4,9 @@ package h3
 // This helps minimize the chance that a user will depend on the iterator internal state
 // after it's exhausted, like the child resolution, for example.
 // Ported from H3 C: iterators.c::_null_iter.
-func nullIter() IterCellsChildren {
-	return IterCellsChildren{
-		H:         0, // H3_NULL
+func nullIter() iterCellsChildren {
+	return iterCellsChildren{
+		H:         0, // h3Null
 		ParentRes: -1,
 		SkipDigit: -1,
 	}

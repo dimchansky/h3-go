@@ -9,21 +9,21 @@ package h3
 //
 // Ported from H3 C: polyfill.c::polygonToCellsExperimental.
 func polygonToCellsExperimental(polygon *GeoPolygon, res int32, flags uint32,
-	size int64, out []H3Index) H3Error {
+	size int64, out []h3Index) h3Error {
 	if len(out) == 0 || int64(len(out)) < size {
-		return E_MEMORY_BOUNDS
+		return eMemoryBounds
 	}
 
 	iter := iterInitPolygon(polygon, res, flags)
-	if iter.Error != E_SUCCESS {
+	if iter.Error != eSuccess {
 		return iter.Error
 	}
 
 	var i int64
-	for iter.Cell != H3_NULL {
+	for iter.Cell != h3Null {
 		if i >= size {
 			iterDestroyPolygon(&iter)
-			return E_MEMORY_BOUNDS
+			return eMemoryBounds
 		}
 		out[i] = iter.Cell
 		i++
@@ -35,19 +35,19 @@ func polygonToCellsExperimental(polygon *GeoPolygon, res int32, flags uint32,
 	return iter.Error
 }
 
-// iterInitPolygon initializes a IterCellsPolygon struct representing the sequence of
+// iterInitPolygon initializes a iterCellsPolygon struct representing the sequence of
 // cells within the target polygon. The test for including edge cells is defined
 // by the polyfill mode passed in the flags argument.
 //
 // Ported from H3 C: polyfill.c::iterInitPolygon.
-func iterInitPolygon(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygon {
+func iterInitPolygon(polygon *GeoPolygon, res int32, flags uint32) iterCellsPolygon {
 	// Create the sub-iterator for compact cells
 	cellIter := iterInitPolygonCompact(polygon, res, flags)
 	// Create the sub-iterator for children
-	childIter := IterCellsChildren{}
+	childIter := iterCellsChildren{}
 	iterInitParent(cellIter.Cell, res, &childIter)
 
-	iter := IterCellsPolygon{
+	iter := iterCellsPolygon{
 		Cell:      childIter.H,
 		Error:     cellIter.Error,
 		cellIter:  cellIter,
@@ -60,48 +60,48 @@ func iterInitPolygon(polygon *GeoPolygon, res int32, flags uint32) IterCellsPoly
 // desired resolution.
 //
 // Ported from H3 C: polyfill.c::iterStepPolygon.
-func iterStepPolygon(iter *IterCellsPolygon) {
-	if iter.Cell == H3_NULL {
+func iterStepPolygon(iter *iterCellsPolygon) {
+	if iter.Cell == h3Null {
 		return
 	}
 
 	// See if there are more children to output
 	iterStepChild(&(iter.childIter))
-	if iter.childIter.H != H3_NULL {
+	if iter.childIter.H != h3Null {
 		iter.Cell = iter.childIter.H
 		return
 	}
 
 	// Otherwise, increment the polyfill iterator
 	iterStepPolygonCompact(&(iter.cellIter))
-	if iter.cellIter.Cell != H3_NULL {
+	if iter.cellIter.Cell != h3Null {
 		iterInitParent(iter.cellIter.Cell, iter.cellIter.res, &(iter.childIter))
 		iter.Cell = iter.childIter.H
 		return
 	}
 
 	// All done, set to null and report errors if any
-	iter.Cell = H3_NULL
+	iter.Cell = h3Null
 	iter.Error = iter.cellIter.Error
 }
 
 // iterDestroyPolygon destroys an iterator, releasing any allocated memory.
-// Iterators destroyed in this manner are safe to use but will always return H3_NULL.
+// Iterators destroyed in this manner are safe to use but will always return h3Null.
 //
 // Ported from H3 C: polyfill.c::iterDestroyPolygon.
-func iterDestroyPolygon(iter *IterCellsPolygon) {
+func iterDestroyPolygon(iter *iterCellsPolygon) {
 	iterDestroyPolygonCompact(&(iter.cellIter))
-	// null out the child iterator by passing H3_NULL
-	iterInitParent(H3_NULL, 0, &(iter.childIter))
-	iter.Cell = H3_NULL
-	iter.Error = E_SUCCESS
+	// null out the child iterator by passing h3Null
+	iterInitParent(h3Null, 0, &(iter.childIter))
+	iter.Cell = h3Null
+	iter.Error = eSuccess
 }
 
-// iterInitPolygonCompact initializes a IterCellsPolygonCompact struct representing
+// iterInitPolygonCompact initializes a iterCellsPolygonCompact struct representing
 // the sequence of compact cells within the target polygon.
 //
 // Ported from H3 C: polyfill.c::iterInitPolygonCompact.
-func iterInitPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygonCompact {
+func iterInitPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) iterCellsPolygonCompact {
 	iter := initIterPolygonCompact(polygon, res, flags)
 
 	// Start the iterator by taking the first step.
@@ -114,11 +114,11 @@ func iterInitPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCe
 // initIterPolygonCompact is the internal initialization function without stepping
 //
 // Ported from H3 C: polyfill.c::_iterInitPolygonCompact.
-func initIterPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygonCompact {
-	iter := IterCellsPolygonCompact{
+func initIterPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) iterCellsPolygonCompact {
+	iter := iterCellsPolygonCompact{
 		// Initialize output properties. The first valid cell will be set in iterStep
 		Cell:  baseCellNumToCell(0),
-		Error: E_SUCCESS,
+		Error: eSuccess,
 		// Save input arguments
 		polygon: polygon,
 		res:     res,
@@ -127,27 +127,27 @@ func initIterPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCe
 		started: false,
 	}
 
-	if res < 0 || res > MAX_H3_RES {
-		iterErrorPolygonCompact(&iter, E_RES_DOMAIN)
+	if res < 0 || res > maxH3Res {
+		iterErrorPolygonCompact(&iter, eResDomain)
 		return iter
 	}
 
 	flagErr := validatePolygonFlags(flags)
-	if flagErr != E_SUCCESS {
+	if flagErr != eSuccess {
 		iterErrorPolygonCompact(&iter, flagErr)
 		return iter
 	}
 
 	// Initialize bounding boxes for polygon and any holes
 	numBBoxes := 1 + len(polygon.Holes)
-	iter.bboxes = make([]BBox, numBBoxes)
+	iter.bboxes = make([]bbox, numBBoxes)
 	bboxesFromGeoPolygon(polygon, iter.bboxes)
 
 	return iter
 }
 
 // iterErrorPolygonCompact sets an error state and cleans up the iterator.
-func iterErrorPolygonCompact(iter *IterCellsPolygonCompact, errCode H3Error) {
+func iterErrorPolygonCompact(iter *iterCellsPolygonCompact, errCode h3Error) {
 	iterDestroyPolygonCompact(iter)
 	iter.Error = errCode
 }
@@ -155,9 +155,9 @@ func iterErrorPolygonCompact(iter *IterCellsPolygonCompact, errCode H3Error) {
 // iterDestroyPolygonCompact destroys an iterator, releasing any allocated memory.
 //
 // Ported from H3 C: polyfill.c::iterDestroyPolygonCompact.
-func iterDestroyPolygonCompact(iter *IterCellsPolygonCompact) {
-	iter.Cell = H3_NULL
-	iter.Error = E_SUCCESS
+func iterDestroyPolygonCompact(iter *iterCellsPolygonCompact) {
+	iter.Cell = h3Null
+	iter.Error = eSuccess
 	iter.polygon = nil
 	iter.res = -1
 	iter.flags = 0
@@ -167,10 +167,10 @@ func iterDestroyPolygonCompact(iter *IterCellsPolygonCompact) {
 // nextCell finds the next cell in the sequence of all cells to check in the iteration.
 //
 // Ported from H3 C: polyfill.c::nextCell.
-func nextCell(cell H3Index) H3Index {
+func nextCell(cell h3Index) h3Index {
 	res := getResolution(cell)
 	for {
-		// If this is a base cell, set to next base cell (or H3_NULL if done)
+		// If this is a base cell, set to next base cell (or h3Null if done)
 		if res == 0 {
 			return baseCellNumToCell(getBaseCell(cell) + 1)
 		}
@@ -179,13 +179,13 @@ func nextCell(cell H3Index) H3Index {
 		// and we're only moving up one level
 		parent := cell
 		parent = setResolution(parent, res-1)
-		parent = setIndexDigit(parent, res, int32(H3_DIGIT_MASK))
+		parent = setIndexDigit(parent, res, int32(h3DigitMask))
 
 		// If not the last sibling of parent, return next sibling
-		digit := Direction(getIndexDigit(cell, res))
-		if digit < INVALID_DIGIT-1 {
+		digit := direction(getIndexDigit(cell, res))
+		if digit < invalidDigit-1 {
 			nextDigit := digit + 1
-			if isPentagon(parent) && digit == CENTER_DIGIT {
+			if isPentagon(parent) && digit == centerDigit {
 				nextDigit = digit + 2 // Skip missing pentagon child
 			}
 			cell = setIndexDigit(cell, res, int32(nextDigit))
@@ -200,11 +200,11 @@ func nextCell(cell H3Index) H3Index {
 // iterStepPolygonCompact increments the polyfill iterator, running the polygon to cells algorithm.
 //
 // Ported from H3 C: polyfill.c::iterStepPolygonCompact.
-func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
+func iterStepPolygonCompact(iter *iterCellsPolygonCompact) {
 	cell := iter.Cell
 
-	// once the cell is H3_NULL, the iterator returns an infinite sequence of H3_NULL
-	if cell == H3_NULL {
+	// once the cell is h3Null, the iterator returns an infinite sequence of h3Null
+	if cell == h3Null {
 		return
 	}
 
@@ -222,19 +222,19 @@ func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 		return
 	}
 
-	mode := FLAG_GET_CONTAINMENT_MODE(iter.flags)
+	mode := flagGetContainmentMode(iter.flags)
 
-	for cell != H3_NULL {
+	for cell != h3Null {
 		cellRes := getResolution(cell)
 
 		// Target res: Do a fine-grained check
 		if cellRes == iter.res {
-			if mode == CONTAINMENT_CENTER || mode == CONTAINMENT_OVERLAPPING ||
-				mode == CONTAINMENT_OVERLAPPING_BBOX {
+			if mode == ContainmentCenter || mode == ContainmentOverlapping ||
+				mode == ContainmentOverlappingBBox {
 				// Check if the cell center is inside the polygon
 				var center LatLng
 				centerErr := cellToLatLng(cell, &center)
-				if centerErr != E_SUCCESS {
+				if centerErr != eSuccess {
 					iterErrorPolygonCompact(iter, centerErr)
 					return
 				}
@@ -244,8 +244,8 @@ func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 					return
 				}
 			}
-			if mode == CONTAINMENT_OVERLAPPING ||
-				mode == CONTAINMENT_OVERLAPPING_BBOX {
+			if mode == ContainmentOverlapping ||
+				mode == ContainmentOverlappingBBox {
 				// For overlapping, we need to do a quick check to determine
 				// whether the polygon is wholly contained by the cell. We
 				// check the first polygon vertex, which if it is contained
@@ -257,10 +257,10 @@ func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 				// We have to check whether the point is in the expected range
 				// first, because out-of-bounds values will yield false
 				// positives with latLngToCell
-				if bboxContains(&VALID_RANGE_BBOX, &firstVertex) {
-					var polygonCell H3Index
+				if bboxContains(&validRangeBbox, &firstVertex) {
+					var polygonCell h3Index
 					polygonCellErr := latLngToCell(&firstVertex, cellRes, &polygonCell)
-					if polygonCellErr != E_SUCCESS {
+					if polygonCellErr != eSuccess {
 						// This should be unreachable with the bbox check
 						iterErrorPolygonCompact(iter, polygonCellErr)
 						return
@@ -272,24 +272,24 @@ func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 					}
 				}
 			}
-			if mode == CONTAINMENT_FULL || mode == CONTAINMENT_OVERLAPPING ||
-				mode == CONTAINMENT_OVERLAPPING_BBOX {
+			if mode == ContainmentFull || mode == ContainmentOverlapping ||
+				mode == ContainmentOverlappingBBox {
 				var boundary CellBoundary
 				boundaryErr := cellToBoundary(cell, &boundary)
-				if boundaryErr != E_SUCCESS {
+				if boundaryErr != eSuccess {
 					iterErrorPolygonCompact(iter, boundaryErr)
 					return
 				}
 				bbox, bboxErr := cellToBBox(cell, false)
-				if bboxErr != E_SUCCESS {
+				if bboxErr != eSuccess {
 					// Should be unreachable - invalid cells would be caught in
 					// the previous boundaryErr
 					iterErrorPolygonCompact(iter, bboxErr)
 					return
 				}
 				// Check if the cell is fully contained by the polygon
-				if (mode == CONTAINMENT_FULL ||
-					mode == CONTAINMENT_OVERLAPPING_BBOX) &&
+				if (mode == ContainmentFull ||
+					mode == ContainmentOverlappingBBox) &&
 					cellBoundaryInsidePolygon(*iter.polygon, iter.bboxes,
 						&boundary, &bbox) {
 					// Set to next output
@@ -299,19 +299,19 @@ func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 				// For overlap, we've already checked for center point inclusion
 				// above; if that failed, we only need to check for line
 				// intersection
-				if (mode == CONTAINMENT_OVERLAPPING ||
-					mode == CONTAINMENT_OVERLAPPING_BBOX) &&
+				if (mode == ContainmentOverlapping ||
+					mode == ContainmentOverlappingBBox) &&
 					cellBoundaryCrossesPolygon(*iter.polygon, iter.bboxes, &boundary, &bbox) {
 					// Set to next output
 					iter.Cell = cell
 					return
 				}
 			}
-			if mode == CONTAINMENT_OVERLAPPING_BBOX {
+			if mode == ContainmentOverlappingBBox {
 				// Get a bounding box containing all the cell's children, so
 				// this can work for the max size calculation
 				bbox, bboxErr := cellToBBox(cell, true)
-				if bboxErr != E_SUCCESS {
+				if bboxErr != eSuccess {
 					iterErrorPolygonCompact(iter, bboxErr)
 					return
 				}
@@ -333,7 +333,7 @@ func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 		if cellRes < iter.res {
 			// Get a bounding box for all of the cell's children
 			bbox, bboxErr := cellToBBox(cell, true)
-			if bboxErr != E_SUCCESS {
+			if bboxErr != eSuccess {
 				iterErrorPolygonCompact(iter, bboxErr)
 				return
 			}
@@ -353,7 +353,7 @@ func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 				// Otherwise, the intersecting bbox means we need to test all
 				// children, starting with the first child
 				child, childErr := cellToCenterChild(cell, cellRes+1)
-				if childErr != E_SUCCESS {
+				if childErr != eSuccess {
 					iterErrorPolygonCompact(iter, childErr)
 					return
 				}

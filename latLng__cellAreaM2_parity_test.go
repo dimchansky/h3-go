@@ -9,7 +9,7 @@ import (
 func Test_cellAreaM2_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		cell H3Index
+		cell h3Index
 	}{
 		// Valid hexagon cells at different resolutions
 		{"res0_base", 0x8001fffffffffff},
@@ -49,7 +49,7 @@ func Test_cellAreaM2_parity(t *testing.T) {
 			}
 
 			// If there was an error, we're done
-			if cErr != E_SUCCESS {
+			if cErr != eSuccess {
 				return
 			}
 

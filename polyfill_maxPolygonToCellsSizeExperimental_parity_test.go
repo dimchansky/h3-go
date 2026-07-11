@@ -12,7 +12,7 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 		polygon GeoPolygon
 		res     int32
 		flags   uint32
-		wantErr H3Error
+		wantErr h3Error
 	}{
 		{
 			name: "Empty polygon",
@@ -21,8 +21,8 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes:   []GeoLoop{},
 			},
 			res:     5,
-			flags:   uint32(CONTAINMENT_CENTER),
-			wantErr: E_SUCCESS,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
 		},
 		{
 			name: "Simple triangle polygon",
@@ -36,8 +36,8 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes: []GeoLoop{},
 			},
 			res:     9,
-			flags:   uint32(CONTAINMENT_CENTER),
-			wantErr: E_SUCCESS,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
 		},
 		{
 			name: "Small square polygon at various resolutions",
@@ -52,8 +52,8 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes: []GeoLoop{},
 			},
 			res:     7,
-			flags:   uint32(CONTAINMENT_CENTER),
-			wantErr: E_SUCCESS,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
 		},
 		{
 			name: "Larger polygon with overlapping bbox mode",
@@ -68,8 +68,8 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes: []GeoLoop{},
 			},
 			res:     8,
-			flags:   uint32(CONTAINMENT_OVERLAPPING_BBOX),
-			wantErr: E_SUCCESS,
+			flags:   uint32(ContainmentOverlappingBBox),
+			wantErr: eSuccess,
 		},
 		{
 			name: "Pentagon test case",
@@ -85,8 +85,8 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes: []GeoLoop{},
 			},
 			res:     6,
-			flags:   uint32(CONTAINMENT_CENTER),
-			wantErr: E_SUCCESS,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
 		},
 		{
 			name: "High resolution test",
@@ -101,8 +101,8 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes: []GeoLoop{},
 			},
 			res:     12,
-			flags:   uint32(CONTAINMENT_CENTER),
-			wantErr: E_SUCCESS,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
 		},
 		{
 			name: "Invalid resolution - too high",
@@ -115,9 +115,9 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				},
 				Holes: []GeoLoop{},
 			},
-			res:     16, // Invalid: > MAX_H3_RES (15)
-			flags:   uint32(CONTAINMENT_CENTER),
-			wantErr: E_RES_DOMAIN,
+			res:     16, // Invalid: > maxH3Res (15)
+			flags:   uint32(ContainmentCenter),
+			wantErr: eResDomain,
 		},
 		{
 			name: "Invalid resolution - negative",
@@ -131,8 +131,8 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes: []GeoLoop{},
 			},
 			res:     -1,
-			flags:   uint32(CONTAINMENT_CENTER),
-			wantErr: E_RES_DOMAIN,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eResDomain,
 		},
 	}
 
@@ -151,7 +151,7 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 			}
 
 			// If we expected an error, don't compare results
-			if tt.wantErr != E_SUCCESS {
+			if tt.wantErr != eSuccess {
 				if goErr != tt.wantErr {
 					t.Errorf("Expected error %v, got %v", tt.wantErr, goErr)
 				}
@@ -164,7 +164,7 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 			}
 
 			// For successful cases, result should be non-negative
-			if goErr == E_SUCCESS && goResult < 0 {
+			if goErr == eSuccess && goResult < 0 {
 				t.Errorf("Expected non-negative result, got %d", goResult)
 			}
 		})
@@ -188,8 +188,8 @@ func Test_maxPolygonToCellsSizeExperimental_resolution_scaling_parity(t *testing
 	for _, res := range resolutions {
 		t.Run("Resolution_"+string(rune(res+'0')), func(t *testing.T) {
 			// Call both implementations
-			goResult, goErr := maxPolygonToCellsSizeExperimental(&polygon, res, uint32(CONTAINMENT_CENTER))
-			cResult, cErr := maxPolygonToCellsSizeExperimentalC(&polygon, res, uint32(CONTAINMENT_CENTER))
+			goResult, goErr := maxPolygonToCellsSizeExperimental(&polygon, res, uint32(ContainmentCenter))
+			cResult, cErr := maxPolygonToCellsSizeExperimentalC(&polygon, res, uint32(ContainmentCenter))
 
 			// Compare errors
 			if goErr != cErr {
@@ -197,7 +197,7 @@ func Test_maxPolygonToCellsSizeExperimental_resolution_scaling_parity(t *testing
 				return
 			}
 
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				t.Errorf("Unexpected error at res %d: %v", res, goErr)
 				return
 			}
@@ -229,9 +229,9 @@ func Test_maxPolygonToCellsSizeExperimental_flags_parity(t *testing.T) {
 	}
 
 	flags := []uint32{
-		uint32(CONTAINMENT_CENTER),
-		uint32(CONTAINMENT_FULL),
-		uint32(CONTAINMENT_OVERLAPPING_BBOX),
+		uint32(ContainmentCenter),
+		uint32(ContainmentFull),
+		uint32(ContainmentOverlappingBBox),
 	}
 
 	res := int32(8)
@@ -247,7 +247,7 @@ func Test_maxPolygonToCellsSizeExperimental_flags_parity(t *testing.T) {
 				return
 			}
 
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				t.Errorf("Unexpected error with flag %d: %v", flag, goErr)
 				return
 			}

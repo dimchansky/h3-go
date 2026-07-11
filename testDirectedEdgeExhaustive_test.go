@@ -6,12 +6,12 @@ import (
 )
 
 // Helper function to iterate all indexes at a given resolution.
-func iterateAllIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
+func iterateAllIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index)) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
@@ -26,17 +26,17 @@ func iterateAllIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc fun
 	// For higher resolutions, get children of each base cell
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue // Some cells might not have children at certain resolutions
 		}
 
-		children := make([]H3Index, childrenSize)
-		if err := cellToChildren(baseCell, res, children); err != E_SUCCESS {
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(baseCell, res, children); err != eSuccess {
 			continue
 		}
 
 		for _, child := range children {
-			if child != H3_NULL {
+			if child != h3Null {
 				testFunc(t, child)
 			}
 		}
@@ -44,12 +44,12 @@ func iterateAllIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc fun
 }
 
 // Helper function to iterate base cell indexes at a specific resolution for directed edge tests.
-func iterateBaseCellIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), baseCell int32) {
+func iterateBaseCellIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index), baseCell int32) {
 	t.Helper()
 
 	// Create base cell index
-	baseCellIndex := H3Index(H3_INIT)
-	baseCellIndex = setMode(baseCellIndex, H3_CELL_MODE)
+	baseCellIndex := h3Index(h3Init)
+	baseCellIndex = setMode(baseCellIndex, h3CellMode)
 	baseCellIndex = setBaseCell(baseCellIndex, baseCell)
 
 	if res == 0 {
@@ -59,35 +59,35 @@ func iterateBaseCellIndexesAtResForDirectedEdge(t *testing.T, res int32, testFun
 
 	// Get children at the specified resolution
 	childrenSize, err := cellToChildrenSize(baseCellIndex, res)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("Failed to get children size for base cell %d at res %d: %v", baseCell, res, err)
 	}
 
-	children := make([]H3Index, childrenSize)
-	if err := cellToChildren(baseCellIndex, res, children); err != E_SUCCESS {
+	children := make([]h3Index, childrenSize)
+	if err := cellToChildren(baseCellIndex, res, children); err != eSuccess {
 		t.Fatalf("Failed to get children for base cell %d at res %d: %v", baseCell, res, err)
 	}
 
 	for _, child := range children {
-		if child != H3_NULL {
+		if child != h3Null {
 			testFunc(t, child)
 		}
 	}
 }
 
-func directedEdge_correctness_assertions(t *testing.T, h3 H3Index) {
+func directedEdge_correctness_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
-	edges := make([]H3Index, 6)
+	edges := make([]h3Index, 6)
 	pentagon := isPentagon(h3)
-	if err := originToDirectedEdges(h3, edges); err != E_SUCCESS {
+	if err := originToDirectedEdges(h3, edges); err != eSuccess {
 		t.Errorf("originToDirectedEdges failed for cell %#016x: %v", h3, err)
 		return
 	}
 
 	for i := 0; i < 6; i++ {
 		if pentagon && i == 0 {
-			if edges[i] != H3_NULL {
+			if edges[i] != h3Null {
 				t.Errorf("Expected null edge for pentagon at position 0, got %#016x", edges[i])
 			}
 			continue
@@ -99,7 +99,7 @@ func directedEdge_correctness_assertions(t *testing.T, h3 H3Index) {
 		}
 
 		origin, err := getDirectedEdgeOrigin(edges[i])
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("getDirectedEdgeOrigin failed for edge %#016x: %v", edges[i], err)
 			continue
 		}
@@ -107,14 +107,14 @@ func directedEdge_correctness_assertions(t *testing.T, h3 H3Index) {
 			t.Errorf("Origin mismatch for edge %#016x: got %#016x, expected %#016x", edges[i], origin, h3)
 		}
 
-		var destination H3Index
-		if err := getDirectedEdgeDestination(edges[i], &destination); err != E_SUCCESS {
+		var destination h3Index
+		if err := getDirectedEdgeDestination(edges[i], &destination); err != eSuccess {
 			t.Errorf("getDirectedEdgeDestination failed for edge %#016x: %v", edges[i], err)
 			continue
 		}
 
 		isNeighbor, err := areNeighborCells(h3, destination)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("areNeighborCells failed for cells %#016x and %#016x: %v", h3, destination, err)
 			continue
 		}
@@ -124,43 +124,43 @@ func directedEdge_correctness_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-func directedEdge_boundary_assertions(t *testing.T, h3 H3Index) {
+func directedEdge_boundary_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
-	edges := make([]H3Index, 6)
-	if err := originToDirectedEdges(h3, edges); err != E_SUCCESS {
+	edges := make([]h3Index, 6)
+	if err := originToDirectedEdges(h3, edges); err != eSuccess {
 		t.Errorf("originToDirectedEdges failed for cell %#016x: %v", h3, err)
 		return
 	}
 
-	var destination H3Index
-	var revEdge H3Index
+	var destination h3Index
+	var revEdge h3Index
 	var edgeBoundary CellBoundary
 	var revEdgeBoundary CellBoundary
 
 	for i := 0; i < 6; i++ {
-		if edges[i] == H3_NULL {
+		if edges[i] == h3Null {
 			continue
 		}
 
-		if err := directedEdgeToBoundary(edges[i], &edgeBoundary); err != E_SUCCESS {
+		if err := directedEdgeToBoundary(edges[i], &edgeBoundary); err != eSuccess {
 			t.Errorf("directedEdgeToBoundary failed for edge %#016x: %v", edges[i], err)
 			continue
 		}
 
-		if err := getDirectedEdgeDestination(edges[i], &destination); err != E_SUCCESS {
+		if err := getDirectedEdgeDestination(edges[i], &destination); err != eSuccess {
 			t.Errorf("getDirectedEdgeDestination failed for edge %#016x: %v", edges[i], err)
 			continue
 		}
 
-		var err H3Error
+		var err h3Error
 		revEdge, err = cellsToDirectedEdge(destination, h3)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("cellsToDirectedEdge failed for cells %#016x -> %#016x: %v", destination, h3, err)
 			continue
 		}
 
-		if err := directedEdgeToBoundary(revEdge, &revEdgeBoundary); err != E_SUCCESS {
+		if err := directedEdgeToBoundary(revEdge, &revEdgeBoundary); err != eSuccess {
 			t.Errorf("directedEdgeToBoundary failed for reverse edge %#016x: %v", revEdge, err)
 			continue
 		}

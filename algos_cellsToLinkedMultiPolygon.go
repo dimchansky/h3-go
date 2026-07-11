@@ -1,6 +1,6 @@
 package h3
 
-// cellsToLinkedMultiPolygon creates a LinkedGeoPolygon describing the outline(s) of a set of hexagons.
+// cellsToLinkedMultiPolygon creates a linkedGeoPolygon describing the outline(s) of a set of hexagons.
 // Polygon outlines will follow GeoJSON MultiPolygon order: Each polygon will
 // have one outer loop, which is first in the list, followed by any holes.
 //
@@ -20,12 +20,12 @@ package h3
 // 4. Cleans up intermediate vertex graph memory
 //
 // Ported from H3 C: algos.c::cellsToLinkedMultiPolygon.
-func cellsToLinkedMultiPolygon(h3Set []H3Index, numHexes int32, out *LinkedGeoPolygon) H3Error {
-	var graph VertexGraph
+func cellsToLinkedMultiPolygon(h3Set []h3Index, numHexes int32, out *linkedGeoPolygon) h3Error {
+	var graph vertexGraph
 
 	// Create vertex graph from the hexagon set
 	err := h3SetToVertexGraph(h3Set, numHexes, &graph)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		return err
 	}
 
@@ -37,7 +37,7 @@ func cellsToLinkedMultiPolygon(h3Set []H3Index, numHexes int32, out *LinkedGeoPo
 
 	// Normalize the multi-polygon structure
 	normalizeResult := normalizeMultiPolygon(out)
-	if normalizeResult != E_SUCCESS {
+	if normalizeResult != eSuccess {
 		// If normalization fails, clean up the output structure
 		destroyLinkedMultiPolygon(out)
 	}

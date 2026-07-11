@@ -6,20 +6,20 @@ package h3
 // The size is the maximum of either the number of points in the geoloop or the
 // number of cells in the bounding box of the geoloop.
 // Ported from H3 C: algos.c::maxPolygonToCellsSize.
-func maxPolygonToCellsSize(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) H3Error {
+func maxPolygonToCellsSize(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) h3Error {
 	flagErr := validatePolygonFlags(flags)
-	if flagErr != E_SUCCESS {
+	if flagErr != eSuccess {
 		return flagErr
 	}
 
 	// Get the bounding box for the GeoJSON-like struct
-	var bbox BBox
+	var bbox bbox
 	geoloop := geoPolygon.GeoLoop
 	bboxFromGeoLoop(geoloop, &bbox)
 
 	var numHexagons int64
 	estimateErr := bboxHexEstimate(&bbox, res, &numHexagons)
-	if estimateErr != E_SUCCESS {
+	if estimateErr != eSuccess {
 		return estimateErr
 	}
 
@@ -38,7 +38,7 @@ func maxPolygonToCellsSize(geoPolygon *GeoPolygon, res int32, flags uint32, out 
 	// resolution, the line tracing needs an extra buffer than the estimator
 	// function provides (but beefing that up to cover causes most situations to
 	// overallocate memory)
-	numHexagons += POLYGON_TO_CELLS_BUFFER
+	numHexagons += polygonToCellsBuffer
 	*out = numHexagons
-	return E_SUCCESS
+	return eSuccess
 }

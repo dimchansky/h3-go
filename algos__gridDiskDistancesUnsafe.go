@@ -6,7 +6,7 @@ package h3
 // Output is placed in the provided array in order of increasing distance from the origin.
 // The distances in hexagons is placed in the distances array at the same offset.
 // Ported from H3 C: algos.c::gridDiskDistancesUnsafe.
-func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+func gridDiskDistancesUnsafe(origin h3Index, k int32, out []h3Index, distances []int32) h3Error {
 	// Return codes:
 	// 1 Pentagon was encountered
 	// 2 Pentagon distortion (deleted k subsequence) was encountered
@@ -14,7 +14,7 @@ func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances [
 	// k-subsequence is the problem, but for compatibility reasons we fail on
 	// the pentagon.
 	if k < 0 {
-		return E_DOMAIN
+		return eDomain
 	}
 
 	// k must be >= 0, so origin is always needed
@@ -27,7 +27,7 @@ func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances [
 
 	if isPentagon(origin) {
 		// Pentagon was encountered; bail out as user doesn't want this.
-		return E_PENTAGON
+		return ePentagon
 	}
 
 	// 0 < ring <= k, current ring
@@ -44,8 +44,8 @@ func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances [
 		if direction == 0 && i == 0 {
 			// Not putting in the output set as it will be done later, at
 			// the end of this ring.
-			neighborResult := h3NeighborRotations(origin, NEXT_RING_DIRECTION, &rotations, &origin)
-			if neighborResult != E_SUCCESS {
+			neighborResult := h3NeighborRotations(origin, nextRingDirection, &rotations, &origin)
+			if neighborResult != eSuccess {
 				// Should not be possible because `origin` would have to be a
 				// pentagon
 				// TODO: Reachable via fuzzer
@@ -54,12 +54,12 @@ func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances [
 
 			if isPentagon(origin) {
 				// Pentagon was encountered; bail out as user doesn't want this.
-				return E_PENTAGON
+				return ePentagon
 			}
 		}
 
-		neighborResult := h3NeighborRotations(origin, DIRECTIONS[direction], &rotations, &origin)
-		if neighborResult != E_SUCCESS {
+		neighborResult := h3NeighborRotations(origin, algosDirections[direction], &rotations, &origin)
+		if neighborResult != eSuccess {
 			return neighborResult
 		}
 		out[idx] = origin
@@ -82,8 +82,8 @@ func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances [
 
 		if isPentagon(origin) {
 			// Pentagon was encountered; bail out as user doesn't want this.
-			return E_PENTAGON
+			return ePentagon
 		}
 	}
-	return E_SUCCESS
+	return eSuccess
 }

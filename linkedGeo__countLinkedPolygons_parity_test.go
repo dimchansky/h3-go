@@ -9,20 +9,20 @@ import (
 func Test_countLinkedPolygons_parity(t *testing.T) {
 	tests := []struct {
 		name          string
-		setupPolygons func() *LinkedGeoPolygon
+		setupPolygons func() *linkedGeoPolygon
 		expectedCount int32
 	}{
 		{
 			name: "nil polygon",
-			setupPolygons: func() *LinkedGeoPolygon {
+			setupPolygons: func() *linkedGeoPolygon {
 				return nil
 			},
 			expectedCount: 0,
 		},
 		{
 			name: "single polygon",
-			setupPolygons: func() *LinkedGeoPolygon {
-				return &LinkedGeoPolygon{
+			setupPolygons: func() *linkedGeoPolygon {
+				return &linkedGeoPolygon{
 					First: nil,
 					Last:  nil,
 					Next:  nil,
@@ -32,13 +32,13 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 		},
 		{
 			name: "two polygons",
-			setupPolygons: func() *LinkedGeoPolygon {
-				first := &LinkedGeoPolygon{
+			setupPolygons: func() *linkedGeoPolygon {
+				first := &linkedGeoPolygon{
 					First: nil,
 					Last:  nil,
 					Next:  nil,
 				}
-				second := &LinkedGeoPolygon{
+				second := &linkedGeoPolygon{
 					First: nil,
 					Last:  nil,
 					Next:  nil,
@@ -50,18 +50,18 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 		},
 		{
 			name: "three polygons",
-			setupPolygons: func() *LinkedGeoPolygon {
-				first := &LinkedGeoPolygon{
+			setupPolygons: func() *linkedGeoPolygon {
+				first := &linkedGeoPolygon{
 					First: nil,
 					Last:  nil,
 					Next:  nil,
 				}
-				second := &LinkedGeoPolygon{
+				second := &linkedGeoPolygon{
 					First: nil,
 					Last:  nil,
 					Next:  nil,
 				}
-				third := &LinkedGeoPolygon{
+				third := &linkedGeoPolygon{
 					First: nil,
 					Last:  nil,
 					Next:  nil,
@@ -74,10 +74,10 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 		},
 		{
 			name: "five polygons",
-			setupPolygons: func() *LinkedGeoPolygon {
-				polygons := make([]*LinkedGeoPolygon, 5)
+			setupPolygons: func() *linkedGeoPolygon {
+				polygons := make([]*linkedGeoPolygon, 5)
 				for i := 0; i < 5; i++ {
-					polygons[i] = &LinkedGeoPolygon{
+					polygons[i] = &linkedGeoPolygon{
 						First: nil,
 						Last:  nil,
 						Next:  nil,
@@ -122,10 +122,10 @@ func Test_countLinkedPolygons_parity(t *testing.T) {
 	t.Run("large chain", func(t *testing.T) {
 		// Create a chain of 100 polygons
 		const chainSize = 100
-		var first, prev *LinkedGeoPolygon
+		var first, prev *linkedGeoPolygon
 
 		for i := 0; i < chainSize; i++ {
-			polygon := &LinkedGeoPolygon{
+			polygon := &linkedGeoPolygon{
 				First: nil,
 				Last:  nil,
 				Next:  nil,

@@ -9,7 +9,7 @@ import (
 func Test_isValidVertex_parity(t *testing.T) {
 	tests := []struct {
 		name   string
-		vertex H3Index
+		vertex h3Index
 	}{
 		// Valid vertices from various resolutions and cell types
 		{"valid hex vertex r0", 0x20283080bffffff},
@@ -29,7 +29,7 @@ func Test_isValidVertex_parity(t *testing.T) {
 		{"invalid vertex number", 0x20283080bfffffff},
 
 		// Null vertex
-		{"null vertex", H3_NULL},
+		{"null vertex", h3Null},
 
 		// Invalid owner cells
 		{"invalid owner cell", 0x2fffffffffffffff},
@@ -53,7 +53,7 @@ func Test_isValidVertex_parity(t *testing.T) {
 func Test_isValidVertex_comprehensive_parity(t *testing.T) {
 	// Test a wider range of vertices by creating them from known cells
 	// Note: Not all generated vertices will be canonical/valid, but we check for parity
-	testCells := []H3Index{
+	testCells := []h3Index{
 		0x8001fffffffffff, // resolution 0 hex
 		0x8008001ffffffff, // resolution 1 hex
 		0x800c001ffffffff, // resolution 2 hex
@@ -69,9 +69,9 @@ func Test_isValidVertex_comprehensive_parity(t *testing.T) {
 		}
 
 		for vertexNum := 0; vertexNum < maxVertexNum; vertexNum++ {
-			var vertex H3Index
+			var vertex h3Index
 			err := cellToVertex(cell, int32(vertexNum), &vertex)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				continue // Skip invalid combinations
 			}
 

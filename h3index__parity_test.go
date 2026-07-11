@@ -6,7 +6,7 @@ import "testing"
 
 func Test_string_h3_ParityWithC(t *testing.T) {
 	// h3ToString parity
-	h := H3Index(0x8928308280fffff)
+	h := h3Index(0x8928308280fffff)
 	goStr, goErr := h3ToString(h)
 	cStr, cErr := h3ToStringC(h)
 	if goErr != cErr || goStr != cStr {
@@ -15,7 +15,7 @@ func Test_string_h3_ParityWithC(t *testing.T) {
 	// stringToH3 parity
 	goH, goE := stringToH3(cStr)
 	cH, cE := stringToH3C(cStr)
-	if goE != H3Error(cE) || goH != cH {
+	if goE != h3Error(cE) || goH != cH {
 		t.Fatalf("stringToH3 mismatch: go=(%x,%d) c=(%x,%d)", uint64(goH), goE, uint64(cH), cE)
 	}
 	// invalid
@@ -27,7 +27,7 @@ func Test_string_h3_ParityWithC(t *testing.T) {
 }
 
 func Test_getters_ParityWithC(t *testing.T) {
-	hs := []H3Index{0x8928308280fffff, 0x821c07fffffffff, 0x8a195da49a2ffff}
+	hs := []h3Index{0x8928308280fffff, 0x821c07fffffffff, 0x8a195da49a2ffff}
 	for _, h := range hs {
 		if getResolution(h) != getResolutionC(h) {
 			t.Fatalf("getResolution mismatch for %x", uint64(h))

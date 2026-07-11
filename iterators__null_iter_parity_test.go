@@ -26,7 +26,7 @@ func Test_nullIter_parity(t *testing.T) {
 
 	// Verify expected values
 	if iterGo.H != 0 {
-		t.Errorf("nullIter() H should be 0 (H3_NULL), got 0x%x", iterGo.H)
+		t.Errorf("nullIter() H should be 0 (h3Null), got 0x%x", iterGo.H)
 	}
 	if iterGo.ParentRes != -1 {
 		t.Errorf("nullIter() ParentRes should be -1, got %d", iterGo.ParentRes)

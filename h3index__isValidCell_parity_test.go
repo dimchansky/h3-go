@@ -10,7 +10,7 @@ import (
 func TestIsValidCellParity(t *testing.T) {
 	testCases := []struct {
 		name string
-		h3   H3Index
+		h3   h3Index
 	}{
 		// Valid cases
 		{"res_0_base_0", 0x8001fffffffffff},
@@ -61,14 +61,14 @@ func TestIsValidCellParity(t *testing.T) {
 			}
 
 			// Log results for visibility
-			t.Logf("H3Index 0x%x -> valid=%t", uint64(tc.h3), goResult)
+			t.Logf("h3Index 0x%x -> valid=%t", uint64(tc.h3), goResult)
 		})
 	}
 }
 
 func TestIsValidCellSystematic(t *testing.T) {
 	// Test a range of systematic cases
-	testCases := []H3Index{
+	testCases := []h3Index{
 		// All base resolution cells
 		0x8001fffffffffff, // base 1
 		0x8003fffffffffff, // base 3
@@ -108,7 +108,7 @@ func TestIsValidCellSystematic(t *testing.T) {
 			}
 
 			// Log the result without assuming validity
-			t.Logf("H3Index 0x%x -> Go=%t, C=%v", uint64(h3), goResult, cResult)
+			t.Logf("h3Index 0x%x -> Go=%t, C=%v", uint64(h3), goResult, cResult)
 		})
 	}
 }

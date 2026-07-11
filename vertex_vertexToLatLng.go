@@ -3,18 +3,18 @@ package h3
 // vertexToLatLng gets the geocoordinates of an H3 vertex.
 // Converts a vertex H3 index to geographic coordinates (latitude and longitude).
 // Ported from H3 C: vertex.c::vertexToLatLng.
-func vertexToLatLng(vertex H3Index, coord *LatLng) H3Error {
+func vertexToLatLng(vertex h3Index, coord *LatLng) h3Error {
 	// Get the vertex number and owner from the vertex
 	vertexNum := getReservedBits(vertex)
 	owner := vertex
-	owner = setMode(owner, H3_CELL_MODE)
+	owner = setMode(owner, h3CellMode)
 	owner = setReservedBits(owner, 0)
 
 	// Get the single vertex from the boundary
 	var gb CellBoundary
-	var fijk FaceIJK
+	var fijk faceIJK
 	fijkError := _h3ToFaceIjk(owner, &fijk)
-	if fijkError != E_SUCCESS {
+	if fijkError != eSuccess {
 		return fijkError
 	}
 	res := getResolution(owner)
@@ -27,5 +27,5 @@ func vertexToLatLng(vertex H3Index, coord *LatLng) H3Error {
 
 	// Copy from boundary to output coord
 	*coord = gb.Verts[0]
-	return E_SUCCESS
+	return eSuccess
 }

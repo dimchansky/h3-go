@@ -9,7 +9,7 @@ import (
 func Test_addLinkedCoord_parity(t *testing.T) {
 	t.Run("empty loop", func(t *testing.T) {
 		// Test Go implementation
-		goLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
+		goLoop := &linkedGeoLoop{First: nil, Last: nil, Next: nil}
 		vertex := &LatLng{Lat: 0.123, Lng: 0.456}
 		goResult := addLinkedCoord(goLoop, vertex)
 
@@ -39,11 +39,11 @@ func Test_addLinkedCoord_parity(t *testing.T) {
 
 	t.Run("loop with existing coordinate", func(t *testing.T) {
 		// Test Go implementation
-		existingCoord := &LinkedLatLng{
+		existingCoord := &linkedLatLng{
 			Vertex: LatLng{Lat: 0.5, Lng: 1.0},
 			Next:   nil,
 		}
-		goLoop := &LinkedGeoLoop{First: existingCoord, Last: existingCoord, Next: nil}
+		goLoop := &linkedGeoLoop{First: existingCoord, Last: existingCoord, Next: nil}
 		vertex := &LatLng{Lat: 0.789, Lng: 0.012}
 		goResult := addLinkedCoord(goLoop, vertex)
 
@@ -77,7 +77,7 @@ func Test_addLinkedCoord_parity(t *testing.T) {
 
 	t.Run("multiple coordinates", func(t *testing.T) {
 		// Test Go implementation with multiple additions
-		goLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
+		goLoop := &linkedGeoLoop{First: nil, Last: nil, Next: nil}
 
 		// Add first coordinate
 		vertex1 := &LatLng{Lat: 0.1, Lng: 0.2}

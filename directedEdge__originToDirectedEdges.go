@@ -1,21 +1,21 @@
 package h3
 
-// originToDirectedEdges provides all of the directed edges from the current H3Index.
+// originToDirectedEdges provides all of the directed edges from the current h3Index.
 //
 // This function generates the six possible directed edges from a hexagon cell,
 // with special handling for pentagon cells which have only 5 valid edges.
-// For pentagons, the K-axis direction (index 0) is set to H3_NULL.
+// For pentagons, the K-axis direction (index 0) is set to h3Null.
 //
 // The edges slice must have length at least 6. Results are stored in canonical order:
-// - edges[0]: Direction 1 (or H3_NULL for pentagons)
-// - edges[1]: Direction 2
-// - edges[2]: Direction 3
-// - edges[3]: Direction 4
-// - edges[4]: Direction 5
-// - edges[5]: Direction 6
+// - edges[0]: direction 1 (or h3Null for pentagons)
+// - edges[1]: direction 2
+// - edges[2]: direction 3
+// - edges[3]: direction 4
+// - edges[4]: direction 5
+// - edges[5]: direction 6
 //
 // Ported from H3 C: directedEdge.c::originToDirectedEdges.
-func originToDirectedEdges(origin H3Index, edges []H3Index) H3Error {
+func originToDirectedEdges(origin h3Index, edges []h3Index) h3Error {
 	// Determine if the origin is a pentagon and special treatment needed.
 	isPent := isPentagon(origin)
 
@@ -24,12 +24,12 @@ func originToDirectedEdges(origin H3Index, edges []H3Index) H3Error {
 	// which is zeroed.
 	for i := int32(0); i < 6; i++ {
 		if isPent && i == 0 {
-			edges[i] = H3_NULL
+			edges[i] = h3Null
 		} else {
 			edges[i] = origin
-			edges[i] = setMode(edges[i], H3_DIRECTEDEDGE_MODE)
+			edges[i] = setMode(edges[i], h3DirectededgeMode)
 			edges[i] = setReservedBits(edges[i], i+1)
 		}
 	}
-	return E_SUCCESS
+	return eSuccess
 }

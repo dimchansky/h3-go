@@ -100,8 +100,8 @@ func Test_findNodeForVertex_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Initialize Go graph
-			goGraph := &VertexGraph{
-				Buckets:    make([]*VertexNode, tt.numBuckets),
+			goGraph := &vertexGraph{
+				Buckets:    make([]*vertexNode, tt.numBuckets),
 				NumBuckets: tt.numBuckets,
 				Size:       0,
 				Res:        tt.res,
@@ -158,8 +158,8 @@ func Test_findNodeForVertex_multiple_edges_same_vertex_parity(t *testing.T) {
 	numBuckets := int32(10)
 	res := int32(9)
 
-	goGraph := &VertexGraph{
-		Buckets:    make([]*VertexNode, numBuckets),
+	goGraph := &vertexGraph{
+		Buckets:    make([]*vertexNode, numBuckets),
 		NumBuckets: numBuckets,
 		Size:       0,
 		Res:        res,

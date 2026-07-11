@@ -5,7 +5,7 @@ import "math"
 // _hex2dToCoordIJK converts 2D hex coordinates to IJK coordinates.
 // Mirrors H3's coordijk.c::_hex2dToCoordIJK behavior.
 // Ported from H3 C: coordijk.c::_hex2dToCoordIJK.
-func _hex2dToCoordIJK(v *Vec2d, h *CoordIJK) {
+func _hex2dToCoordIJK(v *vec2d, h *coordIJK) {
 	var a1, a2 float64
 	var x1, x2 float64
 	var m1, m2 int32
@@ -18,7 +18,7 @@ func _hex2dToCoordIJK(v *Vec2d, h *CoordIJK) {
 	a2 = math.Abs(v.Y)
 
 	// first do a reverse conversion
-	x2 = a2 * M_RSIN60
+	x2 = a2 * mRsin60
 	x1 = a1 + x2/2.0
 
 	// check if we have the center of a hex

@@ -9,66 +9,66 @@ import (
 func Test_faceIjkToCellBoundary_parity(t *testing.T) {
 	tests := []struct {
 		name   string
-		fijk   FaceIJK
+		fijk   faceIJK
 		res    int32
 		start  int32
 		length int32
 	}{
 		{
 			name:   "res 0 center cell full boundary",
-			fijk:   FaceIJK{Face: 0, Coord: CoordIJK{0, 0, 0}},
+			fijk:   faceIJK{Face: 0, Coord: coordIJK{0, 0, 0}},
 			res:    0,
 			start:  0,
-			length: NUM_HEX_VERTS,
+			length: numHexVerts,
 		},
 		{
 			name:   "res 1 cell full boundary",
-			fijk:   FaceIJK{Face: 1, Coord: CoordIJK{1, 0, 0}},
+			fijk:   faceIJK{Face: 1, Coord: coordIJK{1, 0, 0}},
 			res:    1,
 			start:  0,
-			length: NUM_HEX_VERTS,
+			length: numHexVerts,
 		},
 		{
 			name:   "res 2 cell full boundary",
-			fijk:   FaceIJK{Face: 2, Coord: CoordIJK{1, 1, 0}},
+			fijk:   faceIJK{Face: 2, Coord: coordIJK{1, 1, 0}},
 			res:    2,
 			start:  0,
-			length: NUM_HEX_VERTS,
+			length: numHexVerts,
 		},
 		{
 			name:   "res 3 class III cell full boundary",
-			fijk:   FaceIJK{Face: 3, Coord: CoordIJK{2, 1, 0}},
+			fijk:   faceIJK{Face: 3, Coord: coordIJK{2, 1, 0}},
 			res:    3,
 			start:  0,
-			length: NUM_HEX_VERTS,
+			length: numHexVerts,
 		},
 		{
 			name:   "res 4 class II cell full boundary",
-			fijk:   FaceIJK{Face: 4, Coord: CoordIJK{3, 2, 1}},
+			fijk:   faceIJK{Face: 4, Coord: coordIJK{3, 2, 1}},
 			res:    4,
 			start:  0,
-			length: NUM_HEX_VERTS,
+			length: numHexVerts,
 		},
 		{
 			name:   "partial boundary starting at vertex 2, length 3",
-			fijk:   FaceIJK{Face: 0, Coord: CoordIJK{1, 0, 0}},
+			fijk:   faceIJK{Face: 0, Coord: coordIJK{1, 0, 0}},
 			res:    1,
 			start:  2,
 			length: 3,
 		},
 		{
 			name:   "single vertex",
-			fijk:   FaceIJK{Face: 0, Coord: CoordIJK{0, 0, 0}},
+			fijk:   faceIJK{Face: 0, Coord: coordIJK{0, 0, 0}},
 			res:    0,
 			start:  0,
 			length: 1,
 		},
 		{
 			name:   "edge case near face boundary",
-			fijk:   FaceIJK{Face: 5, Coord: CoordIJK{6, 3, 0}},
+			fijk:   faceIJK{Face: 5, Coord: coordIJK{6, 3, 0}},
 			res:    5,
 			start:  0,
-			length: NUM_HEX_VERTS,
+			length: numHexVerts,
 		},
 	}
 
@@ -133,22 +133,22 @@ func Test_faceIjkToCellBoundary_parity(t *testing.T) {
 func Test_faceIjkToCellBoundary_edge_crossing_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		fijk FaceIJK
+		fijk faceIJK
 		res  int32
 	}{
 		{
 			name: "res 1 class III cell near face edge",
-			fijk: FaceIJK{Face: 0, Coord: CoordIJK{2, 0, 0}},
+			fijk: faceIJK{Face: 0, Coord: coordIJK{2, 0, 0}},
 			res:  1,
 		},
 		{
 			name: "res 3 class III cell that might cross faces",
-			fijk: FaceIJK{Face: 1, Coord: CoordIJK{5, 2, 0}},
+			fijk: faceIJK{Face: 1, Coord: coordIJK{5, 2, 0}},
 			res:  3,
 		},
 		{
 			name: "res 5 class III cell at higher resolution",
-			fijk: FaceIJK{Face: 2, Coord: CoordIJK{12, 6, 3}},
+			fijk: faceIJK{Face: 2, Coord: coordIJK{12, 6, 3}},
 			res:  5,
 		},
 	}
@@ -168,8 +168,8 @@ func Test_faceIjkToCellBoundary_edge_crossing_parity(t *testing.T) {
 			cBoundary.Verts = make([]LatLng, 30)
 
 			// Test full boundary
-			_faceIjkToCellBoundary(&tt.fijk, tt.res, 0, NUM_HEX_VERTS, &goBoundary)
-			_faceIjkToCellBoundaryC(&tt.fijk, tt.res, 0, NUM_HEX_VERTS, &cBoundary)
+			_faceIjkToCellBoundary(&tt.fijk, tt.res, 0, numHexVerts, &goBoundary)
+			_faceIjkToCellBoundaryC(&tt.fijk, tt.res, 0, numHexVerts, &cBoundary)
 
 			// Compare results
 			if goBoundary.NumVerts != cBoundary.NumVerts {

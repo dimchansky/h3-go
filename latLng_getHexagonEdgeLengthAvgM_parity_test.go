@@ -44,7 +44,7 @@ func Test_getHexagonEdgeLengthAvgM_parity(t *testing.T) {
 				return
 			}
 
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut != cOut {
 					t.Errorf("getHexagonEdgeLengthAvgM(%d) output mismatch: Go=%v, C=%v", tt.res, goOut, cOut)
 				}

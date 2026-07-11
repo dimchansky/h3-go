@@ -19,7 +19,7 @@ func getTestVertices() (center, vertex1, vertex2, vertex3, vertex4, vertex5, ver
 
 func TestMakeVertexGraph(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 
 	if graph.NumBuckets != 10 {
@@ -38,15 +38,15 @@ func TestVertexHash(t *testing.T) {
 	numBuckets := int32(1000)
 
 	for res := 0; res < 11; res++ {
-		var centerIndex H3Index
+		var centerIndex h3Index
 		err := latLngToCell(&center, int32(res), &centerIndex)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("latLngToCell failed for res %d: %v", res, err)
 		}
 
 		var boundary CellBoundary
 		err = cellToBoundary(centerIndex, &boundary)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("cellToBoundary failed: %v", err)
 		}
 
@@ -81,7 +81,7 @@ func TestVertexHashNegative(t *testing.T) {
 func TestAddVertexNode(t *testing.T) {
 	t.Parallel()
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 
 	// Basic add
@@ -142,7 +142,7 @@ func TestAddVertexNode(t *testing.T) {
 func TestAddVertexNodeDupe(t *testing.T) {
 	t.Parallel()
 	_, vertex1, vertex2, _, _, _, _ := getTestVertices()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 
 	// Basic add
@@ -174,7 +174,7 @@ func TestFindNodeForEdge(t *testing.T) {
 	t.Parallel()
 	// Basic lookup tested in TestAddVertexNode, only test failures here
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 
 	// Empty graph
@@ -211,7 +211,7 @@ func TestFindNodeForEdge(t *testing.T) {
 func TestFindNodeForVertex(t *testing.T) {
 	t.Parallel()
 	_, vertex1, vertex2, vertex3, _, _, _ := getTestVertices()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 
 	// Empty graph
@@ -238,7 +238,7 @@ func TestFindNodeForVertex(t *testing.T) {
 func TestRemoveVertexNode(t *testing.T) {
 	t.Parallel()
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 
 	// Straight removal
@@ -329,7 +329,7 @@ func TestRemoveVertexNode(t *testing.T) {
 
 	// Remove non-existent node
 	// Create a node that's not in the graph
-	fakeNode := &VertexNode{}
+	fakeNode := &vertexNode{}
 	success = removeVertexNode(&graph, fakeNode) == 0
 
 	if success {
@@ -345,7 +345,7 @@ func TestRemoveVertexNode(t *testing.T) {
 func TestFirstVertexNode(t *testing.T) {
 	t.Parallel()
 	_, vertex1, vertex2, _, _, _, _ := getTestVertices()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 
 	node := firstVertexNode(&graph)
@@ -365,7 +365,7 @@ func TestFirstVertexNode(t *testing.T) {
 
 func TestDestroyEmptyVertexGraph(t *testing.T) {
 	t.Parallel()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 10, 9)
 	destroyVertexGraph(&graph)
 	// Test passes if no panic/crash occurs
@@ -374,7 +374,7 @@ func TestDestroyEmptyVertexGraph(t *testing.T) {
 func TestSingleBucketVertexGraph(t *testing.T) {
 	t.Parallel()
 	_, vertex1, vertex2, vertex3, vertex4, _, _ := getTestVertices()
-	var graph VertexGraph
+	var graph vertexGraph
 	initVertexGraph(&graph, 1, 9)
 
 	if graph.NumBuckets != 1 {

@@ -4,12 +4,12 @@ package h3
 // The caller is responsible for freeing memory allocated to input loop struct.
 // Mirrors the behavior of the C destroyLinkedGeoLoop function.
 // Ported from H3 C: linkedGeo.c::destroyLinkedGeoLoop.
-func destroyLinkedGeoLoop(loop *LinkedGeoLoop) {
+func destroyLinkedGeoLoop(loop *linkedGeoLoop) {
 	if loop == nil {
 		return
 	}
 
-	var nextCoord *LinkedLatLng
+	var nextCoord *linkedLatLng
 	for currentCoord := loop.First; currentCoord != nil; currentCoord = nextCoord {
 		nextCoord = currentCoord.Next
 		// In Go, we don't need to explicitly free memory - garbage collection handles it

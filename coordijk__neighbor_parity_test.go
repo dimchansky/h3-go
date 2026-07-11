@@ -7,37 +7,37 @@ import "testing"
 func Test_neighbor_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
-		digit Direction
+		coord coordIJK
+		digit direction
 	}{
 		// Test with origin and all valid directions
-		{"origin center", CoordIJK{0, 0, 0}, CENTER_DIGIT},
-		{"origin k", CoordIJK{0, 0, 0}, K_AXES_DIGIT},
-		{"origin j", CoordIJK{0, 0, 0}, J_AXES_DIGIT},
-		{"origin jk", CoordIJK{0, 0, 0}, JK_AXES_DIGIT},
-		{"origin i", CoordIJK{0, 0, 0}, I_AXES_DIGIT},
-		{"origin ik", CoordIJK{0, 0, 0}, IK_AXES_DIGIT},
-		{"origin ij", CoordIJK{0, 0, 0}, IJ_AXES_DIGIT},
+		{"origin center", coordIJK{0, 0, 0}, centerDigit},
+		{"origin k", coordIJK{0, 0, 0}, kAxesDigit},
+		{"origin j", coordIJK{0, 0, 0}, jAxesDigit},
+		{"origin jk", coordIJK{0, 0, 0}, jkAxesDigit},
+		{"origin i", coordIJK{0, 0, 0}, iAxesDigit},
+		{"origin ik", coordIJK{0, 0, 0}, ikAxesDigit},
+		{"origin ij", coordIJK{0, 0, 0}, ijAxesDigit},
 
 		// Test with various starting coordinates
-		{"unit i + k", CoordIJK{1, 0, 0}, K_AXES_DIGIT},
-		{"unit j + i", CoordIJK{0, 1, 0}, I_AXES_DIGIT},
-		{"unit k + j", CoordIJK{0, 0, 1}, J_AXES_DIGIT},
-		{"positive + direction", CoordIJK{2, 3, 1}, IJ_AXES_DIGIT},
-		{"negative + direction", CoordIJK{-1, -2, -3}, K_AXES_DIGIT},
-		{"mixed + direction", CoordIJK{2, -1, 3}, JK_AXES_DIGIT},
+		{"unit i + k", coordIJK{1, 0, 0}, kAxesDigit},
+		{"unit j + i", coordIJK{0, 1, 0}, iAxesDigit},
+		{"unit k + j", coordIJK{0, 0, 1}, jAxesDigit},
+		{"positive + direction", coordIJK{2, 3, 1}, ijAxesDigit},
+		{"negative + direction", coordIJK{-1, -2, -3}, kAxesDigit},
+		{"mixed + direction", coordIJK{2, -1, 3}, jkAxesDigit},
 
 		// Test with large coordinates
-		{"large + direction", CoordIJK{10, 20, 30}, I_AXES_DIGIT},
+		{"large + direction", coordIJK{10, 20, 30}, iAxesDigit},
 
 		// Test edge cases
-		{"invalid direction below", CoordIJK{1, 2, 3}, -1},
-		{"invalid direction above", CoordIJK{1, 2, 3}, NUM_DIGITS},
-		{"invalid direction way above", CoordIJK{1, 2, 3}, 10},
+		{"invalid direction below", coordIJK{1, 2, 3}, -1},
+		{"invalid direction above", coordIJK{1, 2, 3}, numDigits},
+		{"invalid direction way above", coordIJK{1, 2, 3}, 10},
 
 		// Test boundary directions
-		{"boundary direction 0", CoordIJK{1, 1, 1}, CENTER_DIGIT},
-		{"boundary direction 7", CoordIJK{1, 1, 1}, INVALID_DIGIT},
+		{"boundary direction 0", coordIJK{1, 1, 1}, centerDigit},
+		{"boundary direction 7", coordIJK{1, 1, 1}, invalidDigit},
 	}
 
 	for _, tt := range tests {
@@ -58,19 +58,19 @@ func Test_neighbor_parity(t *testing.T) {
 		})
 	}
 
-	// Test that _neighbor with CENTER_DIGIT doesn't change coordinates for valid digits
+	// Test that _neighbor with centerDigit doesn't change coordinates for valid digits
 	t.Run("center_digit_no_change", func(t *testing.T) {
-		testCoords := []CoordIJK{
+		testCoords := []coordIJK{
 			{0, 0, 0}, {1, 2, 3}, {-1, -2, -3}, {5, 0, 2},
 		}
 
 		for _, coord := range testCoords {
 			original := coord
-			_neighbor(&coord, CENTER_DIGIT)
+			_neighbor(&coord, centerDigit)
 
-			// CENTER_DIGIT should not change coordinates (it adds {0,0,0})
+			// centerDigit should not change coordinates (it adds {0,0,0})
 			if coord.I != original.I || coord.J != original.J || coord.K != original.K {
-				t.Errorf("_neighbor with CENTER_DIGIT should not change coords: original{%d,%d,%d} got{%d,%d,%d}",
+				t.Errorf("_neighbor with centerDigit should not change coords: original{%d,%d,%d} got{%d,%d,%d}",
 					original.I, original.J, original.K, coord.I, coord.J, coord.K)
 			}
 		}
@@ -78,11 +78,11 @@ func Test_neighbor_parity(t *testing.T) {
 
 	// Test applying unit vector directions to origin
 	t.Run("unit_vectors_from_origin", func(t *testing.T) {
-		for digit := K_AXES_DIGIT; digit < NUM_DIGITS; digit++ {
-			coord := CoordIJK{0, 0, 0}
+		for digit := kAxesDigit; digit < numDigits; digit++ {
+			coord := coordIJK{0, 0, 0}
 			_neighbor(&coord, digit)
 
-			expected := UNIT_VECS[digit]
+			expected := unitVecs[digit]
 
 			if coord.I != expected.I || coord.J != expected.J || coord.K != expected.K {
 				t.Errorf("_neighbor from origin with digit %d: got{%d,%d,%d} want{%d,%d,%d}",
@@ -93,8 +93,8 @@ func Test_neighbor_parity(t *testing.T) {
 
 	// Test invalid directions don't modify coordinates
 	t.Run("invalid_directions_no_change", func(t *testing.T) {
-		invalidDigits := []Direction{-1, NUM_DIGITS, NUM_DIGITS + 1, 10, -5}
-		testCoord := CoordIJK{3, 1, 4}
+		invalidDigits := []direction{-1, numDigits, numDigits + 1, 10, -5}
+		testCoord := coordIJK{3, 1, 4}
 
 		for _, digit := range invalidDigits {
 			coord := testCoord

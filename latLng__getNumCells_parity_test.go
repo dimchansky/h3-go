@@ -18,9 +18,9 @@ func Test_getNumCells_parity(t *testing.T) {
 		{"res5", 5},
 		{"res7", 7},
 		{"res10", 10},
-		{"res15", 15}, // MAX_H3_RES
+		{"res15", 15}, // maxH3Res
 
-		// Invalid resolution values (should return E_RES_DOMAIN)
+		// Invalid resolution values (should return eResDomain)
 		{"negative_res", -1},
 		{"res_too_high", 16},
 		{"very_negative", -10},
@@ -42,7 +42,7 @@ func Test_getNumCells_parity(t *testing.T) {
 			}
 
 			// If there was an error, we're done
-			if cErr != E_SUCCESS {
+			if cErr != eSuccess {
 				return
 			}
 

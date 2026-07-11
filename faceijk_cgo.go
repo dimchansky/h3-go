@@ -61,7 +61,7 @@ func _geoToClosestFaceC(g *LatLng, face *int32, sqd *float64) {
 }
 
 // _geoToHex2dC calls the original C implementation.
-func _geoToHex2dC(g *LatLng, res int32, face *int32, v *Vec2d) {
+func _geoToHex2dC(g *LatLng, res int32, face *int32, v *vec2d) {
 	var cg C.LatLng
 	cg.lat = C.double(g.Lat.Rad())
 	cg.lng = C.double(g.Lng.Rad())
@@ -77,7 +77,7 @@ func _geoToHex2dC(g *LatLng, res int32, face *int32, v *Vec2d) {
 }
 
 // _hex2dToGeoC calls the original C implementation.
-func _hex2dToGeoC(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
+func _hex2dToGeoC(v *vec2d, face int32, res int32, substrate int32, g *LatLng) {
 	var cv C.Vec2d
 	cv.x = C.double(v.X)
 	cv.y = C.double(v.Y)
@@ -91,7 +91,7 @@ func _hex2dToGeoC(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
 }
 
 // _faceIjkToGeoC calls the original C implementation.
-func _faceIjkToGeoC(h *FaceIJK, res int32, g *LatLng) {
+func _faceIjkToGeoC(h *faceIJK, res int32, g *LatLng) {
 	var ch C.FaceIJK
 	ch.face = C.int(h.Face)
 	ch.coord.i = C.int(h.Coord.I)
@@ -107,7 +107,7 @@ func _faceIjkToGeoC(h *FaceIJK, res int32, g *LatLng) {
 }
 
 // _adjustOverageClassIIC calls the original C implementation.
-func _adjustOverageClassIIC(fijk *FaceIJK, res int32, pentLeading4 int32, substrate int32) Overage {
+func _adjustOverageClassIIC(fijk *faceIJK, res int32, pentLeading4 int32, substrate int32) overage {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
@@ -122,11 +122,11 @@ func _adjustOverageClassIIC(fijk *FaceIJK, res int32, pentLeading4 int32, substr
 	fijk.Coord.J = int32(cFijk.coord.j)
 	fijk.Coord.K = int32(cFijk.coord.k)
 
-	return Overage(result)
+	return overage(result)
 }
 
 // _faceIjkToVertsC calls the original C implementation.
-func _faceIjkToVertsC(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK) {
+func _faceIjkToVertsC(fijk *faceIJK, res *int32, fijkVerts []faceIJK) {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
@@ -152,7 +152,7 @@ func _faceIjkToVertsC(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK) {
 }
 
 // _faceIjkPentToVertsC calls the original C implementation.
-func _faceIjkPentToVertsC(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK) {
+func _faceIjkPentToVertsC(fijk *faceIJK, res *int32, fijkVerts []faceIJK) {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
@@ -178,7 +178,7 @@ func _faceIjkPentToVertsC(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK) {
 }
 
 // _adjustPentVertOverageC calls the original C implementation.
-func _adjustPentVertOverageC(fijk *FaceIJK, res int32) Overage {
+func _adjustPentVertOverageC(fijk *faceIJK, res int32) overage {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
@@ -193,11 +193,11 @@ func _adjustPentVertOverageC(fijk *FaceIJK, res int32) Overage {
 	fijk.Coord.J = int32(cFijk.coord.j)
 	fijk.Coord.K = int32(cFijk.coord.k)
 
-	return Overage(result)
+	return overage(result)
 }
 
 // _faceIjkToCellBoundaryC calls the original C implementation.
-func _faceIjkToCellBoundaryC(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary) {
+func _faceIjkToCellBoundaryC(h *faceIJK, res int32, start int32, length int32, g *CellBoundary) {
 	var ch C.FaceIJK
 	ch.face = C.int(h.Face)
 	ch.coord.i = C.int(h.Coord.I)
@@ -226,7 +226,7 @@ func _faceIjkToCellBoundaryC(h *FaceIJK, res int32, start int32, length int32, g
 }
 
 // _faceIjkPentToCellBoundaryC calls the original C implementation.
-func _faceIjkPentToCellBoundaryC(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary) {
+func _faceIjkPentToCellBoundaryC(h *faceIJK, res int32, start int32, length int32, g *CellBoundary) {
 	var ch C.FaceIJK
 	ch.face = C.int(h.Face)
 	ch.coord.i = C.int(h.Coord.I)

@@ -3,12 +3,12 @@ package h3
 // _zeroIndexDigits clears index digits from start to end (inclusive).
 // This mirrors the C helper _zeroIndexDigits.
 // Ported from H3 C: h3Index.c::_zeroIndexDigits.
-func _zeroIndexDigits(h H3Index, start, end int32) H3Index {
+func _zeroIndexDigits(h h3Index, start, end int32) h3Index {
 	if start > end {
 		return h
 	}
 	// Allow start at 0 to mirror C behavior (affects bits overlapping base cell).
-	if end > MAX_H3_RES {
+	if end > maxH3Res {
 		// Mirror C: out-of-range end results in no-op.
 		return h
 	}

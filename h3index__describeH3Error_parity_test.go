@@ -6,26 +6,26 @@ import "testing"
 
 func Test_h3index_describeH3Error_ParityWithC(t *testing.T) {
 	testCases := []struct {
-		err  H3Error
+		err  h3Error
 		desc string
 	}{
 		// Valid error codes
-		{E_SUCCESS, "Success"},
-		{E_FAILED, "The operation failed but a more specific error is not available"},
-		{E_DOMAIN, "Argument was outside of acceptable range"},
-		{E_LATLNG_DOMAIN, "Latitude or longitude arguments were outside of acceptable range"},
-		{E_RES_DOMAIN, "Resolution argument was outside of acceptable range"},
-		{E_CELL_INVALID, "Cell argument was not valid"},
-		{E_DIR_EDGE_INVALID, "Directed edge argument was not valid"},
-		{E_UNDIR_EDGE_INVALID, "Undirected edge argument was not valid"},
-		{E_VERTEX_INVALID, "Vertex argument was not valid"},
-		{E_PENTAGON, "Pentagon distortion was encountered"},
-		{E_DUPLICATE_INPUT, "Duplicate input"},
-		{E_NOT_NEIGHBORS, "Cell arguments were not neighbors"},
-		{E_RES_MISMATCH, "Cell arguments had incompatible resolutions"},
-		{E_MEMORY_ALLOC, "Memory allocation failed"},
-		{E_MEMORY_BOUNDS, "Bounds of provided memory were insufficient"},
-		{E_OPTION_INVALID, "Mode or flags argument was not valid"},
+		{eSuccess, "Success"},
+		{eFailed, "The operation failed but a more specific error is not available"},
+		{eDomain, "Argument was outside of acceptable range"},
+		{eLatlngDomain, "Latitude or longitude arguments were outside of acceptable range"},
+		{eResDomain, "Resolution argument was outside of acceptable range"},
+		{eCellInvalid, "Cell argument was not valid"},
+		{eDirEdgeInvalid, "Directed edge argument was not valid"},
+		{eUndirEdgeInvalid, "Undirected edge argument was not valid"},
+		{eVertexInvalid, "Vertex argument was not valid"},
+		{ePentagon, "Pentagon distortion was encountered"},
+		{eDuplicateInput, "Duplicate input"},
+		{eNotNeighbors, "Cell arguments were not neighbors"},
+		{eResMismatch, "Cell arguments had incompatible resolutions"},
+		{eMemoryAlloc, "Memory allocation failed"},
+		{eMemoryBounds, "Bounds of provided memory were insufficient"},
+		{eOptionInvalid, "Mode or flags argument was not valid"},
 	}
 
 	for _, tc := range testCases {
@@ -44,10 +44,10 @@ func Test_h3index_describeH3Error_ParityWithC(t *testing.T) {
 }
 
 func Test_h3index_describeH3Error_InvalidCodes_ParityWithC(t *testing.T) {
-	invalidCodes := []H3Error{
-		H3Error(16),  // Just above valid range
-		H3Error(100), // Well above valid range
-		H3Error(255), // Edge case
+	invalidCodes := []h3Error{
+		h3Error(16),  // Just above valid range
+		h3Error(100), // Well above valid range
+		h3Error(255), // Edge case
 	}
 
 	for _, code := range invalidCodes {
@@ -67,7 +67,7 @@ func Test_h3index_describeH3Error_InvalidCodes_ParityWithC(t *testing.T) {
 }
 
 func Test_h3index_describeH3Error_BoundaryValues_ParityWithC(t *testing.T) {
-	boundaryCases := []H3Error{
+	boundaryCases := []h3Error{
 		0,  // Minimum valid
 		15, // Maximum valid
 	}

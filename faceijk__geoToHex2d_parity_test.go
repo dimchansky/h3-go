@@ -33,7 +33,7 @@ func Test_geoToHex2d_ParityWithC(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			var goFace, cFace int32
-			var goVec, cVec Vec2d
+			var goVec, cVec vec2d
 
 			// Test Go implementation
 			_geoToHex2d(&tc.geo, tc.res, &goFace, &goVec)
@@ -45,7 +45,7 @@ func Test_geoToHex2d_ParityWithC(t *testing.T) {
 				t.Fatalf("face mismatch: go=%d c=%d", goFace, cFace)
 			}
 
-			// Allow small floating-point differences in Vec2d coordinates
+			// Allow small floating-point differences in vec2d coordinates
 			// Use relative tolerance for large coordinates (high resolution cases)
 			const baseTolerance = 1e-12
 

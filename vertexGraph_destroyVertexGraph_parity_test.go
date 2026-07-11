@@ -69,7 +69,7 @@ func Test_destroyVertexGraph_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create Go graph
-			goGraph := &VertexGraph{}
+			goGraph := &vertexGraph{}
 			initVertexGraph(goGraph, tt.numBuckets, tt.res)
 
 			// Add nodes to Go graph
@@ -78,7 +78,7 @@ func Test_destroyVertexGraph_parity(t *testing.T) {
 			}
 
 			// Create C graph
-			cGraph := &VertexGraph{}
+			cGraph := &vertexGraph{}
 			initVertexGraphC(cGraph, tt.numBuckets, tt.res)
 
 			// Note: For this test, we're mainly verifying that destroyVertexGraph

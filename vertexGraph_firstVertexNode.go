@@ -4,8 +4,8 @@ package h3
 // Iterates through buckets sequentially until finding a non-empty bucket,
 // then returns the first node in that bucket. Returns nil if no nodes exist.
 // Ported from H3 C: vertexGraph.c::firstVertexNode.
-func firstVertexNode(graph *VertexGraph) *VertexNode {
-	var node *VertexNode
+func firstVertexNode(graph *vertexGraph) *vertexNode {
+	var node *vertexNode
 	currentIndex := int32(0)
 
 	for node == nil {

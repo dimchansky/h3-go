@@ -7,21 +7,21 @@ import "testing"
 func Test_ijkToHex2d_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
+		coord coordIJK
 	}{
-		{"origin", CoordIJK{0, 0, 0}},
-		{"unit i", CoordIJK{1, 0, 0}},
-		{"unit j", CoordIJK{0, 1, 0}},
-		{"unit k", CoordIJK{0, 0, 1}},
-		{"positive coords", CoordIJK{1, 2, 3}},
-		{"negative coords", CoordIJK{-1, -2, -3}},
-		{"mixed coords", CoordIJK{2, -1, 3}},
-		{"large coords", CoordIJK{10, 20, 30}},
-		{"asymmetric", CoordIJK{1, 4, 2}},
-		{"normalized coords", CoordIJK{5, 3, 1}},
-		{"zero i", CoordIJK{0, 5, 2}},
-		{"zero j", CoordIJK{3, 0, 1}},
-		{"zero k", CoordIJK{2, 4, 0}},
+		{"origin", coordIJK{0, 0, 0}},
+		{"unit i", coordIJK{1, 0, 0}},
+		{"unit j", coordIJK{0, 1, 0}},
+		{"unit k", coordIJK{0, 0, 1}},
+		{"positive coords", coordIJK{1, 2, 3}},
+		{"negative coords", coordIJK{-1, -2, -3}},
+		{"mixed coords", coordIJK{2, -1, 3}},
+		{"large coords", coordIJK{10, 20, 30}},
+		{"asymmetric", coordIJK{1, 4, 2}},
+		{"normalized coords", coordIJK{5, 3, 1}},
+		{"zero i", coordIJK{0, 5, 2}},
+		{"zero j", coordIJK{3, 0, 1}},
+		{"zero k", coordIJK{2, 4, 0}},
 	}
 
 	const tol = 1e-14
@@ -32,7 +32,7 @@ func Test_ijkToHex2d_parity(t *testing.T) {
 			gotC := _ijkToHex2dC(&tt.coord)
 
 			// Call Go implementation
-			var gotGo Vec2d
+			var gotGo vec2d
 			_ijkToHex2d(&tt.coord, &gotGo)
 
 			// Compare results with tolerance
@@ -46,10 +46,10 @@ func Test_ijkToHex2d_parity(t *testing.T) {
 
 	// Test that transformation is deterministic
 	t.Run("deterministic", func(t *testing.T) {
-		coord := CoordIJK{3, 1, 4}
+		coord := coordIJK{3, 1, 4}
 
 		// Apply transformation twice
-		var result1, result2 Vec2d
+		var result1, result2 vec2d
 		_ijkToHex2d(&coord, &result1)
 		_ijkToHex2d(&coord, &result2)
 

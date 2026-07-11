@@ -7,47 +7,47 @@ import (
 )
 
 // Helper function to iterate all directed edges at a given resolution.
-func iterateAllDirectedEdgesAtRes(t *testing.T, res int32, testFunc func(t *testing.T, edge H3Index)) {
+func iterateAllDirectedEdgesAtRes(t *testing.T, res int32, testFunc func(t *testing.T, edge h3Index)) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
 	// For each base cell
 	for _, baseCell := range baseCells {
-		var cells []H3Index
+		var cells []h3Index
 		if res == 0 {
-			cells = []H3Index{baseCell}
+			cells = []h3Index{baseCell}
 		} else {
 			// Get children at the specified resolution
 			childrenSize, err := cellToChildrenSize(baseCell, res)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				continue
 			}
-			cells = make([]H3Index, childrenSize)
-			if err := cellToChildren(baseCell, res, cells); err != E_SUCCESS {
+			cells = make([]h3Index, childrenSize)
+			if err := cellToChildren(baseCell, res, cells); err != eSuccess {
 				continue
 			}
 		}
 
 		// For each cell, get its directed edges
 		for _, cell := range cells {
-			if cell == H3_NULL {
+			if cell == h3Null {
 				continue
 			}
 
 			// Get all directed edges from this cell
-			edges := make([]H3Index, 6)
-			if err := originToDirectedEdges(cell, edges); err != E_SUCCESS {
+			edges := make([]h3Index, 6)
+			if err := originToDirectedEdges(cell, edges); err != eSuccess {
 				continue
 			}
 
 			// Test each valid edge
 			for _, edge := range edges {
-				if edge != H3_NULL {
+				if edge != h3Null {
 					testFunc(t, edge)
 				}
 			}
@@ -56,26 +56,26 @@ func iterateAllDirectedEdgesAtRes(t *testing.T, res int32, testFunc func(t *test
 }
 
 // Test haversine distance functions for positivity and commutativity.
-func haversineAssert(t *testing.T, edge H3Index) {
+func haversineAssert(t *testing.T, edge h3Index) {
 	t.Helper()
 
 	var a, b LatLng
-	var origin, destination H3Index
+	var origin, destination h3Index
 
 	// Get origin cell
 	origin, err := getDirectedEdgeOrigin(edge)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Skipf("Failed to get edge origin: %v", err)
 	}
-	if err := cellToLatLng(origin, &a); err != E_SUCCESS {
+	if err := cellToLatLng(origin, &a); err != eSuccess {
 		t.Skipf("Failed to get origin LatLng: %v", err)
 	}
 
 	// Get destination cell
-	if err := getDirectedEdgeDestination(edge, &destination); err != E_SUCCESS {
+	if err := getDirectedEdgeDestination(edge, &destination); err != eSuccess {
 		t.Skipf("Failed to get edge destination: %v", err)
 	}
-	if err := cellToLatLng(destination, &b); err != E_SUCCESS {
+	if err := cellToLatLng(destination, &b); err != eSuccess {
 		t.Skipf("Failed to get destination LatLng: %v", err)
 	}
 
@@ -119,12 +119,12 @@ func haversineAssert(t *testing.T, edge H3Index) {
 }
 
 // Test edge length calculation functions for positivity.
-func edgeLengthAssert(t *testing.T, edge H3Index) {
+func edgeLengthAssert(t *testing.T, edge h3Index) {
 	t.Helper()
 
 	// Test edgeLengthRads
 	var lengthRads float64
-	if err := edgeLengthRads(edge, &lengthRads); err != E_SUCCESS {
+	if err := edgeLengthRads(edge, &lengthRads); err != eSuccess {
 		t.Skipf("Failed to get edge length in rads: %v", err)
 	}
 	if lengthRads <= 0 {
@@ -133,7 +133,7 @@ func edgeLengthAssert(t *testing.T, edge H3Index) {
 
 	// Test edgeLengthKm
 	var lengthKm float64
-	if err := edgeLengthKm(edge, &lengthKm); err != E_SUCCESS {
+	if err := edgeLengthKm(edge, &lengthKm); err != eSuccess {
 		t.Skipf("Failed to get edge length in km: %v", err)
 	}
 	if lengthKm <= 0 {
@@ -142,7 +142,7 @@ func edgeLengthAssert(t *testing.T, edge H3Index) {
 
 	// Test edgeLengthM
 	var lengthM float64
-	if err := edgeLengthM(edge, &lengthM); err != E_SUCCESS {
+	if err := edgeLengthM(edge, &lengthM); err != eSuccess {
 		t.Skipf("Failed to get edge length in m: %v", err)
 	}
 	if lengthM <= 0 {
@@ -151,12 +151,12 @@ func edgeLengthAssert(t *testing.T, edge H3Index) {
 }
 
 // Test cell area calculation functions for positivity.
-func cellAreaAssert(t *testing.T, cell H3Index) {
+func cellAreaAssert(t *testing.T, cell h3Index) {
 	t.Helper()
 
 	// Test cellAreaRads2
 	areaRads, err := cellAreaRads2(cell)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Skipf("Failed to get cell area in rads2: %v", err)
 	}
 	if areaRads <= 0 {
@@ -165,7 +165,7 @@ func cellAreaAssert(t *testing.T, cell H3Index) {
 
 	// Test cellAreaKm2
 	areaKm2, err := cellAreaKm2(cell)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Skipf("Failed to get cell area in km2: %v", err)
 	}
 	if areaKm2 <= 0 {
@@ -174,7 +174,7 @@ func cellAreaAssert(t *testing.T, cell H3Index) {
 
 	// Test cellAreaM2
 	areaM2, err := cellAreaM2(cell)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Skipf("Failed to get cell area in m2: %v", err)
 	}
 	if areaM2 <= 0 {
@@ -191,39 +191,39 @@ func cellAreaAssert(t *testing.T, cell H3Index) {
 }
 
 // Test sum of all cell areas equals earth surface area.
-func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(H3Index) (float64, H3Error), target float64, tol float64) {
+func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(h3Index) (float64, h3Error), target float64, tol float64) {
 	t.Helper()
 
 	var area float64
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
 	// For each base cell
 	for _, baseCell := range baseCells {
-		var cells []H3Index
+		var cells []h3Index
 		if res == 0 {
-			cells = []H3Index{baseCell}
+			cells = []h3Index{baseCell}
 		} else {
 			// Get children at the specified resolution
 			childrenSize, err := cellToChildrenSize(baseCell, res)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				continue
 			}
-			cells = make([]H3Index, childrenSize)
-			if err := cellToChildren(baseCell, res, cells); err != E_SUCCESS {
+			cells = make([]h3Index, childrenSize)
+			if err := cellToChildren(baseCell, res, cells); err != eSuccess {
 				continue
 			}
 		}
 
 		// Sum up areas of all cells
 		for _, cell := range cells {
-			if cell != H3_NULL {
+			if cell != h3Null {
 				cellArea, err := cellAreaFunc(cell)
-				if err == E_SUCCESS {
+				if err == eSuccess {
 					area += cellArea
 				}
 			}
@@ -309,7 +309,7 @@ func TestCellAreaEarth(t *testing.T) {
 
 	// Earth area in different units
 	rads2 := 4 * math.Pi
-	km2 := rads2 * EARTH_RADIUS_KM * EARTH_RADIUS_KM
+	km2 := rads2 * earthRadiusKm * earthRadiusKm
 	m2 := km2 * 1000 * 1000
 
 	// Resolution 0

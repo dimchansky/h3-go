@@ -19,7 +19,7 @@ func TestPointInsideGeoLoop(t *testing.T) {
 	inside := LatLng{0.659, -2.136}
 	somewhere := LatLng{1, 2}
 
-	var bbox BBox
+	var bbox bbox
 	bboxFromGeoLoop(sfVerts, &bbox)
 
 	// For exact points on the polygon, we bias west and south
@@ -49,7 +49,7 @@ func TestPointInsideGeoLoopCornerCases(t *testing.T) {
 
 	verts := []LatLng{{0, 0}, {1, 0}, {1, 1}, {0, 1}}
 
-	var bbox BBox
+	var bbox bbox
 	bboxFromGeoLoop(verts, &bbox)
 
 	point := LatLng{0, 0}
@@ -85,7 +85,7 @@ func TestPointInsideGeoLoopEdgeCases(t *testing.T) {
 
 	verts := []LatLng{{0, 0}, {1, 0}, {1, 1}, {0, 1}}
 
-	var bbox BBox
+	var bbox bbox
 	bboxFromGeoLoop(verts, &bbox)
 
 	// Test edges. Only points on south and east edges are contained.
@@ -121,7 +121,7 @@ func TestPointInsideGeoLoopExtraEdgeCase(t *testing.T) {
 	// missed branch in coverage
 	verts := []LatLng{{0, 0}, {1, 0.5}, {0, 1}}
 
-	var bbox BBox
+	var bbox bbox
 	bboxFromGeoLoop(verts, &bbox)
 
 	point := LatLng{0.5, 0.5}
@@ -146,7 +146,7 @@ func TestPointInsideGeoLoopTransmeridian(t *testing.T) {
 	westPoint := LatLng{0.001, math.Pi - 0.001}
 	westPointOutside := LatLng{0.001, math.Pi - 0.1}
 
-	var bbox BBox
+	var bbox bbox
 	bboxFromGeoLoop(verts, &bbox)
 
 	result := pointInsideGeoLoop(verts, &bbox, &westPoint)
@@ -171,8 +171,8 @@ func TestPointInsideGeoLoopTransmeridian(t *testing.T) {
 }
 
 // Helper function to create a linked loop like the C code.
-func createLinkedLoop(verts []LatLng) *LinkedGeoLoop {
-	loop := &LinkedGeoLoop{}
+func createLinkedLoop(verts []LatLng) *linkedGeoLoop {
+	loop := &linkedGeoLoop{}
 	for i := range verts {
 		addLinkedCoord(loop, &verts[i])
 	}
@@ -194,7 +194,7 @@ func TestPointInsideLinkedGeoLoop(t *testing.T) {
 	loop := createLinkedLoop(sfVerts)
 	defer destroyLinkedGeoLoop(loop)
 
-	var bbox BBox
+	var bbox bbox
 	bboxFromLinkedGeoLoop(loop, &bbox)
 
 	result := pointInsideLinkedGeoLoop(loop, &bbox, &inside)
@@ -213,9 +213,9 @@ func TestBboxFromGeoLoop(t *testing.T) {
 
 	verts := []LatLng{{0.8, 0.3}, {0.7, 0.6}, {1.1, 0.7}, {1.0, 0.2}}
 
-	expected := BBox{1.1, 0.7, 0.7, 0.2}
+	expected := bbox{1.1, 0.7, 0.7, 0.2}
 
-	var result BBox
+	var result bbox
 	bboxFromGeoLoop(verts, &result)
 
 	if !bboxEquals(&result, &expected) {
@@ -232,9 +232,9 @@ func TestBboxFromGeoLoopTransmeridian(t *testing.T) {
 		{-0.1, -math.Pi + 0.1}, {-0.05, -math.Pi + 0.2},
 	}
 
-	expected := BBox{0.1, -0.1, -math.Pi + 0.2, math.Pi - 0.2}
+	expected := bbox{0.1, -0.1, -math.Pi + 0.2, math.Pi - 0.2}
 
-	var result BBox
+	var result bbox
 	bboxFromGeoLoop(verts, &result)
 
 	if !bboxEquals(&result, &expected) {
@@ -247,9 +247,9 @@ func TestBboxFromGeoLoopNoVertices(t *testing.T) {
 
 	var verts []LatLng
 
-	expected := BBox{0.0, 0.0, 0.0, 0.0}
+	expected := bbox{0.0, 0.0, 0.0, 0.0}
 
-	var result BBox
+	var result bbox
 	bboxFromGeoLoop(verts, &result)
 
 	if !bboxEquals(&result, &expected) {
@@ -264,9 +264,9 @@ func TestBboxesFromGeoPolygon(t *testing.T) {
 	geoloop := GeoLoop(verts)
 	polygon := GeoPolygon{GeoLoop: geoloop}
 
-	expected := BBox{1.1, 0.7, 0.7, 0.2}
+	expected := bbox{1.1, 0.7, 0.7, 0.2}
 
-	result := make([]BBox, 1)
+	result := make([]bbox, 1)
 	bboxesFromGeoPolygon(&polygon, result)
 
 	if !bboxEquals(&result[0], &expected) {
@@ -289,10 +289,10 @@ func TestBboxesFromGeoPolygonHole(t *testing.T) {
 		Holes:   []GeoLoop{holeGeoLoop},
 	}
 
-	expected := BBox{1.1, 0.7, 0.7, 0.2}
-	expectedHole := BBox{1.0, 0.9, 0.7, 0.3}
+	expected := bbox{1.1, 0.7, 0.7, 0.2}
+	expectedHole := bbox{1.0, 0.9, 0.7, 0.3}
 
-	result := make([]BBox, 2)
+	result := make([]bbox, 2)
 	bboxesFromGeoPolygon(&polygon, result)
 
 	if !bboxEquals(&result[0], &expected) {
@@ -311,9 +311,9 @@ func TestBboxFromLinkedGeoLoop(t *testing.T) {
 	loop := createLinkedLoop(verts)
 	defer destroyLinkedGeoLoop(loop)
 
-	expected := BBox{1.1, 0.7, 0.7, 0.2}
+	expected := bbox{1.1, 0.7, 0.7, 0.2}
 
-	var result BBox
+	var result bbox
 	bboxFromLinkedGeoLoop(loop, &result)
 
 	if !bboxEquals(&result, &expected) {
@@ -324,11 +324,11 @@ func TestBboxFromLinkedGeoLoop(t *testing.T) {
 func TestBboxFromLinkedGeoLoopNoVertices(t *testing.T) {
 	t.Parallel()
 
-	loop := &LinkedGeoLoop{}
+	loop := &linkedGeoLoop{}
 
-	expected := BBox{0.0, 0.0, 0.0, 0.0}
+	expected := bbox{0.0, 0.0, 0.0, 0.0}
 
-	var result BBox
+	var result bbox
 	bboxFromLinkedGeoLoop(loop, &result)
 
 	if !bboxEquals(&result, &expected) {
@@ -436,11 +436,11 @@ func TestNormalizeMultiPolygonSingle(t *testing.T) {
 
 	outer := createLinkedLoop(verts)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, outer)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("Expected success, got %v", err)
 	}
 
@@ -466,12 +466,12 @@ func TestNormalizeMultiPolygonTwoOuterLoops(t *testing.T) {
 	verts2 := []LatLng{{2, 2}, {2, 3}, {3, 3}}
 	outer2 := createLinkedLoop(verts2)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, outer1)
 	addLinkedLoop(&polygon, outer2)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("Expected success, got %v", err)
 	}
 
@@ -497,12 +497,12 @@ func TestNormalizeMultiPolygonOneHole(t *testing.T) {
 	verts2 := []LatLng{{1, 1}, {2, 2}, {1, 2}}
 	inner := createLinkedLoop(verts2)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, inner)
 	addLinkedLoop(&polygon, outer)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("Expected success, got %v", err)
 	}
 
@@ -534,13 +534,13 @@ func TestNormalizeMultiPolygonTwoHoles(t *testing.T) {
 	verts3 := []LatLng{{0.2, 0.2}, {0.3, 0.3}, {0.2, 0.3}}
 	inner2 := createLinkedLoop(verts3)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, inner2)
 	addLinkedLoop(&polygon, outer)
 	addLinkedLoop(&polygon, inner1)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("Expected success, got %v", err)
 	}
 
@@ -572,14 +572,14 @@ func TestNormalizeMultiPolygonTwoDonuts(t *testing.T) {
 	verts4 := []LatLng{{-1, -1}, {-2, -2}, {-1, -2}}
 	inner2 := createLinkedLoop(verts4)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, inner2)
 	addLinkedLoop(&polygon, inner)
 	addLinkedLoop(&polygon, outer)
 	addLinkedLoop(&polygon, outer2)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("Expected success, got %v", err)
 	}
 
@@ -623,14 +623,14 @@ func TestNormalizeMultiPolygonNestedDonuts(t *testing.T) {
 	verts4 := []LatLng{{0.5, 0.5}, {-0.5, 0.5}, {-0.5, -0.5}, {0.5, -0.5}}
 	innerBig := createLinkedLoop(verts4)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, inner)
 	addLinkedLoop(&polygon, outerBig)
 	addLinkedLoop(&polygon, innerBig)
 	addLinkedLoop(&polygon, outer)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Errorf("Expected success, got %v", err)
 	}
 
@@ -668,12 +668,12 @@ func TestNormalizeMultiPolygonNoOuterLoops(t *testing.T) {
 	verts2 := []LatLng{{2, 2}, {3, 3}, {2, 3}}
 	outer2 := createLinkedLoop(verts2)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, outer1)
 	addLinkedLoop(&polygon, outer2)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_FAILED {
+	if err != eFailed {
 		t.Error("Expected error code returned")
 	}
 
@@ -696,14 +696,14 @@ func TestNormalizeMultiPolygonAlreadyNormalized(t *testing.T) {
 	verts2 := []LatLng{{2, 2}, {2, 3}, {3, 3}}
 	outer2 := createLinkedLoop(verts2)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, outer1)
 	next := addNewLinkedPolygon(&polygon)
 	addLinkedLoop(next, outer2)
 
 	// Should be a no-op
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_FAILED {
+	if err != eFailed {
 		t.Error("Expected error code returned")
 	}
 
@@ -735,12 +735,12 @@ func TestNormalizeMultiPolygonUnassignedHole(t *testing.T) {
 	verts2 := []LatLng{{2, 2}, {3, 3}, {2, 3}}
 	inner := createLinkedLoop(verts2)
 
-	polygon := LinkedGeoPolygon{}
+	polygon := linkedGeoPolygon{}
 	addLinkedLoop(&polygon, inner)
 	addLinkedLoop(&polygon, outer)
 
 	err := normalizeMultiPolygon(&polygon)
-	if err != E_FAILED {
+	if err != eFailed {
 		t.Error("Expected error code returned")
 	}
 
@@ -818,14 +818,14 @@ func TestCellBoundaryInsidePolygonInside(t *testing.T) {
 	geoloop := GeoLoop(verts)
 	polygon := GeoPolygon{GeoLoop: geoloop}
 
-	bboxes := make([]BBox, 1)
+	bboxes := make([]bbox, 1)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
-	boundaryBBox := BBox{0.6, 0.4, 0.6, 0.4}
+	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if !result {
@@ -845,7 +845,7 @@ func TestCellBoundaryInsidePolygonInsideTransmeridianWest(t *testing.T) {
 	geoloop := GeoLoop(verts)
 	polygon := GeoPolygon{GeoLoop: geoloop}
 
-	bboxes := make([]BBox, 1)
+	bboxes := make([]bbox, 1)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
@@ -857,7 +857,7 @@ func TestCellBoundaryInsidePolygonInsideTransmeridianWest(t *testing.T) {
 			{0.4, math.Pi - 0.1},
 		},
 	}
-	boundaryBBox := BBox{0.6, 0.4, 0.6, 0.4}
+	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if !result {
@@ -877,7 +877,7 @@ func TestCellBoundaryInsidePolygonInsideTransmeridianEast(t *testing.T) {
 	geoloop := GeoLoop(verts)
 	polygon := GeoPolygon{GeoLoop: geoloop}
 
-	bboxes := make([]BBox, 1)
+	bboxes := make([]bbox, 1)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
@@ -889,7 +889,7 @@ func TestCellBoundaryInsidePolygonInsideTransmeridianEast(t *testing.T) {
 			{0.4, -math.Pi + 0.4},
 		},
 	}
-	boundaryBBox := BBox{0.6, 0.4, 0.6, 0.4}
+	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if !result {
@@ -911,14 +911,14 @@ func TestCellBoundaryInsidePolygonInsideWithHole(t *testing.T) {
 		Holes:   []GeoLoop{holeGeoLoop},
 	}
 
-	bboxes := make([]BBox, 2)
+	bboxes := make([]bbox, 2)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
-	boundaryBBox := BBox{0.6, 0.4, 0.6, 0.4}
+	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if !result {
@@ -933,14 +933,14 @@ func TestCellBoundaryInsidePolygonNotInside(t *testing.T) {
 	geoloop := GeoLoop(verts)
 	polygon := GeoPolygon{GeoLoop: geoloop}
 
-	bboxes := make([]BBox, 1)
+	bboxes := make([]bbox, 1)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{1.6, 1.6}, {1.6, 1.4}, {1.4, 1.4}, {1.4, 1.6}},
 	}
-	boundaryBBox := BBox{1.6, 1.4, 1.6, 1.4}
+	boundaryBBox := bbox{1.6, 1.4, 1.6, 1.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if result {
@@ -955,14 +955,14 @@ func TestCellBoundaryInsidePolygonNotInsideIntersect(t *testing.T) {
 	geoloop := GeoLoop(verts)
 	polygon := GeoPolygon{GeoLoop: geoloop}
 
-	bboxes := make([]BBox, 1)
+	bboxes := make([]bbox, 1)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{0.6, 0.6}, {1.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
-	boundaryBBox := BBox{1.6, 0.4, 0.6, 0.4}
+	boundaryBBox := bbox{1.6, 0.4, 0.6, 0.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if result {
@@ -984,14 +984,14 @@ func TestCellBoundaryInsidePolygonNotInsideIntersectHole(t *testing.T) {
 		Holes:   []GeoLoop{holeGeoLoop},
 	}
 
-	bboxes := make([]BBox, 2)
+	bboxes := make([]bbox, 2)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
-	boundaryBBox := BBox{0.6, 0.4, 0.6, 0.4}
+	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if result {
@@ -1013,14 +1013,14 @@ func TestCellBoundaryInsidePolygonNotInsideWithinHole(t *testing.T) {
 		Holes:   []GeoLoop{holeGeoLoop},
 	}
 
-	bboxes := make([]BBox, 2)
+	bboxes := make([]bbox, 2)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
-	boundaryBBox := BBox{0.6, 0.4, 0.6, 0.4}
+	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if result {
@@ -1035,14 +1035,14 @@ func TestCellBoundaryInsidePolygonNotInsideContains(t *testing.T) {
 	geoloop := GeoLoop(verts)
 	polygon := GeoPolygon{GeoLoop: geoloop}
 
-	bboxes := make([]BBox, 1)
+	bboxes := make([]bbox, 1)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{0, 0}, {0, 1}, {1, 1}, {1, 0}},
 	}
-	boundaryBBox := BBox{0, 1, 0, 1}
+	boundaryBBox := bbox{0, 1, 0, 1}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if result {
@@ -1064,14 +1064,14 @@ func TestCellBoundaryInsidePolygonNotInsideContainsHole(t *testing.T) {
 		Holes:   []GeoLoop{holeGeoLoop},
 	}
 
-	bboxes := make([]BBox, 2)
+	bboxes := make([]bbox, 2)
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
 		NumVerts: 4,
 		Verts:    []LatLng{{0.9, 0.9}, {0.9, 0.1}, {0.1, 0.1}, {0.1, 0.9}},
 	}
-	boundaryBBox := BBox{0.9, 0.1, 0.9, 0.1}
+	boundaryBBox := bbox{0.9, 0.1, 0.9, 0.1}
 
 	result := cellBoundaryInsidePolygon(polygon, bboxes, &boundary, &boundaryBBox)
 	if result {

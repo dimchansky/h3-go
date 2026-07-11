@@ -7,11 +7,11 @@ import (
 // bboxHexEstimate returns an estimated number of hexagons that fit
 // within the cartesian-projected bounding box.
 // Ported from H3 C: bbox.c::bboxHexEstimate.
-func bboxHexEstimate(bbox *BBox, res int32, out *int64) H3Error {
+func bboxHexEstimate(bbox *bbox, res int32, out *int64) h3Error {
 	// Get the area of the pentagon as the maximally-distorted area possible
-	var pentagons = make([]H3Index, NUM_PENTAGONS)
+	var pentagons = make([]h3Index, numPentagons)
 	pentagonsErr := getPentagons(res, pentagons)
-	if pentagonsErr != E_SUCCESS {
+	if pentagonsErr != eSuccess {
 		return pentagonsErr
 	}
 	pentagonRadiusKm := _hexRadiusKm(pentagons[0])
@@ -33,7 +33,7 @@ func bboxHexEstimate(bbox *BBox, res int32, out *int64) H3Error {
 	lngDiff := (p1.Lng - p2.Lng).Abs().Rad()
 	latDiff := (p1.Lat - p2.Lat).Abs().Rad()
 	if lngDiff == 0 || latDiff == 0 {
-		return E_FAILED
+		return eFailed
 	}
 	length := math.Max(lngDiff, latDiff)
 	width := math.Min(lngDiff, latDiff)
@@ -45,12 +45,12 @@ func bboxHexEstimate(bbox *BBox, res int32, out *int64) H3Error {
 	// Divide the two to get an estimate of the number of hexagons needed
 	estimateDouble := math.Ceil(a / pentagonAreaKm2)
 	if math.IsInf(estimateDouble, 0) || math.IsNaN(estimateDouble) {
-		return E_FAILED
+		return eFailed
 	}
 	estimate := int64(estimateDouble)
 	if estimate == 0 {
 		estimate = 1
 	}
 	*out = estimate
-	return E_SUCCESS
+	return eSuccess
 }

@@ -7,18 +7,18 @@ import "testing"
 func Test_ijkNormalize_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
+		coord coordIJK
 	}{
-		{"zeros", CoordIJK{0, 0, 0}},
-		{"all positive", CoordIJK{1, 2, 3}},
-		{"negative i", CoordIJK{-1, 2, 3}},
-		{"negative j", CoordIJK{1, -2, 3}},
-		{"negative k", CoordIJK{1, 2, -3}},
-		{"multiple negatives", CoordIJK{-1, -2, 3}},
-		{"all negative", CoordIJK{-1, -2, -3}},
-		{"needs min reduction", CoordIJK{5, 3, 7}},
-		{"mixed normalize case", CoordIJK{-2, 1, -1}},
-		{"large values", CoordIJK{-100, 50, -25}},
+		{"zeros", coordIJK{0, 0, 0}},
+		{"all positive", coordIJK{1, 2, 3}},
+		{"negative i", coordIJK{-1, 2, 3}},
+		{"negative j", coordIJK{1, -2, 3}},
+		{"negative k", coordIJK{1, 2, -3}},
+		{"multiple negatives", coordIJK{-1, -2, 3}},
+		{"all negative", coordIJK{-1, -2, -3}},
+		{"needs min reduction", coordIJK{5, 3, 7}},
+		{"mixed normalize case", coordIJK{-2, 1, -1}},
+		{"large values", coordIJK{-100, 50, -25}},
 	}
 
 	for _, tt := range tests {

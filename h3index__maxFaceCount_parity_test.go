@@ -5,7 +5,7 @@ package h3
 import "testing"
 
 func Test_h3index_maxFaceCount_ParityWithC(t *testing.T) {
-	testCases := []H3Index{
+	testCases := []h3Index{
 		// Hexagons at various resolutions
 		0x8928308280fffff, // res 9 hexagon
 		0x821c07fffffffff, // res 2 hexagon
@@ -47,7 +47,7 @@ func Test_h3index_maxFaceCount_ParityWithC(t *testing.T) {
 		}
 
 		// Basic sanity checks
-		if goErr == E_SUCCESS {
+		if goErr == eSuccess {
 			if goOut != 2 && goOut != 5 {
 				t.Fatalf("maxFaceCount returned unexpected value %d for h3=%x, expected 2 or 5", goOut, uint64(h3))
 			}
@@ -67,8 +67,8 @@ func Test_h3index_maxFaceCount_ParityWithC(t *testing.T) {
 
 func Test_h3index_maxFaceCount_InvalidIndex_ParityWithC(t *testing.T) {
 	// Test with invalid H3 indices
-	invalidIndices := []H3Index{
-		0x0000000000000000, // H3_NULL
+	invalidIndices := []h3Index{
+		0x0000000000000000, // h3Null
 		0xffffffffffffffff, // Invalid bits
 		0x1234567890abcdef, // Random invalid index
 	}

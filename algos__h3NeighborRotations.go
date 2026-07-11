@@ -11,11 +11,11 @@ package h3
 // missing K-subsequences.
 //
 // Ported from H3 C: algos.c::h3NeighborRotations.
-func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H3Index) H3Error {
+func h3NeighborRotations(origin h3Index, dir direction, rotations *int32, out *h3Index) h3Error {
 	current := origin
 
-	if dir < CENTER_DIGIT || dir >= INVALID_DIGIT {
-		return E_FAILED
+	if dir < centerDigit || dir >= invalidDigit {
+		return eFailed
 	}
 
 	// Ensure that rotations is modulo'd by 6 before any possible addition,
@@ -27,9 +27,9 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 
 	newRotations := int32(0)
 	oldBaseCell := int32(getBaseCell(current))
-	if oldBaseCell < 0 || oldBaseCell >= NUM_BASE_CELLS {
+	if oldBaseCell < 0 || oldBaseCell >= numBaseCells {
 		// Base cells less than zero can not be represented in an index
-		return E_CELL_INVALID
+		return eCellInvalid
 	}
 	oldLeadingDigit := _h3LeadingNonZeroDigit(current)
 
@@ -40,11 +40,11 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 			current = setBaseCell(current, baseCellNeighbors[oldBaseCell][dir])
 			newRotations = int32(baseCellNeighbor60CCWRots[oldBaseCell][dir])
 
-			if getBaseCell(current) == INVALID_BASE_CELL {
+			if getBaseCell(current) == invalidBaseCell {
 				// Adjust for the deleted k vertex at the base cell level.
 				// This edge actually borders a different neighbor.
-				current = setBaseCell(current, baseCellNeighbors[oldBaseCell][IK_AXES_DIGIT])
-				newRotations = int32(baseCellNeighbor60CCWRots[oldBaseCell][IK_AXES_DIGIT])
+				current = setBaseCell(current, baseCellNeighbors[oldBaseCell][ikAxesDigit])
+				newRotations = int32(baseCellNeighbor60CCWRots[oldBaseCell][ikAxesDigit])
 
 				// perform the adjustment for the k-subsequence we're skipping
 				// over.
@@ -54,20 +54,20 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 
 			break
 		} else {
-			oldDigit := Direction(getIndexDigit(current, r+1))
-			var nextDir Direction
-			if oldDigit == INVALID_DIGIT {
+			oldDigit := direction(getIndexDigit(current, r+1))
+			var nextDir direction
+			if oldDigit == invalidDigit {
 				// Only possible on invalid input
-				return E_CELL_INVALID
+				return eCellInvalid
 			} else if isResolutionClassIII(r + 1) {
-				current = setIndexDigit(current, r+1, int32(NEW_DIGIT_II[oldDigit][dir]))
-				nextDir = NEW_ADJUSTMENT_II[oldDigit][dir]
+				current = setIndexDigit(current, r+1, int32(newDigitII[oldDigit][dir]))
+				nextDir = newAdjustmentII[oldDigit][dir]
 			} else {
-				current = setIndexDigit(current, r+1, int32(NEW_DIGIT_III[oldDigit][dir]))
-				nextDir = NEW_ADJUSTMENT_III[oldDigit][dir]
+				current = setIndexDigit(current, r+1, int32(newDigitIII[oldDigit][dir]))
+				nextDir = newAdjustmentIII[oldDigit][dir]
 			}
 
-			if nextDir != CENTER_DIGIT {
+			if nextDir != centerDigit {
 				dir = nextDir
 				r--
 			} else {
@@ -82,7 +82,7 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 		alreadyAdjustedKSubsequence := false
 
 		// force rotation out of missing k-axes sub-sequence
-		if Direction(_h3LeadingNonZeroDigit(current)) == K_AXES_DIGIT {
+		if direction(_h3LeadingNonZeroDigit(current)) == kAxesDigit {
 			if oldBaseCell != newBaseCell {
 				// in this case, we traversed into the deleted
 				// k subsequence of a pentagon base cell.
@@ -102,16 +102,16 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 				// In this case, we traversed into the deleted
 				// k subsequence from within the same pentagon
 				// base cell.
-				if Direction(oldLeadingDigit) == CENTER_DIGIT {
+				if direction(oldLeadingDigit) == centerDigit {
 					// Undefined: the k direction is deleted from here
-					return E_PENTAGON
-				} else if Direction(oldLeadingDigit) == JK_AXES_DIGIT {
+					return ePentagon
+				} else if direction(oldLeadingDigit) == jkAxesDigit {
 					// Rotate out of the deleted k subsequence
 					// We also need an additional change to the direction we're
 					// moving in
 					current = _h3Rotate60ccw(current)
 					*rotations = *rotations + 1
-				} else if Direction(oldLeadingDigit) == IK_AXES_DIGIT {
+				} else if direction(oldLeadingDigit) == ikAxesDigit {
 					// Rotate out of the deleted k subsequence
 					// We also need an additional change to the direction we're
 					// moving in
@@ -119,7 +119,7 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 					*rotations = *rotations + 5
 				} else {
 					// TODO: Should never occur, but is reachable by fuzzer
-					return E_FAILED
+					return eFailed
 				}
 			}
 		}
@@ -135,10 +135,10 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 				// 'polar' base cells behave differently because they have all
 				// i neighbors.
 				if oldBaseCell != 118 && oldBaseCell != 8 &&
-					Direction(_h3LeadingNonZeroDigit(current)) != JK_AXES_DIGIT {
+					direction(_h3LeadingNonZeroDigit(current)) != jkAxesDigit {
 					*rotations = *rotations + 1
 				}
-			} else if Direction(_h3LeadingNonZeroDigit(current)) == IK_AXES_DIGIT &&
+			} else if direction(_h3LeadingNonZeroDigit(current)) == ikAxesDigit &&
 				!alreadyAdjustedKSubsequence {
 				// account for distortion introduced to the 5 neighbor by the
 				// deleted k subsequence.
@@ -154,83 +154,83 @@ func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H
 	*rotations = (*rotations + newRotations) % 6
 	*out = current
 
-	return E_SUCCESS
+	return eSuccess
 }
 
 // Lookup tables for neighbor traversal algorithm
 
-// NEW_DIGIT_II: New digit when traversing along class II grids.
+// newDigitII: New digit when traversing along class II grids.
 // Current digit -> direction -> new digit.
-var NEW_DIGIT_II = [7][7]Direction{
-	{CENTER_DIGIT, K_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT, I_AXES_DIGIT,
-		IK_AXES_DIGIT, IJ_AXES_DIGIT},
-	{K_AXES_DIGIT, I_AXES_DIGIT, JK_AXES_DIGIT, IJ_AXES_DIGIT, IK_AXES_DIGIT,
-		J_AXES_DIGIT, CENTER_DIGIT},
-	{J_AXES_DIGIT, JK_AXES_DIGIT, K_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT,
-		CENTER_DIGIT, IK_AXES_DIGIT},
-	{JK_AXES_DIGIT, IJ_AXES_DIGIT, I_AXES_DIGIT, IK_AXES_DIGIT, CENTER_DIGIT,
-		K_AXES_DIGIT, J_AXES_DIGIT},
-	{I_AXES_DIGIT, IK_AXES_DIGIT, IJ_AXES_DIGIT, CENTER_DIGIT, J_AXES_DIGIT,
-		JK_AXES_DIGIT, K_AXES_DIGIT},
-	{IK_AXES_DIGIT, J_AXES_DIGIT, CENTER_DIGIT, K_AXES_DIGIT, JK_AXES_DIGIT,
-		IJ_AXES_DIGIT, I_AXES_DIGIT},
-	{IJ_AXES_DIGIT, CENTER_DIGIT, IK_AXES_DIGIT, J_AXES_DIGIT, K_AXES_DIGIT,
-		I_AXES_DIGIT, JK_AXES_DIGIT},
+var newDigitII = [7][7]direction{
+	{centerDigit, kAxesDigit, jAxesDigit, jkAxesDigit, iAxesDigit,
+		ikAxesDigit, ijAxesDigit},
+	{kAxesDigit, iAxesDigit, jkAxesDigit, ijAxesDigit, ikAxesDigit,
+		jAxesDigit, centerDigit},
+	{jAxesDigit, jkAxesDigit, kAxesDigit, iAxesDigit, ijAxesDigit,
+		centerDigit, ikAxesDigit},
+	{jkAxesDigit, ijAxesDigit, iAxesDigit, ikAxesDigit, centerDigit,
+		kAxesDigit, jAxesDigit},
+	{iAxesDigit, ikAxesDigit, ijAxesDigit, centerDigit, jAxesDigit,
+		jkAxesDigit, kAxesDigit},
+	{ikAxesDigit, jAxesDigit, centerDigit, kAxesDigit, jkAxesDigit,
+		ijAxesDigit, iAxesDigit},
+	{ijAxesDigit, centerDigit, ikAxesDigit, jAxesDigit, kAxesDigit,
+		iAxesDigit, jkAxesDigit},
 }
 
-// NEW_ADJUSTMENT_II: New traversal direction when traversing along class II grids.
+// newAdjustmentII: New traversal direction when traversing along class II grids.
 // Current digit -> direction -> new ap7 move (at coarser level).
-var NEW_ADJUSTMENT_II = [7][7]Direction{
-	{CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT,
-		CENTER_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, K_AXES_DIGIT, CENTER_DIGIT, K_AXES_DIGIT, CENTER_DIGIT,
-		IK_AXES_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, CENTER_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT, CENTER_DIGIT,
-		CENTER_DIGIT, J_AXES_DIGIT},
-	{CENTER_DIGIT, K_AXES_DIGIT, JK_AXES_DIGIT, JK_AXES_DIGIT, CENTER_DIGIT,
-		CENTER_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, I_AXES_DIGIT,
-		I_AXES_DIGIT, IJ_AXES_DIGIT},
-	{CENTER_DIGIT, IK_AXES_DIGIT, CENTER_DIGIT, CENTER_DIGIT, I_AXES_DIGIT,
-		IK_AXES_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, CENTER_DIGIT, J_AXES_DIGIT, CENTER_DIGIT, IJ_AXES_DIGIT,
-		CENTER_DIGIT, IJ_AXES_DIGIT},
+var newAdjustmentII = [7][7]direction{
+	{centerDigit, centerDigit, centerDigit, centerDigit, centerDigit,
+		centerDigit, centerDigit},
+	{centerDigit, kAxesDigit, centerDigit, kAxesDigit, centerDigit,
+		ikAxesDigit, centerDigit},
+	{centerDigit, centerDigit, jAxesDigit, jkAxesDigit, centerDigit,
+		centerDigit, jAxesDigit},
+	{centerDigit, kAxesDigit, jkAxesDigit, jkAxesDigit, centerDigit,
+		centerDigit, centerDigit},
+	{centerDigit, centerDigit, centerDigit, centerDigit, iAxesDigit,
+		iAxesDigit, ijAxesDigit},
+	{centerDigit, ikAxesDigit, centerDigit, centerDigit, iAxesDigit,
+		ikAxesDigit, centerDigit},
+	{centerDigit, centerDigit, jAxesDigit, centerDigit, ijAxesDigit,
+		centerDigit, ijAxesDigit},
 }
 
-// NEW_DIGIT_III: New traversal direction when traversing along class III grids.
+// newDigitIII: New traversal direction when traversing along class III grids.
 // Current digit -> direction -> new ap7 move (at coarser level).
-var NEW_DIGIT_III = [7][7]Direction{
-	{CENTER_DIGIT, K_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT, I_AXES_DIGIT,
-		IK_AXES_DIGIT, IJ_AXES_DIGIT},
-	{K_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT, I_AXES_DIGIT, IK_AXES_DIGIT,
-		IJ_AXES_DIGIT, CENTER_DIGIT},
-	{J_AXES_DIGIT, JK_AXES_DIGIT, I_AXES_DIGIT, IK_AXES_DIGIT, IJ_AXES_DIGIT,
-		CENTER_DIGIT, K_AXES_DIGIT},
-	{JK_AXES_DIGIT, I_AXES_DIGIT, IK_AXES_DIGIT, IJ_AXES_DIGIT, CENTER_DIGIT,
-		K_AXES_DIGIT, J_AXES_DIGIT},
-	{I_AXES_DIGIT, IK_AXES_DIGIT, IJ_AXES_DIGIT, CENTER_DIGIT, K_AXES_DIGIT,
-		J_AXES_DIGIT, JK_AXES_DIGIT},
-	{IK_AXES_DIGIT, IJ_AXES_DIGIT, CENTER_DIGIT, K_AXES_DIGIT, J_AXES_DIGIT,
-		JK_AXES_DIGIT, I_AXES_DIGIT},
-	{IJ_AXES_DIGIT, CENTER_DIGIT, K_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT,
-		I_AXES_DIGIT, IK_AXES_DIGIT},
+var newDigitIII = [7][7]direction{
+	{centerDigit, kAxesDigit, jAxesDigit, jkAxesDigit, iAxesDigit,
+		ikAxesDigit, ijAxesDigit},
+	{kAxesDigit, jAxesDigit, jkAxesDigit, iAxesDigit, ikAxesDigit,
+		ijAxesDigit, centerDigit},
+	{jAxesDigit, jkAxesDigit, iAxesDigit, ikAxesDigit, ijAxesDigit,
+		centerDigit, kAxesDigit},
+	{jkAxesDigit, iAxesDigit, ikAxesDigit, ijAxesDigit, centerDigit,
+		kAxesDigit, jAxesDigit},
+	{iAxesDigit, ikAxesDigit, ijAxesDigit, centerDigit, kAxesDigit,
+		jAxesDigit, jkAxesDigit},
+	{ikAxesDigit, ijAxesDigit, centerDigit, kAxesDigit, jAxesDigit,
+		jkAxesDigit, iAxesDigit},
+	{ijAxesDigit, centerDigit, kAxesDigit, jAxesDigit, jkAxesDigit,
+		iAxesDigit, ikAxesDigit},
 }
 
-// NEW_ADJUSTMENT_III: New traversal direction when traversing along class III grids.
+// newAdjustmentIII: New traversal direction when traversing along class III grids.
 // Current digit -> direction -> new ap7 move (at coarser level).
-var NEW_ADJUSTMENT_III = [7][7]Direction{
-	{CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT,
-		CENTER_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, K_AXES_DIGIT, CENTER_DIGIT, JK_AXES_DIGIT, CENTER_DIGIT,
-		K_AXES_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, CENTER_DIGIT, J_AXES_DIGIT, J_AXES_DIGIT, CENTER_DIGIT,
-		CENTER_DIGIT, IJ_AXES_DIGIT},
-	{CENTER_DIGIT, JK_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT, CENTER_DIGIT,
-		CENTER_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, CENTER_DIGIT, I_AXES_DIGIT,
-		IK_AXES_DIGIT, I_AXES_DIGIT},
-	{CENTER_DIGIT, K_AXES_DIGIT, CENTER_DIGIT, CENTER_DIGIT, IK_AXES_DIGIT,
-		IK_AXES_DIGIT, CENTER_DIGIT},
-	{CENTER_DIGIT, CENTER_DIGIT, IJ_AXES_DIGIT, CENTER_DIGIT, I_AXES_DIGIT,
-		CENTER_DIGIT, IJ_AXES_DIGIT},
+var newAdjustmentIII = [7][7]direction{
+	{centerDigit, centerDigit, centerDigit, centerDigit, centerDigit,
+		centerDigit, centerDigit},
+	{centerDigit, kAxesDigit, centerDigit, jkAxesDigit, centerDigit,
+		kAxesDigit, centerDigit},
+	{centerDigit, centerDigit, jAxesDigit, jAxesDigit, centerDigit,
+		centerDigit, ijAxesDigit},
+	{centerDigit, jkAxesDigit, jAxesDigit, jkAxesDigit, centerDigit,
+		centerDigit, centerDigit},
+	{centerDigit, centerDigit, centerDigit, centerDigit, iAxesDigit,
+		ikAxesDigit, iAxesDigit},
+	{centerDigit, kAxesDigit, centerDigit, centerDigit, ikAxesDigit,
+		ikAxesDigit, centerDigit},
+	{centerDigit, centerDigit, ijAxesDigit, centerDigit, iAxesDigit,
+		centerDigit, ijAxesDigit},
 }

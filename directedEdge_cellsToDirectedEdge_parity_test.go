@@ -9,33 +9,33 @@ import (
 func Test_cellsToDirectedEdge_parity(t *testing.T) {
 	tests := []struct {
 		name        string
-		origin      H3Index
-		destination H3Index
+		origin      h3Index
+		destination h3Index
 	}{
 		// Valid neighbor pairs - these should work
 		// Using some constructed valid cell pairs that are neighbors
-		{"valid_neighbors_1", H3Index(0x8001fffffffffff), H3Index(0x8002fffffffffff)},
-		{"valid_neighbors_2", H3Index(0x8101fffffffffff), H3Index(0x8102fffffffffff)},
-		{"valid_neighbors_3", H3Index(0x8201fffffffffff), H3Index(0x8202fffffffffff)},
+		{"valid_neighbors_1", h3Index(0x8001fffffffffff), h3Index(0x8002fffffffffff)},
+		{"valid_neighbors_2", h3Index(0x8101fffffffffff), h3Index(0x8102fffffffffff)},
+		{"valid_neighbors_3", h3Index(0x8201fffffffffff), h3Index(0x8202fffffffffff)},
 
-		// Non-neighbor cases - these should return E_NOT_NEIGHBORS
-		{"same_cell", H3Index(0x8001fffffffffff), H3Index(0x8001fffffffffff)},
-		{"non_neighbors", H3Index(0x8001fffffffffff), H3Index(0x8003fffffffffff)},
-		{"different_res", H3Index(0x8001fffffffffff), H3Index(0x8101fffffffffff)},
+		// Non-neighbor cases - these should return eNotNeighbors
+		{"same_cell", h3Index(0x8001fffffffffff), h3Index(0x8001fffffffffff)},
+		{"non_neighbors", h3Index(0x8001fffffffffff), h3Index(0x8003fffffffffff)},
+		{"different_res", h3Index(0x8001fffffffffff), h3Index(0x8101fffffffffff)},
 
 		// Invalid cell cases - these should fail with appropriate errors
-		{"invalid_origin", H3Index(0x0), H3Index(0x8001fffffffffff)},
-		{"invalid_destination", H3Index(0x8001fffffffffff), H3Index(0x0)},
-		{"both_invalid", H3Index(0x0), H3Index(0x0)},
+		{"invalid_origin", h3Index(0x0), h3Index(0x8001fffffffffff)},
+		{"invalid_destination", h3Index(0x8001fffffffffff), h3Index(0x0)},
+		{"both_invalid", h3Index(0x0), h3Index(0x0)},
 
 		// Edge cases
-		{"origin_invalid_mode", H3Index(0x2001fffffffffff), H3Index(0x8001fffffffffff)}, // origin has directed edge mode
-		{"dest_invalid_mode", H3Index(0x8001fffffffffff), H3Index(0x2001fffffffffff)},   // destination has directed edge mode
+		{"origin_invalid_mode", h3Index(0x2001fffffffffff), h3Index(0x8001fffffffffff)}, // origin has directed edge mode
+		{"dest_invalid_mode", h3Index(0x8001fffffffffff), h3Index(0x2001fffffffffff)},   // destination has directed edge mode
 
 		// Zero values
-		{"zero_origin", H3Index(0), H3Index(0x8001fffffffffff)},
-		{"zero_destination", H3Index(0x8001fffffffffff), H3Index(0)},
-		{"both_zero", H3Index(0), H3Index(0)},
+		{"zero_origin", h3Index(0), h3Index(0x8001fffffffffff)},
+		{"zero_destination", h3Index(0x8001fffffffffff), h3Index(0)},
+		{"both_zero", h3Index(0), h3Index(0)},
 	}
 
 	for _, tt := range tests {
@@ -53,7 +53,7 @@ func Test_cellsToDirectedEdge_parity(t *testing.T) {
 			}
 
 			// If there was an error, we're done (no need to compare outputs)
-			if cErr != E_SUCCESS {
+			if cErr != eSuccess {
 				return
 			}
 
@@ -63,7 +63,7 @@ func Test_cellsToDirectedEdge_parity(t *testing.T) {
 			}
 
 			// Additional validation - if successful, the result should be a directed edge
-			if getMode(goEdge) != H3_DIRECTEDEDGE_MODE {
+			if getMode(goEdge) != h3DirectededgeMode {
 				t.Errorf("Result is not a directed edge: mode=%d", getMode(goEdge))
 			}
 		})
@@ -77,14 +77,14 @@ func Test_cellsToDirectedEdge_known_neighbors_parity(t *testing.T) {
 
 	testPairs := []struct {
 		name        string
-		origin      H3Index
-		destination H3Index
+		origin      h3Index
+		destination h3Index
 	}{
-		{"pair_1", H3Index(0x8007fffffffffff), H3Index(0x8009fffffffffff)},
-		{"pair_2", H3Index(0x8009fffffffffff), H3Index(0x800bfffffffffff)},
-		{"pair_3", H3Index(0x800bfffffffffff), H3Index(0x8007fffffffffff)},
-		{"pair_4", H3Index(0x8001fffffffffff), H3Index(0x8003fffffffffff)},
-		{"pair_5", H3Index(0x8003fffffffffff), H3Index(0x8005fffffffffff)},
+		{"pair_1", h3Index(0x8007fffffffffff), h3Index(0x8009fffffffffff)},
+		{"pair_2", h3Index(0x8009fffffffffff), h3Index(0x800bfffffffffff)},
+		{"pair_3", h3Index(0x800bfffffffffff), h3Index(0x8007fffffffffff)},
+		{"pair_4", h3Index(0x8001fffffffffff), h3Index(0x8003fffffffffff)},
+		{"pair_5", h3Index(0x8003fffffffffff), h3Index(0x8005fffffffffff)},
 	}
 
 	for _, tt := range testPairs {
@@ -103,7 +103,7 @@ func Test_cellsToDirectedEdge_known_neighbors_parity(t *testing.T) {
 			}
 
 			// If there was an error, we're done
-			if cErr != E_SUCCESS {
+			if cErr != eSuccess {
 				return
 			}
 
@@ -114,13 +114,13 @@ func Test_cellsToDirectedEdge_known_neighbors_parity(t *testing.T) {
 			}
 
 			// Verify the edge is valid
-			if getMode(goEdge) != H3_DIRECTEDEDGE_MODE {
+			if getMode(goEdge) != h3DirectededgeMode {
 				t.Errorf("Result is not a directed edge: mode=%d", getMode(goEdge))
 			}
 
 			// Verify the origin matches by extracting it from the edge
 			extractedOrigin, extractErr := getDirectedEdgeOrigin(goEdge)
-			if extractErr != E_SUCCESS {
+			if extractErr != eSuccess {
 				t.Errorf("Failed to extract origin from edge: %v", extractErr)
 			} else if extractedOrigin != tt.origin {
 				t.Errorf("Extracted origin doesn't match: expected=0x%x, got=0x%x", tt.origin, extractedOrigin)
@@ -135,15 +135,15 @@ func Test_cellsToDirectedEdge_pentagon_parity(t *testing.T) {
 
 	pentagonPairs := []struct {
 		name        string
-		origin      H3Index
-		destination H3Index
+		origin      h3Index
+		destination h3Index
 	}{
 		// Pentagon base cells with various potential destinations
-		{"pentagon_1_to_2", H3Index(0x8001fffffffffff), H3Index(0x8002fffffffffff)},
-		{"pentagon_1_to_3", H3Index(0x8001fffffffffff), H3Index(0x8003fffffffffff)},
-		{"pentagon_3_to_1", H3Index(0x8003fffffffffff), H3Index(0x8001fffffffffff)},
-		{"pentagon_3_to_5", H3Index(0x8003fffffffffff), H3Index(0x8005fffffffffff)},
-		{"pentagon_7_to_9", H3Index(0x8007fffffffffff), H3Index(0x8009fffffffffff)},
+		{"pentagon_1_to_2", h3Index(0x8001fffffffffff), h3Index(0x8002fffffffffff)},
+		{"pentagon_1_to_3", h3Index(0x8001fffffffffff), h3Index(0x8003fffffffffff)},
+		{"pentagon_3_to_1", h3Index(0x8003fffffffffff), h3Index(0x8001fffffffffff)},
+		{"pentagon_3_to_5", h3Index(0x8003fffffffffff), h3Index(0x8005fffffffffff)},
+		{"pentagon_7_to_9", h3Index(0x8007fffffffffff), h3Index(0x8009fffffffffff)},
 	}
 
 	for _, tt := range pentagonPairs {
@@ -162,7 +162,7 @@ func Test_cellsToDirectedEdge_pentagon_parity(t *testing.T) {
 			}
 
 			// If there was an error, we're done
-			if cErr != E_SUCCESS {
+			if cErr != eSuccess {
 				return
 			}
 

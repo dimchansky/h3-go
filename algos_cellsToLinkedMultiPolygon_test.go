@@ -8,10 +8,10 @@ import (
 func TestCellsToLinkedMultiPolygon_empty(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
+	var polygon linkedGeoPolygon
 
 	err := cellsToLinkedMultiPolygon(nil, 0, &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with empty set failed: %v", err)
 	}
 
@@ -25,11 +25,11 @@ func TestCellsToLinkedMultiPolygon_empty(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_singleHex(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x890dab6220bffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x890dab6220bffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with single hex failed: %v", err)
 	}
 
@@ -47,23 +47,23 @@ func TestCellsToLinkedMultiPolygon_singleHex(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_invalid(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0xfffffffffffffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0xfffffffffffffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_CELL_INVALID {
-		t.Errorf("Expected E_CELL_INVALID, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("Expected eCellInvalid, got %v", err)
 	}
 }
 
 func TestCellsToLinkedMultiPolygon_contiguous2(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x8928308291bffff, 0x89283082957ffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x8928308291bffff, 0x89283082957ffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with contiguous 2 failed: %v", err)
 	}
 
@@ -81,11 +81,11 @@ func TestCellsToLinkedMultiPolygon_contiguous2(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_nonContiguous2(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x8928308291bffff, 0x89283082943ffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x8928308291bffff, 0x89283082943ffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with non-contiguous 2 failed: %v", err)
 	}
 
@@ -115,11 +115,11 @@ func TestCellsToLinkedMultiPolygon_nonContiguous2(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_contiguous3(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x8928308288bffff, 0x892830828d7ffff, 0x8928308289bffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x8928308288bffff, 0x892830828d7ffff, 0x8928308289bffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with contiguous 3 failed: %v", err)
 	}
 
@@ -137,12 +137,12 @@ func TestCellsToLinkedMultiPolygon_contiguous3(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_hole(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x892830828c7ffff, 0x892830828d7ffff, 0x8928308289bffff,
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x892830828c7ffff, 0x892830828d7ffff, 0x8928308289bffff,
 		0x89283082813ffff, 0x8928308288fffff, 0x89283082883ffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with hole failed: %v", err)
 	}
 
@@ -164,11 +164,11 @@ func TestCellsToLinkedMultiPolygon_hole(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_pentagon(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x851c0003fffffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x851c0003fffffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with pentagon failed: %v", err)
 	}
 
@@ -186,9 +186,9 @@ func TestCellsToLinkedMultiPolygon_pentagon(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_twoRing(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
+	var polygon linkedGeoPolygon
 	// 2-ring, in order returned by k-ring algo
-	set := []H3Index{
+	set := []h3Index{
 		0x8930062838bffff, 0x8930062838fffff, 0x89300628383ffff,
 		0x8930062839bffff, 0x893006283d7ffff, 0x893006283c7ffff,
 		0x89300628313ffff, 0x89300628317ffff, 0x893006283bbffff,
@@ -199,7 +199,7 @@ func TestCellsToLinkedMultiPolygon_twoRing(t *testing.T) {
 	}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with two ring failed: %v", err)
 	}
 
@@ -218,9 +218,9 @@ func TestCellsToLinkedMultiPolygon_twoRing(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_twoRingUnordered(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
+	var polygon linkedGeoPolygon
 	// 2-ring in random order
-	set := []H3Index{
+	set := []h3Index{
 		0x89300628393ffff, 0x89300628383ffff, 0x89300628397ffff,
 		0x89300628067ffff, 0x89300628387ffff, 0x893006283bbffff,
 		0x89300628313ffff, 0x893006283cfffff, 0x89300628303ffff,
@@ -231,7 +231,7 @@ func TestCellsToLinkedMultiPolygon_twoRingUnordered(t *testing.T) {
 	}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with two ring unordered failed: %v", err)
 	}
 
@@ -250,9 +250,9 @@ func TestCellsToLinkedMultiPolygon_twoRingUnordered(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_nestedDonut(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
+	var polygon linkedGeoPolygon
 	// hollow 1-ring + hollow 3-ring around the same hex
-	set := []H3Index{
+	set := []h3Index{
 		0x89283082813ffff, 0x8928308281bffff, 0x8928308280bffff,
 		0x8928308280fffff, 0x89283082807ffff, 0x89283082817ffff,
 		0x8928308289bffff, 0x892830828d7ffff, 0x892830828c3ffff,
@@ -264,7 +264,7 @@ func TestCellsToLinkedMultiPolygon_nestedDonut(t *testing.T) {
 	}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with nested donut failed: %v", err)
 	}
 
@@ -304,9 +304,9 @@ func TestCellsToLinkedMultiPolygon_nestedDonut(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_nestedDonutTransmeridian(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
+	var polygon linkedGeoPolygon
 	// hollow 1-ring + hollow 3-ring around the hex at (0, -180)
-	set := []H3Index{
+	set := []h3Index{
 		0x897eb5722c7ffff, 0x897eb5722cfffff, 0x897eb572257ffff,
 		0x897eb57220bffff, 0x897eb572203ffff, 0x897eb572213ffff,
 		0x897eb57266fffff, 0x897eb5722d3ffff, 0x897eb5722dbffff,
@@ -318,7 +318,7 @@ func TestCellsToLinkedMultiPolygon_nestedDonutTransmeridian(t *testing.T) {
 	}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with nested donut transmeridian failed: %v", err)
 	}
 
@@ -358,11 +358,11 @@ func TestCellsToLinkedMultiPolygon_nestedDonutTransmeridian(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_contiguous2distorted(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x894cc5365afffff, 0x894cc536537ffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x894cc5365afffff, 0x894cc536537ffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with contiguous 2 distorted failed: %v", err)
 	}
 
@@ -380,11 +380,11 @@ func TestCellsToLinkedMultiPolygon_contiguous2distorted(t *testing.T) {
 func TestCellsToLinkedMultiPolygon_negativeHashedCoordinates(t *testing.T) {
 	t.Parallel()
 
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0x88ad36c547fffff, 0x88ad36c467fffff}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0x88ad36c547fffff, 0x88ad36c467fffff}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellsToLinkedMultiPolygon with negative hashed coordinates failed: %v", err)
 	}
 
@@ -416,19 +416,19 @@ func TestCellsToLinkedMultiPolygon_specificLeak(t *testing.T) {
 
 	// Test for a case where a leak can occur, detected by fuzzer.
 	// The leak detection part will be enforced here by the Go garbage collector.
-	var polygon LinkedGeoPolygon
-	set := []H3Index{0xd60006d60000f100, 0x3c3c403c1300d668}
+	var polygon linkedGeoPolygon
+	set := []h3Index{0xd60006d60000f100, 0x3c3c403c1300d668}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	// Note: C test expects E_FAILED, but Go implementation returns E_CELL_INVALID
+	// Note: C test expects eFailed, but Go implementation returns eCellInvalid
 	// This indicates Go does more thorough input validation than C
 	// Both errors indicate failure, but Go is more specific about the cause
-	if err == E_SUCCESS {
+	if err == eSuccess {
 		t.Errorf("Expected error for invalid cells, got success")
 	}
-	// Accept both E_FAILED and E_CELL_INVALID as valid error responses
-	if err != E_FAILED && err != E_CELL_INVALID {
-		t.Errorf("Expected E_FAILED or E_CELL_INVALID for invalid cells, got %v", err)
+	// Accept both eFailed and eCellInvalid as valid error responses
+	if err != eFailed && err != eCellInvalid {
+		t.Errorf("Expected eFailed or eCellInvalid for invalid cells, got %v", err)
 	}
 }
 
@@ -436,28 +436,28 @@ func TestCellsToLinkedMultiPolygon_gridDiskResolutions(t *testing.T) {
 	t.Parallel()
 
 	// This is a center-face base cell, no pentagon siblings
-	baseCell := H3Index(0x8073fffffffffff)
-	var origin H3Index
+	baseCell := h3Index(0x8073fffffffffff)
+	var origin h3Index
 
-	indexes := make([]H3Index, 19)
+	indexes := make([]h3Index, 19)
 
 	for res := int32(1); res < 15; res++ {
 		// Take the 2-disk of the center child at res
-		var err H3Error
+		var err h3Error
 		origin, err = cellToCenterChild(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("cellToCenterChild failed at res %d: %v", res, err)
 		}
 
 		err = gridDisk(origin, 2, indexes)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("gridDisk failed at res %d: %v", res, err)
 		}
 
 		// Test the polygon output
-		var polygon LinkedGeoPolygon
+		var polygon linkedGeoPolygon
 		err = cellsToLinkedMultiPolygon(indexes, int32(len(indexes)), &polygon)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("cellsToLinkedMultiPolygon failed at res %d: %v", res, err)
 		}
 
@@ -481,32 +481,32 @@ func TestCellsToLinkedMultiPolygon_gridDiskResolutionsPentagon(t *testing.T) {
 	t.Parallel()
 
 	// This is a pentagon base cell
-	baseCell := H3Index(0x8031fffffffffff)
-	var origin H3Index
+	baseCell := h3Index(0x8031fffffffffff)
+	var origin h3Index
 
-	diskIndexes := make([]H3Index, 7)
-	indexes := make([]H3Index, 6)
+	diskIndexes := make([]h3Index, 7)
+	indexes := make([]h3Index, 6)
 
 	for res := int32(1); res < 15; res++ {
 		// Take the 1-disk of the center child at res. Note: We can't take
 		// the 2-disk here, as increased distortion around the pentagon will
 		// still fail at res 1. TODO: Use a 2-ring, start at res 0
 		// when output is correct.
-		var err H3Error
+		var err h3Error
 		origin, err = cellToCenterChild(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("cellToCenterChild failed at res %d: %v", res, err)
 		}
 
 		err = gridDisk(origin, 1, diskIndexes)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("gridDisk failed at res %d: %v", res, err)
 		}
 
 		// Filter out null entries and collect into indexes
 		j := 0
 		for i := 0; i < len(diskIndexes); i++ {
-			if diskIndexes[i] != H3_NULL {
+			if diskIndexes[i] != h3Null {
 				indexes[j] = diskIndexes[i]
 				j++
 			}
@@ -517,9 +517,9 @@ func TestCellsToLinkedMultiPolygon_gridDiskResolutionsPentagon(t *testing.T) {
 		}
 
 		// Test the polygon output
-		var polygon LinkedGeoPolygon
+		var polygon linkedGeoPolygon
 		err = cellsToLinkedMultiPolygon(indexes[:6], 6, &polygon)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("cellsToLinkedMultiPolygon failed at res %d: %v", res, err)
 		}
 

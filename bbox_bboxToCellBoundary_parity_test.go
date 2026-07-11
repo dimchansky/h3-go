@@ -10,11 +10,11 @@ import (
 func Test_bboxToCellBoundary_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		bbox BBox
+		bbox bbox
 	}{
 		{
 			name: "Simple bbox around origin",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(0.1),
 				South: Angle(-0.1),
 				East:  Angle(0.1),
@@ -23,7 +23,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Bbox spanning positive longitude",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(0.5),
 				South: Angle(0.3),
 				East:  Angle(1.2),
@@ -32,7 +32,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Bbox spanning negative longitude",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(-0.3),
 				South: Angle(-0.5),
 				East:  Angle(-0.8),
@@ -41,7 +41,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Large bbox covering significant area",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(1.5),
 				South: Angle(-1.5),
 				East:  Angle(3.0),
@@ -50,7 +50,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Very small bbox",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(0.001),
 				South: Angle(0.0),
 				East:  Angle(0.001),
@@ -59,7 +59,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Bbox near north pole",
-			bbox: BBox{
+			bbox: bbox{
 				North: PiOver2,
 				South: Angle(1.4),
 				East:  Pi,
@@ -68,7 +68,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Bbox near south pole",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(-1.4),
 				South: -PiOver2,
 				East:  Pi,
@@ -77,7 +77,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Bbox crossing antimeridian",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(0.5),
 				South: Angle(-0.5),
 				East:  Angle(-2.5),
@@ -86,7 +86,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Square bbox",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(1.0),
 				South: Angle(0.0),
 				East:  Angle(1.0),
@@ -95,7 +95,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 		},
 		{
 			name: "Zero-width bbox (line)",
-			bbox: BBox{
+			bbox: bbox{
 				North: Angle(1.0),
 				South: Angle(0.0),
 				East:  Angle(0.5),
@@ -139,7 +139,7 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 
 func Test_bboxToCellBoundary_vertex_order_parity(t *testing.T) {
 	// Test specific vertex ordering (counter-clockwise)
-	bbox := BBox{
+	bbox := bbox{
 		North: Angle(1.0),
 		South: Angle(0.0),
 		East:  Angle(1.0),
@@ -189,7 +189,7 @@ func Test_bboxToCellBoundary_vertex_order_parity(t *testing.T) {
 
 func Test_bboxToCellBoundary_comprehensive_parity(t *testing.T) {
 	// Test with various coordinate ranges and edge cases
-	testCases := []BBox{
+	testCases := []bbox{
 		// Normal cases
 		{North: Angle(0.5), South: Angle(0.0), East: Angle(0.5), West: Angle(0.0)},
 		{North: Angle(-0.5), South: Angle(-1.0), East: Angle(-0.5), West: Angle(-1.0)},

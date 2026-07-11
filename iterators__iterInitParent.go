@@ -4,10 +4,10 @@ package h3
 // the children of a given parent cell at a given resolution. This function
 // sets up the iterator state for stepping through all child cells.
 // Ported from H3 C: iterators.c::_iterInitParent.
-func iterInitParent(h H3Index, childRes int32, iter *IterCellsChildren) {
+func iterInitParent(h h3Index, childRes int32, iter *iterCellsChildren) {
 	iter.ParentRes = getResolution(h)
 
-	if childRes < iter.ParentRes || childRes > MAX_H3_RES || h == 0 {
+	if childRes < iter.ParentRes || childRes > maxH3Res || h == 0 {
 		*iter = nullIter()
 		return
 	}

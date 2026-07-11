@@ -6,64 +6,64 @@ import "testing"
 func TestCellToVertex_badVerts(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x823d6ffffffffff)
+	origin := h3Index(0x823d6ffffffffff)
 
-	var vert H3Index
-	if err := cellToVertex(origin, -1, &vert); err != E_DOMAIN {
-		t.Errorf("negative vertex should return E_DOMAIN, got %v", err)
+	var vert h3Index
+	if err := cellToVertex(origin, -1, &vert); err != eDomain {
+		t.Errorf("negative vertex should return eDomain, got %v", err)
 	}
-	if err := cellToVertex(origin, 6, &vert); err != E_DOMAIN {
-		t.Errorf("invalid vertex should return E_DOMAIN, got %v", err)
+	if err := cellToVertex(origin, 6, &vert); err != eDomain {
+		t.Errorf("invalid vertex should return eDomain, got %v", err)
 	}
 
-	pentagon := H3Index(0x823007fffffffff)
-	if err := cellToVertex(pentagon, 5, &vert); err != E_DOMAIN {
-		t.Errorf("invalid pent vertex should return E_DOMAIN, got %v", err)
+	pentagon := h3Index(0x823007fffffffff)
+	if err := cellToVertex(pentagon, 5, &vert); err != eDomain {
+		t.Errorf("invalid pent vertex should return eDomain, got %v", err)
 	}
 }
 
 func TestCellToVertex_invalid(t *testing.T) {
 	t.Parallel()
 
-	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
-	var vert H3Index
-	if err := cellToVertex(invalid, 3, &vert); err != E_FAILED {
-		t.Errorf("Invalid cell should return E_FAILED, got %v", err)
+	invalid := h3Index(0xFFFFFFFFFFFFFFFF)
+	var vert h3Index
+	if err := cellToVertex(invalid, 3, &vert); err != eFailed {
+		t.Errorf("Invalid cell should return eFailed, got %v", err)
 	}
 }
 
 func TestCellToVertex_invalid2(t *testing.T) {
 	t.Parallel()
 
-	index := H3Index(0x685b2396e900fff9)
-	var vert H3Index
-	if err := cellToVertex(index, 2, &vert); err != E_CELL_INVALID {
-		t.Errorf("Invalid cell should return E_CELL_INVALID, got %v", err)
+	index := h3Index(0x685b2396e900fff9)
+	var vert h3Index
+	if err := cellToVertex(index, 2, &vert); err != eCellInvalid {
+		t.Errorf("Invalid cell should return eCellInvalid, got %v", err)
 	}
 }
 
 func TestCellToVertex_invalid3(t *testing.T) {
 	t.Parallel()
 
-	index := H3Index(0x20ff20202020ff35)
-	var vert H3Index
-	if err := cellToVertex(index, 0, &vert); err != E_CELL_INVALID {
-		t.Errorf("Invalid cell should return E_CELL_INVALID, got %v", err)
+	index := h3Index(0x20ff20202020ff35)
+	var vert h3Index
+	if err := cellToVertex(index, 0, &vert); err != eCellInvalid {
+		t.Errorf("Invalid cell should return eCellInvalid, got %v", err)
 	}
 }
 
 func TestIsValidVertex_hex(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x823d6ffffffffff)
-	vert := H3Index(0x2222597fffffffff)
+	origin := h3Index(0x823d6ffffffffff)
+	vert := h3Index(0x2222597fffffffff)
 
 	if !isValidVertex(vert) {
 		t.Error("known vertex should be valid")
 	}
 
-	for i := int32(0); i < NUM_HEX_VERTS; i++ {
-		if err := cellToVertex(origin, i, &vert); err != E_SUCCESS {
+	for i := int32(0); i < numHexVerts; i++ {
+		if err := cellToVertex(origin, i, &vert); err != eSuccess {
 			t.Fatalf("cellToVertex should succeed, got %v", err)
 		}
 		if !isValidVertex(vert) {
@@ -75,10 +75,10 @@ func TestIsValidVertex_hex(t *testing.T) {
 func TestIsValidVertex_invalidOwner(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x823d6ffffffffff)
+	origin := h3Index(0x823d6ffffffffff)
 	vertexNum := int32(0)
-	var vert H3Index
-	if err := cellToVertex(origin, vertexNum, &vert); err != E_SUCCESS {
+	var vert h3Index
+	if err := cellToVertex(origin, vertexNum, &vert); err != eSuccess {
 		t.Fatalf("cellToVertex should succeed, got %v", err)
 	}
 
@@ -93,16 +93,16 @@ func TestIsValidVertex_invalidOwner(t *testing.T) {
 func TestIsValidVertex_wrongOwner(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x823d6ffffffffff)
+	origin := h3Index(0x823d6ffffffffff)
 	vertexNum := int32(0)
-	var vert H3Index
-	if err := cellToVertex(origin, vertexNum, &vert); err != E_SUCCESS {
+	var vert h3Index
+	if err := cellToVertex(origin, vertexNum, &vert); err != eSuccess {
 		t.Fatalf("cellToVertex should succeed, got %v", err)
 	}
 
 	// Assert that origin does not own the vertex
 	owner := vert
-	owner = setMode(owner, H3_CELL_MODE)
+	owner = setMode(owner, h3CellMode)
 	owner = setReservedBits(owner, 0)
 
 	if origin == owner {
@@ -110,7 +110,7 @@ func TestIsValidVertex_wrongOwner(t *testing.T) {
 	}
 
 	nonCanonicalVertex := origin
-	nonCanonicalVertex = setMode(nonCanonicalVertex, H3_VERTEX_MODE)
+	nonCanonicalVertex = setMode(nonCanonicalVertex, h3VertexMode)
 	nonCanonicalVertex = setReservedBits(nonCanonicalVertex, vertexNum)
 
 	if isValidVertex(nonCanonicalVertex) {
@@ -121,19 +121,19 @@ func TestIsValidVertex_wrongOwner(t *testing.T) {
 func TestIsValidVertex_badVerts(t *testing.T) {
 	t.Parallel()
 
-	origin := H3Index(0x823d6ffffffffff)
+	origin := h3Index(0x823d6ffffffffff)
 	if isValidVertex(origin) {
 		t.Error("cell should not be valid")
 	}
 
 	fakeEdge := origin
-	fakeEdge = setMode(fakeEdge, H3_DIRECTEDEDGE_MODE)
+	fakeEdge = setMode(fakeEdge, h3DirectededgeMode)
 	if isValidVertex(fakeEdge) {
 		t.Error("edge mode should not be valid")
 	}
 
-	var vert H3Index
-	if err := cellToVertex(origin, 0, &vert); err != E_SUCCESS {
+	var vert h3Index
+	if err := cellToVertex(origin, 0, &vert); err != eSuccess {
 		t.Fatalf("cellToVertex should succeed, got %v", err)
 	}
 	vert = setReservedBits(vert, 6)
@@ -141,9 +141,9 @@ func TestIsValidVertex_badVerts(t *testing.T) {
 		t.Error("invalid vertexNum should not be valid")
 	}
 
-	pentagon := H3Index(0x823007fffffffff)
-	var vert2 H3Index
-	if err := cellToVertex(pentagon, 0, &vert2); err != E_SUCCESS {
+	pentagon := h3Index(0x823007fffffffff)
+	var vert2 h3Index
+	if err := cellToVertex(pentagon, 0, &vert2); err != eSuccess {
 		t.Fatalf("cellToVertex should succeed, got %v", err)
 	}
 	vert2 = setReservedBits(vert2, 5)
@@ -155,9 +155,9 @@ func TestIsValidVertex_badVerts(t *testing.T) {
 func TestVertexToLatLng_invalid(t *testing.T) {
 	t.Parallel()
 
-	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
+	invalid := h3Index(0xFFFFFFFFFFFFFFFF)
 	var latLng LatLng
-	if err := vertexToLatLng(invalid, &latLng); err == E_SUCCESS {
+	if err := vertexToLatLng(invalid, &latLng); err == eSuccess {
 		t.Error("Invalid vertex should return error")
 	}
 }
@@ -165,9 +165,9 @@ func TestVertexToLatLng_invalid(t *testing.T) {
 func TestCellToVertexes_invalid(t *testing.T) {
 	t.Parallel()
 
-	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
-	var verts [6]H3Index
-	if err := cellToVertexes(invalid, &verts); err != E_FAILED {
-		t.Errorf("cellToVertexes should fail for invalid cell with E_FAILED, got %v", err)
+	invalid := h3Index(0xFFFFFFFFFFFFFFFF)
+	var verts [6]h3Index
+	if err := cellToVertexes(invalid, &verts); err != eFailed {
+		t.Errorf("cellToVertexes should fail for invalid cell with eFailed, got %v", err)
 	}
 }

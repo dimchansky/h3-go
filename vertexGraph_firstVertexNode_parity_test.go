@@ -9,13 +9,13 @@ import (
 func Test_firstVertexNode_parity(t *testing.T) {
 	testCases := []struct {
 		name        string
-		graph       VertexGraph
+		graph       vertexGraph
 		expectNil   bool
 		description string
 	}{
 		{
 			name: "empty graph",
-			graph: VertexGraph{
+			graph: vertexGraph{
 				Buckets:    nil,
 				NumBuckets: 0,
 				Size:       0,
@@ -26,8 +26,8 @@ func Test_firstVertexNode_parity(t *testing.T) {
 		},
 		{
 			name: "graph with empty buckets",
-			graph: VertexGraph{
-				Buckets:    make([]*VertexNode, 3),
+			graph: vertexGraph{
+				Buckets:    make([]*vertexNode, 3),
 				NumBuckets: 3,
 				Size:       0,
 				Res:        9,
@@ -37,8 +37,8 @@ func Test_firstVertexNode_parity(t *testing.T) {
 		},
 		{
 			name: "graph with node in first bucket",
-			graph: VertexGraph{
-				Buckets: []*VertexNode{
+			graph: vertexGraph{
+				Buckets: []*vertexNode{
 					{
 						From: LatLng{Lat: 0.0, Lng: 0.0},
 						To:   LatLng{Lat: 0.1, Lng: 0.1},
@@ -56,8 +56,8 @@ func Test_firstVertexNode_parity(t *testing.T) {
 		},
 		{
 			name: "graph with node in second bucket",
-			graph: VertexGraph{
-				Buckets: []*VertexNode{
+			graph: vertexGraph{
+				Buckets: []*vertexNode{
 					nil,
 					{
 						From: LatLng{Lat: 0.2, Lng: 0.2},
@@ -75,13 +75,13 @@ func Test_firstVertexNode_parity(t *testing.T) {
 		},
 		{
 			name: "graph with multiple nodes, first in second bucket",
-			graph: VertexGraph{
-				Buckets: []*VertexNode{
+			graph: vertexGraph{
+				Buckets: []*vertexNode{
 					nil,
 					{
 						From: LatLng{Lat: 0.4, Lng: 0.4},
 						To:   LatLng{Lat: 0.5, Lng: 0.5},
-						Next: &VertexNode{
+						Next: &vertexNode{
 							From: LatLng{Lat: 0.6, Lng: 0.6},
 							To:   LatLng{Lat: 0.7, Lng: 0.7},
 							Next: nil,

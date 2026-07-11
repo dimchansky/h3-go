@@ -4,19 +4,19 @@ package h3
 // This was determined empirically by finding the smallest factor that
 // passed exhaustive tests.
 // Ported from H3 C: polyfill.c::CELL_SCALE_FACTOR.
-const CELL_SCALE_FACTOR = 1.1
+const cellScaleFactor = 1.1
 
 // Factor by which to scale the cell bounding box to include all children.
 // This was determined empirically by finding the smallest factor that
 // passed exhaustive tests.
 // Ported from H3 C: polyfill.c::CHILD_SCALE_FACTOR.
-const CHILD_SCALE_FACTOR = 1.4
+const childScaleFactor = 1.4
 
 // Max cell edge length, in radians, for each resolution. This was computed
 // by taking the max exact edge length for cells at the center of each base
 // cell at that resolution.
 // Ported from H3 C: polyfill.c::MAX_EDGE_LENGTH_RADS.
-var MAX_EDGE_LENGTH_RADS = [MAX_H3_RES + 1]float64{
+var maxEdgeLengthRads = [maxH3Res + 1]float64{
 	0.21577206265130, 0.08308767068495, 0.03148970436439, 0.01190662871439,
 	0.00450053330908, 0.00170105523619, 0.00064293917678, 0.00024300820659,
 	0.00009184847087, 0.00003471545901, 0.00001312121017, 0.00000495935129,
@@ -25,7 +25,7 @@ var MAX_EDGE_LENGTH_RADS = [MAX_H3_RES + 1]float64{
 
 // All cells that contain the north pole, by resolution
 // Ported from H3 C: polyfill.c::NORTH_POLE_CELLS.
-var NORTH_POLE_CELLS = [MAX_H3_RES + 1]H3Index{
+var northPoleCells = [maxH3Res + 1]h3Index{
 	0x8001fffffffffff, 0x81033ffffffffff, 0x820327fffffffff, 0x830326fffffffff,
 	0x8403263ffffffff, 0x85032623fffffff, 0x860326237ffffff, 0x870326233ffffff,
 	0x880326233bfffff, 0x890326233abffff, 0x8a0326233ab7fff, 0x8b0326233ab0fff,
@@ -34,7 +34,7 @@ var NORTH_POLE_CELLS = [MAX_H3_RES + 1]H3Index{
 
 // All cells that contain the south pole, by resolution
 // Ported from H3 C: polyfill.c::SOUTH_POLE_CELLS.
-var SOUTH_POLE_CELLS = [MAX_H3_RES + 1]H3Index{
+var southPoleCells = [maxH3Res + 1]h3Index{
 	0x80f3fffffffffff, 0x81f2bffffffffff, 0x82f297fffffffff, 0x83f293fffffffff,
 	0x84f2939ffffffff, 0x85f29383fffffff, 0x86f29380fffffff, 0x87f29380effffff,
 	0x88f29380e1fffff, 0x89f29380e0fffff, 0x8af29380e0d7fff, 0x8bf29380e0d0fff,
@@ -42,15 +42,15 @@ var SOUTH_POLE_CELLS = [MAX_H3_RES + 1]H3Index{
 }
 
 // Ported from H3 C: polyfill.c::VALID_RANGE_BBOX.
-var VALID_RANGE_BBOX = BBox{North: PiOver2, South: -PiOver2, East: Pi, West: -Pi}
+var validRangeBbox = bbox{North: PiOver2, South: -PiOver2, East: Pi, West: -Pi}
 
 // Max cell threshold used for polygon size estimation
 // Ported from H3 C: polyfill.c::MAX_SIZE_CELL_THRESHOLD.
-const MAX_SIZE_CELL_THRESHOLD = 10
+const maxSizeCellThreshold = 10
 
 // Pre-calculated bounding boxes for all res 0 cells
 // Ported from H3 C: polyfill.c::RES0_BBOXES.
-var RES0_BBOXES = [NUM_BASE_CELLS]BBox{
+var res0Bboxes = [numBaseCells]bbox{
 	{1.52480158339146, 1.20305471830087, -0.60664883654036, 0.00568297271999},
 	{1.52480158339146, 1.17872424267511, -0.60664883654036, 2.54046980298264},
 	{1.52480158339146, 1.09069387298096, -2.85286053297673, 1.64310689027893},

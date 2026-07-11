@@ -3,11 +3,11 @@ package h3
 // _ijkRotate60ccw rotates IJK coordinates 60 degrees counter-clockwise.
 // Mirrors H3's coordijk.c::_ijkRotate60ccw behavior.
 // Ported from H3 C: coordijk.c::_ijkRotate60ccw.
-func _ijkRotate60ccw(ijk *CoordIJK) {
+func _ijkRotate60ccw(ijk *coordIJK) {
 	// unit vector rotations
-	iVec := CoordIJK{I: 1, J: 1, K: 0}
-	jVec := CoordIJK{I: 0, J: 1, K: 1}
-	kVec := CoordIJK{I: 1, J: 0, K: 1}
+	iVec := coordIJK{I: 1, J: 1, K: 0}
+	jVec := coordIJK{I: 0, J: 1, K: 1}
+	kVec := coordIJK{I: 1, J: 0, K: 1}
 
 	_ijkScale(&iVec, ijk.I)
 	_ijkScale(&jVec, ijk.J)

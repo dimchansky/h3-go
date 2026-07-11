@@ -10,7 +10,7 @@ import (
 func Test_hexRadiusKm_parity(t *testing.T) {
 	tests := []struct {
 		name    string
-		h3Index H3Index
+		h3Index h3Index
 	}{
 		// Valid indices at different resolutions
 		{"res0_index", 0x8001fffffffffff},

@@ -1,24 +1,24 @@
 package h3
 
-// LongitudeNormalization mirrors the C enum in latLng.h.
-type LongitudeNormalization int
+// longitudeNormalization mirrors the C enum in latLng.h.
+type longitudeNormalization int
 
 const (
-	NORMALIZE_NONE LongitudeNormalization = 0
-	NORMALIZE_EAST LongitudeNormalization = 1
-	NORMALIZE_WEST LongitudeNormalization = 2
+	normalizeNone longitudeNormalization = 0
+	normalizeEast longitudeNormalization = 1
+	normalizeWest longitudeNormalization = 2
 )
 
 // normalizeLng normalizes an input longitude according to the strategy.
 // Ported from H3 C: latLng.c::normalizeLng.
-func normalizeLng(lng Angle, normalization LongitudeNormalization) Angle {
+func normalizeLng(lng Angle, normalization longitudeNormalization) Angle {
 	switch normalization {
-	case NORMALIZE_EAST:
+	case normalizeEast:
 		if lng < 0 {
 			return lng + TwoPi
 		}
 		return lng
-	case NORMALIZE_WEST:
+	case normalizeWest:
 		if lng > 0 {
 			return lng - TwoPi
 		}

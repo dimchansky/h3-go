@@ -8,44 +8,44 @@ import "math"
 // box may have a significant margin of error.
 //
 // Ported from H3 C: polyfill.c::cellToBBox.
-func cellToBBox(cell H3Index, coverChildren bool) (BBox, H3Error) {
+func cellToBBox(cell h3Index, coverChildren bool) (bbox, h3Error) {
 	res := getResolution(cell)
-	var out BBox
+	var out bbox
 
 	if res == 0 {
 		baseCell := getBaseCell(cell)
-		if baseCell < 0 || baseCell >= NUM_BASE_CELLS {
-			return out, E_CELL_INVALID
+		if baseCell < 0 || baseCell >= numBaseCells {
+			return out, eCellInvalid
 		}
-		out = RES0_BBOXES[baseCell]
+		out = res0Bboxes[baseCell]
 	} else {
 		var center LatLng
 		centerErr := cellToLatLng(cell, &center)
-		if centerErr != E_SUCCESS {
+		if centerErr != eSuccess {
 			return out, centerErr
 		}
 		lngRatio := 1.0 / math.Cos(float64(center.Lat))
-		out.North = center.Lat + Angle(MAX_EDGE_LENGTH_RADS[res])
-		out.South = center.Lat - Angle(MAX_EDGE_LENGTH_RADS[res])
-		out.East = center.Lng + Angle(MAX_EDGE_LENGTH_RADS[res]*lngRatio)
-		out.West = center.Lng - Angle(MAX_EDGE_LENGTH_RADS[res]*lngRatio)
+		out.North = center.Lat + Angle(maxEdgeLengthRads[res])
+		out.South = center.Lat - Angle(maxEdgeLengthRads[res])
+		out.East = center.Lng + Angle(maxEdgeLengthRads[res]*lngRatio)
+		out.West = center.Lng - Angle(maxEdgeLengthRads[res]*lngRatio)
 	}
 
 	// Buffer the bounding box to cover children. Call this even if no buffering
 	// is required in order to normalize the bbox to lat/lng bounds
-	scaleFactor := CELL_SCALE_FACTOR
+	scaleFactor := cellScaleFactor
 	if coverChildren {
-		scaleFactor = CHILD_SCALE_FACTOR
+		scaleFactor = childScaleFactor
 	}
 	scaleBBox(&out, scaleFactor)
 
 	// Cell that contains the north pole
-	if cell == NORTH_POLE_CELLS[res] {
+	if cell == northPoleCells[res] {
 		out.North = PiOver2
 	}
 
 	// Cell that contains the south pole
-	if cell == SOUTH_POLE_CELLS[res] {
+	if cell == southPoleCells[res] {
 		out.South = -PiOver2
 	}
 
@@ -56,5 +56,5 @@ func cellToBBox(cell H3Index, coverChildren bool) (BBox, H3Error) {
 		out.West = -Pi
 	}
 
-	return out, E_SUCCESS
+	return out, eSuccess
 }

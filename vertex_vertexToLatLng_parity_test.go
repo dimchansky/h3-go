@@ -11,7 +11,7 @@ import (
 func Test_vertexToLatLng_parity(t *testing.T) {
 	tests := []struct {
 		name   string
-		vertex H3Index
+		vertex h3Index
 	}{
 		// Test vertices from various resolutions and cell types
 		{"hex vertex r0", 0x20283080bffffff},
@@ -38,7 +38,7 @@ func Test_vertexToLatLng_parity(t *testing.T) {
 			}
 
 			// If there was an error, skip coordinate comparison
-			if goErr != E_SUCCESS {
+			if goErr != eSuccess {
 				return
 			}
 
@@ -59,8 +59,8 @@ func Test_vertexToLatLng_parity(t *testing.T) {
 }
 
 func Test_vertexToLatLng_invalidVertex_parity(t *testing.T) {
-	invalidVertices := []H3Index{
-		H3_NULL,            // null vertex
+	invalidVertices := []h3Index{
+		h3Null,             // null vertex
 		0x20283080bfffffff, // invalid reserved bits
 		0x10283080bffffff,  // wrong mode (cell mode)
 		0x30283080bffffff,  // wrong mode (edge mode)

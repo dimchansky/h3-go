@@ -15,7 +15,7 @@ package h3
 // - Used in polygon normalization to assign holes to their proper parent polygons
 //
 // Ported from H3 C: linkedGeo.c::findPolygonForHole (static function).
-func findPolygonForHole(loop *LinkedGeoLoop, polygon *LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon {
+func findPolygonForHole(loop *linkedGeoLoop, polygon *linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon {
 	polygonCount := len(bboxes)
 
 	// Early exit with no polygons
@@ -29,8 +29,8 @@ func findPolygonForHole(loop *LinkedGeoLoop, polygon *LinkedGeoPolygon, bboxes [
 	}
 
 	// Initialize arrays for candidate loops and their bounding boxes
-	var candidates []*LinkedGeoPolygon
-	var candidateBBoxes []*BBox
+	var candidates []*linkedGeoPolygon
+	var candidateBBoxes []*bbox
 
 	// Find all polygons that contain the loop
 	index := 0

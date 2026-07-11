@@ -12,7 +12,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 		geoPolygon  GeoPolygon
 		res         int32
 		flags       uint32
-		expectError H3Error
+		expectError h3Error
 	}{
 		{
 			name: "simple_triangle_sf",
@@ -25,8 +25,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:         5,
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentCenter),
+			expectError: eSuccess,
 		},
 		{
 			name: "square_polygon",
@@ -40,8 +40,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:         7,
-			flags:       uint32(CONTAINMENT_FULL),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentFull),
+			expectError: eSuccess,
 		},
 		{
 			name: "polygon_with_hole",
@@ -62,8 +62,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				},
 			},
 			res:         6,
-			flags:       uint32(CONTAINMENT_OVERLAPPING),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentOverlapping),
+			expectError: eSuccess,
 		},
 		{
 			name: "single_point_polygon",
@@ -74,8 +74,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:         10,
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentCenter),
+			expectError: eSuccess,
 		},
 		{
 			name: "large_polygon_low_res",
@@ -89,8 +89,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:         2,
-			flags:       uint32(CONTAINMENT_OVERLAPPING_BBOX),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentOverlappingBBox),
+			expectError: eSuccess,
 		},
 		{
 			name: "tiny_polygon_high_res",
@@ -103,8 +103,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:         12,
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentCenter),
+			expectError: eSuccess,
 		},
 		{
 			name: "multiple_holes",
@@ -131,8 +131,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				},
 			},
 			res:         8,
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentCenter),
+			expectError: eSuccess,
 		},
 		{
 			name: "empty_polygon",
@@ -141,8 +141,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 				Holes:   nil,
 			},
 			res:         5,
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentCenter),
+			expectError: eSuccess,
 		},
 	}
 
@@ -163,7 +163,7 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 			}
 
 			// If there was an expected error, verify it
-			if tt.expectError != E_SUCCESS {
+			if tt.expectError != eSuccess {
 				if goErr != tt.expectError {
 					t.Errorf("Expected error %v, got Go=%v", tt.expectError, goErr)
 				}
@@ -178,8 +178,8 @@ func Test_maxPolygonToCellsSize_parity(t *testing.T) {
 
 			// Sanity check - size should be positive for polygons with area
 			// Single points and empty polygons may return just the buffer size
-			if len(tt.geoPolygon.GeoLoop) > 1 && goOut <= POLYGON_TO_CELLS_BUFFER {
-				t.Errorf("maxPolygonToCellsSize should return more than buffer (%d) for polygon with area, got %d", POLYGON_TO_CELLS_BUFFER, goOut)
+			if len(tt.geoPolygon.GeoLoop) > 1 && goOut <= polygonToCellsBuffer {
+				t.Errorf("maxPolygonToCellsSize should return more than buffer (%d) for polygon with area, got %d", polygonToCellsBuffer, goOut)
 			}
 
 			// Sanity check - for successful cases output should be reasonable
@@ -196,7 +196,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 		geoPolygon  GeoPolygon
 		res         int32
 		flags       uint32
-		expectError H3Error
+		expectError h3Error
 	}{
 		{
 			name: "invalid_flags",
@@ -210,7 +210,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 			},
 			res:         5,
 			flags:       16, // Invalid flag
-			expectError: E_OPTION_INVALID,
+			expectError: eOptionInvalid,
 		},
 		{
 			name: "invalid_containment_mode",
@@ -223,8 +223,8 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:         5,
-			flags:       uint32(CONTAINMENT_INVALID), // Invalid containment
-			expectError: E_OPTION_INVALID,
+			flags:       uint32(ContainmentInvalid), // Invalid containment
+			expectError: eOptionInvalid,
 		},
 		{
 			name: "negative_resolution",
@@ -237,8 +237,8 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 				Holes: nil,
 			},
 			res:         -1,
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_RES_DOMAIN, // This might depend on bboxHexEstimate validation
+			flags:       uint32(ContainmentCenter),
+			expectError: eResDomain, // This might depend on bboxHexEstimate validation
 		},
 		{
 			name: "resolution_too_high",
@@ -250,9 +250,9 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 				},
 				Holes: nil,
 			},
-			res:         16, // Above MAX_H3_RES
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_RES_DOMAIN, // This might depend on bboxHexEstimate validation
+			res:         16, // Above maxH3Res
+			flags:       uint32(ContainmentCenter),
+			expectError: eResDomain, // This might depend on bboxHexEstimate validation
 		},
 		{
 			name: "polygon_with_many_vertices",
@@ -261,8 +261,8 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 				Holes:   nil,
 			},
 			res:         5,
-			flags:       uint32(CONTAINMENT_CENTER),
-			expectError: E_SUCCESS,
+			flags:       uint32(ContainmentCenter),
+			expectError: eSuccess,
 		},
 	}
 
@@ -283,7 +283,7 @@ func Test_maxPolygonToCellsSize_edge_cases_parity(t *testing.T) {
 			}
 
 			// If there was an expected error, verify it matches
-			if tt.expectError != E_SUCCESS {
+			if tt.expectError != eSuccess {
 				if goErr != tt.expectError {
 					t.Errorf("Expected error %v, got Go=%v for case %s", tt.expectError, goErr, tt.name)
 				}

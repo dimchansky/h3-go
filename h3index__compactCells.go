@@ -4,15 +4,15 @@ package h3
 // compresses them by pruning full child branches to the parent level. This is
 // also done for all parents recursively to get the minimum number of hex
 // addresses that perfectly cover the defined space.
-// The compactedSet slice is modified in place. Remaining slots are filled with H3_NULL.
+// The compactedSet slice is modified in place. Remaining slots are filled with h3Null.
 // Ported from H3 C: h3Index.c::compactCells.
-func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Error {
+func compactCells(h3Set []h3Index, compactedSet []h3Index, numHexes int64) h3Error {
 	if numHexes == 0 {
-		return E_SUCCESS
+		return eSuccess
 	}
 
 	if int64(len(h3Set)) < numHexes || int64(len(compactedSet)) < numHexes {
-		return E_FAILED
+		return eFailed
 	}
 
 	res := getResolution(h3Set[0])
@@ -21,13 +21,13 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 		for i := int64(0); i < numHexes; i++ {
 			compactedSet[i] = h3Set[i]
 		}
-		return E_SUCCESS
+		return eSuccess
 	}
 
 	// Create working arrays
-	remainingHexes := make([]H3Index, numHexes)
+	remainingHexes := make([]h3Index, numHexes)
 	copy(remainingHexes, h3Set)
-	hashSetArray := make([]H3Index, numHexes)
+	hashSetArray := make([]h3Index, numHexes)
 
 	compactedSetOffset := int64(0)
 	numRemainingHexes := numHexes
@@ -50,32 +50,32 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 					// because it expects to have set the reserved bits
 					// itself.
 					if getReservedBits(currIndex) != 0 {
-						return E_CELL_INVALID
+						return eCellInvalid
 					}
 
 					parent, parentError := cellToParent(currIndex, parentRes)
 					// Should never be reachable as a result of the compact
 					// algorithm. Can happen if cellToParent errors e.g.
 					// because of incompatible resolutions.
-					if parentError != E_SUCCESS {
+					if parentError != eSuccess {
 						return parentError
 					}
 
 					// Modulus hash the parent into the temp array
-					loc := int64(parent % H3Index(numRemainingHexes))
+					loc := int64(parent % h3Index(numRemainingHexes))
 					loopCount := int64(0)
 					for hashSetArray[loc] != 0 {
 						if loopCount > numRemainingHexes {
 							// This case should not be possible because at
 							// most one index is placed into hashSetArray
 							// per numRemainingHexes.
-							return E_FAILED
+							return eFailed
 						}
-						tempIndex := hashSetArray[loc] & H3Index(H3_RESERVED_MASK_NEGATIVE)
+						tempIndex := hashSetArray[loc] & h3Index(h3ReservedMaskNegative)
 						if tempIndex == parent {
 							count := getReservedBits(hashSetArray[loc]) + 1
 							limitCount := int32(7)
-							if isPentagon(tempIndex & H3Index(H3_RESERVED_MASK_NEGATIVE)) {
+							if isPentagon(tempIndex & h3Index(h3ReservedMaskNegative)) {
 								limitCount--
 							}
 							// One is added to count for this check to match
@@ -84,10 +84,10 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 							// present.
 							if count+1 > limitCount {
 								// Only possible on duplicate input
-								return E_DUPLICATE_INPUT
+								return eDuplicateInput
 							}
 							parent = setReservedBits(parent, count)
-							hashSetArray[loc] = H3_NULL
+							hashSetArray[loc] = h3Null
 						} else {
 							loc = (loc + 1) % numRemainingHexes
 						}
@@ -110,14 +110,14 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 			break
 		}
 
-		compactableHexes := make([]H3Index, maxCompactableCount)
+		compactableHexes := make([]h3Index, maxCompactableCount)
 		for i := int64(0); i < numRemainingHexes; i++ {
 			if hashSetArray[i] == 0 {
 				continue
 			}
 			count := getReservedBits(hashSetArray[i]) + 1
 			// Include the deleted direction for pentagons as implicitly "there"
-			if isPentagon(hashSetArray[i] & H3Index(H3_RESERVED_MASK_NEGATIVE)) {
+			if isPentagon(hashSetArray[i] & h3Index(h3ReservedMaskNegative)) {
 				// We need this later on, no need to recalculate
 				hashSetArray[i] = setReservedBits(hashSetArray[i], count)
 				// Increment count after setting the reserved bits,
@@ -127,7 +127,7 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 			}
 			if count == 7 {
 				// Bingo! Full set!
-				compactableHexes[compactableCount] = hashSetArray[i] & H3Index(H3_RESERVED_MASK_NEGATIVE)
+				compactableHexes[compactableCount] = hashSetArray[i] & h3Index(h3ReservedMaskNegative)
 				compactableCount++
 			}
 		}
@@ -137,19 +137,19 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 		uncompactableCount := int64(0)
 		for i := int64(0); i < numRemainingHexes; i++ {
 			currIndex := remainingHexes[i]
-			if currIndex != H3_NULL {
+			if currIndex != h3Null {
 				isUncompactable := true
 				// Resolution 0 cells always uncompactable, and trying to take
 				// the res -1 parent of a cell is invalid.
 				if parentRes >= 0 {
 					parent, parentError := cellToParent(currIndex, parentRes)
-					if parentError != E_SUCCESS {
+					if parentError != eSuccess {
 						return parentError
 					}
 					// Modulus hash the parent into the temp array
 					// to determine if this index was included in
 					// the compactableHexes array
-					loc := int64(parent % H3Index(numRemainingHexes))
+					loc := int64(parent % h3Index(numRemainingHexes))
 					loopCount := int64(0)
 					// Equivalent to C do-while loop
 					for {
@@ -157,9 +157,9 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 							// This case should not be possible because at most
 							// one index is placed into hashSetArray per input
 							// hexagon.
-							return E_FAILED
+							return eFailed
 						}
-						tempIndex := hashSetArray[loc] & H3Index(H3_RESERVED_MASK_NEGATIVE)
+						tempIndex := hashSetArray[loc] & h3Index(h3ReservedMaskNegative)
 						if tempIndex == parent {
 							count := getReservedBits(hashSetArray[loc]) + 1
 							if count == 7 {
@@ -184,7 +184,7 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 		}
 
 		// Set up for the next loop
-		// Clear hash set array (matches C: memset(hashSetArray, 0, numHexes * sizeof(H3Index)))
+		// Clear hash set array (matches C: memset(hashSetArray, 0, numHexes * sizeof(h3Index)))
 		for i := int64(0); i < numHexes; i++ {
 			hashSetArray[i] = 0
 		}
@@ -193,10 +193,10 @@ func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Err
 		numRemainingHexes = compactableCount
 	}
 
-	// Fill remaining slots with H3_NULL
+	// Fill remaining slots with h3Null
 	for i := compactedSetOffset; i < numHexes; i++ {
-		compactedSet[i] = H3_NULL
+		compactedSet[i] = h3Null
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

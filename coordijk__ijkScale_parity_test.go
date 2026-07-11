@@ -7,17 +7,17 @@ import "testing"
 func Test_ijkScale_parity(t *testing.T) {
 	tests := []struct {
 		name   string
-		coord  CoordIJK
+		coord  coordIJK
 		factor int32
 	}{
-		{"zeros", CoordIJK{0, 0, 0}, 5},
-		{"positive scale positive", CoordIJK{1, 2, 3}, 2},
-		{"positive scale negative", CoordIJK{1, 2, 3}, -2},
-		{"negative scale positive", CoordIJK{-1, -2, -3}, 2},
-		{"negative scale negative", CoordIJK{-1, -2, -3}, -2},
-		{"scale by zero", CoordIJK{5, 10, 15}, 0},
-		{"scale by one", CoordIJK{5, 10, 15}, 1},
-		{"mixed coords", CoordIJK{10, -20, 30}, 3},
+		{"zeros", coordIJK{0, 0, 0}, 5},
+		{"positive scale positive", coordIJK{1, 2, 3}, 2},
+		{"positive scale negative", coordIJK{1, 2, 3}, -2},
+		{"negative scale positive", coordIJK{-1, -2, -3}, 2},
+		{"negative scale negative", coordIJK{-1, -2, -3}, -2},
+		{"scale by zero", coordIJK{5, 10, 15}, 0},
+		{"scale by one", coordIJK{5, 10, 15}, 1},
+		{"mixed coords", coordIJK{10, -20, 30}, 3},
 	}
 
 	for _, tt := range tests {

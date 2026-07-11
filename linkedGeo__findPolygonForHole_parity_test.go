@@ -8,8 +8,8 @@ import (
 
 func Test_findPolygonForHole_parity(t *testing.T) {
 	// Helper to create a simple square loop
-	createSquareLoop := func(x, y, size float64) *LinkedGeoLoop {
-		loop := &LinkedGeoLoop{}
+	createSquareLoop := func(x, y, size float64) *linkedGeoLoop {
+		loop := &linkedGeoLoop{}
 		coords := []LatLng{
 			{Lat: Rad(x), Lng: Rad(y)},
 			{Lat: Rad(x), Lng: Rad(y + size)},
@@ -18,9 +18,9 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 			{Lat: Rad(x), Lng: Rad(y)}, // Close the loop
 		}
 
-		var prev *LinkedLatLng
+		var prev *linkedLatLng
 		for i, coord := range coords {
-			node := &LinkedLatLng{
+			node := &linkedLatLng{
 				Vertex: coord,
 				Next:   nil,
 			}
@@ -35,33 +35,33 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 		return loop
 	}
 
-	// Helper to create bbox for a loop
-	createBboxForLoop := func(loop *LinkedGeoLoop) *BBox {
-		bbox := &BBox{North: Deg(-90), South: Deg(90), East: Deg(-180), West: Deg(180)}
+	// Helper to create bb for a loop
+	createBboxForLoop := func(loop *linkedGeoLoop) *bbox {
+		bb := &bbox{North: Deg(-90), South: Deg(90), East: Deg(-180), West: Deg(180)}
 
-		// Simple bbox calculation (not exact but sufficient for testing)
+		// Simple bb calculation (not exact but sufficient for testing)
 		current := loop.First
 		for current != nil {
-			if current.Vertex.Lat.Rad() > bbox.North.Rad() {
-				bbox.North = current.Vertex.Lat
+			if current.Vertex.Lat.Rad() > bb.North.Rad() {
+				bb.North = current.Vertex.Lat
 			}
-			if current.Vertex.Lat.Rad() < bbox.South.Rad() {
-				bbox.South = current.Vertex.Lat
+			if current.Vertex.Lat.Rad() < bb.South.Rad() {
+				bb.South = current.Vertex.Lat
 			}
-			if current.Vertex.Lng.Rad() > bbox.East.Rad() {
-				bbox.East = current.Vertex.Lng
+			if current.Vertex.Lng.Rad() > bb.East.Rad() {
+				bb.East = current.Vertex.Lng
 			}
-			if current.Vertex.Lng.Rad() < bbox.West.Rad() {
-				bbox.West = current.Vertex.Lng
+			if current.Vertex.Lng.Rad() < bb.West.Rad() {
+				bb.West = current.Vertex.Lng
 			}
 			current = current.Next
 		}
 
-		return bbox
+		return bb
 	}
 
 	// Helper to create a linked list of polygons
-	createPolygonList := func(polygons []*LinkedGeoPolygon) *LinkedGeoPolygon {
+	createPolygonList := func(polygons []*linkedGeoPolygon) *linkedGeoPolygon {
 		if len(polygons) == 0 {
 			return nil
 		}
@@ -81,102 +81,102 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		setupTest     func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) // returns hole, polygons, bboxes, expected index
+		setupTest     func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) // returns hole, polygons, bboxes, expected index
 		expectedIndex int
 	}{
 		{
 			name: "no polygons",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) {
 				hole := createSquareLoop(0.04, 0.04, 0.02)
-				return hole, []*LinkedGeoPolygon{}, []*BBox{}, -1
+				return hole, []*linkedGeoPolygon{}, []*bbox{}, -1
 			},
 			expectedIndex: -1,
 		},
 		{
 			name: "nil hole",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
-				polygon := &LinkedGeoPolygon{
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) {
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1),
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return nil, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}, -1
+				return nil, []*linkedGeoPolygon{polygon}, []*bbox{bb}, -1
 			},
 			expectedIndex: -1,
 		},
 		{
 			name: "hole with nil first coordinate",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
-				hole := &LinkedGeoLoop{
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) {
+				hole := &linkedGeoLoop{
 					First: nil,
 					Last:  nil,
 				}
 
-				polygon := &LinkedGeoPolygon{
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1),
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return hole, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}, -1
+				return hole, []*linkedGeoPolygon{polygon}, []*bbox{bb}, -1
 			},
 			expectedIndex: -1,
 		},
 		{
 			name: "hole not inside any polygon",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) {
 				// Hole far from any polygon
 				hole := createSquareLoop(10, 10, 0.02)
 
-				polygon := &LinkedGeoPolygon{
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1),
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return hole, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}, -1
+				return hole, []*linkedGeoPolygon{polygon}, []*bbox{bb}, -1
 			},
 			expectedIndex: -1,
 		},
 		{
 			name: "hole inside single polygon",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) {
 				// Small hole inside polygon
 				hole := createSquareLoop(0.04, 0.04, 0.02)
 
-				polygon := &LinkedGeoPolygon{
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1), // Contains hole
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return hole, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}, 0
+				return hole, []*linkedGeoPolygon{polygon}, []*bbox{bb}, 0
 			},
 			expectedIndex: 0,
 		},
 		{
 			name: "hole inside multiple nested polygons - find most deeply nested",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) {
 				// Small hole at center
 				hole := createSquareLoop(0.045, 0.045, 0.01)
 
 				// Create nested polygons (each contains the hole)
-				polygon1 := &LinkedGeoPolygon{
+				polygon1 := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1), // Largest
 				}
 				polygon1.Last = polygon1.First
 
-				polygon2 := &LinkedGeoPolygon{
+				polygon2 := &linkedGeoPolygon{
 					First: createSquareLoop(0.02, 0.02, 0.06), // Medium
 				}
 				polygon2.Last = polygon2.First
 
-				polygon3 := &LinkedGeoPolygon{
+				polygon3 := &linkedGeoPolygon{
 					First: createSquareLoop(0.03, 0.03, 0.04), // Smallest but still contains hole
 				}
 				polygon3.Last = polygon3.First
@@ -187,28 +187,28 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 
 				// The most deeply nested polygon (polygon3) should be selected
 				return hole,
-					[]*LinkedGeoPolygon{polygon1, polygon2, polygon3},
-					[]*BBox{bbox1, bbox2, bbox3}, 2
+					[]*linkedGeoPolygon{polygon1, polygon2, polygon3},
+					[]*bbox{bbox1, bbox2, bbox3}, 2
 			},
 			expectedIndex: 2,
 		},
 		{
 			name: "hole inside some but not all polygons",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox, int32) {
 				// Hole positioned to be inside polygon1 and polygon2 but not polygon3
 				hole := createSquareLoop(0.025, 0.025, 0.01)
 
-				polygon1 := &LinkedGeoPolygon{
+				polygon1 := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1), // Contains hole
 				}
 				polygon1.Last = polygon1.First
 
-				polygon2 := &LinkedGeoPolygon{
+				polygon2 := &linkedGeoPolygon{
 					First: createSquareLoop(0.01, 0.01, 0.08), // Contains hole (more nested)
 				}
 				polygon2.Last = polygon2.First
 
-				polygon3 := &LinkedGeoPolygon{
+				polygon3 := &linkedGeoPolygon{
 					First: createSquareLoop(0.05, 0.05, 0.04), // Does NOT contain hole
 				}
 				polygon3.Last = polygon3.First
@@ -219,8 +219,8 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 
 				// polygon2 should be selected (more deeply nested than polygon1)
 				return hole,
-					[]*LinkedGeoPolygon{polygon1, polygon2, polygon3},
-					[]*BBox{bbox1, bbox2, bbox3}, 1
+					[]*linkedGeoPolygon{polygon1, polygon2, polygon3},
+					[]*bbox{bbox1, bbox2, bbox3}, 1
 			},
 			expectedIndex: 1,
 		},
@@ -246,7 +246,7 @@ func Test_findPolygonForHole_parity(t *testing.T) {
 			}
 
 			// Check expected result
-			var expected *LinkedGeoPolygon
+			var expected *linkedGeoPolygon
 			if expectedIndex >= 0 && int(expectedIndex) < len(polygons) {
 				expected = polygons[expectedIndex]
 			}

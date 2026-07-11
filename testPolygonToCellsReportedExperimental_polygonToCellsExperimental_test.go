@@ -5,11 +5,11 @@ import (
 	"testing"
 )
 
-// countNonNullIndexes counts the number of non-null H3Index values in a slice.
-func countNonNullIndexes(indexes []H3Index) int64 {
+// countNonNullIndexes counts the number of non-null h3Index values in a slice.
+func countNonNullIndexes(indexes []h3Index) int64 {
 	var count int64
 	for _, idx := range indexes {
-		if idx != H3_NULL {
+		if idx != h3Null {
 			count++
 		}
 	}
@@ -19,7 +19,7 @@ func countNonNullIndexes(indexes []H3Index) int64 {
 func Test_fuzzer_crash(t *testing.T) {
 	t.Parallel()
 
-	// Fuzzer crash due to inconsistent handling of CONTAINMENT_OVERLAPPING
+	// Fuzzer crash due to inconsistent handling of ContainmentOverlapping
 	// This test uses the exact data from the original C test case that caused the crash
 	// Vertex 0: lat=3.2378592100206092e-319 (0x000000000000ffff), lng=0 (0x0000000000000000)
 	// Vertex 1: lat=7.2902319905434936e-304 (0x00ffff00000a0000), lng=-8.9283979943081665e+303 (0xff0a0a0a0a0a0000)
@@ -34,9 +34,9 @@ func Test_fuzzer_crash(t *testing.T) {
 	}
 
 	res := int32(0)
-	flags := uint32(CONTAINMENT_OVERLAPPING)
+	flags := uint32(ContainmentOverlapping)
 	sz, err := maxPolygonToCellsSizeExperimental(&geoPolygon, res, flags)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
@@ -44,9 +44,9 @@ func Test_fuzzer_crash(t *testing.T) {
 		t.Errorf("Expected output count 1, got %d", sz)
 	}
 
-	out := make([]H3Index, sz)
+	out := make([]h3Index, sz)
 	err = polygonToCellsExperimental(&geoPolygon, res, flags, sz, out)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 }
@@ -56,53 +56,53 @@ func Test_entireWorld(t *testing.T) {
 
 	// Test for entire world coverage using two polygons
 	worldVerts1 := []LatLng{
-		{Lat: Angle(-M_PI_2), Lng: Angle(-M_PI)},
-		{Lat: Angle(M_PI_2), Lng: Angle(-M_PI)},
-		{Lat: Angle(M_PI_2), Lng: Angle(0)},
-		{Lat: Angle(-M_PI_2), Lng: Angle(0)},
+		{Lat: Angle(-mPi2), Lng: Angle(-mPi)},
+		{Lat: Angle(mPi2), Lng: Angle(-mPi)},
+		{Lat: Angle(mPi2), Lng: Angle(0)},
+		{Lat: Angle(-mPi2), Lng: Angle(0)},
 	}
 	worldGeoPolygon1 := GeoPolygon{GeoLoop: worldVerts1, Holes: nil}
 
 	worldVerts2 := []LatLng{
-		{Lat: Angle(-M_PI_2), Lng: Angle(0)},
-		{Lat: Angle(M_PI_2), Lng: Angle(0)},
-		{Lat: Angle(M_PI_2), Lng: Angle(M_PI)},
-		{Lat: Angle(-M_PI_2), Lng: Angle(M_PI)},
+		{Lat: Angle(-mPi2), Lng: Angle(0)},
+		{Lat: Angle(mPi2), Lng: Angle(0)},
+		{Lat: Angle(mPi2), Lng: Angle(mPi)},
+		{Lat: Angle(-mPi2), Lng: Angle(mPi)},
 	}
 	worldGeoPolygon2 := GeoPolygon{GeoLoop: worldVerts2, Holes: nil}
 
 	for res := int32(0); res < 3; res++ {
 		// Process first polygon
 		var polygonToCellsSize1 int64
-		err := maxPolygonToCellsSize(&worldGeoPolygon1, res, uint32(CONTAINMENT_CENTER), &polygonToCellsSize1)
-		if err != E_SUCCESS {
+		err := maxPolygonToCellsSize(&worldGeoPolygon1, res, uint32(ContainmentCenter), &polygonToCellsSize1)
+		if err != eSuccess {
 			t.Fatalf("maxPolygonToCellsSize failed for polygon 1 at res %d: %v", res, err)
 		}
-		polygonToCellsOut1 := make([]H3Index, polygonToCellsSize1)
+		polygonToCellsOut1 := make([]h3Index, polygonToCellsSize1)
 
-		err = polygonToCellsExperimental(&worldGeoPolygon1, res, uint32(CONTAINMENT_CENTER), polygonToCellsSize1, polygonToCellsOut1)
-		if err != E_SUCCESS {
+		err = polygonToCellsExperimental(&worldGeoPolygon1, res, uint32(ContainmentCenter), polygonToCellsSize1, polygonToCellsOut1)
+		if err != eSuccess {
 			t.Fatalf("polygonToCellsExperimental failed for polygon 1 at res %d: %v", res, err)
 		}
 		actualNumIndexes1 := countNonNullIndexes(polygonToCellsOut1)
 
 		// Process second polygon
 		var polygonToCellsSize2 int64
-		err = maxPolygonToCellsSize(&worldGeoPolygon2, res, uint32(CONTAINMENT_CENTER), &polygonToCellsSize2)
-		if err != E_SUCCESS {
+		err = maxPolygonToCellsSize(&worldGeoPolygon2, res, uint32(ContainmentCenter), &polygonToCellsSize2)
+		if err != eSuccess {
 			t.Fatalf("maxPolygonToCellsSize failed for polygon 2 at res %d: %v", res, err)
 		}
-		polygonToCellsOut2 := make([]H3Index, polygonToCellsSize2)
+		polygonToCellsOut2 := make([]h3Index, polygonToCellsSize2)
 
-		err = polygonToCellsExperimental(&worldGeoPolygon2, res, uint32(CONTAINMENT_CENTER), polygonToCellsSize2, polygonToCellsOut2)
-		if err != E_SUCCESS {
+		err = polygonToCellsExperimental(&worldGeoPolygon2, res, uint32(ContainmentCenter), polygonToCellsSize2, polygonToCellsOut2)
+		if err != eSuccess {
 			t.Fatalf("polygonToCellsExperimental failed for polygon 2 at res %d: %v", res, err)
 		}
 		actualNumIndexes2 := countNonNullIndexes(polygonToCellsOut2)
 
 		// Get expected total world cells
 		expectedTotalWorld, err := getNumCells(res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("getNumCells failed for res %d: %v", res, err)
 		}
 
@@ -112,15 +112,15 @@ func Test_entireWorld(t *testing.T) {
 		}
 
 		// Check that sets are disjoint
-		indexSet := make(map[H3Index]bool)
+		indexSet := make(map[h3Index]bool)
 		for _, idx := range polygonToCellsOut1 {
-			if idx != H3_NULL {
+			if idx != h3Null {
 				indexSet[idx] = true
 			}
 		}
 
 		for _, idx := range polygonToCellsOut2 {
-			if idx != H3_NULL {
+			if idx != h3Null {
 				if indexSet[idx] {
 					t.Errorf("Index 0x%x found in both polygon results at res %d - sets should be disjoint", idx, res)
 				}
@@ -151,14 +151,14 @@ func Test_h3js_67(t *testing.T) {
 
 	res := int32(7)
 	var numHexagons int64
-	err := maxPolygonToCellsSize(&testPolygon, res, uint32(CONTAINMENT_CENTER), &numHexagons)
-	if err != E_SUCCESS {
+	err := maxPolygonToCellsSize(&testPolygon, res, uint32(ContainmentCenter), &numHexagons)
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSize failed: %v", err)
 	}
-	hexagons := make([]H3Index, numHexagons)
+	hexagons := make([]h3Index, numHexagons)
 
-	err = polygonToCellsExperimental(&testPolygon, res, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	err = polygonToCellsExperimental(&testPolygon, res, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 	actualNumIndexes := countNonNullIndexes(hexagons)
@@ -190,14 +190,14 @@ func Test_h3js_67_2nd(t *testing.T) {
 
 	res := int32(7)
 	var numHexagons int64
-	err := maxPolygonToCellsSize(&testPolygon, res, uint32(CONTAINMENT_CENTER), &numHexagons)
-	if err != E_SUCCESS {
+	err := maxPolygonToCellsSize(&testPolygon, res, uint32(ContainmentCenter), &numHexagons)
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSize failed: %v", err)
 	}
-	hexagons := make([]H3Index, numHexagons)
+	hexagons := make([]h3Index, numHexagons)
 
-	err = polygonToCellsExperimental(&testPolygon, res, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	err = polygonToCellsExperimental(&testPolygon, res, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 	actualNumIndexes := countNonNullIndexes(hexagons)
@@ -224,14 +224,14 @@ func Test_h3_136(t *testing.T) {
 
 	res := int32(13)
 	var numHexagons int64
-	err := maxPolygonToCellsSize(&testPolygon, res, uint32(CONTAINMENT_CENTER), &numHexagons)
-	if err != E_SUCCESS {
+	err := maxPolygonToCellsSize(&testPolygon, res, uint32(ContainmentCenter), &numHexagons)
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSize failed: %v", err)
 	}
-	hexagons := make([]H3Index, numHexagons)
+	hexagons := make([]h3Index, numHexagons)
 
-	err = polygonToCellsExperimental(&testPolygon, res, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	err = polygonToCellsExperimental(&testPolygon, res, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 	actualNumIndexes := countNonNullIndexes(hexagons)
@@ -247,10 +247,10 @@ func Test_h3_595(t *testing.T) {
 	// https://github.com/uber/h3/issues/595
 	// Note: The second test in the C code has the same name as the first (h3_136),
 	// but this is actually testing issue 595
-	center := H3Index(0x85283473fffffff)
+	center := h3Index(0x85283473fffffff)
 	var centerLatLng LatLng
 	err := cellToLatLng(center, &centerLatLng)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellToLatLng failed: %v", err)
 	}
 
@@ -271,14 +271,14 @@ func Test_h3_595(t *testing.T) {
 
 	res := int32(5)
 	var numHexagons int64
-	err = maxPolygonToCellsSize(&testPolygon, res, uint32(CONTAINMENT_CENTER), &numHexagons)
-	if err != E_SUCCESS {
+	err = maxPolygonToCellsSize(&testPolygon, res, uint32(ContainmentCenter), &numHexagons)
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSize failed: %v", err)
 	}
-	hexagons := make([]H3Index, numHexagons)
+	hexagons := make([]h3Index, numHexagons)
 
-	err = polygonToCellsExperimental(&testPolygon, res, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	err = polygonToCellsExperimental(&testPolygon, res, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 	actualNumIndexes := countNonNullIndexes(hexagons)

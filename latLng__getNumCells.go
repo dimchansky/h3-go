@@ -7,9 +7,9 @@ package h3
 // has 2 pentagons at the poles and 120 faces, each subdivided 7^res times
 // per resolution level.
 // Ported from H3 C: latLng.c::getNumCells.
-func getNumCells(res int32) (int64, H3Error) {
-	if res < 0 || res > MAX_H3_RES {
-		return 0, E_RES_DOMAIN
+func getNumCells(res int32) (int64, h3Error) {
+	if res < 0 || res > maxH3Res {
+		return 0, eResDomain
 	}
-	return 2 + 120*_ipow(7, int64(res)), E_SUCCESS
+	return 2 + 120*_ipow(7, int64(res)), eSuccess
 }

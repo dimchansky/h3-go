@@ -8,52 +8,52 @@ import (
 
 func Test_latLngToCell_res(t *testing.T) {
 	t.Parallel()
-	var h H3Index
+	var h h3Index
 	anywhere := LatLng{Lat: 0, Lng: 0}
 
 	// Test resolution below 0 is invalid
 	err := latLngToCell(&anywhere, -1, &h)
-	if err != E_RES_DOMAIN {
-		t.Errorf("expected E_RES_DOMAIN for resolution -1, got %v", err)
+	if err != eResDomain {
+		t.Errorf("expected eResDomain for resolution -1, got %v", err)
 	}
 
 	// Test resolution above 15 is invalid
 	err = latLngToCell(&anywhere, 16, &h)
-	if err != E_RES_DOMAIN {
-		t.Errorf("expected E_RES_DOMAIN for resolution 16, got %v", err)
+	if err != eResDomain {
+		t.Errorf("expected eResDomain for resolution 16, got %v", err)
 	}
 }
 
 func Test_latLngToCell_coord(t *testing.T) {
 	t.Parallel()
-	var h H3Index
+	var h h3Index
 
 	// Test invalid latitude (NaN)
 	invalidLat := LatLng{Lat: Angle(math.NaN()), Lng: 0}
 	err := latLngToCell(&invalidLat, 1, &h)
-	if err != E_LATLNG_DOMAIN {
-		t.Errorf("expected E_LATLNG_DOMAIN for invalid latitude, got %v", err)
+	if err != eLatlngDomain {
+		t.Errorf("expected eLatlngDomain for invalid latitude, got %v", err)
 	}
 
 	// Test invalid longitude (NaN)
 	invalidLng := LatLng{Lat: 0, Lng: Angle(math.NaN())}
 	err = latLngToCell(&invalidLng, 1, &h)
-	if err != E_LATLNG_DOMAIN {
-		t.Errorf("expected E_LATLNG_DOMAIN for invalid longitude, got %v", err)
+	if err != eLatlngDomain {
+		t.Errorf("expected eLatlngDomain for invalid longitude, got %v", err)
 	}
 
 	// Test coordinates with infinity
 	invalidLatLng := LatLng{Lat: Angle(math.Inf(1)), Lng: Angle(math.Inf(-1))}
 	err = latLngToCell(&invalidLatLng, 1, &h)
-	if err != E_LATLNG_DOMAIN {
-		t.Errorf("expected E_LATLNG_DOMAIN for coordinates with infinity, got %v", err)
+	if err != eLatlngDomain {
+		t.Errorf("expected eLatlngDomain for coordinates with infinity, got %v", err)
 	}
 }
 
 func Test_cellToBoundary_classIIIEdgeVertex(t *testing.T) {
 	t.Parallel()
 	// Bug test for https://github.com/uber/h3/issues/45
-	hexes := []H3Index{
+	hexes := []h3Index{
 		0x894cc5349b7ffff, 0x894cc534d97ffff, 0x894cc53682bffff,
 		0x894cc536b17ffff, 0x894cc53688bffff, 0x894cead92cbffff,
 		0x894cc536537ffff, 0x894cc5acbabffff, 0x894cc536597ffff,
@@ -62,7 +62,7 @@ func Test_cellToBoundary_classIIIEdgeVertex(t *testing.T) {
 	var b CellBoundary
 	for i, hex := range hexes {
 		err := cellToBoundary(hex, &b)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Errorf("cellToBoundary failed for hex %d: %v", i, err)
 			continue
 		}
@@ -82,7 +82,7 @@ func Test_cellToBoundary_classIIIEdgeVertex_exact(t *testing.T) {
 
 	var boundary CellBoundary
 	err2 := cellToBoundary(h3, &boundary)
-	if err2 != E_SUCCESS {
+	if err2 != eSuccess {
 		t.Fatalf("cellToBoundary failed: %v", err2)
 	}
 
@@ -123,11 +123,11 @@ func Test_cellToBoundary_classIIIEdgeVertex_exact(t *testing.T) {
 func Test_cellToBoundary_coslngConstrain(t *testing.T) {
 	t.Parallel()
 	// Bug test for https://github.com/uber/h3/issues/212
-	h3 := H3Index(0x87dc6d364ffffff)
+	h3 := h3Index(0x87dc6d364ffffff)
 
 	var boundary CellBoundary
 	err := cellToBoundary(h3, &boundary)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellToBoundary failed: %v", err)
 	}
 
@@ -166,41 +166,41 @@ func Test_cellToBoundary_coslngConstrain(t *testing.T) {
 
 func Test_cellToBoundary_failed(t *testing.T) {
 	t.Parallel()
-	h := H3Index(0x87dc6d364ffffff)
-	// Set an invalid base cell (NUM_BASE_CELLS + 1 = 122 + 1 = 123)
+	h := h3Index(0x87dc6d364ffffff)
+	// Set an invalid base cell (numBaseCells + 1 = 122 + 1 = 123)
 	// Need to check how base cells are encoded in Go version
-	invalidH := h | (H3Index(123) << H3_BC_OFFSET)
+	invalidH := h | (h3Index(123) << h3BcOffset)
 
 	var gb CellBoundary
 	err := cellToBoundary(invalidH, &gb)
-	if err != E_CELL_INVALID {
-		t.Errorf("expected E_CELL_INVALID for invalid base cell, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("expected eCellInvalid for invalid base cell, got %v", err)
 	}
 }
 
 func Test_cellToLatLngInvalid(t *testing.T) {
 	t.Parallel()
 	var coord LatLng
-	err := cellToLatLng(H3Index(0x7fffffffffffffff), &coord)
-	if err != E_CELL_INVALID {
-		t.Errorf("expected E_CELL_INVALID for invalid cell, got %v", err)
+	err := cellToLatLng(h3Index(0x7fffffffffffffff), &coord)
+	if err != eCellInvalid {
+		t.Errorf("expected eCellInvalid for invalid cell, got %v", err)
 	}
 }
 
 func Test_version(t *testing.T) {
 	t.Parallel()
-	// Port of C test: t_assert(H3_VERSION_MAJOR >= 0, "major version is set");
-	if H3_VERSION_MAJOR < 0 {
+	// Port of C test: t_assert(h3VersionMajor >= 0, "major version is set");
+	if h3VersionMajor < 0 {
 		t.Error("major version is set")
 	}
 
-	// Port of C test: t_assert(H3_VERSION_MINOR >= 0, "minor version is set");
-	if H3_VERSION_MINOR < 0 {
+	// Port of C test: t_assert(h3VersionMinor >= 0, "minor version is set");
+	if h3VersionMinor < 0 {
 		t.Error("minor version is set")
 	}
 
-	// Port of C test: t_assert(H3_VERSION_PATCH >= 0, "patch version is set");
-	if H3_VERSION_PATCH < 0 {
+	// Port of C test: t_assert(h3VersionPatch >= 0, "patch version is set");
+	if h3VersionPatch < 0 {
 		t.Error("patch version is set")
 	}
 }

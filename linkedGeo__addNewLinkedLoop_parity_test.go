@@ -9,8 +9,8 @@ import (
 func Test_addLinkedLoop_parity(t *testing.T) {
 	t.Run("empty polygon", func(t *testing.T) {
 		// Test Go implementation
-		goPolygon := &LinkedGeoPolygon{First: nil, Last: nil, Next: nil}
-		goLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
+		goPolygon := &linkedGeoPolygon{First: nil, Last: nil, Next: nil}
+		goLoop := &linkedGeoLoop{First: nil, Last: nil, Next: nil}
 		goResult := addLinkedLoop(goPolygon, goLoop)
 
 		// Check Go behavior
@@ -35,9 +35,9 @@ func Test_addLinkedLoop_parity(t *testing.T) {
 
 	t.Run("polygon with existing loop", func(t *testing.T) {
 		// Test Go implementation
-		existingLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
-		goPolygon := &LinkedGeoPolygon{First: existingLoop, Last: existingLoop, Next: nil}
-		newLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
+		existingLoop := &linkedGeoLoop{First: nil, Last: nil, Next: nil}
+		goPolygon := &linkedGeoPolygon{First: existingLoop, Last: existingLoop, Next: nil}
+		newLoop := &linkedGeoLoop{First: nil, Last: nil, Next: nil}
 		goResult := addLinkedLoop(goPolygon, newLoop)
 
 		// Check Go behavior
@@ -68,7 +68,7 @@ func Test_addLinkedLoop_parity(t *testing.T) {
 func Test_addNewLinkedLoop_parity(t *testing.T) {
 	t.Run("empty polygon", func(t *testing.T) {
 		// Test Go implementation
-		goPolygon := &LinkedGeoPolygon{First: nil, Last: nil, Next: nil}
+		goPolygon := &linkedGeoPolygon{First: nil, Last: nil, Next: nil}
 		goResult := addNewLinkedLoop(goPolygon)
 
 		// Check Go behavior
@@ -93,8 +93,8 @@ func Test_addNewLinkedLoop_parity(t *testing.T) {
 
 	t.Run("polygon with existing loop", func(t *testing.T) {
 		// Test Go implementation
-		existingLoop := &LinkedGeoLoop{First: nil, Last: nil, Next: nil}
-		goPolygon := &LinkedGeoPolygon{First: existingLoop, Last: existingLoop, Next: nil}
+		existingLoop := &linkedGeoLoop{First: nil, Last: nil, Next: nil}
+		goPolygon := &linkedGeoPolygon{First: existingLoop, Last: existingLoop, Next: nil}
 		goResult := addNewLinkedLoop(goPolygon)
 
 		// Check Go behavior

@@ -9,63 +9,63 @@ func TestFaceIjkToH3ExtremeCoordinates(t *testing.T) {
 	// Test cases for resolution 0 bounds checking
 	tests := []struct {
 		name     string
-		fijk     FaceIJK
+		fijk     faceIJK
 		res      int32
-		expected H3Index
+		expected h3Index
 	}{
 		{
 			name:     "i out of bounds at res 0",
-			fijk:     FaceIJK{Face: 0, Coord: CoordIJK{I: 3, J: 0, K: 0}},
+			fijk:     faceIJK{Face: 0, Coord: coordIJK{I: 3, J: 0, K: 0}},
 			res:      0,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "j out of bounds at res 0",
-			fijk:     FaceIJK{Face: 1, Coord: CoordIJK{I: 0, J: 4, K: 0}},
+			fijk:     faceIJK{Face: 1, Coord: coordIJK{I: 0, J: 4, K: 0}},
 			res:      0,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "k out of bounds at res 0",
-			fijk:     FaceIJK{Face: 2, Coord: CoordIJK{I: 2, J: 0, K: 5}},
+			fijk:     faceIJK{Face: 2, Coord: coordIJK{I: 2, J: 0, K: 5}},
 			res:      0,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "i out of bounds at res 1",
-			fijk:     FaceIJK{Face: 3, Coord: CoordIJK{I: 6, J: 0, K: 0}},
+			fijk:     faceIJK{Face: 3, Coord: coordIJK{I: 6, J: 0, K: 0}},
 			res:      1,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "j out of bounds at res 1",
-			fijk:     FaceIJK{Face: 4, Coord: CoordIJK{I: 0, J: 7, K: 1}},
+			fijk:     faceIJK{Face: 4, Coord: coordIJK{I: 0, J: 7, K: 1}},
 			res:      1,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "k out of bounds at res 1",
-			fijk:     FaceIJK{Face: 5, Coord: CoordIJK{I: 2, J: 0, K: 8}},
+			fijk:     faceIJK{Face: 5, Coord: coordIJK{I: 2, J: 0, K: 8}},
 			res:      1,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "i out of bounds at res 2",
-			fijk:     FaceIJK{Face: 6, Coord: CoordIJK{I: 18, J: 0, K: 0}},
+			fijk:     faceIJK{Face: 6, Coord: coordIJK{I: 18, J: 0, K: 0}},
 			res:      2,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "j out of bounds at res 2",
-			fijk:     FaceIJK{Face: 7, Coord: CoordIJK{I: 0, J: 19, K: 1}},
+			fijk:     faceIJK{Face: 7, Coord: coordIJK{I: 0, J: 19, K: 1}},
 			res:      2,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 		{
 			name:     "k out of bounds at res 2",
-			fijk:     FaceIJK{Face: 8, Coord: CoordIJK{I: 2, J: 0, K: 20}},
+			fijk:     faceIJK{Face: 8, Coord: coordIJK{I: 2, J: 0, K: 20}},
 			res:      2,
-			expected: H3_NULL,
+			expected: h3Null,
 		},
 	}
 

@@ -9,8 +9,8 @@ import (
 func Test_directionForNeighbor_parity(t *testing.T) {
 	testCases := []struct {
 		name        string
-		origin      H3Index
-		destination H3Index
+		origin      h3Index
+		destination h3Index
 	}{
 		{
 			name:        "hex neighbor",

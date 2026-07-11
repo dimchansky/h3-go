@@ -10,42 +10,42 @@ package h3
 // is on the other side of a pentagon.
 //
 // Ported from H3 C: localij.c::cellToLocalIjk.
-func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error {
+func cellToLocalIjk(origin h3Index, h3 h3Index, out *coordIJK) h3Error {
 	res := getResolution(origin)
 
 	if res != getResolution(h3) {
-		return E_RES_MISMATCH
+		return eResMismatch
 	}
 
 	originBaseCell := getBaseCell(origin)
 	baseCell := getBaseCell(h3)
 
 	// NEVER macro checks - base cells less than zero can not be represented in an index
-	if originBaseCell < 0 || originBaseCell >= NUM_BASE_CELLS {
-		return E_CELL_INVALID
+	if originBaseCell < 0 || originBaseCell >= numBaseCells {
+		return eCellInvalid
 	}
-	if baseCell < 0 || baseCell >= NUM_BASE_CELLS {
-		return E_CELL_INVALID
+	if baseCell < 0 || baseCell >= numBaseCells {
+		return eCellInvalid
 	}
 
-	// Direction from origin base cell to index base cell
-	dir := CENTER_DIGIT
-	revDir := CENTER_DIGIT
+	// direction from origin base cell to index base cell
+	dir := centerDigit
+	revDir := centerDigit
 	if originBaseCell != baseCell {
 		dir = _getBaseCellDirection(originBaseCell, baseCell)
-		if dir == INVALID_DIGIT {
+		if dir == invalidDigit {
 			// Base cells are not neighbors, can't unfold
-			return E_FAILED
+			return eFailed
 		}
 		revDir = _getBaseCellDirection(baseCell, originBaseCell)
-		// assert(revDir != INVALID_DIGIT) - this should never happen if dir is valid
+		// assert(revDir != invalidDigit) - this should never happen if dir is valid
 	}
 
 	originOnPent := _isBaseCellPentagon(originBaseCell)
 	indexOnPent := _isBaseCellPentagon(baseCell)
 
-	var indexFijk FaceIJK
-	if dir != CENTER_DIGIT {
+	var indexFijk faceIJK
+	if dir != centerDigit {
 		// Rotate index into the orientation of the origin base cell.
 		// cw because we are undoing the rotation into that base cell.
 		baseCellRotations := baseCellNeighbor60CCWRots[originBaseCell][dir]
@@ -54,7 +54,7 @@ func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error {
 				h3 = _h3RotatePent60cw(h3)
 
 				revDir = _rotate60cw(revDir)
-				if revDir == K_AXES_DIGIT {
+				if revDir == kAxesDigit {
 					revDir = _rotate60cw(revDir)
 				}
 			}
@@ -70,7 +70,7 @@ func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error {
 	// Face is unused. This produces coordinates in base cell coordinate space.
 	_h3ToFaceIjkWithInitializedFijk(h3, &indexFijk)
 
-	if dir != CENTER_DIGIT {
+	if dir != centerDigit {
 		// assert(baseCell != originBaseCell)
 		// assert(!(originOnPent && indexOnPent))
 
@@ -80,44 +80,44 @@ func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error {
 		if originOnPent {
 			originLeadingDigit := _h3LeadingNonZeroDigit(origin)
 
-			if originLeadingDigit == int32(INVALID_DIGIT) {
-				return E_CELL_INVALID
+			if originLeadingDigit == int32(invalidDigit) {
+				return eCellInvalid
 			}
-			if FAILED_DIRECTIONS[originLeadingDigit][dir] {
+			if failedDirections[originLeadingDigit][dir] {
 				// TODO: We may be unfolding the pentagon incorrectly in this
 				// case; return an error code until this is guaranteed to be
 				// correct.
-				return E_FAILED
+				return eFailed
 			}
 
-			directionRotations = PENTAGON_ROTATIONS[originLeadingDigit][dir]
+			directionRotations = localijPentagonRotations[originLeadingDigit][dir]
 			pentagonRotations = directionRotations
 		} else if indexOnPent {
 			indexLeadingDigit := _h3LeadingNonZeroDigit(h3)
 
-			if indexLeadingDigit == int32(INVALID_DIGIT) {
-				return E_CELL_INVALID
+			if indexLeadingDigit == int32(invalidDigit) {
+				return eCellInvalid
 			}
-			if FAILED_DIRECTIONS[indexLeadingDigit][revDir] {
+			if failedDirections[indexLeadingDigit][revDir] {
 				// TODO: We may be unfolding the pentagon incorrectly in this
 				// case; return an error code until this is guaranteed to be
 				// correct.
-				return E_FAILED
+				return eFailed
 			}
 
-			pentagonRotations = PENTAGON_ROTATIONS[revDir][indexLeadingDigit]
+			pentagonRotations = localijPentagonRotations[revDir][indexLeadingDigit]
 		}
 
 		if pentagonRotations < 0 || directionRotations < 0 {
 			// This occurs when an invalid K axis digit is present
-			return E_CELL_INVALID
+			return eCellInvalid
 		}
 
 		for i := int32(0); i < pentagonRotations; i++ {
 			_ijkRotate60cw(&indexFijk.Coord)
 		}
 
-		var offset CoordIJK
+		var offset coordIJK
 		_neighbor(&offset, dir)
 		// Scale offset based on resolution
 		for r := res - 1; r >= 0; r-- {
@@ -146,18 +146,18 @@ func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error {
 		originLeadingDigit := _h3LeadingNonZeroDigit(origin)
 		indexLeadingDigit := _h3LeadingNonZeroDigit(h3)
 
-		if originLeadingDigit == int32(INVALID_DIGIT) ||
-			indexLeadingDigit == int32(INVALID_DIGIT) {
-			return E_CELL_INVALID
+		if originLeadingDigit == int32(invalidDigit) ||
+			indexLeadingDigit == int32(invalidDigit) {
+			return eCellInvalid
 		}
-		if FAILED_DIRECTIONS[originLeadingDigit][indexLeadingDigit] {
+		if failedDirections[originLeadingDigit][indexLeadingDigit] {
 			// TODO: We may be unfolding the pentagon incorrectly in this case;
 			// return an error code until this is guaranteed to be correct.
-			return E_FAILED
+			return eFailed
 		}
 
 		withinPentagonRotations :=
-			PENTAGON_ROTATIONS[originLeadingDigit][indexLeadingDigit]
+			localijPentagonRotations[originLeadingDigit][indexLeadingDigit]
 
 		for i := int32(0); i < withinPentagonRotations; i++ {
 			_ijkRotate60cw(&indexFijk.Coord)
@@ -165,5 +165,5 @@ func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error {
 	}
 
 	*out = indexFijk.Coord
-	return E_SUCCESS
+	return eSuccess
 }

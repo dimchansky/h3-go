@@ -5,10 +5,10 @@ package h3
 // The callback function is called for each valid H3 index encountered.
 // This function is useful for testing or partial iteration through the H3 grid.
 // Ported from H3 C: utility.c::iterateAllIndexesAtResPartial.
-func _iterateAllIndexesAtResPartial(res int32, callback func(H3Index), baseCells int32) {
+func _iterateAllIndexesAtResPartial(res int32, callback func(h3Index), baseCells int32) {
 	// Assert equivalent: ensure baseCells doesn't exceed maximum
-	if baseCells > NUM_BASE_CELLS {
-		baseCells = NUM_BASE_CELLS
+	if baseCells > numBaseCells {
+		baseCells = numBaseCells
 	}
 
 	for i := int32(0); i < baseCells; i++ {

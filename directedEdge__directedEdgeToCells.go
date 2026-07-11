@@ -7,19 +7,19 @@ package h3
 // The results are stored in the provided originDestination slice at indices 0 and 1.
 //
 // Ported from H3 C: directedEdge.c::directedEdgeToCells.
-func directedEdgeToCells(edge H3Index, originDestination []H3Index) H3Error {
+func directedEdgeToCells(edge h3Index, originDestination []h3Index) h3Error {
 	// Get the origin cell from the directed edge
 	origin, originResult := getDirectedEdgeOrigin(edge)
-	if originResult != E_SUCCESS {
+	if originResult != eSuccess {
 		return originResult
 	}
 	originDestination[0] = origin
 
 	// Get the destination cell from the directed edge
 	destinationResult := getDirectedEdgeDestination(edge, &originDestination[1])
-	if destinationResult != E_SUCCESS {
+	if destinationResult != eSuccess {
 		return destinationResult
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

@@ -4,11 +4,11 @@ package h3
 // counter-clockwise resolution. Works in place.
 // Mirrors H3's coordijk.c::_downAp7 behavior.
 // Ported from H3 C: coordijk.c::_downAp7.
-func _downAp7(ijk *CoordIJK) {
+func _downAp7(ijk *coordIJK) {
 	// res r unit vectors in res r+1
-	iVec := CoordIJK{3, 0, 1}
-	jVec := CoordIJK{1, 3, 0}
-	kVec := CoordIJK{0, 1, 3}
+	iVec := coordIJK{3, 0, 1}
+	jVec := coordIJK{1, 3, 0}
+	kVec := coordIJK{0, 1, 3}
 
 	_ijkScale(&iVec, ijk.I)
 	_ijkScale(&jVec, ijk.J)

@@ -5,7 +5,7 @@ import "math"
 // _geoToHex2d converts geographic coordinates to 2D hex coordinates on a specified face.
 // Mirrors _geoToHex2d in faceijk.c
 // Ported from H3 C: faceijk.c::_geoToHex2d.
-func _geoToHex2d(g *LatLng, res int32, face *int32, v *Vec2d) {
+func _geoToHex2d(g *LatLng, res int32, face *int32, v *vec2d) {
 	// determine the icosahedron face
 	var sqd float64
 	_geoToClosestFace(g, face, &sqd)
@@ -13,7 +13,7 @@ func _geoToHex2d(g *LatLng, res int32, face *int32, v *Vec2d) {
 	// cos(r) = 1 - 2 * sin^2(r/2) = 1 - 2 * (sqd / 4) = 1 - sqd/2
 	r := math.Acos(1 - sqd*0.5)
 
-	if r < EPSILON {
+	if r < epsilon {
 		v.X = 0.0
 		v.Y = 0.0
 		return
@@ -25,16 +25,16 @@ func _geoToHex2d(g *LatLng, res int32, face *int32, v *Vec2d) {
 
 	// adjust theta for Class III (odd resolutions)
 	if isResolutionClassIII(res) {
-		theta = _posAngleRads(theta - M_AP7_ROT_RADS)
+		theta = _posAngleRads(theta - mAp7RotRads)
 	}
 
 	// perform gnomonic scaling of r
 	r = math.Tan(r)
 
 	// scale for current resolution length u
-	r *= INV_RES0_U_GNOMONIC
+	r *= invRes0UGnomonic
 	for i := int32(0); i < res; i++ {
-		r *= M_SQRT7
+		r *= mSqrt7
 	}
 
 	// we now have (r, theta) in hex2d with theta ccw from x-axes

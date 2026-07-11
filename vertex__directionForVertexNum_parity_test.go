@@ -9,7 +9,7 @@ import (
 func Test_directionForVertexNum_parity(t *testing.T) {
 	tests := []struct {
 		name      string
-		origin    H3Index
+		origin    h3Index
 		vertexNum int32
 	}{
 		// Test with regular hexagon cells at various resolutions
@@ -42,7 +42,7 @@ func Test_directionForVertexNum_parity(t *testing.T) {
 		{"res1 pent", 0x8104fffffffffff, 2},
 		{"res1 pent", 0x8104fffffffffff, 4},
 
-		// Test invalid vertex numbers (should return INVALID_DIGIT)
+		// Test invalid vertex numbers (should return invalidDigit)
 		{"invalid vertex -1", 0x8001fffffffffff, -1},
 		{"invalid vertex 6 for hex", 0x8001fffffffffff, 6},
 		{"invalid vertex 5 for pent", 0x8004fffffffffff, 5},
@@ -66,10 +66,10 @@ func Test_directionForVertexNum_parity(t *testing.T) {
 					tt.origin, tt.vertexNum, goResult, cResult)
 			}
 
-			// Additional validation - if the result is not INVALID_DIGIT,
+			// Additional validation - if the result is not invalidDigit,
 			// it should be a valid direction
-			if goResult != INVALID_DIGIT {
-				if goResult < 0 || goResult >= NUM_DIGITS {
+			if goResult != invalidDigit {
+				if goResult < 0 || goResult >= numDigits {
 					t.Errorf("directionForVertexNum(%#x, %d) returned invalid direction %d",
 						tt.origin, tt.vertexNum, goResult)
 				}
@@ -80,7 +80,7 @@ func Test_directionForVertexNum_parity(t *testing.T) {
 
 func Test_directionForVertexNum_invalidCells_parity(t *testing.T) {
 	// Test with invalid H3 index
-	invalidCells := []H3Index{
+	invalidCells := []h3Index{
 		0x0000000000000000, // Invalid: mode 0
 		0x1000000000000000, // Invalid: mode 1
 		0x2000000000000000, // Invalid: mode 2

@@ -21,7 +21,7 @@ func Test__iterateAllIndexesAtRes_parity(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Calculate expected total cells at resolution
 			totalCells, err := getNumCells(tc.res)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("getNumCells failed: %v", err)
 			}
 
@@ -32,13 +32,13 @@ func Test__iterateAllIndexesAtRes_parity(t *testing.T) {
 			}
 
 			// Collect Go results
-			goResults := make([]H3Index, 0, bufferSize)
-			_iterateAllIndexesAtRes(tc.res, func(h H3Index) {
+			goResults := make([]h3Index, 0, bufferSize)
+			_iterateAllIndexesAtRes(tc.res, func(h h3Index) {
 				goResults = append(goResults, h)
 			})
 
 			// Collect C results
-			cBuffer := make([]H3Index, bufferSize)
+			cBuffer := make([]h3Index, bufferSize)
 			cCount := iterateAllIndexesAtResC(tc.res, cBuffer)
 			cResults := cBuffer[:cCount]
 

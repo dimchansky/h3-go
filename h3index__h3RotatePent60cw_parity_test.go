@@ -11,7 +11,7 @@ func Test_h3RotatePent60cw_parity(t *testing.T) {
 	// Test pentagon rotation with pentagon base cells
 	tests := []struct {
 		name string
-		h    H3Index
+		h    h3Index
 	}{
 		{"pentagon_res_1", 0x81083ffffffffff}, // Pentagon base cell 4, res 1
 		{"pentagon_res_2", 0x820807fffffffff}, // Pentagon base cell 14, res 2
@@ -42,7 +42,7 @@ func Test_h3RotatePent60cw_all_pentagon_base_cells(t *testing.T) {
 		for res := int32(0); res <= 5; res++ { // Test lower resolutions to keep tests fast
 			t.Run(fmt.Sprintf("baseCell_%d_res_%d", baseCell, res), func(t *testing.T) {
 				// Create an index for this base cell and resolution
-				var h H3Index
+				var h h3Index
 				setH3Index(&h, res, baseCell, 0)
 
 				goResult := _h3RotatePent60cw(h)

@@ -8,14 +8,14 @@ package h3
 // if a pentagon is encountered. Failure cases may be fixed in future versions.
 //
 // Ported from H3 C: algos.c::gridRingUnsafe.
-func gridRingUnsafe(origin H3Index, k int32, out []H3Index) H3Error {
+func gridRingUnsafe(origin h3Index, k int32, out []h3Index) h3Error {
 	if k < 0 {
-		return E_DOMAIN
+		return eDomain
 	}
 	// Short-circuit on 'identity' ring
 	if k == 0 {
 		out[0] = origin
-		return E_SUCCESS
+		return eSuccess
 	}
 	idx := int32(0)
 	// Number of 60 degree ccw rotations to perform on the direction (based on
@@ -24,19 +24,19 @@ func gridRingUnsafe(origin H3Index, k int32, out []H3Index) H3Error {
 	// Scratch structure for checking for pentagons
 	if isPentagon(origin) {
 		// Pentagon was encountered; bail out as user doesn't want this.
-		return E_PENTAGON
+		return ePentagon
 	}
 	for ring := int32(0); ring < k; ring++ {
 		neighborResult := h3NeighborRotations(
-			origin, NEXT_RING_DIRECTION, &rotations, &origin)
-		if neighborResult != E_SUCCESS {
+			origin, nextRingDirection, &rotations, &origin)
+		if neighborResult != eSuccess {
 			// Should not be possible because `origin` would have to be a
 			// pentagon
 			// TODO: Reachable via fuzzer
 			return neighborResult
 		}
 		if isPentagon(origin) {
-			return E_PENTAGON
+			return ePentagon
 		}
 	}
 	lastIndex := origin
@@ -45,8 +45,8 @@ func gridRingUnsafe(origin H3Index, k int32, out []H3Index) H3Error {
 	for direction := int32(0); direction < 6; direction++ {
 		for pos := int32(0); pos < k; pos++ {
 			neighborResult := h3NeighborRotations(
-				origin, DIRECTIONS[direction], &rotations, &origin)
-			if neighborResult != E_SUCCESS {
+				origin, algosDirections[direction], &rotations, &origin)
+			if neighborResult != eSuccess {
 				// Should not be possible because `origin` would have to be a
 				// pentagon
 				// TODO: Reachable via fuzzer
@@ -59,7 +59,7 @@ func gridRingUnsafe(origin H3Index, k int32, out []H3Index) H3Error {
 				out[idx] = origin
 				idx++
 				if isPentagon(origin) {
-					return E_PENTAGON
+					return ePentagon
 				}
 			}
 		}
@@ -68,7 +68,7 @@ func gridRingUnsafe(origin H3Index, k int32, out []H3Index) H3Error {
 	// it indicates pentagonal distortion occurred and we should report
 	// failure.
 	if lastIndex != origin {
-		return E_PENTAGON
+		return ePentagon
 	}
-	return E_SUCCESS
+	return eSuccess
 }

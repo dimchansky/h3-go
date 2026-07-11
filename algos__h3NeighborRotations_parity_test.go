@@ -9,54 +9,54 @@ import (
 func Test_h3NeighborRotations_parity(t *testing.T) {
 	tests := []struct {
 		name      string
-		origin    H3Index
-		dir       Direction
+		origin    h3Index
+		dir       direction
 		rotations int32
 	}{
 		// Basic hexagon neighbors
-		{"hex_k_axis", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 0},
-		{"hex_j_axis", H3Index(0x8001fffffffffff), J_AXES_DIGIT, 0},
-		{"hex_jk_axis", H3Index(0x8001fffffffffff), JK_AXES_DIGIT, 0},
-		{"hex_i_axis", H3Index(0x8001fffffffffff), I_AXES_DIGIT, 0},
-		{"hex_ik_axis", H3Index(0x8001fffffffffff), IK_AXES_DIGIT, 0},
-		{"hex_ij_axis", H3Index(0x8001fffffffffff), IJ_AXES_DIGIT, 0},
+		{"hex_k_axis", h3Index(0x8001fffffffffff), kAxesDigit, 0},
+		{"hex_j_axis", h3Index(0x8001fffffffffff), jAxesDigit, 0},
+		{"hex_jk_axis", h3Index(0x8001fffffffffff), jkAxesDigit, 0},
+		{"hex_i_axis", h3Index(0x8001fffffffffff), iAxesDigit, 0},
+		{"hex_ik_axis", h3Index(0x8001fffffffffff), ikAxesDigit, 0},
+		{"hex_ij_axis", h3Index(0x8001fffffffffff), ijAxesDigit, 0},
 
 		// With some initial rotations
-		{"hex_with_rotations_1", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 1},
-		{"hex_with_rotations_2", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 2},
-		{"hex_with_rotations_3", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 3},
+		{"hex_with_rotations_1", h3Index(0x8001fffffffffff), kAxesDigit, 1},
+		{"hex_with_rotations_2", h3Index(0x8001fffffffffff), kAxesDigit, 2},
+		{"hex_with_rotations_3", h3Index(0x8001fffffffffff), kAxesDigit, 3},
 
 		// Different resolutions
-		{"res1_hex", H3Index(0x8101fffffffffff), K_AXES_DIGIT, 0},
-		{"res2_hex", H3Index(0x8201fffffffffff), K_AXES_DIGIT, 0},
-		{"res3_hex", H3Index(0x8301fffffffffff), K_AXES_DIGIT, 0},
+		{"res1_hex", h3Index(0x8101fffffffffff), kAxesDigit, 0},
+		{"res2_hex", h3Index(0x8201fffffffffff), kAxesDigit, 0},
+		{"res3_hex", h3Index(0x8301fffffffffff), kAxesDigit, 0},
 
-		// Pentagon base cells - should fail with E_PENTAGON for K_AXES_DIGIT
-		{"pentagon_base_4_k", H3Index(0x8004fffffffffff), K_AXES_DIGIT, 0},  // Should fail
-		{"pentagon_base_4_j", H3Index(0x8004fffffffffff), J_AXES_DIGIT, 0},  // Should work
-		{"pentagon_base_14_k", H3Index(0x800efffffffffff), K_AXES_DIGIT, 0}, // Should fail
-		{"pentagon_base_14_j", H3Index(0x800efffffffffff), J_AXES_DIGIT, 0}, // Should work
+		// Pentagon base cells - should fail with ePentagon for kAxesDigit
+		{"pentagon_base_4_k", h3Index(0x8004fffffffffff), kAxesDigit, 0},  // Should fail
+		{"pentagon_base_4_j", h3Index(0x8004fffffffffff), jAxesDigit, 0},  // Should work
+		{"pentagon_base_14_k", h3Index(0x800efffffffffff), kAxesDigit, 0}, // Should fail
+		{"pentagon_base_14_j", h3Index(0x800efffffffffff), jAxesDigit, 0}, // Should work
 
 		// More pentagon base cells
-		{"pentagon_base_24", H3Index(0x8018fffffffffff), J_AXES_DIGIT, 0},
-		{"pentagon_base_38", H3Index(0x8026fffffffffff), J_AXES_DIGIT, 0},
-		{"pentagon_base_49", H3Index(0x8031fffffffffff), J_AXES_DIGIT, 0},
-		{"pentagon_base_58", H3Index(0x803afffffffffff), J_AXES_DIGIT, 0},
+		{"pentagon_base_24", h3Index(0x8018fffffffffff), jAxesDigit, 0},
+		{"pentagon_base_38", h3Index(0x8026fffffffffff), jAxesDigit, 0},
+		{"pentagon_base_49", h3Index(0x8031fffffffffff), jAxesDigit, 0},
+		{"pentagon_base_58", h3Index(0x803afffffffffff), jAxesDigit, 0},
 
 		// Edge cases with high rotations
-		{"high_rotation_6", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 6},
-		{"high_rotation_7", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 7},
-		{"high_rotation_12", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 12},
+		{"high_rotation_6", h3Index(0x8001fffffffffff), kAxesDigit, 6},
+		{"high_rotation_7", h3Index(0x8001fffffffffff), kAxesDigit, 7},
+		{"high_rotation_12", h3Index(0x8001fffffffffff), kAxesDigit, 12},
 
 		// Different base cells
-		{"base_cell_0", H3Index(0x8000fffffffffff), K_AXES_DIGIT, 0},
-		{"base_cell_1", H3Index(0x8001fffffffffff), K_AXES_DIGIT, 0},
-		{"base_cell_2", H3Index(0x8002fffffffffff), K_AXES_DIGIT, 0},
-		{"base_cell_10", H3Index(0x800afffffffffff), K_AXES_DIGIT, 0},
-		{"base_cell_20", H3Index(0x8014fffffffffff), K_AXES_DIGIT, 0},
+		{"base_cell_0", h3Index(0x8000fffffffffff), kAxesDigit, 0},
+		{"base_cell_1", h3Index(0x8001fffffffffff), kAxesDigit, 0},
+		{"base_cell_2", h3Index(0x8002fffffffffff), kAxesDigit, 0},
+		{"base_cell_10", h3Index(0x800afffffffffff), kAxesDigit, 0},
+		{"base_cell_20", h3Index(0x8014fffffffffff), kAxesDigit, 0},
 
 		// Failing case from cellToVertex debug - should cause parity test to fail
-		{"cellToVertex_failing_case", H3Index(0x08015fffffffffff), I_AXES_DIGIT, 0},
+		{"cellToVertex_failing_case", h3Index(0x08015fffffffffff), iAxesDigit, 0},
 	}
 
 	for _, tt := range tests {
@@ -66,7 +66,7 @@ func Test_h3NeighborRotations_parity(t *testing.T) {
 			cOut, cResult := h3NeighborRotationsC(tt.origin, tt.dir, &cRotations)
 
 			// Test Go implementation
-			var goOut H3Index
+			var goOut h3Index
 			goRotations := tt.rotations
 			goResult := h3NeighborRotations(tt.origin, tt.dir, &goRotations, &goOut)
 
@@ -78,7 +78,7 @@ func Test_h3NeighborRotations_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare outputs
-			if cResult == E_SUCCESS && goResult == E_SUCCESS {
+			if cResult == eSuccess && goResult == eSuccess {
 				if cOut != goOut {
 					t.Errorf("Output mismatch for origin=0x%x, dir=%d: C=0x%x, Go=0x%x",
 						tt.origin, tt.dir, cOut, goOut)
@@ -94,16 +94,16 @@ func Test_h3NeighborRotations_parity(t *testing.T) {
 
 func Test_h3NeighborRotations_comprehensive_parity(t *testing.T) {
 	// Test with a variety of origins, directions, and rotations
-	origins := []H3Index{
-		H3Index(0x8001fffffffffff), // Basic hex
-		H3Index(0x8101fffffffffff), // Res 1
-		H3Index(0x8201fffffffffff), // Res 2
-		H3Index(0x8004fffffffffff), // Pentagon base 4
-		H3Index(0x800efffffffffff), // Pentagon base 14
-		H3Index(0x8018fffffffffff), // Pentagon base 24
+	origins := []h3Index{
+		h3Index(0x8001fffffffffff), // Basic hex
+		h3Index(0x8101fffffffffff), // Res 1
+		h3Index(0x8201fffffffffff), // Res 2
+		h3Index(0x8004fffffffffff), // Pentagon base 4
+		h3Index(0x800efffffffffff), // Pentagon base 14
+		h3Index(0x8018fffffffffff), // Pentagon base 24
 	}
 
-	directions := []Direction{J_AXES_DIGIT, JK_AXES_DIGIT, K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT}
+	directions := []direction{jAxesDigit, jkAxesDigit, kAxesDigit, ikAxesDigit, iAxesDigit, ijAxesDigit}
 	rotationsValues := []int32{0, 1, 2, 3, 4, 5}
 
 	for _, origin := range origins {
@@ -115,7 +115,7 @@ func Test_h3NeighborRotations_comprehensive_parity(t *testing.T) {
 					cOut, cResult := h3NeighborRotationsC(origin, dir, &cRotations)
 
 					// Test Go implementation
-					var goOut H3Index
+					var goOut h3Index
 					goRotations := rot
 					goResult := h3NeighborRotations(origin, dir, &goRotations, &goOut)
 
@@ -127,7 +127,7 @@ func Test_h3NeighborRotations_comprehensive_parity(t *testing.T) {
 					}
 
 					// If both succeeded, compare outputs
-					if cResult == E_SUCCESS && goResult == E_SUCCESS {
+					if cResult == eSuccess && goResult == eSuccess {
 						if cOut != goOut {
 							t.Errorf("Output mismatch for origin=0x%x, dir=%d: C=0x%x, Go=0x%x",
 								origin, dir, cOut, goOut)

@@ -1,15 +1,15 @@
 package h3
 
-// BaseCellRotation represents base cell at a given ijk and required rotations into its system.
-type BaseCellRotation struct {
+// baseCellRotation represents base cell at a given ijk and required rotations into its system.
+type baseCellRotation struct {
 	BaseCell int32 // base cell number (matches C int)
 	CcwRot60 int32 // number of ccw 60 degree rotations relative to current face (matches C int)
 }
 
 // faceIjkBaseCells mirrors the static faceIjkBaseCells array from baseCells.c
-// This is a 4D lookup table: [face][i][j][k] -> BaseCellRotation
+// This is a 4D lookup table: [face][i][j][k] -> baseCellRotation
 // Ported from H3 C: baseCells.c::faceIjkBaseCells.
-var faceIjkBaseCells = [NUM_ICOSA_FACES][3][3][3]BaseCellRotation{
+var faceIjkBaseCells = [numIcosaFaces][3][3][3]baseCellRotation{
 	{ // face 0
 		{
 			// i 0

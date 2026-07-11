@@ -55,12 +55,12 @@ func Test_getEdgeHexagons_parity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Initialize arrays for both implementations
-			goSearch := make([]H3Index, tt.numHexagons)
-			goFound := make([]H3Index, tt.numHexagons)
+			goSearch := make([]h3Index, tt.numHexagons)
+			goFound := make([]h3Index, tt.numHexagons)
 			goNumSearchHexes := int64(0)
 
-			cSearch := make([]H3Index, tt.numHexagons)
-			cFound := make([]H3Index, tt.numHexagons)
+			cSearch := make([]h3Index, tt.numHexagons)
+			cFound := make([]h3Index, tt.numHexagons)
 			cNumSearchHexes := int64(0)
 
 			// Call Go implementation
@@ -82,8 +82,8 @@ func Test_getEdgeHexagons_parity(t *testing.T) {
 			}
 
 			// Compare search arrays up to numSearchHexes
-			goSearchSet := make(map[H3Index]bool)
-			cSearchSet := make(map[H3Index]bool)
+			goSearchSet := make(map[h3Index]bool)
+			cSearchSet := make(map[h3Index]bool)
 
 			for i := int64(0); i < goNumSearchHexes; i++ {
 				goSearchSet[goSearch[i]] = true
@@ -105,8 +105,8 @@ func Test_getEdgeHexagons_parity(t *testing.T) {
 			}
 
 			// Compare found arrays (hash table structure)
-			goFoundSet := make(map[H3Index]bool)
-			cFoundSet := make(map[H3Index]bool)
+			goFoundSet := make(map[h3Index]bool)
+			cFoundSet := make(map[h3Index]bool)
 
 			for _, hex := range goFound {
 				if hex != 0 {

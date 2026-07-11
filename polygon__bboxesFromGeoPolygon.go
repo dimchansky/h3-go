@@ -4,7 +4,7 @@ package h3
 // The function creates one bounding box for the outer loop and one for each hole.
 // The bboxes array must be pre-allocated with length 1 + len(polygon.Holes).
 // Ported from H3 C: polygon.c::bboxesFromGeoPolygon.
-func bboxesFromGeoPolygon(polygon *GeoPolygon, bboxes []BBox) {
+func bboxesFromGeoPolygon(polygon *GeoPolygon, bboxes []bbox) {
 	// Create bounding box for the main geoloop
 	bboxFromGeoLoop(polygon.GeoLoop, &bboxes[0])
 

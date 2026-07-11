@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	// DBL_EPSILON represents the smallest positive floating-point number
-	// such that 1.0 + DBL_EPSILON != 1.0.
-	DBL_EPSILON = 2.220446049250313e-16
+	// dblEpsilon represents the smallest positive floating-point number
+	// such that 1.0 + dblEpsilon != 1.0.
+	dblEpsilon = 2.220446049250313e-16
 )
 
 // normalizeLngTransmeridian normalizes longitude for transmeridian arcs
@@ -24,7 +24,7 @@ func normalizeLngTransmeridian(lng float64, isTransmeridian bool) float64 {
 // defined by a linked list of coordinates. Uses ray casting with proper handling
 // of edge cases and transmeridian polygons.
 // Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(pointInside) -> pointInsideLinkedGeoLoop.
-func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bool {
+func pointInsideLinkedGeoLoop(loop *linkedGeoLoop, bbox *bbox, coord *LatLng) bool {
 	// fail fast if we're outside the bounding box
 	if !bboxContains(bbox, coord) {
 		return false
@@ -38,8 +38,8 @@ func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bo
 	var a, b LatLng
 
 	// Initialize iteration variables (INIT_ITERATION)
-	var currentCoord *LinkedLatLng = nil
-	var nextCoord *LinkedLatLng
+	var currentCoord *linkedLatLng = nil
+	var nextCoord *linkedLatLng
 
 	for {
 		// ITERATE(loop, a, b) macro expansion:
@@ -85,7 +85,7 @@ func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bo
 		// north pole. If we need to expand this algo to more generic uses we
 		// might need to handle this edge case.
 		if lat == a.Lat.Rad() || lat == b.Lat.Rad() {
-			lat += DBL_EPSILON
+			lat += dblEpsilon
 		}
 
 		// If we're totally above or below the latitude ranges, the test
@@ -100,7 +100,7 @@ func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bo
 		// Rays are cast in the longitudinal direction, in case a point
 		// exactly matches, to decide tiebreakers, bias westerly
 		if aLng == lng || bLng == lng {
-			lng -= DBL_EPSILON
+			lng -= dblEpsilon
 		}
 
 		// For the latitude of the point, compute the longitude of the

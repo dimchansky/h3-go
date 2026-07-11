@@ -7,7 +7,7 @@ import (
 )
 
 func Test_h3index_isResClassIII_ParityWithC(t *testing.T) {
-	bases := []H3Index{0x8928308280fffff, 0x821c07fffffffff}
+	bases := []h3Index{0x8928308280fffff, 0x821c07fffffffff}
 	for _, b := range bases {
 		for res := int32(0); res <= 15; res++ {
 			h := setResolution(b, res)

@@ -4,7 +4,7 @@ package h3
 // Ported from polygon.c::pointInsidePolygon
 // bboxes must contain one bbox for outer geoloop and one per hole.
 // Ported from H3 C: polygon.c::pointInsidePolygon.
-func pointInsidePolygon(poly GeoPolygon, bboxes []BBox, coord *LatLng) bool {
+func pointInsidePolygon(poly GeoPolygon, bboxes []bbox, coord *LatLng) bool {
 	// primary geoloop
 	contains := pointInsideGeoLoop(poly.GeoLoop, &bboxes[0], coord)
 	if contains && len(poly.Holes) > 0 {

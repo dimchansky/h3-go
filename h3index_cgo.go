@@ -38,22 +38,22 @@ import (
 )
 
 // getResolutionC calls the original C implementation.
-func getResolutionC(h H3Index) int32 { return int32(C.getResolution(C.H3Index(h))) }
+func getResolutionC(h h3Index) int32 { return int32(C.getResolution(C.H3Index(h))) }
 
 // getBaseCellNumberC calls the original C implementation.
-func getBaseCellNumberC(h H3Index) int32 { return int32(C.getBaseCellNumber(C.H3Index(h))) }
+func getBaseCellNumberC(h h3Index) int32 { return int32(C.getBaseCellNumber(C.H3Index(h))) }
 
 // stringToH3C calls the original C implementation.
-func stringToH3C(s string) (H3Index, uint32) {
+func stringToH3C(s string) (h3Index, uint32) {
 	cs := C.CString(s)
 	defer C.free(unsafe.Pointer(cs))
 	var out C.H3Index
 	err := C.stringToH3(cs, &out)
-	return H3Index(out), uint32(err)
+	return h3Index(out), uint32(err)
 }
 
 // h3ToStringC calls the original C implementation (17 bytes incl. NUL).
-func h3ToStringC(h H3Index) (string, uint32) {
+func h3ToStringC(h h3Index) (string, uint32) {
 	const sz = 17
 	buf := C.malloc(sz)
 	defer C.free(buf)
@@ -65,167 +65,167 @@ func h3ToStringC(h H3Index) (string, uint32) {
 func describeH3ErrorC(code uint32) string { return C.GoString(C.describeH3Error(C.uint(code))) }
 
 // getReservedBitsC exposes H3_GET_RESERVED_BITS.
-func getReservedBitsC(h H3Index) int32 { return int32(C.h3_get_reserved_bits_c(C.H3Index(h))) }
+func getReservedBitsC(h h3Index) int32 { return int32(C.h3_get_reserved_bits_c(C.H3Index(h))) }
 
 // setReservedBitsC exposes H3_SET_RESERVED_BITS.
-func setReservedBitsC(h H3Index, v int32) H3Index {
-	return H3Index(C.h3_set_reserved_bits_c(C.H3Index(h), C.int(v)))
+func setReservedBitsC(h h3Index, v int32) h3Index {
+	return h3Index(C.h3_set_reserved_bits_c(C.H3Index(h), C.int(v)))
 }
 
 // getIndexDigitC exposes H3_GET_INDEX_DIGIT.
-func getIndexDigitC(h H3Index, res int32) int32 {
+func getIndexDigitC(h h3Index, res int32) int32 {
 	return int32(C.h3_get_index_digit_c(C.H3Index(h), C.int(res)))
 }
 
 // setIndexDigitC exposes H3_SET_INDEX_DIGIT.
-func setIndexDigitC(h H3Index, res int32, digit int32) H3Index {
-	return H3Index(C.h3_set_index_digit_c(C.H3Index(h), C.int(res), C.int(digit)))
+func setIndexDigitC(h h3Index, res int32, digit int32) h3Index {
+	return h3Index(C.h3_set_index_digit_c(C.H3Index(h), C.int(res), C.int(digit)))
 }
 
 // h3LeadingNonZeroDigitC calls the original C implementation.
-func h3LeadingNonZeroDigitC(h H3Index) int32 { return int32(C._h3LeadingNonZeroDigit(C.H3Index(h))) }
+func h3LeadingNonZeroDigitC(h h3Index) int32 { return int32(C._h3LeadingNonZeroDigit(C.H3Index(h))) }
 
 // zeroIndexDigitsC calls the original C implementation.
-func zeroIndexDigitsC(h H3Index, start, end int32) H3Index {
-	return H3Index(C.zero_index_digits_c(C.H3Index(h), C.int(start), C.int(end)))
+func zeroIndexDigitsC(h h3Index, start, end int32) h3Index {
+	return h3Index(C.zero_index_digits_c(C.H3Index(h), C.int(start), C.int(end)))
 }
 
 // isResClassIIIC calls the original C implementation and returns int for parity.
-func isResClassIIIC(h H3Index) bool { return int32(C.isResClassIII(C.H3Index(h))) != 0 }
+func isResClassIIIC(h h3Index) bool { return int32(C.isResClassIII(C.H3Index(h))) != 0 }
 
 // isPentagonC calls the original C implementation and returns int for parity.
-func isPentagonC(h H3Index) bool { return int32(C.isPentagon(C.H3Index(h))) != 0 }
+func isPentagonC(h h3Index) bool { return int32(C.isPentagon(C.H3Index(h))) != 0 }
 
 // pentagonCountC calls the original C implementation.
 func pentagonCountC() int32 { return int32(C.pentagonCount()) }
 
 // getModeC exposes H3_GET_MODE.
-func getModeC(h H3Index) int32 { return int32(C.h3_get_mode_c(C.H3Index(h))) }
+func getModeC(h h3Index) int32 { return int32(C.h3_get_mode_c(C.H3Index(h))) }
 
 // setModeC exposes H3_SET_MODE.
-func setModeC(h H3Index, v int32) H3Index { return H3Index(C.h3_set_mode_c(C.H3Index(h), C.int(v))) }
+func setModeC(h h3Index, v int32) h3Index { return h3Index(C.h3_set_mode_c(C.H3Index(h), C.int(v))) }
 
 // getHighBitC exposes H3_GET_HIGH_BIT.
-func getHighBitC(h H3Index) int32 { return int32(C.h3_get_high_bit_c(C.H3Index(h))) }
+func getHighBitC(h h3Index) int32 { return int32(C.h3_get_high_bit_c(C.H3Index(h))) }
 
 // setHighBitC exposes H3_SET_HIGH_BIT.
-func setHighBitC(h H3Index, v int32) H3Index {
-	return H3Index(C.h3_set_high_bit_c(C.H3Index(h), C.int(v)))
+func setHighBitC(h h3Index, v int32) h3Index {
+	return h3Index(C.h3_set_high_bit_c(C.H3Index(h), C.int(v)))
 }
 
 // isResolutionClassIIIC bridges to the C helper taking a resolution.
 func isResolutionClassIIIC(res int32) int32 { return int32(C.isResolutionClassIII(C.int(res))) }
 
 // setH3IndexC calls the original C implementation and returns the built index.
-func setH3IndexC(res, baseCell, initDigit int32) H3Index {
+func setH3IndexC(res, baseCell, initDigit int32) h3Index {
 	var out C.H3Index
 	C.setH3Index(&out, C.int(res), C.int(baseCell), C.Direction(initDigit))
-	return H3Index(out)
+	return h3Index(out)
 }
 
 // makeDirectChildC calls the original C implementation.
-func makeDirectChildC(h H3Index, cellNumber int32) H3Index {
-	return H3Index(C.make_direct_child_c(C.H3Index(h), C.int(cellNumber)))
+func makeDirectChildC(h h3Index, cellNumber int32) h3Index {
+	return h3Index(C.make_direct_child_c(C.H3Index(h), C.int(cellNumber)))
 }
 
 // cellToParentC calls the original C implementation.
-func cellToParentC(h H3Index, parentRes int32) (H3Index, uint32) {
+func cellToParentC(h h3Index, parentRes int32) (h3Index, uint32) {
 	var out C.H3Index
 	err := C.cellToParent(C.H3Index(h), C.int(parentRes), &out)
-	return H3Index(out), uint32(err)
+	return h3Index(out), uint32(err)
 }
 
 // cellToCenterChildC calls the original C implementation.
-func cellToCenterChildC(h H3Index, childRes int32) (H3Index, uint32) {
+func cellToCenterChildC(h h3Index, childRes int32) (h3Index, uint32) {
 	var out C.H3Index
 	err := C.cellToCenterChild(C.H3Index(h), C.int(childRes), &out)
-	return H3Index(out), uint32(err)
+	return h3Index(out), uint32(err)
 }
 
 // hasChildAtResC bridges to the static helper via our shim.
-func hasChildAtResC(h H3Index, childRes int32) int32 {
+func hasChildAtResC(h h3Index, childRes int32) int32 {
 	return int32(C.has_child_at_res_c(C.H3Index(h), C.int(childRes)))
 }
 
 // cellToChildrenSizeC calls the original C implementation.
-func cellToChildrenSizeC(h H3Index, childRes int32) (int64, uint32) {
+func cellToChildrenSizeC(h h3Index, childRes int32) (int64, uint32) {
 	var out C.int64_t
 	err := C.cellToChildrenSize(C.H3Index(h), C.int(childRes), &out)
 	return int64(out), uint32(err)
 }
 
 // cellToChildPosC calls the original C implementation.
-func cellToChildPosC(child H3Index, parentRes int32) (int64, uint32) {
+func cellToChildPosC(child h3Index, parentRes int32) (int64, uint32) {
 	var out C.int64_t
 	err := C.cellToChildPos(C.H3Index(child), C.int(parentRes), &out)
 	return int64(out), uint32(err)
 }
 
 // childPosToCellC calls the original C implementation.
-func childPosToCellC(childPos int64, parent H3Index, childRes int32) (H3Index, uint32) {
+func childPosToCellC(childPos int64, parent h3Index, childRes int32) (h3Index, uint32) {
 	var out C.H3Index
 	err := C.childPosToCell(C.int64_t(childPos), C.H3Index(parent), C.int(childRes), &out)
-	return H3Index(out), uint32(err)
+	return h3Index(out), uint32(err)
 }
 
 // getPentagonsC calls the original C implementation and returns slice + err.
-func getPentagonsC(res int32) ([]H3Index, uint32) {
+func getPentagonsC(res int32) ([]h3Index, uint32) {
 	n := pentagonCountC()
 	if n <= 0 {
-		return nil, uint32(E_FAILED)
+		return nil, uint32(eFailed)
 	}
-	buf := make([]H3Index, n)
+	buf := make([]h3Index, n)
 	err := C.getPentagons(C.int(res), (*C.H3Index)(&buf[0]))
 	return buf, uint32(err)
 }
 
 // firstOneIndexC calls the original C implementation.
-func firstOneIndexC(h H3Index) int32 {
+func firstOneIndexC(h h3Index) int32 {
 	return int32(C.first_one_index_c(C.H3Index(h)))
 }
 
 // hasGoodTopBitsC calls the original C implementation.
-func hasGoodTopBitsC(h H3Index) bool {
+func hasGoodTopBitsC(h h3Index) bool {
 	return C.has_good_top_bits_c(C.H3Index(h)) != 0
 }
 
 // hasAny7UptoResC calls the original C implementation.
-func hasAny7UptoResC(h H3Index, res int32) bool {
+func hasAny7UptoResC(h h3Index, res int32) bool {
 	return C.has_any_7_upto_res_c(C.H3Index(h), C.int(res)) != 0
 }
 
 // hasAll7AfterResC calls the original C implementation.
-func hasAll7AfterResC(h H3Index, res int32) bool {
+func hasAll7AfterResC(h h3Index, res int32) bool {
 	return C.has_all_7_after_res_c(C.H3Index(h), C.int(res)) != 0
 }
 
 // hasDeletedSubsequenceC calls the original C implementation.
-func hasDeletedSubsequenceC(h H3Index, baseCell int32) bool {
+func hasDeletedSubsequenceC(h h3Index, baseCell int32) bool {
 	return C.has_deleted_subsequence_c(C.H3Index(h), C.int(baseCell)) != 0
 }
 
 // h3Rotate60ccwC calls the original C implementation.
-func h3Rotate60ccwC(h H3Index) H3Index {
-	return H3Index(C._h3Rotate60ccw(C.H3Index(h)))
+func h3Rotate60ccwC(h h3Index) h3Index {
+	return h3Index(C._h3Rotate60ccw(C.H3Index(h)))
 }
 
 // h3Rotate60cwC calls the original C implementation.
-func h3Rotate60cwC(h H3Index) H3Index {
-	return H3Index(C._h3Rotate60cw(C.H3Index(h)))
+func h3Rotate60cwC(h h3Index) h3Index {
+	return h3Index(C._h3Rotate60cw(C.H3Index(h)))
 }
 
 // h3RotatePent60ccwC calls the original C implementation.
-func h3RotatePent60ccwC(h H3Index) H3Index {
-	return H3Index(C._h3RotatePent60ccw(C.H3Index(h)))
+func h3RotatePent60ccwC(h h3Index) h3Index {
+	return h3Index(C._h3RotatePent60ccw(C.H3Index(h)))
 }
 
 // h3RotatePent60cwC calls the original C implementation.
-func h3RotatePent60cwC(h H3Index) H3Index {
-	return H3Index(C._h3RotatePent60cw(C.H3Index(h)))
+func h3RotatePent60cwC(h h3Index) h3Index {
+	return h3Index(C._h3RotatePent60cw(C.H3Index(h)))
 }
 
 // _h3ToFaceIjkWithInitializedFijkC calls the original C implementation.
-func _h3ToFaceIjkWithInitializedFijkC(h H3Index, fijk *FaceIJK) int32 {
+func _h3ToFaceIjkWithInitializedFijkC(h h3Index, fijk *faceIJK) int32 {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(fijk.Face)
 	cFijk.coord.i = C.int(fijk.Coord.I)
@@ -244,7 +244,7 @@ func _h3ToFaceIjkWithInitializedFijkC(h H3Index, fijk *FaceIJK) int32 {
 }
 
 // _h3ToFaceIjkC calls the original C implementation.
-func _h3ToFaceIjkC(h H3Index, fijk *FaceIJK) uint32 {
+func _h3ToFaceIjkC(h h3Index, fijk *faceIJK) uint32 {
 	var cFijk C.FaceIJK
 	err := C._h3ToFaceIjk(C.H3Index(h), &cFijk)
 
@@ -258,7 +258,7 @@ func _h3ToFaceIjkC(h H3Index, fijk *FaceIJK) uint32 {
 }
 
 // cellToLatLngC calls the original C implementation.
-func cellToLatLngC(h H3Index, g *LatLng) uint32 {
+func cellToLatLngC(h h3Index, g *LatLng) uint32 {
 	var cg C.LatLng
 	err := C.cellToLatLng(C.H3Index(h), &cg)
 
@@ -269,12 +269,12 @@ func cellToLatLngC(h H3Index, g *LatLng) uint32 {
 }
 
 // isValidCellC calls the original C implementation.
-func isValidCellC(h H3Index) bool {
+func isValidCellC(h h3Index) bool {
 	return int32(C.isValidCell(C.H3Index(h))) != 0
 }
 
 // latLngToCellC calls the original C implementation.
-func latLngToCellC(g *LatLng, res int32, out *H3Index) uint32 {
+func latLngToCellC(g *LatLng, res int32, out *h3Index) uint32 {
 	var cg C.LatLng
 	cg.lat = C.double(g.Lat.Rad())
 	cg.lng = C.double(g.Lng.Rad())
@@ -282,12 +282,12 @@ func latLngToCellC(g *LatLng, res int32, out *H3Index) uint32 {
 	var cOut C.H3Index
 	err := C.latLngToCell(&cg, C.int(res), &cOut)
 
-	*out = H3Index(cOut)
+	*out = h3Index(cOut)
 	return uint32(err)
 }
 
 // debugGeoToFaceIjkC calls the original C _geoToFaceIjk implementation.
-func debugGeoToFaceIjkC(g *LatLng, res int32, fijk *FaceIJK) {
+func debugGeoToFaceIjkC(g *LatLng, res int32, fijk *faceIJK) {
 	var cg C.LatLng
 	cg.lat = C.double(g.Lat.Rad())
 	cg.lng = C.double(g.Lng.Rad())
@@ -302,18 +302,18 @@ func debugGeoToFaceIjkC(g *LatLng, res int32, fijk *FaceIJK) {
 }
 
 // debugFaceIjkToH3C calls the original C _faceIjkToH3 implementation.
-func debugFaceIjkToH3C(fijk *FaceIJK, res int32) H3Index {
+func debugFaceIjkToH3C(fijk *faceIJK, res int32) h3Index {
 	var cfijk C.FaceIJK
 	cfijk.face = C.int(fijk.Face)
 	cfijk.coord.i = C.int(fijk.Coord.I)
 	cfijk.coord.j = C.int(fijk.Coord.J)
 	cfijk.coord.k = C.int(fijk.Coord.K)
 
-	return H3Index(C._faceIjkToH3(&cfijk, C.int(res)))
+	return h3Index(C._faceIjkToH3(&cfijk, C.int(res)))
 }
 
 // maxFaceCountC calls the original C implementation.
-func maxFaceCountC(h H3Index, out *int32) uint32 {
+func maxFaceCountC(h h3Index, out *int32) uint32 {
 	var cOut C.int
 	err := C.maxFaceCount(C.H3Index(h), &cOut)
 	*out = int32(cOut)
@@ -321,7 +321,7 @@ func maxFaceCountC(h H3Index, out *int32) uint32 {
 }
 
 // getIcosahedronFacesC calls the original C implementation.
-func getIcosahedronFacesC(h H3Index, out []int32) uint32 {
+func getIcosahedronFacesC(h h3Index, out []int32) uint32 {
 	if len(out) == 0 {
 		return uint32(C.E_FAILED)
 	}
@@ -339,7 +339,7 @@ func getIcosahedronFacesC(h H3Index, out []int32) uint32 {
 }
 
 // cellToChildrenC calls the original C implementation.
-func cellToChildrenC(h H3Index, childRes int32, children []H3Index) uint32 {
+func cellToChildrenC(h h3Index, childRes int32, children []h3Index) uint32 {
 	if len(children) == 0 {
 		return uint32(C.E_FAILED)
 	}
@@ -350,14 +350,14 @@ func cellToChildrenC(h H3Index, childRes int32, children []H3Index) uint32 {
 		// Copy results back to Go slice
 		slice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cChildren))[:len(children):len(children)]
 		for i := range children {
-			children[i] = H3Index(slice[i])
+			children[i] = h3Index(slice[i])
 		}
 	}
 	return uint32(err)
 }
 
 // cellToBoundaryC calls the original C implementation.
-func cellToBoundaryC(h H3Index, cb *CellBoundary) uint32 {
+func cellToBoundaryC(h h3Index, cb *CellBoundary) uint32 {
 	var cCb C.CellBoundary
 	cCb.numVerts = 0
 
@@ -383,7 +383,7 @@ func cellToBoundaryC(h H3Index, cb *CellBoundary) uint32 {
 }
 
 // compactCellsC calls the original C implementation.
-func compactCellsC(h3Set []H3Index, compactedSet []H3Index, numHexes int64) uint32 {
+func compactCellsC(h3Set []h3Index, compactedSet []h3Index, numHexes int64) uint32 {
 	if numHexes == 0 {
 		return uint32(C.E_SUCCESS)
 	}
@@ -410,7 +410,7 @@ func compactCellsC(h3Set []H3Index, compactedSet []H3Index, numHexes int64) uint
 		// Copy results back to Go slice
 		compactedSlice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cCompactedSet))[:numHexes:numHexes]
 		for i := int64(0); i < numHexes; i++ {
-			compactedSet[i] = H3Index(compactedSlice[i])
+			compactedSet[i] = h3Index(compactedSlice[i])
 		}
 	}
 
@@ -418,7 +418,7 @@ func compactCellsC(h3Set []H3Index, compactedSet []H3Index, numHexes int64) uint
 }
 
 // uncompactCellsSizeC calls the original C implementation.
-func uncompactCellsSizeC(compactedSet []H3Index, numCompacted int64, res int32) (int64, uint32) {
+func uncompactCellsSizeC(compactedSet []h3Index, numCompacted int64, res int32) (int64, uint32) {
 	if numCompacted == 0 {
 		return 0, uint32(C.E_SUCCESS)
 	}
@@ -444,7 +444,7 @@ func uncompactCellsSizeC(compactedSet []H3Index, numCompacted int64, res int32) 
 }
 
 // uncompactCellsC calls the original C implementation.
-func uncompactCellsC(compactedSet []H3Index, numCompacted int64, outSet []H3Index, numOut int64, res int32) uint32 {
+func uncompactCellsC(compactedSet []h3Index, numCompacted int64, outSet []h3Index, numOut int64, res int32) uint32 {
 	if numCompacted == 0 {
 		return uint32(C.E_SUCCESS)
 	}
@@ -471,7 +471,7 @@ func uncompactCellsC(compactedSet []H3Index, numCompacted int64, outSet []H3Inde
 		// Copy results back to Go slice
 		outSlice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cOutSet))[:numOut:numOut]
 		for i := int64(0); i < numOut; i++ {
-			outSet[i] = H3Index(outSlice[i])
+			outSet[i] = h3Index(outSlice[i])
 		}
 	}
 

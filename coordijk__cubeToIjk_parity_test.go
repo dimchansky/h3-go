@@ -7,19 +7,19 @@ import "testing"
 func Test_cubeToIjk_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
+		coord coordIJK
 	}{
-		{"origin", CoordIJK{0, 0, 0}},
-		{"cube unit", CoordIJK{1, -1, 0}},          // Valid cube coordinate (sums to 0)
-		{"cube unit 2", CoordIJK{0, 1, -1}},        // Valid cube coordinate
-		{"cube unit 3", CoordIJK{-1, 0, 1}},        // Valid cube coordinate
-		{"positive cube", CoordIJK{3, -1, -2}},     // Valid cube coordinate
-		{"negative cube", CoordIJK{-2, 1, 1}},      // Valid cube coordinate
-		{"invalid cube", CoordIJK{1, 2, 3}},        // Invalid cube (doesn't sum to 0)
-		{"large cube", CoordIJK{10, -5, -5}},       // Valid cube coordinate
-		{"asymmetric cube", CoordIJK{7, -3, -4}},   // Valid cube coordinate
-		{"negative invalid", CoordIJK{-1, -2, -3}}, // Invalid cube
-		{"mixed invalid", CoordIJK{2, -1, 3}},      // Invalid cube
+		{"origin", coordIJK{0, 0, 0}},
+		{"cube unit", coordIJK{1, -1, 0}},          // Valid cube coordinate (sums to 0)
+		{"cube unit 2", coordIJK{0, 1, -1}},        // Valid cube coordinate
+		{"cube unit 3", coordIJK{-1, 0, 1}},        // Valid cube coordinate
+		{"positive cube", coordIJK{3, -1, -2}},     // Valid cube coordinate
+		{"negative cube", coordIJK{-2, 1, 1}},      // Valid cube coordinate
+		{"invalid cube", coordIJK{1, 2, 3}},        // Invalid cube (doesn't sum to 0)
+		{"large cube", coordIJK{10, -5, -5}},       // Valid cube coordinate
+		{"asymmetric cube", coordIJK{7, -3, -4}},   // Valid cube coordinate
+		{"negative invalid", coordIJK{-1, -2, -3}}, // Invalid cube
+		{"mixed invalid", coordIJK{2, -1, 3}},      // Invalid cube
 	}
 
 	for _, tt := range tests {
@@ -42,7 +42,7 @@ func Test_cubeToIjk_parity(t *testing.T) {
 
 	// Test that transformation is deterministic
 	t.Run("deterministic", func(t *testing.T) {
-		coord := CoordIJK{3, -1, -2}
+		coord := coordIJK{3, -1, -2}
 
 		// Apply transformation twice
 		result1 := coord

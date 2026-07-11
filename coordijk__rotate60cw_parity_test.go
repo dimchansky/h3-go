@@ -7,19 +7,19 @@ import "testing"
 func Test_rotate60cw_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		digit Direction
+		digit direction
 	}{
 		// Valid direction rotations (clockwise)
-		{"K -> JK", K_AXES_DIGIT},
-		{"JK -> J", JK_AXES_DIGIT},
-		{"J -> IJ", J_AXES_DIGIT},
-		{"IJ -> I", IJ_AXES_DIGIT},
-		{"I -> IK", I_AXES_DIGIT},
-		{"IK -> K", IK_AXES_DIGIT},
+		{"K -> quadJK", kAxesDigit},
+		{"quadJK -> J", jkAxesDigit},
+		{"J -> quadIJ", jAxesDigit},
+		{"quadIJ -> I", ijAxesDigit},
+		{"I -> IK", iAxesDigit},
+		{"IK -> K", ikAxesDigit},
 
 		// Center digit and invalid digit should return unchanged
-		{"center unchanged", CENTER_DIGIT},
-		{"invalid unchanged", INVALID_DIGIT},
+		{"center unchanged", centerDigit},
+		{"invalid unchanged", invalidDigit},
 
 		// Test edge cases and invalid values (but avoid negative due to type conversion)
 		{"large value unchanged", 100},
@@ -44,7 +44,7 @@ func Test_rotate60cw_parity(t *testing.T) {
 
 	// Test that 6 rotations return to original
 	t.Run("six_rotations", func(t *testing.T) {
-		validDigits := []Direction{K_AXES_DIGIT, IK_AXES_DIGIT, I_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT, JK_AXES_DIGIT}
+		validDigits := []direction{kAxesDigit, ikAxesDigit, iAxesDigit, ijAxesDigit, jAxesDigit, jkAxesDigit}
 
 		for _, original := range validDigits {
 			digit := original
@@ -61,10 +61,10 @@ func Test_rotate60cw_parity(t *testing.T) {
 
 	// Test rotation sequence correctness
 	t.Run("rotation_sequence", func(t *testing.T) {
-		// Starting from K_AXES_DIGIT, check the full clockwise sequence
-		expected := []Direction{K_AXES_DIGIT, JK_AXES_DIGIT, J_AXES_DIGIT, IJ_AXES_DIGIT, I_AXES_DIGIT, IK_AXES_DIGIT}
+		// Starting from kAxesDigit, check the full clockwise sequence
+		expected := []direction{kAxesDigit, jkAxesDigit, jAxesDigit, ijAxesDigit, iAxesDigit, ikAxesDigit}
 
-		digit := K_AXES_DIGIT
+		digit := kAxesDigit
 		for i, expectedDigit := range expected {
 			if digit != expectedDigit {
 				t.Errorf("Rotation sequence step %d: expected=%d got=%d", i, expectedDigit, digit)
@@ -73,8 +73,8 @@ func Test_rotate60cw_parity(t *testing.T) {
 		}
 
 		// After 6 rotations, should be back to start
-		if digit != K_AXES_DIGIT {
-			t.Errorf("After 6 clockwise rotations: expected=%d got=%d", K_AXES_DIGIT, digit)
+		if digit != kAxesDigit {
+			t.Errorf("After 6 clockwise rotations: expected=%d got=%d", kAxesDigit, digit)
 		}
 	})
 }

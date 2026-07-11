@@ -2,13 +2,13 @@ package h3
 
 // addVertexNode adds an edge to the vertex graph.
 // Returns a pointer to the new node, or an existing node if the edge already exists.
-// The function creates a new VertexNode with the given from/to vertices and adds it
+// The function creates a new vertexNode with the given from/to vertices and adds it
 // to the appropriate bucket in the graph's hash table. If an identical edge already
 // exists, it returns the existing node instead of creating a duplicate.
 // Ported from H3 C: vertexGraph.c::addVertexNode.
-func addVertexNode(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode {
+func addVertexNode(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode {
 	// Create the new node
-	node := &VertexNode{
+	node := &vertexNode{
 		From: *fromVtx,
 		To:   *toVtx,
 		Next: nil,

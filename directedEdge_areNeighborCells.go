@@ -5,21 +5,21 @@ package h3
 // Uses an optimized approach for cells that share the same parent, falling back
 // to gridDisk check for cells that don't share a parent.
 // Ported from H3 C: directedEdge.c::areNeighborCells.
-func areNeighborCells(origin, destination H3Index) (bool, H3Error) {
+func areNeighborCells(origin, destination h3Index) (bool, h3Error) {
 	// Make sure they're hexagon indexes
-	if getMode(origin) != H3_CELL_MODE ||
-		getMode(destination) != H3_CELL_MODE {
-		return false, E_CELL_INVALID
+	if getMode(origin) != h3CellMode ||
+		getMode(destination) != h3CellMode {
+		return false, eCellInvalid
 	}
 
 	// Hexagons cannot be neighbors with themselves
 	if origin == destination {
-		return false, E_SUCCESS
+		return false, eSuccess
 	}
 
 	// Only hexagons in the same resolution can be neighbors
 	if getResolution(origin) != getResolution(destination) {
-		return false, E_RES_MISMATCH
+		return false, eResMismatch
 	}
 
 	// H3 Indexes that share the same parent are very likely to be neighbors
@@ -30,64 +30,64 @@ func areNeighborCells(origin, destination H3Index) (bool, H3Error) {
 	parentRes := getResolution(origin) - 1
 	if parentRes > 0 {
 		originParent, err1 := cellToParent(origin, int32(parentRes))
-		if err1 != E_SUCCESS {
+		if err1 != eSuccess {
 			return false, err1
 		}
 		destinationParent, err2 := cellToParent(destination, int32(parentRes))
-		if err2 != E_SUCCESS {
+		if err2 != eSuccess {
 			return false, err2
 		}
 		if originParent == destinationParent {
-			originResDigit := Direction(getIndexDigit(origin, parentRes+1))
-			destinationResDigit := Direction(getIndexDigit(destination, parentRes+1))
-			if originResDigit == CENTER_DIGIT ||
-				destinationResDigit == CENTER_DIGIT {
-				return true, E_SUCCESS
+			originResDigit := direction(getIndexDigit(origin, parentRes+1))
+			destinationResDigit := direction(getIndexDigit(destination, parentRes+1))
+			if originResDigit == centerDigit ||
+				destinationResDigit == centerDigit {
+				return true, eSuccess
 			}
-			if originResDigit >= INVALID_DIGIT {
+			if originResDigit >= invalidDigit {
 				// Prevent indexing off the end of the array below
-				return false, E_CELL_INVALID
+				return false, eCellInvalid
 			}
 			isPent := isPentagon(originParent)
-			if (originResDigit == K_AXES_DIGIT ||
-				destinationResDigit == K_AXES_DIGIT) &&
+			if (originResDigit == kAxesDigit ||
+				destinationResDigit == kAxesDigit) &&
 				isPent {
 				// If these are invalid cells, fail rather than incorrectly
 				// reporting neighbors. For pentagon cells that are actually
 				// neighbors across the deleted subsequence, they will fail the
 				// optimized check below, but they will be accepted by the
 				// gridDisk check below that.
-				return false, E_CELL_INVALID
+				return false, eCellInvalid
 			}
 			// These sets are the relevant neighbors in the clockwise
 			// and counter-clockwise
-			neighborSetClockwise := []Direction{
-				CENTER_DIGIT, JK_AXES_DIGIT, IJ_AXES_DIGIT, J_AXES_DIGIT,
-				IK_AXES_DIGIT, K_AXES_DIGIT, I_AXES_DIGIT}
-			neighborSetCounterclockwise := []Direction{
-				CENTER_DIGIT, IK_AXES_DIGIT, JK_AXES_DIGIT, K_AXES_DIGIT,
-				IJ_AXES_DIGIT, I_AXES_DIGIT, J_AXES_DIGIT}
+			neighborSetClockwise := []direction{
+				centerDigit, jkAxesDigit, ijAxesDigit, jAxesDigit,
+				ikAxesDigit, kAxesDigit, iAxesDigit}
+			neighborSetCounterclockwise := []direction{
+				centerDigit, ikAxesDigit, jkAxesDigit, kAxesDigit,
+				ijAxesDigit, iAxesDigit, jAxesDigit}
 			if neighborSetClockwise[originResDigit] == destinationResDigit ||
 				neighborSetCounterclockwise[originResDigit] == destinationResDigit {
-				return true, E_SUCCESS
+				return true, eSuccess
 			}
 		}
 	}
 
 	// Otherwise, we have to determine the neighbor relationship the "hard" way.
-	neighborRing := make([]H3Index, 7)
+	neighborRing := make([]h3Index, 7)
 	err := gridDisk(origin, 1, neighborRing)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		// If gridDisk fails, assume they are not neighbors (C behavior)
 		// rather than propagating the error
-		return false, E_SUCCESS
+		return false, eSuccess
 	}
 	for i := 0; i < 7; i++ {
 		if neighborRing[i] == destination {
-			return true, E_SUCCESS
+			return true, eSuccess
 		}
 	}
 
 	// Made it here, they definitely aren't neighbors
-	return false, E_SUCCESS
+	return false, eSuccess
 }

@@ -4,8 +4,8 @@ package h3
 // This function calls edgeLengthRads and converts the result to kilometers
 // by multiplying by Earth's radius.
 // Ported from H3 C: latLng.c::H3_EXPORT(edgeLengthKm).
-func edgeLengthKm(edge H3Index, length *float64) H3Error {
+func edgeLengthKm(edge h3Index, length *float64) h3Error {
 	err := edgeLengthRads(edge, length)
-	*length = *length * EARTH_RADIUS_KM
+	*length = *length * earthRadiusKm
 	return err
 }

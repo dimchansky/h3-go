@@ -16,7 +16,7 @@ func TestLinkedGeoInternal(t *testing.T) {
 	t.Run("createLinkedGeo", func(t *testing.T) {
 		t.Parallel()
 
-		polygon := &LinkedGeoPolygon{}
+		polygon := &linkedGeoPolygon{}
 
 		loop := addNewLinkedLoop(polygon)
 		if loop == nil {

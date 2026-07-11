@@ -4,5 +4,5 @@ package h3
 // between two spherical coordinates (radians).
 // Ported from H3 C: latLng.c::H3_EXPORT(greatCircleDistanceKm).
 func greatCircleDistanceKm(a, b *LatLng) float64 {
-	return greatCircleDistanceRads(a, b) * EARTH_RADIUS_KM
+	return greatCircleDistanceRads(a, b) * earthRadiusKm
 }

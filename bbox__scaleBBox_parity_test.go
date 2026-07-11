@@ -10,20 +10,20 @@ import (
 func Test_scaleBBox_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		bbox  BBox
+		bbox  bbox
 		scale float64
 	}{
-		{"no_scaling", BBox{1.0, -1.0, 1.0, -1.0}, 1.0},
-		{"double_size", BBox{0.5, -0.5, 0.5, -0.5}, 2.0},
-		{"shrink_half", BBox{1.0, -1.0, 1.0, -1.0}, 0.5},
-		{"small_box", BBox{0.1, -0.1, 0.1, -0.1}, 1.5},
-		{"large_scale", BBox{0.2, -0.2, 0.2, -0.2}, 5.0},
-		{"near_poles", BBox{math.Pi / 2 * 0.9, -math.Pi / 2 * 0.9, 0.5, -0.5}, 1.2},
-		{"near_antimeridian", BBox{0.5, -0.5, math.Pi * 0.9, -math.Pi * 0.9}, 1.3},
-		{"crosses_antimeridian", BBox{0.5, -0.5, -math.Pi + 0.1, math.Pi - 0.1}, 1.1},
-		{"zero_scale", BBox{0.5, -0.5, 0.5, -0.5}, 0.0},
-		{"tiny_scale", BBox{0.1, -0.1, 0.1, -0.1}, 0.01},
-		{"negative_scale", BBox{0.1, -0.1, 0.1, -0.1}, -1.0},
+		{"no_scaling", bbox{1.0, -1.0, 1.0, -1.0}, 1.0},
+		{"double_size", bbox{0.5, -0.5, 0.5, -0.5}, 2.0},
+		{"shrink_half", bbox{1.0, -1.0, 1.0, -1.0}, 0.5},
+		{"small_box", bbox{0.1, -0.1, 0.1, -0.1}, 1.5},
+		{"large_scale", bbox{0.2, -0.2, 0.2, -0.2}, 5.0},
+		{"near_poles", bbox{math.Pi / 2 * 0.9, -math.Pi / 2 * 0.9, 0.5, -0.5}, 1.2},
+		{"near_antimeridian", bbox{0.5, -0.5, math.Pi * 0.9, -math.Pi * 0.9}, 1.3},
+		{"crosses_antimeridian", bbox{0.5, -0.5, -math.Pi + 0.1, math.Pi - 0.1}, 1.1},
+		{"zero_scale", bbox{0.5, -0.5, 0.5, -0.5}, 0.0},
+		{"tiny_scale", bbox{0.1, -0.1, 0.1, -0.1}, 0.01},
+		{"negative_scale", bbox{0.1, -0.1, 0.1, -0.1}, -1.0},
 	}
 
 	const epsilon = 1e-15
@@ -60,7 +60,7 @@ func Test_scaleBBox_parity(t *testing.T) {
 
 	// Test that scaling is deterministic
 	t.Run("deterministic", func(t *testing.T) {
-		bbox := BBox{0.5, -0.5, 0.5, -0.5}
+		bbox := bbox{0.5, -0.5, 0.5, -0.5}
 		scale := 1.5
 
 		// Apply scaling twice
@@ -80,15 +80,15 @@ func Test_scaleBBox_parity(t *testing.T) {
 	t.Run("edge_cases", func(t *testing.T) {
 		edgeCases := []struct {
 			name    string
-			bbox    BBox
+			bbox    bbox
 			scale   float64
-			checkFn func(*testing.T, BBox)
+			checkFn func(*testing.T, bbox)
 		}{
 			{
 				name:  "clamp_to_north_pole",
-				bbox:  BBox{math.Pi / 2 * 0.9, -0.1, 0.1, -0.1},
+				bbox:  bbox{math.Pi / 2 * 0.9, -0.1, 0.1, -0.1},
 				scale: 2.0,
-				checkFn: func(t *testing.T, result BBox) {
+				checkFn: func(t *testing.T, result bbox) {
 					if result.North > PiOver2 {
 						t.Errorf("North should be clamped to π/2, got %g", result.North.Rad())
 					}
@@ -96,9 +96,9 @@ func Test_scaleBBox_parity(t *testing.T) {
 			},
 			{
 				name:  "clamp_to_south_pole",
-				bbox:  BBox{0.1, -math.Pi / 2 * 0.9, 0.1, -0.1},
+				bbox:  bbox{0.1, -math.Pi / 2 * 0.9, 0.1, -0.1},
 				scale: 2.0,
-				checkFn: func(t *testing.T, result BBox) {
+				checkFn: func(t *testing.T, result bbox) {
 					if result.South < -PiOver2 {
 						t.Errorf("South should be clamped to -π/2, got %g", result.South.Rad())
 					}

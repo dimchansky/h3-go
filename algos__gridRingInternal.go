@@ -6,25 +6,25 @@ package h3
 // k, then filters those results to include only cells exactly at distance k.
 //
 // Ported from H3 C: algos.c::_gridRingInternal.
-func _gridRingInternal(origin H3Index, k int32, out []H3Index) H3Error {
+func _gridRingInternal(origin h3Index, k int32, out []h3Index) h3Error {
 	// Short-circuit on 'identity' ring
 	if k == 0 {
 		out[0] = origin
-		return E_SUCCESS
+		return eSuccess
 	}
 
 	var maxIdx int64
 	err := maxGridDiskSize(k, &maxIdx)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		return err
 	}
 
 	// Allocate temporary buffers for disk and distances
-	diskOut := make([]H3Index, maxIdx)
+	diskOut := make([]h3Index, maxIdx)
 	diskDistances := make([]int32, maxIdx)
 
 	err = _gridDiskDistancesInternal(origin, k, diskOut, diskDistances, maxIdx, 0)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		return err
 	}
 
@@ -36,5 +36,5 @@ func _gridRingInternal(origin H3Index, k int32, out []H3Index) H3Error {
 		}
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

@@ -3,20 +3,20 @@ package h3
 // _rotate60ccw rotates a direction digit 60 degrees counter-clockwise.
 // Mirrors H3's coordijk.c::_rotate60ccw behavior.
 // Ported from H3 C: coordijk.c::_rotate60ccw.
-func _rotate60ccw(digit Direction) Direction {
+func _rotate60ccw(digit direction) direction {
 	switch digit {
-	case K_AXES_DIGIT:
-		return IK_AXES_DIGIT
-	case IK_AXES_DIGIT:
-		return I_AXES_DIGIT
-	case I_AXES_DIGIT:
-		return IJ_AXES_DIGIT
-	case IJ_AXES_DIGIT:
-		return J_AXES_DIGIT
-	case J_AXES_DIGIT:
-		return JK_AXES_DIGIT
-	case JK_AXES_DIGIT:
-		return K_AXES_DIGIT
+	case kAxesDigit:
+		return ikAxesDigit
+	case ikAxesDigit:
+		return iAxesDigit
+	case iAxesDigit:
+		return ijAxesDigit
+	case ijAxesDigit:
+		return jAxesDigit
+	case jAxesDigit:
+		return jkAxesDigit
+	case jkAxesDigit:
+		return kAxesDigit
 	default:
 		return digit
 	}

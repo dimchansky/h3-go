@@ -10,7 +10,7 @@ import (
 func Test_isClockwiseLinkedGeoLoop_parity(t *testing.T) {
 	testCases := []struct {
 		name string
-		loop *LinkedGeoLoop
+		loop *linkedGeoLoop
 	}{
 		{
 			name: "clockwise square",
@@ -115,7 +115,7 @@ func Test_isClockwiseLinkedGeoLoop_transmeridian(t *testing.T) {
 
 	testCases := []struct {
 		name string
-		loop *LinkedGeoLoop
+		loop *linkedGeoLoop
 	}{
 		{
 			name: "transmeridian clockwise",
@@ -146,7 +146,7 @@ func Test_isClockwiseLinkedGeoLoop_transmeridian(t *testing.T) {
 }
 
 // Helper function to get coordinates from a loop for length checking
-func getLoopCoords(loop *LinkedGeoLoop) []LatLng {
+func getLoopCoords(loop *linkedGeoLoop) []LatLng {
 	var coords []LatLng
 	current := loop.First
 	for current != nil {

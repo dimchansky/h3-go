@@ -8,7 +8,7 @@ import (
 
 func Test_v2dMag(t *testing.T) {
 	t.Parallel()
-	v := Vec2d{X: 3.0, Y: 4.0}
+	v := vec2d{X: 3.0, Y: 4.0}
 	expected := 5.0
 	mag := _v2dMag(&v)
 	if math.Abs(mag-expected) >= 1e-15 { // Using double precision epsilon equivalent
@@ -18,10 +18,10 @@ func Test_v2dMag(t *testing.T) {
 
 func Test_v2dIntersect(t *testing.T) {
 	t.Parallel()
-	p0 := Vec2d{X: 2.0, Y: 2.0}
-	p1 := Vec2d{X: 6.0, Y: 6.0}
-	p2 := Vec2d{X: 0.0, Y: 4.0}
-	p3 := Vec2d{X: 10.0, Y: 4.0}
+	p0 := vec2d{X: 2.0, Y: 2.0}
+	p1 := vec2d{X: 6.0, Y: 6.0}
+	p2 := vec2d{X: 0.0, Y: 4.0}
+	p3 := vec2d{X: 10.0, Y: 4.0}
 
 	intersection := _v2dIntersect(&p0, &p1, &p2, &p3)
 
@@ -38,12 +38,12 @@ func Test_v2dIntersect(t *testing.T) {
 
 func Test_v2dAlmostEquals(t *testing.T) {
 	t.Parallel()
-	v1 := Vec2d{X: 3.0, Y: 4.0}
-	v2 := Vec2d{X: 3.0, Y: 4.0}
-	v3 := Vec2d{X: 3.5, Y: 4.0}
-	v4 := Vec2d{X: 3.0, Y: 4.5}
-	const dblEpsilon = 2.2204460492503131e-16 // DBL_EPSILON
-	v5 := Vec2d{X: 3.0 + dblEpsilon, Y: 4.0 - dblEpsilon}
+	v1 := vec2d{X: 3.0, Y: 4.0}
+	v2 := vec2d{X: 3.0, Y: 4.0}
+	v3 := vec2d{X: 3.5, Y: 4.0}
+	v4 := vec2d{X: 3.0, Y: 4.5}
+	const dblEpsilon = 2.2204460492503131e-16 // dblEpsilon
+	v5 := vec2d{X: 3.0 + dblEpsilon, Y: 4.0 - dblEpsilon}
 
 	if !_v2dAlmostEquals(&v1, &v2) {
 		t.Error("expected true for equal vectors")

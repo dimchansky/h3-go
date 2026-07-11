@@ -9,13 +9,13 @@ import (
 func Test_normalizeLng_ParityWithC(t *testing.T) {
 	cases := []struct {
 		lng  float64
-		mode LongitudeNormalization
+		mode longitudeNormalization
 	}{
-		{0, NORMALIZE_NONE},
-		{-1.0, NORMALIZE_EAST},
-		{1.0, NORMALIZE_EAST},
-		{1.0, NORMALIZE_WEST},
-		{-1.0, NORMALIZE_WEST},
+		{0, normalizeNone},
+		{-1.0, normalizeEast},
+		{1.0, normalizeEast},
+		{1.0, normalizeWest},
+		{-1.0, normalizeWest},
 	}
 	for _, tc := range cases {
 		inputAngle := Rad(tc.lng)

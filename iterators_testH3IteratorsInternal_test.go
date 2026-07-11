@@ -6,10 +6,10 @@ import (
 )
 
 // Helper function to assert iterator is null (ported from assert_is_null_iterator).
-func assertIsNullIterator(t *testing.T, iter IterCellsChildren, msg string) {
+func assertIsNullIterator(t *testing.T, iter iterCellsChildren, msg string) {
 	t.Helper()
-	if iter.H != H3_NULL {
-		t.Errorf("%s: expected H3_NULL, got %x", msg, uint64(iter.H))
+	if iter.H != h3Null {
+		t.Errorf("%s: expected h3Null, got %x", msg, uint64(iter.H))
 	}
 	if iter.ParentRes != -1 {
 		t.Errorf("%s: expected ParentRes=-1, got %d", msg, iter.ParentRes)
@@ -25,13 +25,13 @@ func testNumber(t *testing.T, res int32) {
 
 	count := int64(0)
 	iter := iterInitRes(res)
-	for iter.H != H3_NULL {
+	for iter.H != h3Null {
 		count++
 		iterStepRes(&iter)
 	}
 
 	expected, err := getNumCells(res)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("getNumCells failed for res %d: %v", res, err)
 	}
 
@@ -46,7 +46,7 @@ func testValid(t *testing.T, res int32) {
 
 	iter := iterInitRes(res)
 	count := 0
-	for iter.H != H3_NULL {
+	for iter.H != h3Null {
 		if !isValidCell(iter.H) {
 			t.Errorf("res %d, cell %d: iterator cell %x is not valid", res, count, uint64(iter.H))
 		}
@@ -67,7 +67,7 @@ func testResolution(t *testing.T, res int32) {
 
 	iter := iterInitRes(res)
 	count := 0
-	for iter.H != H3_NULL {
+	for iter.H != h3Null {
 		cellRes := getResolution(iter.H)
 		if cellRes != res {
 			t.Errorf("res %d, cell %d: expected resolution %d, got %d for cell %x",
@@ -89,7 +89,7 @@ func testOrdered(t *testing.T, res int32) {
 	t.Helper()
 
 	iter := iterInitRes(res)
-	if iter.H == H3_NULL {
+	if iter.H == h3Null {
 		t.Errorf("res %d: iterator is null at start", res)
 		return
 	}
@@ -98,7 +98,7 @@ func testOrdered(t *testing.T, res int32) {
 	iterStepRes(&iter)
 	count := 1
 
-	for iter.H != H3_NULL {
+	for iter.H != h3Null {
 		if prev >= iter.H {
 			t.Errorf("res %d, cell %d: cells not in order: prev=%x curr=%x",
 				res, count, uint64(prev), uint64(iter.H))
@@ -125,11 +125,11 @@ func TestIteratorSetupInvalid(t *testing.T) {
 	assertIsNullIterator(t, iterInitBaseCellNum(0, 100), "iterInitBaseCellNum(0, 100)")
 
 	// Test iterInitParent with invalid inputs
-	var iter IterCellsChildren
+	var iter iterCellsChildren
 	iterInitParent(0, 0, &iter)
 	assertIsNullIterator(t, iter, "iterInitParent(0, 0)")
 
-	testCell := H3Index(0x85283473fffffff)
+	testCell := h3Index(0x85283473fffffff)
 	iterInitParent(testCell, 0, &iter)
 	assertIsNullIterator(t, iter, "iterInitParent(testCell, 0)")
 
@@ -143,8 +143,8 @@ func TestNullIteratorBaseCell(t *testing.T) {
 	iter := iterInitBaseCellNum(-1, 0)
 	assertIsNullIterator(t, iter, "initial state")
 	iterStepChild(&iter)
-	if iter.H != H3_NULL {
-		t.Errorf("expected H3_NULL after step, got %x", uint64(iter.H))
+	if iter.H != h3Null {
+		t.Errorf("expected h3Null after step, got %x", uint64(iter.H))
 	}
 }
 
@@ -154,8 +154,8 @@ func TestNullIteratorRes(t *testing.T) {
 	iter := iterInitRes(-1)
 	assertIsNullIterator(t, iter.itC, "initial state")
 	iterStepRes(&iter)
-	if iter.H != H3_NULL {
-		t.Errorf("expected H3_NULL after step, got %x", uint64(iter.H))
+	if iter.H != h3Null {
+		t.Errorf("expected h3Null after step, got %x", uint64(iter.H))
 	}
 }
 

@@ -9,7 +9,7 @@ import (
 func Test_gridDiskDistancesSafe_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
+		origin h3Index
 		k      int32
 	}{
 		// Basic test cases
@@ -42,14 +42,14 @@ func Test_gridDiskDistancesSafe_parity(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			var maxIdx int64
 			err := maxGridDiskSize(tc.k, &maxIdx)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("maxGridDiskSize failed: %v", err)
 			}
 
 			// Allocate buffers for both Go and C implementations
-			outGo := make([]H3Index, maxIdx)
+			outGo := make([]h3Index, maxIdx)
 			distancesGo := make([]int32, maxIdx)
-			outC := make([]H3Index, maxIdx)
+			outC := make([]h3Index, maxIdx)
 			distancesC := make([]int32, maxIdx)
 
 			// Call Go implementation
@@ -63,14 +63,14 @@ func Test_gridDiskDistancesSafe_parity(t *testing.T) {
 				t.Errorf("Error mismatch: Go=%v, C=%v", errGo, errC)
 			}
 
-			if errGo != E_SUCCESS {
+			if errGo != eSuccess {
 				// If both failed with same error, that's fine
 				return
 			}
 
 			// Create maps to compare results since order is not guaranteed
-			goResults := make(map[H3Index]int32)
-			cResults := make(map[H3Index]int32)
+			goResults := make(map[h3Index]int32)
+			cResults := make(map[h3Index]int32)
 
 			// Collect Go results
 			for i := int64(0); i < maxIdx; i++ {

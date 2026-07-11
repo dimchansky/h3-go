@@ -8,9 +8,9 @@ import (
 func TestGetRes0Cells(t *testing.T) {
 	t.Parallel()
 	count := res0CellCount()
-	indexes := make([]H3Index, count)
+	indexes := make([]h3Index, count)
 	err := getRes0Cells(indexes)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("getRes0Cells failed with error: %v", err)
 	}
 	if indexes[0] != 0x8001fffffffffff {

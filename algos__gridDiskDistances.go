@@ -5,13 +5,13 @@ package h3
 // Output is placed in the provided array in no particular order. Elements of the output array may be left zero,
 // as can happen when crossing a pentagon.
 // Ported from H3 C: algos.c::gridDiskDistances.
-func gridDiskDistances(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
+func gridDiskDistances(origin h3Index, k int32, out []h3Index, distances []int32) h3Error {
 	// Optimistically try the faster gridDiskUnsafe algorithm first
 	failed := gridDiskDistancesUnsafe(origin, k, out, distances)
-	if failed != E_SUCCESS {
+	if failed != eSuccess {
 		var maxIdx int64
 		err := maxGridDiskSize(k, &maxIdx)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			return err
 		}
 		// Fast algo failed, fall back to slower, correct algo
@@ -33,5 +33,5 @@ func gridDiskDistances(origin H3Index, k int32, out []H3Index, distances []int32
 			return _gridDiskDistancesInternal(origin, k, out, distances, maxIdx, 0)
 		}
 	}
-	return E_SUCCESS
+	return eSuccess
 }

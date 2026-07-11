@@ -9,15 +9,15 @@ func Test_gridRingInternal_identityGridRing(t *testing.T) {
 	t.Parallel()
 
 	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
-	var sfHex H3Index
+	var sfHex h3Index
 	err := latLngToCell(&sf, 9, &sfHex)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
-	k0 := []H3Index{0}
+	k0 := []h3Index{0}
 	result := _gridRingInternal(sfHex, 0, k0)
-	if result != E_SUCCESS {
+	if result != eSuccess {
 		t.Fatalf("_gridRingInternal failed: %v", result)
 	}
 	if k0[0] != sfHex {
@@ -29,16 +29,16 @@ func Test_gridRingInternal_negativeK(t *testing.T) {
 	t.Parallel()
 
 	sf := LatLng{Lat: 0.659966917655, Lng: 2*3.14159 - 2.1364398519396}
-	var sfHex H3Index
+	var sfHex h3Index
 	err := latLngToCell(&sf, 9, &sfHex)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
-	k0 := []H3Index{0}
+	k0 := []h3Index{0}
 	result := _gridRingInternal(sfHex, -1, k0)
-	if result != E_DOMAIN {
-		t.Errorf("Expected E_DOMAIN for negative k, got %v", result)
+	if result != eDomain {
+		t.Errorf("Expected eDomain for negative k, got %v", result)
 	}
 }
 
@@ -48,14 +48,14 @@ func Test_gridRingInternal_gridDiskInvalid(t *testing.T) {
 	const k = 1000
 	var kSz int64
 	err := maxGridDiskSize(k, &kSz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
 
-	neighbors := make([]H3Index, kSz)
+	neighbors := make([]h3Index, kSz)
 	result := _gridRingInternal(0x7fffffffffffffff, k, neighbors)
-	if result != E_CELL_INVALID {
-		t.Errorf("Expected E_CELL_INVALID for invalid input, got %v", result)
+	if result != eCellInvalid {
+		t.Errorf("Expected eCellInvalid for invalid input, got %v", result)
 	}
 }
 
@@ -65,13 +65,13 @@ func Test_gridRingInternal_gridDiskInvalidDigit(t *testing.T) {
 	const k = 2
 	var kSz int64
 	err := maxGridDiskSize(k, &kSz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
 
-	neighbors := make([]H3Index, kSz)
+	neighbors := make([]h3Index, kSz)
 	result := _gridRingInternal(0x4d4b00fe5c5c3030, k, neighbors)
-	if result != E_CELL_INVALID {
-		t.Errorf("Expected E_CELL_INVALID for invalid input, got %v", result)
+	if result != eCellInvalid {
+		t.Errorf("Expected eCellInvalid for invalid input, got %v", result)
 	}
 }

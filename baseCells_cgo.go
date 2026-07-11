@@ -22,12 +22,12 @@ func _isBaseCellPolarPentagonC(baseCell int32) bool {
 func res0CellCountC() int32 { return int32(C.res0CellCount()) }
 
 // _baseCellToFaceIjkC calls the original C helper _baseCellToFaceIjk.
-func _baseCellToFaceIjkC(baseCell int32) FaceIJK {
+func _baseCellToFaceIjkC(baseCell int32) faceIJK {
 	var h C.FaceIJK
 	C._baseCellToFaceIjk(C.int(baseCell), &h)
-	return FaceIJK{
+	return faceIJK{
 		Face: int32(h.face),
-		Coord: CoordIJK{
+		Coord: coordIJK{
 			I: int32(h.coord.i),
 			J: int32(h.coord.j),
 			K: int32(h.coord.k),
@@ -46,7 +46,7 @@ func _baseCellIsCwOffsetC(baseCell int32, testFace int32) bool {
 }
 
 // _faceIjkToBaseCellC calls the original C helper _faceIjkToBaseCell.
-func _faceIjkToBaseCellC(h *FaceIJK) int32 {
+func _faceIjkToBaseCellC(h *faceIJK) int32 {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(h.Face)
 	cFijk.coord.i = C.int(h.Coord.I)
@@ -56,7 +56,7 @@ func _faceIjkToBaseCellC(h *FaceIJK) int32 {
 }
 
 // _faceIjkToBaseCellCCWrot60C calls the original C helper _faceIjkToBaseCellCCWrot60.
-func _faceIjkToBaseCellCCWrot60C(h *FaceIJK) int32 {
+func _faceIjkToBaseCellCCWrot60C(h *faceIJK) int32 {
 	var cFijk C.FaceIJK
 	cFijk.face = C.int(h.Face)
 	cFijk.coord.i = C.int(h.Coord.I)
@@ -66,24 +66,24 @@ func _faceIjkToBaseCellCCWrot60C(h *FaceIJK) int32 {
 }
 
 // _getBaseCellNeighborC calls the original C helper _getBaseCellNeighbor.
-func _getBaseCellNeighborC(baseCell int32, dir Direction) int32 {
+func _getBaseCellNeighborC(baseCell int32, dir direction) int32 {
 	return int32(C._getBaseCellNeighbor(C.int(baseCell), C.Direction(dir)))
 }
 
 // _getBaseCellDirectionC calls the original C helper _getBaseCellDirection.
-func _getBaseCellDirectionC(originBaseCell int32, neighboringBaseCell int32) Direction {
-	return Direction(C._getBaseCellDirection(C.int(originBaseCell), C.int(neighboringBaseCell)))
+func _getBaseCellDirectionC(originBaseCell int32, neighboringBaseCell int32) direction {
+	return direction(C._getBaseCellDirection(C.int(originBaseCell), C.int(neighboringBaseCell)))
 }
 
 // getRes0CellsC calls the original C implementation getRes0Cells.
-func getRes0CellsC(out []H3Index) H3Error {
-	if len(out) != NUM_BASE_CELLS {
-		return E_FAILED // Need exactly NUM_BASE_CELLS slots
+func getRes0CellsC(out []h3Index) h3Error {
+	if len(out) != numBaseCells {
+		return eFailed // Need exactly numBaseCells slots
 	}
-	cOut := make([]C.H3Index, NUM_BASE_CELLS)
+	cOut := make([]C.H3Index, numBaseCells)
 	err := C.getRes0Cells(&cOut[0])
-	for i := 0; i < NUM_BASE_CELLS; i++ {
-		out[i] = H3Index(cOut[i])
+	for i := 0; i < numBaseCells; i++ {
+		out[i] = h3Index(cOut[i])
 	}
-	return H3Error(err)
+	return h3Error(err)
 }

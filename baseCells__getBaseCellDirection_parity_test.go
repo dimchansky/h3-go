@@ -19,7 +19,7 @@ func Test_getBaseCellDirection_parity(t *testing.T) {
 		{"base_0_to_4", 0, 4},
 		{"base_0_to_5", 0, 5},
 		{"base_0_to_8", 0, 8},
-		{"base_0_to_0", 0, 0}, // Self reference (CENTER_DIGIT)
+		{"base_0_to_0", 0, 0}, // Self reference (centerDigit)
 
 		{"base_1_to_0", 1, 0},
 		{"base_1_to_2", 1, 2},
@@ -29,7 +29,7 @@ func Test_getBaseCellDirection_parity(t *testing.T) {
 		{"base_1_to_9", 1, 9},
 		{"base_1_to_1", 1, 1}, // Self reference
 
-		// Test non-neighboring base cells (should return INVALID_DIGIT)
+		// Test non-neighboring base cells (should return invalidDigit)
 		{"base_0_to_10", 0, 10}, // Not neighbors
 		{"base_0_to_50", 0, 50}, // Not neighbors
 		{"base_1_to_25", 1, 25}, // Not neighbors
@@ -68,10 +68,10 @@ func Test_getBaseCellDirection_parity(t *testing.T) {
 
 func Test_getBaseCellDirection_comprehensive(t *testing.T) {
 	// Test that direction lookup is consistent with neighbor lookup
-	for baseCell := int32(0); baseCell < NUM_BASE_CELLS; baseCell++ {
-		for dir := CENTER_DIGIT; dir < NUM_DIGITS; dir++ {
+	for baseCell := int32(0); baseCell < numBaseCells; baseCell++ {
+		for dir := centerDigit; dir < numDigits; dir++ {
 			neighbor := _getBaseCellNeighbor(baseCell, dir)
-			if neighbor != INVALID_BASE_CELL {
+			if neighbor != invalidBaseCell {
 				// If there's a valid neighbor, the direction lookup should work
 				foundDir := _getBaseCellDirection(baseCell, neighbor)
 				cFoundDir := _getBaseCellDirectionC(baseCell, neighbor)
@@ -83,7 +83,7 @@ func Test_getBaseCellDirection_comprehensive(t *testing.T) {
 
 				// The found direction should match the original direction
 				if foundDir != dir {
-					t.Errorf("Direction mismatch: baseCell=%d, expected_dir=%d, found_dir=%d, neighbor=%d",
+					t.Errorf("direction mismatch: baseCell=%d, expected_dir=%d, found_dir=%d, neighbor=%d",
 						baseCell, dir, foundDir, neighbor)
 				}
 			}
@@ -112,9 +112,9 @@ func Test_getBaseCellDirection_invalid_cases(t *testing.T) {
 				tc.origin, tc.neighbor, goResult, cResult)
 		}
 
-		// Both should return INVALID_DIGIT
-		if goResult != INVALID_DIGIT {
-			t.Errorf("Expected INVALID_DIGIT for non-neighbors %d->%d, got %d",
+		// Both should return invalidDigit
+		if goResult != invalidDigit {
+			t.Errorf("Expected invalidDigit for non-neighbors %d->%d, got %d",
 				tc.origin, tc.neighbor, goResult)
 		}
 	}

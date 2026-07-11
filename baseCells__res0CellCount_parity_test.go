@@ -14,7 +14,7 @@ func Test_res0CellCount_ParityWithC(t *testing.T) {
 	}
 
 	// Verify the expected value
-	expectedCount := int32(122) // NUM_BASE_CELLS
+	expectedCount := int32(122) // numBaseCells
 	if goResult != expectedCount {
 		t.Errorf("Expected res0CellCount to return %d but got %d", expectedCount, goResult)
 	}

@@ -5,7 +5,7 @@ package h3
 // initial hexagon set for polygon operations.
 // Ported from H3 C: algos.c::_getEdgeHexagons.
 func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32,
-	numSearchHexes *int64, search []H3Index, found []H3Index) H3Error {
+	numSearchHexes *int64, search []h3Index, found []h3Index) h3Error {
 
 	for i := 0; i < len(geoloop); i++ {
 		origin := geoloop[i]
@@ -18,7 +18,7 @@ func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32,
 
 		var numHexesEstimate int64
 		estimateErr := lineHexEstimate(&origin, &destination, res, &numHexesEstimate)
-		if estimateErr != E_SUCCESS {
+		if estimateErr != eSuccess {
 			return estimateErr
 		}
 
@@ -28,20 +28,20 @@ func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32,
 			interpolate.Lat = origin.Lat.Mul(float64(numHexesEstimate-j)*invNumHexesEst) + (destination.Lat.Mul(float64(j) * invNumHexesEst))
 			interpolate.Lng = origin.Lng.Mul(float64(numHexesEstimate-j)*invNumHexesEst) + (destination.Lng.Mul(float64(j) * invNumHexesEst))
 
-			var pointHex H3Index
+			var pointHex h3Index
 			err := latLngToCell(&interpolate, res, &pointHex)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				return err
 			}
 
 			// A simple hash to store the hexagon, or move to another place if needed
-			loc := int64(pointHex % H3Index(numHexagons))
+			loc := int64(pointHex % h3Index(numHexagons))
 			loopCount := int64(0)
 			for found[loc] != 0 {
 				// If this conditional is reached, the found memory block is
 				// too small for the given polygon. This should not happen.
 				if loopCount > numHexagons {
-					return E_FAILED
+					return eFailed
 				}
 				if found[loc] == pointHex {
 					break // At least two points of the geoloop index to the same cell
@@ -59,5 +59,5 @@ func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32,
 			(*numSearchHexes)++
 		}
 	}
-	return E_SUCCESS
+	return eSuccess
 }

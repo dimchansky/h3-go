@@ -5,15 +5,15 @@ package h3
 // The function frees all polygons in the linked list except the first (input) polygon,
 // and all loops and coordinates within each polygon.
 // Ported from H3 C: linkedGeo.c::destroyLinkedMultiPolygon.
-func destroyLinkedMultiPolygon(polygon *LinkedGeoPolygon) {
+func destroyLinkedMultiPolygon(polygon *linkedGeoPolygon) {
 	if polygon == nil {
 		return
 	}
 
 	// flag to skip the input polygon
 	skip := true
-	var nextPolygon *LinkedGeoPolygon
-	var nextLoop *LinkedGeoLoop
+	var nextPolygon *linkedGeoPolygon
+	var nextLoop *linkedGeoLoop
 
 	for currentPolygon := polygon; currentPolygon != nil; currentPolygon = nextPolygon {
 		for currentLoop := currentPolygon.First; currentLoop != nil; currentLoop = nextLoop {

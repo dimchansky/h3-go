@@ -15,7 +15,7 @@ import "C"
 // pointSquareDistC calls the original C implementation for squared distance.
 // This bridges to vec3d.c::_pointSquareDist.
 
-func pointSquareDistC(a, b Vec3d) float64 {
+func pointSquareDistC(a, b vec3d) float64 {
 	var ca, cb C.Vec3d
 	ca.x = C.double(a.X)
 	ca.y = C.double(a.Y)
@@ -26,9 +26,9 @@ func pointSquareDistC(a, b Vec3d) float64 {
 	return float64(C._pointSquareDist(&ca, &cb))
 }
 
-// _geoToVec3dC calls the original C implementation to convert a LatLng to Vec3d.
+// _geoToVec3dC calls the original C implementation to convert a LatLng to vec3d.
 // Bridges to vec3d.c::_geoToVec3d.
-func _geoToVec3dC(geo *LatLng, v *Vec3d) {
+func _geoToVec3dC(geo *LatLng, v *vec3d) {
 	var cg C.LatLng
 	cg.lat = C.double(geo.Lat)
 	cg.lng = C.double(geo.Lng)

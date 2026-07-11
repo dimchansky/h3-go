@@ -22,7 +22,7 @@ func Test_setIJK_parity(t *testing.T) {
 			gotC := _setIJKC(tt.i, tt.j, tt.k)
 
 			// Call Go implementation
-			var gotGo CoordIJK
+			var gotGo coordIJK
 			_setIJK(&gotGo, tt.i, tt.j, tt.k)
 
 			// Compare results

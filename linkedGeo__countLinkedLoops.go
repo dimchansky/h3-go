@@ -4,7 +4,7 @@ package h3
 // Iterates through the linked list of loops, counting each node.
 // Returns the total count of loops in the polygon.
 // Ported from H3 C: linkedGeo.c::countLinkedLoops.
-func countLinkedLoops(polygon *LinkedGeoPolygon) int32 {
+func countLinkedLoops(polygon *linkedGeoPolygon) int32 {
 	loop := polygon.First
 	count := int32(0)
 	for loop != nil {

@@ -19,9 +19,9 @@ func Test_getPentagons_propertyTests(t *testing.T) {
 		t.Run(fmt.Sprintf("resolution_%d", res), func(t *testing.T) {
 			t.Parallel()
 
-			h3Indexes := make([]H3Index, PADDED_COUNT)
+			h3Indexes := make([]h3Index, PADDED_COUNT)
 			err := getPentagons(res, h3Indexes)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("getPentagons failed with error: %v", err)
 			}
 
@@ -78,10 +78,10 @@ func Test_getPentagons_invalid(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			h3Indexes := make([]H3Index, PADDED_COUNT)
+			h3Indexes := make([]h3Index, PADDED_COUNT)
 			err := getPentagons(tc.res, h3Indexes)
-			if err != E_RES_DOMAIN {
-				t.Errorf("getPentagons of invalid resolution %d should return E_RES_DOMAIN, got %v",
+			if err != eResDomain {
+				t.Errorf("getPentagons of invalid resolution %d should return eResDomain, got %v",
 					tc.res, err)
 			}
 		})
@@ -93,11 +93,11 @@ func Test_isPentagon_invalid(t *testing.T) {
 
 	testCases := []struct {
 		name   string
-		index  H3Index
+		index  h3Index
 		isPent bool
 	}{
-		{"zero index", H3Index(0), false},
-		{"all but high bit", H3Index(0x7fffffffffffffff), false},
+		{"zero index", h3Index(0), false},
+		{"all but high bit", h3Index(0x7fffffffffffffff), false},
 	}
 
 	for _, tc := range testCases {

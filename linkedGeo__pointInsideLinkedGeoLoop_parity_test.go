@@ -10,8 +10,8 @@ import (
 func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 	testCases := []struct {
 		name  string
-		loop  *LinkedGeoLoop
-		bbox  *BBox
+		loop  *linkedGeoLoop
+		bbox  *bbox
 		coord *LatLng
 	}{
 		{
@@ -22,7 +22,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 1.0, Lng: 1.0},
 				{Lat: 1.0, Lng: 0.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 1.0, South: 0.0,
 				East: 1.0, West: 0.0,
 			},
@@ -36,7 +36,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 1.0, Lng: 1.0},
 				{Lat: 1.0, Lng: 0.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 1.0, South: 0.0,
 				East: 1.0, West: 0.0,
 			},
@@ -50,7 +50,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 1.0, Lng: 1.0},
 				{Lat: 1.0, Lng: 0.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 1.0, South: 0.0,
 				East: 1.0, West: 0.0,
 			},
@@ -63,7 +63,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 1.0, Lng: 0.5},
 				{Lat: 0.0, Lng: 1.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 1.0, South: 0.0,
 				East: 1.0, West: 0.0,
 			},
@@ -76,7 +76,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 1.0, Lng: 0.5},
 				{Lat: 0.0, Lng: 1.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 1.0, South: 0.0,
 				East: 1.0, West: 0.0,
 			},
@@ -90,7 +90,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 1.0, Lng: 1.0},
 				{Lat: 1.0, Lng: 0.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 1.0, South: 0.0,
 				East: 1.0, West: 0.0,
 			},
@@ -106,7 +106,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 2.0, Lng: 1.0},
 				{Lat: 2.0, Lng: 0.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 2.0, South: 0.0,
 				East: 2.0, West: 0.0,
 			},
@@ -122,7 +122,7 @@ func Test_pointInsideLinkedGeoLoop_parity(t *testing.T) {
 				{Lat: 2.0, Lng: 1.0},
 				{Lat: 2.0, Lng: 0.0},
 			}),
-			bbox: &BBox{
+			bbox: &bbox{
 				North: 2.0, South: 0.0,
 				East: 2.0, West: 0.0,
 			},
@@ -155,7 +155,7 @@ func Test_pointInsideLinkedGeoLoop_transmeridian(t *testing.T) {
 	})
 
 	// Create bbox for transmeridian case
-	var bbox BBox
+	var bbox bbox
 	bboxFromLinkedGeoLoop(transmeridianLoop, &bbox)
 
 	testCases := []struct {

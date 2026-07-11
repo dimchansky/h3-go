@@ -9,63 +9,63 @@ import (
 func Test_gridPathCells_parity(t *testing.T) {
 	tests := []struct {
 		name      string
-		start     H3Index
-		end       H3Index
-		expectErr H3Error
+		start     h3Index
+		end       h3Index
+		expectErr h3Error
 	}{
 		{
 			name:      "same cell",
 			start:     0x8a1fb46622dffff,
 			end:       0x8a1fb46622dffff,
-			expectErr: E_SUCCESS,
+			expectErr: eSuccess,
 		},
 		{
 			name:      "adjacent cells",
 			start:     0x8a1fb46622dffff,
 			end:       0x8a1fb46622d7fff,
-			expectErr: E_SUCCESS,
+			expectErr: eSuccess,
 		},
 		{
 			name:      "adjacent cells res 5",
 			start:     0x85283473fffffff,
 			end:       0x85283477fffffff,
-			expectErr: E_SUCCESS,
+			expectErr: eSuccess,
 		},
 		{
 			name:      "distant cells res 7",
 			start:     0x87283470fffffff,
 			end:       0x87283471fffffff,
-			expectErr: E_SUCCESS,
+			expectErr: eSuccess,
 		},
 		{
 			name:      "resolution 0 cells",
 			start:     0x8001fffffffffff,
 			end:       0x8007fffffffffff,
-			expectErr: E_SUCCESS,
+			expectErr: eSuccess,
 		},
 		{
 			name:      "resolution 1 cells",
 			start:     0x81083ffffffffff,
 			end:       0x81093ffffffffff,
-			expectErr: E_SUCCESS,
+			expectErr: eSuccess,
 		},
 		{
 			name:      "different resolutions",
 			start:     0x8a1fb46622dffff,
 			end:       0x891fb46622dffff,
-			expectErr: E_RES_MISMATCH,
+			expectErr: eResMismatch,
 		},
 		{
 			name:      "invalid start cell",
 			start:     0x0,
 			end:       0x85283473fffffff,
-			expectErr: E_RES_MISMATCH, // Invalid cell causes resolution mismatch error
+			expectErr: eResMismatch, // Invalid cell causes resolution mismatch error
 		},
 		{
 			name:      "invalid end cell",
 			start:     0x85283473fffffff,
 			end:       0x0,
-			expectErr: E_RES_MISMATCH, // Invalid cell causes resolution mismatch error
+			expectErr: eResMismatch, // Invalid cell causes resolution mismatch error
 		},
 	}
 
@@ -89,7 +89,7 @@ func Test_gridPathCells_parity(t *testing.T) {
 				return
 			}
 
-			if tt.expectErr != E_SUCCESS {
+			if tt.expectErr != eSuccess {
 				// Expected error case, no need to test further
 				return
 			}
@@ -101,10 +101,10 @@ func Test_gridPathCells_parity(t *testing.T) {
 			}
 
 			// Now test the actual gridPathCells function
-			cOut := make([]H3Index, expectedSize)
+			cOut := make([]h3Index, expectedSize)
 			cErr := _gridPathCellsC(tt.start, tt.end, cOut)
 
-			goOut := make([]H3Index, expectedSize)
+			goOut := make([]h3Index, expectedSize)
 			goErr := gridPathCells(goOut, tt.start, tt.end)
 
 			// Check error parity
@@ -118,7 +118,7 @@ func Test_gridPathCells_parity(t *testing.T) {
 				return
 			}
 
-			if tt.expectErr != E_SUCCESS {
+			if tt.expectErr != eSuccess {
 				return
 			}
 
@@ -141,7 +141,7 @@ func Test_gridPathCells_parity(t *testing.T) {
 			// We only verify parity between C and Go implementations.
 
 			// Test with pre-allocated buffer (dst-buffer pattern)
-			dst := make([]H3Index, expectedSize)
+			dst := make([]h3Index, expectedSize)
 			goErrDst := gridPathCells(dst, tt.start, tt.end)
 
 			if goErrDst != goErr {
@@ -165,8 +165,8 @@ func Test_gridPathCells_pentagon_distortion(t *testing.T) {
 	// Test cases that may involve pentagon distortion
 	tests := []struct {
 		name  string
-		start H3Index
-		end   H3Index
+		start h3Index
+		end   h3Index
 	}{
 		{
 			name:  "pentagon cell base",
@@ -189,21 +189,21 @@ func Test_gridPathCells_pentagon_distortion(t *testing.T) {
 				return
 			}
 
-			if cSizeErr != E_SUCCESS {
+			if cSizeErr != eSuccess {
 				// If size calculation fails, gridPathCells should also fail
-				goOut := make([]H3Index, 1) // Minimal buffer to test failure
+				goOut := make([]h3Index, 1) // Minimal buffer to test failure
 				goErr := gridPathCells(goOut, tt.start, tt.end)
-				if goErr == E_SUCCESS {
+				if goErr == eSuccess {
 					t.Errorf("Expected gridPathCells to fail when gridPathCellsSize failed, but got success")
 				}
 				return
 			}
 
 			// Test gridPathCells
-			cOut := make([]H3Index, cSize)
+			cOut := make([]h3Index, cSize)
 			cErr := _gridPathCellsC(tt.start, tt.end, cOut)
 
-			goOut := make([]H3Index, cSize)
+			goOut := make([]h3Index, cSize)
 			goErr := gridPathCells(goOut, tt.start, tt.end)
 
 			// Check error parity
@@ -212,7 +212,7 @@ func Test_gridPathCells_pentagon_distortion(t *testing.T) {
 				return
 			}
 
-			if cErr == E_SUCCESS {
+			if cErr == eSuccess {
 				// Compare results if successful
 				if int64(len(goOut)) != cSize {
 					t.Errorf("Output length mismatch: expected %d, got %d", cSize, len(goOut))

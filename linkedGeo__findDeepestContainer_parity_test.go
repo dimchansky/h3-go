@@ -8,8 +8,8 @@ import (
 
 func Test_findDeepestContainer_parity(t *testing.T) {
 	// Helper to create a simple square loop
-	createSquareLoop := func(x, y, size float64) *LinkedGeoLoop {
-		loop := &LinkedGeoLoop{}
+	createSquareLoop := func(x, y, size float64) *linkedGeoLoop {
+		loop := &linkedGeoLoop{}
 		coords := []LatLng{
 			{Lat: Rad(x), Lng: Rad(y)},
 			{Lat: Rad(x), Lng: Rad(y + size)},
@@ -18,9 +18,9 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 			{Lat: Rad(x), Lng: Rad(y)}, // Close the loop
 		}
 
-		var prev *LinkedLatLng
+		var prev *linkedLatLng
 		for i, coord := range coords {
-			node := &LinkedLatLng{
+			node := &linkedLatLng{
 				Vertex: coord,
 				Next:   nil,
 			}
@@ -35,68 +35,68 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 		return loop
 	}
 
-	// Helper to create bbox for a loop
-	createBboxForLoop := func(loop *LinkedGeoLoop) *BBox {
-		bbox := &BBox{North: Deg(-90), South: Deg(90), East: Deg(-180), West: Deg(180)}
+	// Helper to create bb for a loop
+	createBboxForLoop := func(loop *linkedGeoLoop) *bbox {
+		bb := &bbox{North: Deg(-90), South: Deg(90), East: Deg(-180), West: Deg(180)}
 
-		// Simple bbox calculation (not exact but sufficient for testing)
+		// Simple bb calculation (not exact but sufficient for testing)
 		current := loop.First
 		for current != nil {
-			if current.Vertex.Lat.Rad() > bbox.North.Rad() {
-				bbox.North = current.Vertex.Lat
+			if current.Vertex.Lat.Rad() > bb.North.Rad() {
+				bb.North = current.Vertex.Lat
 			}
-			if current.Vertex.Lat.Rad() < bbox.South.Rad() {
-				bbox.South = current.Vertex.Lat
+			if current.Vertex.Lat.Rad() < bb.South.Rad() {
+				bb.South = current.Vertex.Lat
 			}
-			if current.Vertex.Lng.Rad() > bbox.East.Rad() {
-				bbox.East = current.Vertex.Lng
+			if current.Vertex.Lng.Rad() > bb.East.Rad() {
+				bb.East = current.Vertex.Lng
 			}
-			if current.Vertex.Lng.Rad() < bbox.West.Rad() {
-				bbox.West = current.Vertex.Lng
+			if current.Vertex.Lng.Rad() < bb.West.Rad() {
+				bb.West = current.Vertex.Lng
 			}
 			current = current.Next
 		}
 
-		return bbox
+		return bb
 	}
 
 	tests := []struct {
 		name          string
-		setupTest     func() ([]*LinkedGeoPolygon, []*BBox, int32) // returns polygons, bboxes, expected index
+		setupTest     func() ([]*linkedGeoPolygon, []*bbox, int32) // returns polygons, bboxes, expected index
 		expectedIndex int
 	}{
 		{
 			name: "empty polygons array",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
-				return []*LinkedGeoPolygon{}, []*BBox{}, -1 // -1 indicates nil expected
+			setupTest: func() ([]*linkedGeoPolygon, []*bbox, int32) {
+				return []*linkedGeoPolygon{}, []*bbox{}, -1 // -1 indicates nil expected
 			},
 			expectedIndex: -1,
 		},
 		{
 			name: "single polygon",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
-				polygon := &LinkedGeoPolygon{
+			setupTest: func() ([]*linkedGeoPolygon, []*bbox, int32) {
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1),
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return []*LinkedGeoPolygon{polygon}, []*BBox{bbox}, 0
+				return []*linkedGeoPolygon{polygon}, []*bbox{bb}, 0
 			},
 			expectedIndex: 0,
 		},
 		{
 			name: "two nested polygons - outer and inner",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() ([]*linkedGeoPolygon, []*bbox, int32) {
 				// Larger outer polygon
-				outerPolygon := &LinkedGeoPolygon{
+				outerPolygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1), // Large outer square
 				}
 				outerPolygon.Last = outerPolygon.First
 
 				// Smaller inner polygon (more deeply nested)
-				innerPolygon := &LinkedGeoPolygon{
+				innerPolygon := &linkedGeoPolygon{
 					First: createSquareLoop(0.02, 0.02, 0.06), // Smaller inner square
 				}
 				innerPolygon.Last = innerPolygon.First
@@ -106,25 +106,25 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 
 				// The inner polygon should be the deepest (it has 1 container - the outer)
 				// The outer polygon has 0 containers
-				return []*LinkedGeoPolygon{outerPolygon, innerPolygon}, []*BBox{outerBbox, innerBbox}, 1
+				return []*linkedGeoPolygon{outerPolygon, innerPolygon}, []*bbox{outerBbox, innerBbox}, 1
 			},
 			expectedIndex: 1,
 		},
 		{
 			name: "three nested polygons - find the most deeply nested",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() ([]*linkedGeoPolygon, []*bbox, int32) {
 				// Create three nested polygons: large, medium, small
-				largePolygon := &LinkedGeoPolygon{
+				largePolygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.1), // Largest
 				}
 				largePolygon.Last = largePolygon.First
 
-				mediumPolygon := &LinkedGeoPolygon{
+				mediumPolygon := &linkedGeoPolygon{
 					First: createSquareLoop(0.02, 0.02, 0.06), // Medium
 				}
 				mediumPolygon.Last = mediumPolygon.First
 
-				smallPolygon := &LinkedGeoPolygon{
+				smallPolygon := &linkedGeoPolygon{
 					First: createSquareLoop(0.03, 0.03, 0.04), // Smallest (most deeply nested)
 				}
 				smallPolygon.Last = smallPolygon.First
@@ -137,21 +137,21 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 				// Medium polygon has 1 container (large)
 				// Large polygon has 0 containers
 				// So small polygon should be selected
-				return []*LinkedGeoPolygon{largePolygon, mediumPolygon, smallPolygon},
-					[]*BBox{largeBbox, mediumBbox, smallBbox}, 2
+				return []*linkedGeoPolygon{largePolygon, mediumPolygon, smallPolygon},
+					[]*bbox{largeBbox, mediumBbox, smallBbox}, 2
 			},
 			expectedIndex: 2,
 		},
 		{
 			name: "non-nested polygons - return first",
-			setupTest: func() ([]*LinkedGeoPolygon, []*BBox, int32) {
+			setupTest: func() ([]*linkedGeoPolygon, []*bbox, int32) {
 				// Two separate polygons that don't contain each other
-				polygon1 := &LinkedGeoPolygon{
+				polygon1 := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0, 0.05), // Left side
 				}
 				polygon1.Last = polygon1.First
 
-				polygon2 := &LinkedGeoPolygon{
+				polygon2 := &linkedGeoPolygon{
 					First: createSquareLoop(0.1, 0.1, 0.05), // Right side, far away
 				}
 				polygon2.Last = polygon2.First
@@ -161,7 +161,7 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 
 				// Neither polygon contains the other, so both have 0 containers
 				// Function should return the first polygon
-				return []*LinkedGeoPolygon{polygon1, polygon2}, []*BBox{bbox1, bbox2}, 0
+				return []*linkedGeoPolygon{polygon1, polygon2}, []*bbox{bbox1, bbox2}, 0
 			},
 			expectedIndex: 0,
 		},
@@ -184,7 +184,7 @@ func Test_findDeepestContainer_parity(t *testing.T) {
 			}
 
 			// Check expected result
-			var expected *LinkedGeoPolygon
+			var expected *linkedGeoPolygon
 			if expectedIndex >= 0 && int(expectedIndex) < len(polygons) {
 				expected = polygons[expectedIndex]
 			}

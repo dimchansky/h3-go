@@ -6,12 +6,12 @@ import (
 )
 
 // Helper function to iterate all indexes at a given resolution.
-func iterateAllIndexesAtResForChildPos(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
+func iterateAllIndexesAtResForChildPos(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index)) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
@@ -26,17 +26,17 @@ func iterateAllIndexesAtResForChildPos(t *testing.T, res int32, testFunc func(t 
 	// For higher resolutions, get children of each base cell
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue // Some cells might not have children at certain resolutions
 		}
 
-		children := make([]H3Index, childrenSize)
-		if err := cellToChildren(baseCell, res, children); err != E_SUCCESS {
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(baseCell, res, children); err != eSuccess {
 			continue
 		}
 
 		for _, child := range children {
-			if child != H3_NULL {
+			if child != h3Null {
 				testFunc(t, child)
 			}
 		}
@@ -44,7 +44,7 @@ func iterateAllIndexesAtResForChildPos(t *testing.T, res int32, testFunc func(t 
 }
 
 // childPos_assertions tests cellToChildPos and childPosToCell for a given H3 index.
-func childPos_assertions(t *testing.T, h3 H3Index) {
+func childPos_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
 	parentRes := getResolution(h3)
@@ -52,20 +52,20 @@ func childPos_assertions(t *testing.T, h3 H3Index) {
 	for resolutionOffset := int32(0); resolutionOffset < 4; resolutionOffset++ {
 		childRes := parentRes + resolutionOffset
 		numChildren, err := cellToChildrenSize(h3, childRes)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue
 		}
 
-		children := make([]H3Index, numChildren)
+		children := make([]h3Index, numChildren)
 		err = cellToChildren(h3, childRes, children)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue
 		}
 
 		for i, child := range children {
 			// Test cellToChildPos
 			childPos, err := cellToChildPos(child, parentRes)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Errorf("cellToChildPos failed for child %d: %v", i, err)
 				continue
 			}
@@ -75,7 +75,7 @@ func childPos_assertions(t *testing.T, h3 H3Index) {
 
 			// Test childPosToCell
 			cell, err := childPosToCell(int64(i), h3, childRes)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Errorf("childPosToCell failed for position %d: %v", i, err)
 				continue
 			}
@@ -98,24 +98,24 @@ func Test_cellToChildPos_res_errors(t *testing.T) {
 	t.Parallel()
 
 	// random res 8 cell
-	child := H3Index(0x88283080ddfffff)
+	child := h3Index(0x88283080ddfffff)
 
 	// Test invalid resolution -1
 	_, err := cellToChildPos(child, -1)
-	if err != E_RES_DOMAIN {
-		t.Errorf("error matches expected for invalid res: expected E_RES_DOMAIN, got %v", err)
+	if err != eResDomain {
+		t.Errorf("error matches expected for invalid res: expected eResDomain, got %v", err)
 	}
 
 	// Test invalid resolution 42
 	_, err = cellToChildPos(child, 42)
-	if err != E_RES_DOMAIN {
-		t.Errorf("error matches expected for invalid res: expected E_RES_DOMAIN, got %v", err)
+	if err != eResDomain {
+		t.Errorf("error matches expected for invalid res: expected eResDomain, got %v", err)
 	}
 
 	// Test parent res finer than child
 	_, err = cellToChildPos(child, 9)
-	if err != E_RES_MISMATCH {
-		t.Errorf("error matches expected for parent res finer than child: expected E_RES_MISMATCH, got %v", err)
+	if err != eResMismatch {
+		t.Errorf("error matches expected for parent res finer than child: expected eResMismatch, got %v", err)
 	}
 }
 
@@ -123,25 +123,25 @@ func Test_childPosToCell_res_errors(t *testing.T) {
 	t.Parallel()
 
 	// random res 8 cell
-	parent := H3Index(0x88283080ddfffff)
+	parent := h3Index(0x88283080ddfffff)
 	childPos := int64(27)
 
 	// Test invalid resolution 42
 	_, err := childPosToCell(childPos, parent, 42)
-	if err != E_RES_DOMAIN {
-		t.Errorf("error matches expected for invalid res: expected E_RES_DOMAIN, got %v", err)
+	if err != eResDomain {
+		t.Errorf("error matches expected for invalid res: expected eResDomain, got %v", err)
 	}
 
 	// Test invalid resolution -1
 	_, err = childPosToCell(childPos, parent, -1)
-	if err != E_RES_DOMAIN {
-		t.Errorf("error matches expected for invalid res: expected E_RES_DOMAIN, got %v", err)
+	if err != eResDomain {
+		t.Errorf("error matches expected for invalid res: expected eResDomain, got %v", err)
 	}
 
 	// Test child res coarser than parent
 	_, err = childPosToCell(childPos, parent, 7)
-	if err != E_RES_MISMATCH {
-		t.Errorf("error matches expected for child res coarser than parent: expected E_RES_MISMATCH, got %v", err)
+	if err != eResMismatch {
+		t.Errorf("error matches expected for child res coarser than parent: expected eResMismatch, got %v", err)
 	}
 }
 
@@ -149,24 +149,24 @@ func Test_childPosToCell_childPos_errors(t *testing.T) {
 	t.Parallel()
 
 	// random res 8 cell
-	parent := H3Index(0x88283080ddfffff)
+	parent := h3Index(0x88283080ddfffff)
 	res := int32(10)
 
 	// Test negative childPos
 	_, err := childPosToCell(-1, parent, res)
-	if err != E_DOMAIN {
-		t.Errorf("error matches expected for negative childPos: expected E_DOMAIN, got %v", err)
+	if err != eDomain {
+		t.Errorf("error matches expected for negative childPos: expected eDomain, got %v", err)
 	}
 
 	// res is two steps down, so max valid child pos is 48
 	_, err = childPosToCell(48, parent, res)
-	if err != E_SUCCESS {
-		t.Errorf("No error for max valid child pos: expected E_SUCCESS, got %v", err)
+	if err != eSuccess {
+		t.Errorf("No error for max valid child pos: expected eSuccess, got %v", err)
 	}
 
 	_, err = childPosToCell(49, parent, res)
-	if err != E_DOMAIN {
-		t.Errorf("error matches expected for childPos greater than max: expected E_DOMAIN, got %v", err)
+	if err != eDomain {
+		t.Errorf("error matches expected for childPos greater than max: expected eDomain, got %v", err)
 	}
 }
 
@@ -174,12 +174,12 @@ func Test_cellToChildPos_invalid_digit(t *testing.T) {
 	t.Parallel()
 
 	// random res 8 cell
-	child := H3Index(0x88283080ddfffff)
-	child = setIndexDigit(child, 6, int32(INVALID_DIGIT))
+	child := h3Index(0x88283080ddfffff)
+	child = setIndexDigit(child, 6, int32(invalidDigit))
 
 	_, err := cellToChildPos(child, 0)
-	if err != E_CELL_INVALID {
-		t.Errorf("error matches expected for invalid cell: expected E_CELL_INVALID, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("error matches expected for invalid cell: expected eCellInvalid, got %v", err)
 	}
 }
 
@@ -187,12 +187,12 @@ func Test_cellToChildPos_invalid_pentagon_digit(t *testing.T) {
 	t.Parallel()
 
 	// Res 7 hexagon child of a pentagon
-	child := H3Index(0x870800006ffffff)
-	child = setIndexDigit(child, 7, int32(INVALID_DIGIT))
+	child := h3Index(0x870800006ffffff)
+	child = setIndexDigit(child, 7, int32(invalidDigit))
 
 	_, err := cellToChildPos(child, 0)
-	if err != E_CELL_INVALID {
-		t.Errorf("error matches expected for invalid cell: expected E_CELL_INVALID, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("error matches expected for invalid cell: expected eCellInvalid, got %v", err)
 	}
 }
 
@@ -200,11 +200,11 @@ func Test_cellToChildPos_invalid_pentagon_kaxis(t *testing.T) {
 	t.Parallel()
 
 	// Create a res 8 index located in a deleted subsequence of a pentagon.
-	var child H3Index
-	setH3Index(&child, 8, 4, int32(K_AXES_DIGIT))
+	var child h3Index
+	setH3Index(&child, 8, 4, int32(kAxesDigit))
 
 	_, err := cellToChildPos(child, 0)
-	if err != E_CELL_INVALID {
-		t.Errorf("error matches expected for invalid cell: expected E_CELL_INVALID, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("error matches expected for invalid cell: expected eCellInvalid, got %v", err)
 	}
 }

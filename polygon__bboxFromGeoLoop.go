@@ -7,9 +7,9 @@ import (
 // bboxFromGeoLoop computes a bounding box for a loop of coordinates.
 // Mirrors H3's polygon.c::bboxFromGeoLoop behavior.
 // Ported from H3 C: polygon.c::bboxFromGeoLoop.
-func bboxFromGeoLoop(loop []LatLng, bbox *BBox) {
+func bboxFromGeoLoop(loop []LatLng, bb *bbox) {
 	if len(loop) == 0 {
-		*bbox = BBox{}
+		*bb = bbox{}
 		return
 	}
 	south := Rad(math.MaxFloat64)
@@ -50,5 +50,5 @@ func bboxFromGeoLoop(loop []LatLng, bbox *BBox) {
 		east = maxNegLng
 		west = minPosLng
 	}
-	*bbox = BBox{North: north, South: south, East: east, West: west}
+	*bb = bbox{North: north, South: south, East: east, West: west}
 }

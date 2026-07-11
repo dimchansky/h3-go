@@ -27,18 +27,18 @@ func Test_ijToIjk_parity(t *testing.T) {
 		{"medium values", CoordIJ{100, -50}},
 		{"medium values 2", CoordIJ{-100, 50}},
 		// Test boundary cases that might trigger overflow
-		{"boundary case 1", CoordIJ{INT32_MAX / 2, 0}},
-		{"boundary case 2", CoordIJ{0, INT32_MIN / 2}},
-		{"boundary case 3", CoordIJ{INT32_MAX / 2, INT32_MIN / 2}},
-		{"boundary case 4", CoordIJ{INT32_MIN / 2, INT32_MAX / 2}},
+		{"boundary case 1", CoordIJ{int32Max / 2, 0}},
+		{"boundary case 2", CoordIJ{0, int32Min / 2}},
+		{"boundary case 3", CoordIJ{int32Max / 2, int32Min / 2}},
+		{"boundary case 4", CoordIJ{int32Min / 2, int32Max / 2}},
 		// Test cases that might cause overflow in normalization
-		{"potential overflow 1", CoordIJ{INT32_MAX, -1}},
-		{"potential overflow 2", CoordIJ{INT32_MIN, 1}},
-		{"potential overflow 3", CoordIJ{INT32_MAX - 1000, -2000}},
-		{"potential overflow 4", CoordIJ{INT32_MIN + 1000, 2000}},
-		{"extreme positive", CoordIJ{INT32_MAX, INT32_MAX}},
-		{"extreme negative", CoordIJ{INT32_MIN, INT32_MIN}},
-		{"extreme mixed", CoordIJ{INT32_MAX, INT32_MIN}},
+		{"potential overflow 1", CoordIJ{int32Max, -1}},
+		{"potential overflow 2", CoordIJ{int32Min, 1}},
+		{"potential overflow 3", CoordIJ{int32Max - 1000, -2000}},
+		{"potential overflow 4", CoordIJ{int32Min + 1000, 2000}},
+		{"extreme positive", CoordIJ{int32Max, int32Max}},
+		{"extreme negative", CoordIJ{int32Min, int32Min}},
+		{"extreme mixed", CoordIJ{int32Max, int32Min}},
 	}
 
 	for _, tt := range tests {
@@ -47,7 +47,7 @@ func Test_ijToIjk_parity(t *testing.T) {
 			gotCIjk, gotCErr := ijToIjkC(&tt.ij)
 
 			// Call Go implementation
-			var gotGoIjk CoordIJK
+			var gotGoIjk coordIJK
 			gotGoErr := ijToIjk(&tt.ij, &gotGoIjk)
 
 			// Compare error codes first
@@ -58,7 +58,7 @@ func Test_ijToIjk_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare results
-			if gotGoErr == E_SUCCESS {
+			if gotGoErr == eSuccess {
 				if gotGoIjk.I != gotCIjk.I || gotGoIjk.J != gotCIjk.J || gotGoIjk.K != gotCIjk.K {
 					t.Errorf("ijToIjk() result mismatch: Go{%d,%d,%d} != C{%d,%d,%d} for input{%d,%d}",
 						gotGoIjk.I, gotGoIjk.J, gotGoIjk.K, gotCIjk.I, gotCIjk.J, gotCIjk.K,
@@ -73,7 +73,7 @@ func Test_ijToIjk_parity(t *testing.T) {
 		ij := CoordIJ{100, -50}
 
 		// Apply transformation twice
-		var result1, result2 CoordIJK
+		var result1, result2 coordIJK
 		err1 := ijToIjk(&ij, &result1)
 		err2 := ijToIjk(&ij, &result2)
 
@@ -81,7 +81,7 @@ func Test_ijToIjk_parity(t *testing.T) {
 			t.Errorf("ijToIjk should have deterministic errors: first=%d != second=%d", err1, err2)
 		}
 
-		if err1 == E_SUCCESS {
+		if err1 == eSuccess {
 			if result1.I != result2.I || result1.J != result2.J || result1.K != result2.K {
 				t.Errorf("ijToIjk should be deterministic: first{%d,%d,%d} != second{%d,%d,%d}",
 					result1.I, result1.J, result1.K, result2.I, result2.J, result2.K)
@@ -96,17 +96,17 @@ func Test_ijToIjk_parity(t *testing.T) {
 		}
 
 		for _, ij := range testIJs {
-			var ijk CoordIJK
+			var ijk coordIJK
 			err := ijToIjk(&ij, &ijk)
 
-			if err == E_SUCCESS {
+			if err == eSuccess {
 				// Basic property: the IJ coordinates should be preserved in some form
 				// After normalization, the relationship might be different, but
 				// let's at least verify the function doesn't crash
 				if ijk.I == 0 && ijk.J == 0 && ijk.K == 0 {
 					// Should only happen for origin
 					if ij.I != 0 || ij.J != 0 {
-						t.Errorf("Non-origin IJ{%d,%d} produced origin IJK{%d,%d,%d}",
+						t.Errorf("Non-origin quadIJ{%d,%d} produced origin IJK{%d,%d,%d}",
 							ij.I, ij.J, ijk.I, ijk.J, ijk.K)
 					}
 				}
@@ -121,17 +121,17 @@ func Test_ijToIjk_parity(t *testing.T) {
 		}
 
 		for _, origIj := range testIJs {
-			var ijk CoordIJK
+			var ijk coordIJK
 			err := ijToIjk(&origIj, &ijk)
 
-			if err == E_SUCCESS {
-				// Convert back to IJ
+			if err == eSuccess {
+				// Convert back to quadIJ
 				var resultIj CoordIJ
 				ijkToIj(&ijk, &resultIj)
 
 				// Note: Due to normalization, this might not be a perfect round-trip
 				// but we can at least check that the process doesn't crash
-				t.Logf("Round trip: IJ{%d,%d} -> IJK{%d,%d,%d} -> IJ{%d,%d}",
+				t.Logf("Round trip: quadIJ{%d,%d} -> IJK{%d,%d,%d} -> quadIJ{%d,%d}",
 					origIj.I, origIj.J, ijk.I, ijk.J, ijk.K, resultIj.I, resultIj.J)
 			}
 		}
@@ -141,21 +141,21 @@ func Test_ijToIjk_parity(t *testing.T) {
 	t.Run("overflow_errors", func(t *testing.T) {
 		// Test cases that should definitely trigger overflow
 		overflowCases := []CoordIJ{
-			{INT32_MAX, INT32_MAX},
-			{INT32_MIN, INT32_MIN},
-			{INT32_MAX, INT32_MIN},
+			{int32Max, int32Max},
+			{int32Min, int32Min},
+			{int32Max, int32Min},
 		}
 
 		for _, ij := range overflowCases {
-			var ijk CoordIJK
+			var ijk coordIJK
 			err := ijToIjk(&ij, &ijk)
 
 			// The function should either succeed or fail, but not crash
-			if err != E_SUCCESS && err != E_FAILED {
+			if err != eSuccess && err != eFailed {
 				t.Errorf("Unexpected error code %d for overflow case {%d,%d}", err, ij.I, ij.J)
 			}
 
-			t.Logf("Overflow test: IJ{%d,%d} -> error=%d", ij.I, ij.J, err)
+			t.Logf("Overflow test: quadIJ{%d,%d} -> error=%d", ij.I, ij.J, err)
 		}
 	})
 }

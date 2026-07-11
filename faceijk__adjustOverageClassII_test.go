@@ -8,18 +8,18 @@ import (
 
 func Test_adjustOverageClassII_CriticalDifference(t *testing.T) {
 	// Test the specific case where Go and C implementations differ
-	// This is the termination point where C returns NO_OVERAGE but Go returns NEW_FACE
+	// This is the termination point where C returns noOverage but Go returns newFace
 
 	testCase := struct {
 		name             string
-		input            FaceIJK
-		expectedC        FaceIJK
-		expectedOverageC Overage
+		input            faceIJK
+		expectedC        faceIJK
+		expectedOverageC overage
 	}{
 		name:             "termination_point",
-		input:            FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}},
-		expectedC:        FaceIJK{Face: 5, Coord: CoordIJK{I: 715827882, J: 0, K: 1431655770}}, // C doesn't change it
-		expectedOverageC: NO_OVERAGE,                                                           // C returns 0 (NO_OVERAGE)
+		input:            faceIJK{Face: 5, Coord: coordIJK{I: 715827882, J: 0, K: 1431655770}},
+		expectedC:        faceIJK{Face: 5, Coord: coordIJK{I: 715827882, J: 0, K: 1431655770}}, // C doesn't change it
+		expectedOverageC: noOverage,                                                            // C returns 0 (noOverage)
 	}
 
 	res := int32(3)

@@ -10,8 +10,8 @@ import (
 func Test_cellToLocalIjk_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
-		h3     H3Index
+		origin h3Index
+		h3     h3Index
 	}{
 		// Same cell - should return (0,0,0)
 		{
@@ -63,11 +63,11 @@ func Test_cellToLocalIjk_parity(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test Go implementation
-			var goOut CoordIJK
+			var goOut coordIJK
 			goErr := cellToLocalIjk(tc.origin, tc.h3, &goOut)
 
 			// Test C implementation
-			var cOut CoordIJK
+			var cOut coordIJK
 			cErr := _cellToLocalIjkC(tc.origin, tc.h3, &cOut)
 
 			// Compare errors
@@ -77,7 +77,7 @@ func Test_cellToLocalIjk_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare results
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut.I != cOut.I || goOut.J != cOut.J || goOut.K != cOut.K {
 					t.Errorf("Result mismatch:\nGo:  {I:%d, J:%d, K:%d}\nC:   {I:%d, J:%d, K:%d}",
 						goOut.I, goOut.J, goOut.K,
@@ -92,8 +92,8 @@ func Test_cellToLocalIjk_parity(t *testing.T) {
 func Test_cellToLocalIjk_errors_parity(t *testing.T) {
 	testCases := []struct {
 		name   string
-		origin H3Index
-		h3     H3Index
+		origin h3Index
+		h3     h3Index
 	}{
 		{
 			"Resolution mismatch",
@@ -120,11 +120,11 @@ func Test_cellToLocalIjk_errors_parity(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test Go implementation
-			var goOut CoordIJK
+			var goOut coordIJK
 			goErr := cellToLocalIjk(tc.origin, tc.h3, &goOut)
 
 			// Test C implementation
-			var cOut CoordIJK
+			var cOut coordIJK
 			cErr := _cellToLocalIjkC(tc.origin, tc.h3, &cOut)
 
 			// Compare errors - both should fail
@@ -132,8 +132,8 @@ func Test_cellToLocalIjk_errors_parity(t *testing.T) {
 				t.Errorf("Error mismatch: Go=%v, C=%v", goErr, cErr)
 			}
 
-			// Both should return error (not E_SUCCESS)
-			if goErr == E_SUCCESS || cErr == E_SUCCESS {
+			// Both should return error (not eSuccess)
+			if goErr == eSuccess || cErr == eSuccess {
 				t.Errorf("Expected error but got: Go=%v, C=%v", goErr, cErr)
 			}
 		})
@@ -148,15 +148,15 @@ func Test_cellToLocalIjk_pentagon_parity(t *testing.T) {
 	for _, baseCell := range pentagonBaseCells {
 		t.Run(fmt.Sprintf("Pentagon base cell %d", baseCell), func(t *testing.T) {
 			// Create a cell on this pentagon base cell at res 3
-			origin := H3Index(0x83000000000000 | (H3Index(baseCell) << H3_BC_OFFSET))
+			origin := h3Index(0x83000000000000 | (h3Index(baseCell) << h3BcOffset))
 			h3 := origin
 
 			// Test Go implementation
-			var goOut CoordIJK
+			var goOut coordIJK
 			goErr := cellToLocalIjk(origin, h3, &goOut)
 
 			// Test C implementation
-			var cOut CoordIJK
+			var cOut coordIJK
 			cErr := _cellToLocalIjkC(origin, h3, &cOut)
 
 			// Compare errors
@@ -166,7 +166,7 @@ func Test_cellToLocalIjk_pentagon_parity(t *testing.T) {
 			}
 
 			// If both succeeded, compare results
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut.I != cOut.I || goOut.J != cOut.J || goOut.K != cOut.K {
 					t.Errorf("Result mismatch for pentagon base cell %d:\nGo:  {I:%d, J:%d, K:%d}\nC:   {I:%d, J:%d, K:%d}",
 						baseCell, goOut.I, goOut.J, goOut.K, cOut.I, cOut.J, cOut.K)

@@ -4,18 +4,18 @@ package h3
 // Pentagon cells are handled with 5 vertices, hexagon cells with 6 vertices.
 // All boundaries are returned in counter-clockwise order.
 // Ported from H3 C: h3Index.c::cellToBoundary.
-func cellToBoundary(h3 H3Index, cb *CellBoundary) H3Error {
-	var fijk FaceIJK
+func cellToBoundary(h3 h3Index, cb *CellBoundary) h3Error {
+	var fijk faceIJK
 	err := _h3ToFaceIjk(h3, &fijk)
-	if err != E_SUCCESS {
-		return H3Error(err)
+	if err != eSuccess {
+		return h3Error(err)
 	}
 
 	if isPentagon(h3) {
-		_faceIjkPentToCellBoundary(&fijk, getResolution(h3), 0, NUM_PENT_VERTS, cb)
+		_faceIjkPentToCellBoundary(&fijk, getResolution(h3), 0, numPentVerts, cb)
 	} else {
-		_faceIjkToCellBoundary(&fijk, getResolution(h3), 0, NUM_HEX_VERTS, cb)
+		_faceIjkToCellBoundary(&fijk, getResolution(h3), 0, numHexVerts, cb)
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

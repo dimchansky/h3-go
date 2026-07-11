@@ -1,10 +1,10 @@
 package h3
 
-// _h3RotatePent60ccw rotates an H3Index 60 degrees counterclockwise about a pentagonal center.
+// _h3RotatePent60ccw rotates an h3Index 60 degrees counterclockwise about a pentagonal center.
 // This function handles pentagon-specific rotation logic, skipping leading 1 digits (k-axis)
 // and adjusting for deleted k-axes sequence when necessary.
 // Ported from H3 C: h3Index.c::_h3RotatePent60ccw.
-func _h3RotatePent60ccw(h H3Index) H3Index {
+func _h3RotatePent60ccw(h h3Index) h3Index {
 	// rotate in place; skips any leading 1 digits (k-axis)
 	foundFirstNonZeroDigit := false
 	res := getResolution(h)
@@ -12,14 +12,14 @@ func _h3RotatePent60ccw(h H3Index) H3Index {
 	for r := int32(1); r <= res; r++ {
 		// rotate this digit
 		oldDigit := getIndexDigit(h, r)
-		h = setIndexDigit(h, r, int32(_rotate60ccw(Direction(oldDigit))))
+		h = setIndexDigit(h, r, int32(_rotate60ccw(direction(oldDigit))))
 
 		// look for the first non-zero digit so we can adjust for deleted k-axes sequence if necessary
 		if !foundFirstNonZeroDigit && getIndexDigit(h, r) != 0 {
 			foundFirstNonZeroDigit = true
 
 			// adjust for deleted k-axes sequence
-			if Direction(_h3LeadingNonZeroDigit(h)) == K_AXES_DIGIT {
+			if direction(_h3LeadingNonZeroDigit(h)) == kAxesDigit {
 				h = _h3Rotate60ccw(h)
 			}
 		}

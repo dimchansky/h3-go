@@ -1,8 +1,8 @@
 package h3
 
-// BBox mirrors the C struct BBox used in bbox.h
+// bbox mirrors the C struct bbox used in bbox.h
 // Stores latitude and longitude bounds as angle.Angle (internally in radians).
-type BBox struct {
+type bbox struct {
 	North Angle
 	South Angle
 	East  Angle

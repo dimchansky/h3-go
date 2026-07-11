@@ -23,7 +23,7 @@ extern H3Error bboxHexEstimate(const BBox* bbox, int res, int64_t* out);
 */
 import "C"
 
-func toCBBox(b BBox) C.BBox {
+func toCBBox(b bbox) C.BBox {
 	var cb C.BBox
 	cb.north = C.double(b.North.Rad())
 	cb.south = C.double(b.South.Rad())
@@ -33,7 +33,7 @@ func toCBBox(b BBox) C.BBox {
 }
 
 // bboxIsTransmeridianC calls the original C implementation.
-func bboxIsTransmeridianC(b BBox) bool {
+func bboxIsTransmeridianC(b bbox) bool {
 	cb := toCBBox(b)
 	if C.bboxIsTransmeridian(&cb) {
 		return true
@@ -43,19 +43,19 @@ func bboxIsTransmeridianC(b BBox) bool {
 }
 
 // bboxWidthRadsC calls the original C implementation.
-func bboxWidthRadsC(b BBox) float64 {
+func bboxWidthRadsC(b bbox) float64 {
 	cb := toCBBox(b)
 	return float64(C.bboxWidthRads(&cb))
 }
 
 // bboxHeightRadsC calls the original C implementation.
-func bboxHeightRadsC(b BBox) float64 {
+func bboxHeightRadsC(b bbox) float64 {
 	cb := toCBBox(b)
 	return float64(C.bboxHeightRads(&cb))
 }
 
 // bboxEqualsC calls the original C implementation.
-func bboxEqualsC(b1, b2 BBox) bool {
+func bboxEqualsC(b1, b2 bbox) bool {
 	cb1 := toCBBox(b1)
 	cb2 := toCBBox(b2)
 	if C.bboxEquals(&cb1, &cb2) {
@@ -66,7 +66,7 @@ func bboxEqualsC(b1, b2 BBox) bool {
 }
 
 // bboxCenterC calls the original C implementation.
-func bboxCenterC(b BBox) LatLng {
+func bboxCenterC(b bbox) LatLng {
 	cb := toCBBox(b)
 	var center C.LatLng
 	C.bboxCenter(&cb, &center)
@@ -74,7 +74,7 @@ func bboxCenterC(b BBox) LatLng {
 }
 
 // bboxContainsC calls the original C implementation.
-func bboxContainsC(b BBox, p LatLng) bool {
+func bboxContainsC(b bbox, p LatLng) bool {
 	cb := toCBBox(b)
 	var cp C.LatLng
 	cp.lat = C.double(p.Lat.Rad())
@@ -87,7 +87,7 @@ func bboxContainsC(b BBox, p LatLng) bool {
 }
 
 // bboxOverlapsBBoxC calls the original C implementation.
-func bboxOverlapsBBoxC(a, b BBox) bool {
+func bboxOverlapsBBoxC(a, b bbox) bool {
 	ca := toCBBox(a)
 	cb := toCBBox(b)
 	if C.bboxOverlapsBBox(&ca, &cb) {
@@ -98,7 +98,7 @@ func bboxOverlapsBBoxC(a, b BBox) bool {
 }
 
 // bboxContainsBBoxC calls the original C implementation.
-func bboxContainsBBoxC(a, b BBox) bool {
+func bboxContainsBBoxC(a, b bbox) bool {
 	ca := toCBBox(a)
 	cb := toCBBox(b)
 	if C.bboxContainsBBox(&ca, &cb) {
@@ -109,7 +109,7 @@ func bboxContainsBBoxC(a, b BBox) bool {
 }
 
 // scaleBBoxC calls the original C implementation.
-func scaleBBoxC(bbox *BBox, scale float64) {
+func scaleBBoxC(bbox *bbox, scale float64) {
 	cb := toCBBox(*bbox)
 	C.scaleBBox(&cb, C.double(scale))
 	// Convert back to Go struct
@@ -120,12 +120,12 @@ func scaleBBoxC(bbox *BBox, scale float64) {
 }
 
 // _hexRadiusKmC calls the original C implementation.
-func _hexRadiusKmC(h3Index H3Index) float64 {
+func _hexRadiusKmC(h3Index h3Index) float64 {
 	return float64(C._hexRadiusKm(C.H3Index(h3Index)))
 }
 
 // lineHexEstimateC calls the original C implementation.
-func lineHexEstimateC(origin *LatLng, destination *LatLng, res int32, out *int64) H3Error {
+func lineHexEstimateC(origin *LatLng, destination *LatLng, res int32, out *int64) h3Error {
 	var cOrigin C.LatLng
 	cOrigin.lat = C.double(origin.Lat)
 	cOrigin.lng = C.double(origin.Lng)
@@ -137,14 +137,14 @@ func lineHexEstimateC(origin *LatLng, destination *LatLng, res int32, out *int64
 	var cOut C.int64_t
 	err := C.lineHexEstimate(&cOrigin, &cDest, C.int(res), &cOut)
 	*out = int64(cOut)
-	return H3Error(err)
+	return h3Error(err)
 }
 
 // bboxHexEstimateC calls the original C implementation.
-func bboxHexEstimateC(bbox *BBox, res int32, out *int64) H3Error {
+func bboxHexEstimateC(bbox *bbox, res int32, out *int64) h3Error {
 	cb := toCBBox(*bbox)
 	var cOut C.int64_t
 	err := C.bboxHexEstimate(&cb, C.int(res), &cOut)
 	*out = int64(cOut)
-	return H3Error(err)
+	return h3Error(err)
 }

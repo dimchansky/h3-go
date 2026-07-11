@@ -77,10 +77,10 @@ var (
 )
 
 // isTransmeridianCell returns true if the cell crosses the meridian.
-func isTransmeridianCell(h H3Index) bool {
+func isTransmeridianCell(h h3Index) bool {
 	var boundary CellBoundary
 	err := cellToBoundary(h, &boundary)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		return false
 	}
 
@@ -99,10 +99,10 @@ func isTransmeridianCell(h H3Index) bool {
 }
 
 // countNonNullIndexesWithSize counts non-null H3 indexes in a slice up to size.
-func countNonNullIndexesWithSize(indexes []H3Index, size int64) int64 {
+func countNonNullIndexesWithSize(indexes []h3Index, size int64) int64 {
 	var count int64
 	for i := int64(0); i < size && i < int64(len(indexes)); i++ {
-		if indexes[i] != H3_NULL {
+		if indexes[i] != h3Null {
 			count++
 		}
 	}
@@ -111,22 +111,22 @@ func countNonNullIndexesWithSize(indexes []H3Index, size int64) int64 {
 
 func TestPolygonToCells_ZeroSize(t *testing.T) {
 	t.Parallel()
-	err := polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_CENTER), 0, nil)
-	if err != E_MEMORY_BOUNDS {
-		t.Errorf("Expected E_MEMORY_BOUNDS for zero size, got %v", err)
+	err := polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(ContainmentCenter), 0, nil)
+	if err != eMemoryBounds {
+		t.Errorf("Expected eMemoryBounds for zero size, got %v", err)
 	}
 }
 
 func TestPolygonToCells_CenterContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -139,14 +139,14 @@ func TestPolygonToCells_CenterContainment(t *testing.T) {
 
 func TestPolygonToCells_FullContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_FULL))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(ContainmentFull))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -159,14 +159,14 @@ func TestPolygonToCells_FullContainment(t *testing.T) {
 
 func TestPolygonToCells_Overlapping(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(ContainmentOverlapping))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(ContainmentOverlapping), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -179,14 +179,14 @@ func TestPolygonToCells_Overlapping(t *testing.T) {
 
 func TestPolygonToCells_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(ContainmentOverlappingBBox))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 9, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -199,14 +199,14 @@ func TestPolygonToCells_OverlappingBBox(t *testing.T) {
 
 func TestPolygonToCellsHole_CenterContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -219,14 +219,14 @@ func TestPolygonToCellsHole_CenterContainment(t *testing.T) {
 
 func TestPolygonToCellsHole_FullContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_FULL))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(ContainmentFull))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -239,14 +239,14 @@ func TestPolygonToCellsHole_FullContainment(t *testing.T) {
 
 func TestPolygonToCellsHole_Overlapping(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(ContainmentOverlapping))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(ContainmentOverlapping), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -259,14 +259,14 @@ func TestPolygonToCellsHole_Overlapping(t *testing.T) {
 
 func TestPolygonToCellsHole_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&holeGeoPolygon, 9, uint32(ContainmentOverlappingBBox))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&holeGeoPolygon, 9, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -301,19 +301,19 @@ func TestPolygonToCellsHoleParentIssue(t *testing.T) {
 		Holes:   []GeoLoop{sanMarino},
 	}
 
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&polygon, 6, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&polygon, 6, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&polygon, 6, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&polygon, 6, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
 	// This is the cell inside San Marino (i.e. inside the hole)
-	holeCell := H3Index(0x861ea3cefffffff)
+	holeCell := h3Index(0x861ea3cefffffff)
 
 	found := false
 	for i := int64(0); i < numHexagons; i++ {
@@ -330,14 +330,14 @@ func TestPolygonToCellsHoleParentIssue(t *testing.T) {
 
 func TestPolygonToCellsEmpty(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&emptyGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&emptyGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&emptyGeoPolygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&emptyGeoPolygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -350,14 +350,14 @@ func TestPolygonToCellsEmpty(t *testing.T) {
 
 func TestPolygonToCellsContainsPolygon(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -379,14 +379,14 @@ func TestPolygonToCellsContainsPolygon_CenterContainment(t *testing.T) {
 	}
 	centerGeoPolygon := GeoPolygon{GeoLoop: centerVerts, Holes: nil}
 
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&centerGeoPolygon, 4, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&centerGeoPolygon, 4, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&centerGeoPolygon, 4, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&centerGeoPolygon, 4, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -396,7 +396,7 @@ func TestPolygonToCellsContainsPolygon_CenterContainment(t *testing.T) {
 		t.Errorf("Expected %d indexes, got %d", expectedCount, actualNumIndexes)
 	}
 
-	expectedHexagon := H3Index(0x8428309ffffffff)
+	expectedHexagon := h3Index(0x8428309ffffffff)
 	if hexagons[0] != expectedHexagon {
 		t.Errorf("Expected hexagon %x, got %x", expectedHexagon, hexagons[0])
 	}
@@ -404,14 +404,14 @@ func TestPolygonToCellsContainsPolygon_CenterContainment(t *testing.T) {
 
 func TestPolygonToCellsContainsPolygon_FullContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_FULL))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(ContainmentFull))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -424,14 +424,14 @@ func TestPolygonToCellsContainsPolygon_FullContainment(t *testing.T) {
 
 func TestPolygonToCellsContainsPolygon_Overlapping(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_OVERLAPPING))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(ContainmentOverlapping))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(ContainmentOverlapping), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -441,7 +441,7 @@ func TestPolygonToCellsContainsPolygon_Overlapping(t *testing.T) {
 		t.Errorf("Expected %d indexes, got %d (overlapping mode)", expectedCount, actualNumIndexes)
 	}
 
-	expectedHexagon := H3Index(0x8428309ffffffff)
+	expectedHexagon := h3Index(0x8428309ffffffff)
 	if hexagons[0] != expectedHexagon {
 		t.Errorf("Expected hexagon %x, got %x", expectedHexagon, hexagons[0])
 	}
@@ -449,14 +449,14 @@ func TestPolygonToCellsContainsPolygon_Overlapping(t *testing.T) {
 
 func TestPolygonToCellsContainsPolygon_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 4, uint32(ContainmentOverlappingBBox))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&sfGeoPolygon, 4, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -466,7 +466,7 @@ func TestPolygonToCellsContainsPolygon_OverlappingBBox(t *testing.T) {
 		t.Errorf("Expected %d indexes, got %d (overlapping bbox mode)", expectedCount, actualNumIndexes)
 	}
 
-	expectedHexagon := H3Index(0x8428309ffffffff)
+	expectedHexagon := h3Index(0x8428309ffffffff)
 	if hexagons[0] != expectedHexagon {
 		t.Errorf("Expected hexagon %x, got %x", expectedHexagon, hexagons[0])
 	}
@@ -475,15 +475,15 @@ func TestPolygonToCellsContainsPolygon_OverlappingBBox(t *testing.T) {
 func TestPolygonToCellsExact(t *testing.T) {
 	t.Parallel()
 	somewhere := LatLng{Lat: 1, Lng: 2}
-	var origin H3Index
+	var origin h3Index
 	err := latLngToCell(&somewhere, 9, &origin)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 
 	var boundary CellBoundary
 	err = cellToBoundary(origin, &boundary)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellToBoundary failed: %v", err)
 	}
 
@@ -498,16 +498,16 @@ func TestPolygonToCellsExact(t *testing.T) {
 		Holes:   nil,
 	}
 
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&someHexagon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&someHexagon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
+	hexagons := make([]h3Index, numHexagons)
 
 	// Test center containment
-	err = polygonToCellsExperimental(&someHexagon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	err = polygonToCellsExperimental(&someHexagon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 	actualNumIndexes := countNonNullIndexesWithSize(hexagons, numHexagons)
@@ -516,8 +516,8 @@ func TestPolygonToCellsExact(t *testing.T) {
 	}
 
 	// Test full containment
-	err = polygonToCellsExperimental(&someHexagon, 9, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	err = polygonToCellsExperimental(&someHexagon, 9, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 	actualNumIndexes = countNonNullIndexesWithSize(hexagons, numHexagons)
@@ -526,12 +526,12 @@ func TestPolygonToCellsExact(t *testing.T) {
 	}
 
 	// Test overlapping bbox containment
-	err = polygonToCellsExperimental(&someHexagon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	err = polygonToCellsExperimental(&someHexagon, 9, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 	actualNumIndexes = countNonNullIndexesWithSize(hexagons, numHexagons)
-	// Overlapping BBox is very rough, so we get a couple of overlaps from
+	// Overlapping bbox is very rough, so we get a couple of overlaps from
 	// non-neighboring cells
 	if actualNumIndexes != 9 {
 		t.Errorf("Expected 9 indexes for overlapping bbox containment, got %d", actualNumIndexes)
@@ -573,14 +573,14 @@ func TestPolygonToCellsTransmeridian(t *testing.T) {
 
 	// Prime meridian case
 	expectedSize := int64(4228)
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&primeMeridianGeoPolygon, 7, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&primeMeridianGeoPolygon, 7, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&primeMeridianGeoPolygon, 7, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&primeMeridianGeoPolygon, 7, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -593,14 +593,14 @@ func TestPolygonToCellsTransmeridian(t *testing.T) {
 	// This doesn't exactly match the prime meridian count because of slight
 	// differences in hex size and grid offset between the two cases
 	expectedSize = int64(4238)
-	numHexagons, err = maxPolygonToCellsSizeExperimental(&transMeridianGeoPolygon, 7, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err = maxPolygonToCellsSizeExperimental(&transMeridianGeoPolygon, 7, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagonsTM := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&transMeridianGeoPolygon, 7, uint32(CONTAINMENT_CENTER), numHexagons, hexagonsTM)
-	if err != E_SUCCESS {
+	hexagonsTM := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&transMeridianGeoPolygon, 7, uint32(ContainmentCenter), numHexagons, hexagonsTM)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -610,28 +610,28 @@ func TestPolygonToCellsTransmeridian(t *testing.T) {
 	}
 
 	// Transmeridian filled hole case -- only needed for calculating hole size
-	numHexagons, err = maxPolygonToCellsSizeExperimental(&transMeridianFilledHoleGeoPolygon, 7, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err = maxPolygonToCellsSizeExperimental(&transMeridianFilledHoleGeoPolygon, 7, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagonsTMFH := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&transMeridianFilledHoleGeoPolygon, 7, uint32(CONTAINMENT_CENTER), numHexagons, hexagonsTMFH)
-	if err != E_SUCCESS {
+	hexagonsTMFH := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&transMeridianFilledHoleGeoPolygon, 7, uint32(ContainmentCenter), numHexagons, hexagonsTMFH)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
 	actualNumHoleIndexes := countNonNullIndexesWithSize(hexagonsTMFH, numHexagons)
 
 	// Transmeridian hole case
-	numHexagons, err = maxPolygonToCellsSizeExperimental(&transMeridianHoleGeoPolygon, 7, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err = maxPolygonToCellsSizeExperimental(&transMeridianHoleGeoPolygon, 7, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagonsTMH := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&transMeridianHoleGeoPolygon, 7, uint32(CONTAINMENT_CENTER), numHexagons, hexagonsTMH)
-	if err != E_SUCCESS {
+	hexagonsTMH := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&transMeridianHoleGeoPolygon, 7, uint32(ContainmentCenter), numHexagons, hexagonsTMH)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -657,14 +657,14 @@ func TestPolygonToCellsTransmeridianComplex(t *testing.T) {
 	}
 	polygon := GeoPolygon{GeoLoop: verts, Holes: nil}
 
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&polygon, 4, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&polygon, 4, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&polygon, 4, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&polygon, 4, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -678,12 +678,12 @@ func TestPolygonToCellsTransmeridianComplex(t *testing.T) {
 func TestPolygonToCellsPentagon(t *testing.T) {
 	t.Parallel()
 	// Get a pentagon cell
-	var pentagon H3Index
+	var pentagon h3Index
 	setH3Index(&pentagon, 9, 24, 0)
 
 	var coord LatLng
 	err := cellToLatLng(pentagon, &coord)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellToLatLng failed: %v", err)
 	}
 
@@ -716,14 +716,14 @@ func TestPolygonToCellsPentagon(t *testing.T) {
 		Holes:   nil,
 	}
 
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&polygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&polygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&polygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&polygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -748,21 +748,21 @@ func TestPolygonToCellsPentagon(t *testing.T) {
 
 func TestPolygonToCellsNullPolygon(t *testing.T) {
 	t.Parallel()
-	for res := int32(0); res <= MAX_H3_RES; res++ {
-		for flags := uint32(0); flags < uint32(CONTAINMENT_INVALID); flags++ {
+	for res := int32(0); res <= maxH3Res; res++ {
+		for flags := uint32(0); flags < uint32(ContainmentInvalid); flags++ {
 			numHexagons, err := maxPolygonToCellsSizeExperimental(&nullGeoPolygon, res, flags)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 			}
 			if numHexagons != 0 {
 				t.Errorf("Expected 0 estimated size, got %d", numHexagons)
 			}
 
-			var hexagons []H3Index
+			var hexagons []h3Index
 			if numHexagons > 0 {
-				hexagons = make([]H3Index, numHexagons)
+				hexagons = make([]h3Index, numHexagons)
 				err = polygonToCellsExperimental(&nullGeoPolygon, res, flags, numHexagons, hexagons)
-				if err != E_SUCCESS {
+				if err != eSuccess {
 					t.Fatalf("polygonToCellsExperimental failed: %v", err)
 				}
 			}
@@ -777,18 +777,18 @@ func TestPolygonToCellsNullPolygon(t *testing.T) {
 
 func TestPolygonToCellsPointPolygon_CenterContainment(t *testing.T) {
 	t.Parallel()
-	for res := int32(0); res <= MAX_H3_RES; res++ {
-		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_CENTER))
-		if err != E_SUCCESS {
+	for res := int32(0); res <= maxH3Res; res++ {
+		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(ContainmentCenter))
+		if err != eSuccess {
 			t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 		}
 		if numHexagons < 1 || numHexagons > 5 {
 			t.Errorf("Expected estimated size between 1 and 5, got %d", numHexagons)
 		}
 
-		hexagons := make([]H3Index, numHexagons)
-		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-		if err != E_SUCCESS {
+		hexagons := make([]h3Index, numHexagons)
+		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(ContainmentCenter), numHexagons, hexagons)
+		if err != eSuccess {
 			t.Fatalf("polygonToCellsExperimental failed: %v", err)
 		}
 
@@ -801,18 +801,18 @@ func TestPolygonToCellsPointPolygon_CenterContainment(t *testing.T) {
 
 func TestPolygonToCellsPointPolygon_FullContainment(t *testing.T) {
 	t.Parallel()
-	for res := int32(0); res <= MAX_H3_RES; res++ {
-		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_FULL))
-		if err != E_SUCCESS {
+	for res := int32(0); res <= maxH3Res; res++ {
+		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(ContainmentFull))
+		if err != eSuccess {
 			t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 		}
 		if numHexagons < 1 || numHexagons > 5 {
 			t.Errorf("Expected estimated size between 1 and 5, got %d", numHexagons)
 		}
 
-		hexagons := make([]H3Index, numHexagons)
-		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-		if err != E_SUCCESS {
+		hexagons := make([]h3Index, numHexagons)
+		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(ContainmentFull), numHexagons, hexagons)
+		if err != eSuccess {
 			t.Fatalf("polygonToCellsExperimental failed: %v", err)
 		}
 
@@ -825,18 +825,18 @@ func TestPolygonToCellsPointPolygon_FullContainment(t *testing.T) {
 
 func TestPolygonToCellsPointPolygon_Overlapping(t *testing.T) {
 	t.Parallel()
-	for res := int32(0); res <= MAX_H3_RES; res++ {
-		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_OVERLAPPING))
-		if err != E_SUCCESS {
+	for res := int32(0); res <= maxH3Res; res++ {
+		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(ContainmentOverlapping))
+		if err != eSuccess {
 			t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 		}
 		if numHexagons < 1 || numHexagons > 5 {
 			t.Errorf("Expected estimated size between 1 and 5, got %d", numHexagons)
 		}
 
-		hexagons := make([]H3Index, numHexagons)
-		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-		if err != E_SUCCESS {
+		hexagons := make([]h3Index, numHexagons)
+		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(ContainmentOverlapping), numHexagons, hexagons)
+		if err != eSuccess {
 			t.Fatalf("polygonToCellsExperimental failed: %v", err)
 		}
 
@@ -849,18 +849,18 @@ func TestPolygonToCellsPointPolygon_Overlapping(t *testing.T) {
 
 func TestPolygonToCellsPointPolygon_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	for res := int32(0); res <= MAX_H3_RES; res++ {
-		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-		if err != E_SUCCESS {
+	for res := int32(0); res <= maxH3Res; res++ {
+		numHexagons, err := maxPolygonToCellsSizeExperimental(&pointGeoPolygon, res, uint32(ContainmentOverlappingBBox))
+		if err != eSuccess {
 			t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 		}
 		if numHexagons < 1 || numHexagons > 5 {
 			t.Errorf("Expected estimated size between 1 and 5, got %d", numHexagons)
 		}
 
-		hexagons := make([]H3Index, numHexagons)
-		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-		if err != E_SUCCESS {
+		hexagons := make([]h3Index, numHexagons)
+		err = polygonToCellsExperimental(&pointGeoPolygon, res, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+		if err != eSuccess {
 			t.Fatalf("polygonToCellsExperimental failed: %v", err)
 		}
 
@@ -873,10 +873,10 @@ func TestPolygonToCellsPointPolygon_OverlappingBBox(t *testing.T) {
 
 func TestPolygonToCellsOutOfBoundsPolygon(t *testing.T) {
 	t.Parallel()
-	for res := int32(0); res <= MAX_H3_RES; res++ {
-		for flags := uint32(0); flags < uint32(CONTAINMENT_INVALID); flags++ {
+	for res := int32(0); res <= maxH3Res; res++ {
+		for flags := uint32(0); flags < uint32(ContainmentInvalid); flags++ {
 			numHexagons, err := maxPolygonToCellsSizeExperimental(&outOfBoundsVertGeoPolygon, res, flags)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 			}
 			if numHexagons != 0 {
@@ -885,9 +885,9 @@ func TestPolygonToCellsOutOfBoundsPolygon(t *testing.T) {
 
 			// Note: We're allocating more memory than the estimate to test
 			// for out-of-bounds writes here
-			hexagons := make([]H3Index, 10)
+			hexagons := make([]h3Index, 10)
 			err = polygonToCellsExperimental(&outOfBoundsVertGeoPolygon, res, flags, numHexagons, hexagons)
-			if err != E_SUCCESS {
+			if err != eSuccess {
 				t.Fatalf("polygonToCellsExperimental failed: %v", err)
 			}
 
@@ -901,14 +901,14 @@ func TestPolygonToCellsOutOfBoundsPolygon(t *testing.T) {
 
 func TestPolygonToCellsLinePolygon_CenterContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -920,14 +920,14 @@ func TestPolygonToCellsLinePolygon_CenterContainment(t *testing.T) {
 
 func TestPolygonToCellsLinePolygon_FullContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_FULL))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(ContainmentFull))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -939,14 +939,14 @@ func TestPolygonToCellsLinePolygon_FullContainment(t *testing.T) {
 
 func TestPolygonToCellsLinePolygon_Overlapping(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(ContainmentOverlapping))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(ContainmentOverlapping), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -958,14 +958,14 @@ func TestPolygonToCellsLinePolygon_Overlapping(t *testing.T) {
 
 func TestPolygonToCellsLinePolygon_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineGeoPolygon, 9, uint32(ContainmentOverlappingBBox))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineGeoPolygon, 9, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -977,14 +977,14 @@ func TestPolygonToCellsLinePolygon_OverlappingBBox(t *testing.T) {
 
 func TestPolygonToCellsNullHole_CenterContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -997,14 +997,14 @@ func TestPolygonToCellsNullHole_CenterContainment(t *testing.T) {
 
 func TestPolygonToCellsNullHole_FullContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_FULL))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentFull))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1017,14 +1017,14 @@ func TestPolygonToCellsNullHole_FullContainment(t *testing.T) {
 
 func TestPolygonToCellsNullHole_Overlapping(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentOverlapping))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentOverlapping), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1037,14 +1037,14 @@ func TestPolygonToCellsNullHole_Overlapping(t *testing.T) {
 
 func TestPolygonToCellsNullHole_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentOverlappingBBox))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&nullHoleGeoPolygon, 9, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1057,14 +1057,14 @@ func TestPolygonToCellsNullHole_OverlappingBBox(t *testing.T) {
 
 func TestPolygonToCellsPointHole_CenterContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1077,14 +1077,14 @@ func TestPolygonToCellsPointHole_CenterContainment(t *testing.T) {
 
 func TestPolygonToCellsPointHole_FullContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_FULL))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentFull))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1097,14 +1097,14 @@ func TestPolygonToCellsPointHole_FullContainment(t *testing.T) {
 
 func TestPolygonToCellsPointHole_Overlapping(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentOverlapping))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentOverlapping), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1117,14 +1117,14 @@ func TestPolygonToCellsPointHole_Overlapping(t *testing.T) {
 
 func TestPolygonToCellsPointHole_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentOverlappingBBox))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&pointHoleGeoPolygon, 9, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1137,14 +1137,14 @@ func TestPolygonToCellsPointHole_OverlappingBBox(t *testing.T) {
 
 func TestPolygonToCellsLineHole_CenterContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_CENTER), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentCenter), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1157,14 +1157,14 @@ func TestPolygonToCellsLineHole_CenterContainment(t *testing.T) {
 
 func TestPolygonToCellsLineHole_FullContainment(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_FULL))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentFull))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_FULL), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentFull), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1177,14 +1177,14 @@ func TestPolygonToCellsLineHole_FullContainment(t *testing.T) {
 
 func TestPolygonToCellsLineHole_Overlapping(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentOverlapping))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentOverlapping), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1197,14 +1197,14 @@ func TestPolygonToCellsLineHole_Overlapping(t *testing.T) {
 
 func TestPolygonToCellsLineHole_OverlappingBBox(t *testing.T) {
 	t.Parallel()
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentOverlappingBBox))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(CONTAINMENT_OVERLAPPING_BBOX), numHexagons, hexagons)
-	if err != E_SUCCESS {
+	hexagons := make([]h3Index, numHexagons)
+	err = polygonToCellsExperimental(&lineHoleGeoPolygon, 9, uint32(ContainmentOverlappingBBox), numHexagons, hexagons)
+	if err != eSuccess {
 		t.Fatalf("polygonToCellsExperimental failed: %v", err)
 	}
 
@@ -1217,23 +1217,23 @@ func TestPolygonToCellsLineHole_OverlappingBBox(t *testing.T) {
 
 func TestInvalidFlags(t *testing.T) {
 	t.Parallel()
-	for flags := uint32(uint32(CONTAINMENT_INVALID)); flags <= 32; flags++ {
+	for flags := uint32(uint32(ContainmentInvalid)); flags <= 32; flags++ {
 		_, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, flags)
-		if err != E_OPTION_INVALID {
-			t.Errorf("Expected E_OPTION_INVALID for invalid flags %d in maxPolygonToCellsSizeExperimental, got %v", flags, err)
+		if err != eOptionInvalid {
+			t.Errorf("Expected eOptionInvalid for invalid flags %d in maxPolygonToCellsSizeExperimental, got %v", flags, err)
 		}
 	}
 
-	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(CONTAINMENT_CENTER))
-	if err != E_SUCCESS {
+	numHexagons, err := maxPolygonToCellsSizeExperimental(&sfGeoPolygon, 9, uint32(ContainmentCenter))
+	if err != eSuccess {
 		t.Fatalf("maxPolygonToCellsSizeExperimental failed: %v", err)
 	}
 
-	hexagons := make([]H3Index, numHexagons)
-	for flags := uint32(uint32(CONTAINMENT_INVALID)); flags <= 32; flags++ {
+	hexagons := make([]h3Index, numHexagons)
+	for flags := uint32(uint32(ContainmentInvalid)); flags <= 32; flags++ {
 		err := polygonToCellsExperimental(&sfGeoPolygon, 9, flags, numHexagons, hexagons)
-		if err != E_OPTION_INVALID {
-			t.Errorf("Expected E_OPTION_INVALID for invalid flags %d in polygonToCellsExperimental, got %v", flags, err)
+		if err != eOptionInvalid {
+			t.Errorf("Expected eOptionInvalid for invalid flags %d in polygonToCellsExperimental, got %v", flags, err)
 		}
 	}
 }

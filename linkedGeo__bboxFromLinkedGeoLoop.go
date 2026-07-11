@@ -11,17 +11,17 @@ import (
 //   - Does not currently support polygons containing a pole.
 //
 // Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(bboxFrom) -> bboxFromLinkedGeoLoop.
-func bboxFromLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox) {
+func bboxFromLinkedGeoLoop(loop *linkedGeoLoop, bb *bbox) {
 	// Early exit if there are no vertices
 	if loop.First == nil {
-		*bbox = BBox{}
+		*bb = bbox{}
 		return
 	}
 
-	bbox.South = Rad(math.MaxFloat64)
-	bbox.West = Rad(math.MaxFloat64)
-	bbox.North = Rad(-math.MaxFloat64)
-	bbox.East = Rad(-math.MaxFloat64)
+	bb.South = Rad(math.MaxFloat64)
+	bb.West = Rad(math.MaxFloat64)
+	bb.North = Rad(-math.MaxFloat64)
+	bb.East = Rad(-math.MaxFloat64)
 	minPosLng := Rad(math.MaxFloat64)
 	maxNegLng := Rad(-math.MaxFloat64)
 	isTransmeridian := false
@@ -47,17 +47,17 @@ func bboxFromLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox) {
 		lat := coord.Lat
 		lng := coord.Lng
 
-		if lat < bbox.South {
-			bbox.South = lat
+		if lat < bb.South {
+			bb.South = lat
 		}
-		if lng < bbox.West {
-			bbox.West = lng
+		if lng < bb.West {
+			bb.West = lng
 		}
-		if lat > bbox.North {
-			bbox.North = lat
+		if lat > bb.North {
+			bb.North = lat
 		}
-		if lng > bbox.East {
-			bbox.East = lng
+		if lng > bb.East {
+			bb.East = lng
 		}
 
 		// Save the min positive and max negative longitude for
@@ -84,7 +84,7 @@ func bboxFromLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox) {
 
 	// Swap east and west if transmeridian
 	if isTransmeridian {
-		bbox.East = maxNegLng
-		bbox.West = minPosLng
+		bb.East = maxNegLng
+		bb.West = minPosLng
 	}
 }

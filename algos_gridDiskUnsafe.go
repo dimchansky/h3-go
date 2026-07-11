@@ -8,6 +8,6 @@ package h3
 // Output is placed in the provided array in order of increasing distance from
 // the origin.
 // Ported from H3 C: algos.c::gridDiskUnsafe.
-func gridDiskUnsafe(origin H3Index, k int32, out []H3Index) H3Error {
+func gridDiskUnsafe(origin h3Index, k int32, out []h3Index) h3Error {
 	return gridDiskDistancesUnsafe(origin, k, out, nil)
 }

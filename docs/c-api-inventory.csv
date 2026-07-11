@@ -1,199 +1,199 @@
 c_function,c_signature,go_file,go_func,go_signature,is_c_public,notes
-describeH3Error,const char * describeH3Error(H3Error err),h3index__describeH3Error.go,describeH3Error,func describeH3Error(err H3Error) string,true,attr: h3Index.c
-latLngToCell,"H3Error latLngToCell(const LatLng *g, int res, H3Index *out)",h3index__latLngToCell.go,latLngToCell,"func latLngToCell(g *LatLng, res int32, out *H3Index) H3Error",true,attr: h3Index.c
-cellToLatLng,"H3Error cellToLatLng(H3Index h3, LatLng *g)",h3index__cellToLatLng.go,cellToLatLng,"func cellToLatLng(h3 H3Index, g *LatLng) H3Error",true,attr: h3Index.c
-cellToBoundary,"H3Error cellToBoundary(H3Index h3, CellBoundary *gp)",h3index__cellToBoundary.go,cellToBoundary,"func cellToBoundary(h3 H3Index, cb *CellBoundary) H3Error",true,attr: h3Index.c
-maxGridDiskSize,"H3Error maxGridDiskSize(int k, int64_t *out)",algos__maxGridDiskSize.go,maxGridDiskSize,"func maxGridDiskSize(k int32, out *int64) H3Error",true,attr: algos.c
-gridDiskUnsafe,"H3Error gridDiskUnsafe(H3Index origin, int k, H3Index *out)",algos_gridDiskUnsafe.go,gridDiskUnsafe,"func gridDiskUnsafe(origin H3Index, k int32, out []H3Index) H3Error",true,attr: algos.c
-gridDiskDistancesUnsafe,"H3Error gridDiskDistancesUnsafe(H3Index origin, int k, H3Index *out, int *distances)",algos__gridDiskDistancesUnsafe.go,gridDiskDistancesUnsafe,"func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances []int32) H3Error",true,attr: algos.c
-gridDiskDistancesSafe,"H3Error gridDiskDistancesSafe(H3Index origin, int k, H3Index *out, int *distances)",algos__gridDiskDistancesSafe.go,gridDiskDistancesSafe,"func gridDiskDistancesSafe(origin H3Index, k int32, out []H3Index, distances []int32) H3Error",true,attr: algos.c
-gridDisksUnsafe,"H3Error gridDisksUnsafe(H3Index *h3Set, int length, int k, H3Index *out)",algos_gridDisksUnsafe.go,gridDisksUnsafe,"func gridDisksUnsafe(h3Set []H3Index, k int32, out []H3Index) H3Error",true,attr: algos.c
-gridDisk,"H3Error gridDisk(H3Index origin, int k, H3Index *out)",algos__gridDisk.go,gridDisk,"func gridDisk(origin H3Index, k int32, out []H3Index) H3Error",true,attr: algos.c
-gridDiskDistances,"H3Error gridDiskDistances(H3Index origin, int k, H3Index *out, int *distances)",algos__gridDiskDistances.go,gridDiskDistances,"func gridDiskDistances(origin H3Index, k int32, out []H3Index, distances []int32) H3Error",true,attr: algos.c
-maxGridRingSize,"H3Error maxGridRingSize(int k, int64_t *out)",algos_maxGridRingSize.go,_maxGridRingSize,"func _maxGridRingSize(k int32, out *int64) H3Error",true,attr: algos.c
-gridRingUnsafe,"H3Error gridRingUnsafe(H3Index origin, int k, H3Index *out)",algos__gridRingUnsafe.go,gridRingUnsafe,"func gridRingUnsafe(origin H3Index, k int32, out []H3Index) H3Error",true,attr: algos.c
-gridRing,"H3Error gridRing(H3Index origin, int k, H3Index *out)",algos_gridRing.go,gridRing,"func gridRing(origin H3Index, k int32, out []H3Index) H3Error",true,attr: algos.c
-maxPolygonToCellsSize,"H3Error maxPolygonToCellsSize(const GeoPolygon *geoPolygon, int res, uint32_t flags, int64_t *out)",algos_maxPolygonToCellsSize.go,maxPolygonToCellsSize,"func maxPolygonToCellsSize(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) H3Error",true,attr: algos.c
-polygonToCells,"H3Error polygonToCells(const GeoPolygon *geoPolygon, int res, uint32_t flags, H3Index *out)",algos_polygonToCells.go,polygonToCells,"func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Index) H3Error",true,attr: algos.c
-maxPolygonToCellsSizeExperimental,"H3Error maxPolygonToCellsSizeExperimental(const GeoPolygon *polygon, int res, uint32_t flags, int64_t *out)",polyfill_maxPolygonToCellsSizeExperimental.go,maxPolygonToCellsSizeExperimental,"func maxPolygonToCellsSizeExperimental(polygon *GeoPolygon, res int32, flags uint32) (int64, H3Error)",true,attr: polyfill.c
-polygonToCellsExperimental,"H3Error polygonToCellsExperimental(const GeoPolygon *polygon, int res, uint32_t flags, int64_t size, H3Index *out)",polyfill_polygonToCellsExperimental.go,polygonToCellsExperimental,"func polygonToCellsExperimental(polygon *GeoPolygon, res int32, flags uint32, size int64, out []H3Index) H3Error",true,attr: polyfill.c
-cellsToLinkedMultiPolygon,"H3Error cellsToLinkedMultiPolygon(const H3Index *h3Set, const int numHexes, LinkedGeoPolygon *out)",algos_cellsToLinkedMultiPolygon.go,cellsToLinkedMultiPolygon,"func cellsToLinkedMultiPolygon(h3Set []H3Index, numHexes int32, out *LinkedGeoPolygon) H3Error",true,attr: algos.c
-destroyLinkedMultiPolygon,void destroyLinkedMultiPolygon(LinkedGeoPolygon *polygon),linkedGeo_destroyLinkedMultiPolygon.go,destroyLinkedMultiPolygon,func destroyLinkedMultiPolygon(polygon *LinkedGeoPolygon),true,attr: linkedGeo.c
+describeH3Error,const char * describeH3Error(H3Error err),h3index__describeH3Error.go,describeH3Error,func describeH3Error(err h3Error) string,true,attr: h3Index.c
+latLngToCell,"H3Error latLngToCell(const LatLng *g, int res, H3Index *out)",h3index__latLngToCell.go,latLngToCell,"func latLngToCell(g *LatLng, res int32, out *h3Index) h3Error",true,attr: h3Index.c
+cellToLatLng,"H3Error cellToLatLng(H3Index h3, LatLng *g)",h3index__cellToLatLng.go,cellToLatLng,"func cellToLatLng(h3 h3Index, g *LatLng) h3Error",true,attr: h3Index.c
+cellToBoundary,"H3Error cellToBoundary(H3Index h3, CellBoundary *gp)",h3index__cellToBoundary.go,cellToBoundary,"func cellToBoundary(h3 h3Index, cb *CellBoundary) h3Error",true,attr: h3Index.c
+maxGridDiskSize,"H3Error maxGridDiskSize(int k, int64_t *out)",algos__maxGridDiskSize.go,maxGridDiskSize,"func maxGridDiskSize(k int32, out *int64) h3Error",true,attr: algos.c
+gridDiskUnsafe,"H3Error gridDiskUnsafe(H3Index origin, int k, H3Index *out)",algos_gridDiskUnsafe.go,gridDiskUnsafe,"func gridDiskUnsafe(origin h3Index, k int32, out []h3Index) h3Error",true,attr: algos.c
+gridDiskDistancesUnsafe,"H3Error gridDiskDistancesUnsafe(H3Index origin, int k, H3Index *out, int *distances)",algos__gridDiskDistancesUnsafe.go,gridDiskDistancesUnsafe,"func gridDiskDistancesUnsafe(origin h3Index, k int32, out []h3Index, distances []int32) h3Error",true,attr: algos.c
+gridDiskDistancesSafe,"H3Error gridDiskDistancesSafe(H3Index origin, int k, H3Index *out, int *distances)",algos__gridDiskDistancesSafe.go,gridDiskDistancesSafe,"func gridDiskDistancesSafe(origin h3Index, k int32, out []h3Index, distances []int32) h3Error",true,attr: algos.c
+gridDisksUnsafe,"H3Error gridDisksUnsafe(H3Index *h3Set, int length, int k, H3Index *out)",algos_gridDisksUnsafe.go,gridDisksUnsafe,"func gridDisksUnsafe(h3Set []h3Index, k int32, out []h3Index) h3Error",true,attr: algos.c
+gridDisk,"H3Error gridDisk(H3Index origin, int k, H3Index *out)",algos__gridDisk.go,gridDisk,"func gridDisk(origin h3Index, k int32, out []h3Index) h3Error",true,attr: algos.c
+gridDiskDistances,"H3Error gridDiskDistances(H3Index origin, int k, H3Index *out, int *distances)",algos__gridDiskDistances.go,gridDiskDistances,"func gridDiskDistances(origin h3Index, k int32, out []h3Index, distances []int32) h3Error",true,attr: algos.c
+maxGridRingSize,"H3Error maxGridRingSize(int k, int64_t *out)",algos_maxGridRingSize.go,_maxGridRingSize,"func _maxGridRingSize(k int32, out *int64) h3Error",true,attr: algos.c
+gridRingUnsafe,"H3Error gridRingUnsafe(H3Index origin, int k, H3Index *out)",algos__gridRingUnsafe.go,gridRingUnsafe,"func gridRingUnsafe(origin h3Index, k int32, out []h3Index) h3Error",true,attr: algos.c
+gridRing,"H3Error gridRing(H3Index origin, int k, H3Index *out)",algos_gridRing.go,gridRing,"func gridRing(origin h3Index, k int32, out []h3Index) h3Error",true,attr: algos.c
+maxPolygonToCellsSize,"H3Error maxPolygonToCellsSize(const GeoPolygon *geoPolygon, int res, uint32_t flags, int64_t *out)",algos_maxPolygonToCellsSize.go,maxPolygonToCellsSize,"func maxPolygonToCellsSize(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) h3Error",true,attr: algos.c
+polygonToCells,"H3Error polygonToCells(const GeoPolygon *geoPolygon, int res, uint32_t flags, H3Index *out)",algos_polygonToCells.go,polygonToCells,"func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []h3Index) h3Error",true,attr: algos.c
+maxPolygonToCellsSizeExperimental,"H3Error maxPolygonToCellsSizeExperimental(const GeoPolygon *polygon, int res, uint32_t flags, int64_t *out)",polyfill_maxPolygonToCellsSizeExperimental.go,maxPolygonToCellsSizeExperimental,"func maxPolygonToCellsSizeExperimental(polygon *GeoPolygon, res int32, flags uint32) (int64, h3Error)",true,attr: polyfill.c
+polygonToCellsExperimental,"H3Error polygonToCellsExperimental(const GeoPolygon *polygon, int res, uint32_t flags, int64_t size, H3Index *out)",polyfill_polygonToCellsExperimental.go,polygonToCellsExperimental,"func polygonToCellsExperimental(polygon *GeoPolygon, res int32, flags uint32, size int64, out []h3Index) h3Error",true,attr: polyfill.c
+cellsToLinkedMultiPolygon,"H3Error cellsToLinkedMultiPolygon(const H3Index *h3Set, const int numHexes, LinkedGeoPolygon *out)",algos_cellsToLinkedMultiPolygon.go,cellsToLinkedMultiPolygon,"func cellsToLinkedMultiPolygon(h3Set []h3Index, numHexes int32, out *linkedGeoPolygon) h3Error",true,attr: algos.c
+destroyLinkedMultiPolygon,void destroyLinkedMultiPolygon(LinkedGeoPolygon *polygon),linkedGeo_destroyLinkedMultiPolygon.go,destroyLinkedMultiPolygon,func destroyLinkedMultiPolygon(polygon *linkedGeoPolygon),true,attr: linkedGeo.c
 degsToRads,double degsToRads(double degrees),latLng__degsToRads.go,degsToRads,func degsToRads(degrees float64) float64,true,attr: latLng.c
 radsToDegs,double radsToDegs(double radians),latLng__radsToDegs.go,radsToDegs,func radsToDegs(radians float64) float64,true,attr: latLng.c
 greatCircleDistanceRads,"double greatCircleDistanceRads(const LatLng *a, const LatLng *b)",latLng__greatCircleDistanceRads.go,greatCircleDistanceRads,"func greatCircleDistanceRads(a, b *LatLng) float64",true,attr: latLng.c
 greatCircleDistanceKm,"double greatCircleDistanceKm(const LatLng *a, const LatLng *b)",latLng__greatCircleDistanceKm.go,greatCircleDistanceKm,"func greatCircleDistanceKm(a, b *LatLng) float64",true,attr: latLng.c
 greatCircleDistanceM,"double greatCircleDistanceM(const LatLng *a, const LatLng *b)",latLng__greatCircleDistanceM.go,greatCircleDistanceM,"func greatCircleDistanceM(a, b *LatLng) float64",true,attr: latLng.c
-getHexagonAreaAvgKm2,"H3Error getHexagonAreaAvgKm2(int res, double *out)",latLng_getHexagonAreaAvgKm2.go,getHexagonAreaAvgKm2,"func getHexagonAreaAvgKm2(res int32, out *float64) H3Error",true,attr: latLng.c
-getHexagonAreaAvgM2,"H3Error getHexagonAreaAvgM2(int res, double *out)",latLng_getHexagonAreaAvgM2.go,getHexagonAreaAvgM2,"func getHexagonAreaAvgM2(res int32, out *float64) H3Error",true,attr: latLng.c
-cellAreaRads2,"H3Error cellAreaRads2(H3Index h, double *out)",latLng__cellAreaRads2.go,cellAreaRads2,"func cellAreaRads2(cell H3Index) (float64, H3Error)",true,attr: latLng.c
-cellAreaKm2,"H3Error cellAreaKm2(H3Index h, double *out)",latLng__cellAreaKm2.go,cellAreaKm2,"func cellAreaKm2(cell H3Index) (float64, H3Error)",true,attr: latLng.c
-cellAreaM2,"H3Error cellAreaM2(H3Index h, double *out)",latLng__cellAreaM2.go,cellAreaM2,"func cellAreaM2(cell H3Index) (float64, H3Error)",true,attr: latLng.c
-getHexagonEdgeLengthAvgKm,"H3Error getHexagonEdgeLengthAvgKm(int res, double *out)",latLng_getHexagonEdgeLengthAvgKm.go,getHexagonEdgeLengthAvgKm,"func getHexagonEdgeLengthAvgKm(res int32, out *float64) H3Error",true,attr: latLng.c
-getHexagonEdgeLengthAvgM,"H3Error getHexagonEdgeLengthAvgM(int res, double *out)",latLng_getHexagonEdgeLengthAvgM.go,getHexagonEdgeLengthAvgM,"func getHexagonEdgeLengthAvgM(res int32, out *float64) H3Error",true,attr: latLng.c
-edgeLengthRads,"H3Error edgeLengthRads(H3Index edge, double *length)",latLng_edgeLengthRads.go,edgeLengthRads,"func edgeLengthRads(edge H3Index, length *float64) H3Error",true,attr: latLng.c
-edgeLengthKm,"H3Error edgeLengthKm(H3Index edge, double *length)",latLng_edgeLengthKm.go,edgeLengthKm,"func edgeLengthKm(edge H3Index, length *float64) H3Error",true,attr: latLng.c
-edgeLengthM,"H3Error edgeLengthM(H3Index edge, double *length)",latLng_edgeLengthM.go,edgeLengthM,"func edgeLengthM(edge H3Index, length *float64) H3Error",true,attr: latLng.c
-getNumCells,"H3Error getNumCells(int res, int64_t *out)",latLng__getNumCells.go,getNumCells,"func getNumCells(res int32) (int64, H3Error)",true,attr: latLng.c
+getHexagonAreaAvgKm2,"H3Error getHexagonAreaAvgKm2(int res, double *out)",latLng_getHexagonAreaAvgKm2.go,getHexagonAreaAvgKm2,"func getHexagonAreaAvgKm2(res int32, out *float64) h3Error",true,attr: latLng.c
+getHexagonAreaAvgM2,"H3Error getHexagonAreaAvgM2(int res, double *out)",latLng_getHexagonAreaAvgM2.go,getHexagonAreaAvgM2,"func getHexagonAreaAvgM2(res int32, out *float64) h3Error",true,attr: latLng.c
+cellAreaRads2,"H3Error cellAreaRads2(H3Index h, double *out)",latLng__cellAreaRads2.go,cellAreaRads2,"func cellAreaRads2(cell h3Index) (float64, h3Error)",true,attr: latLng.c
+cellAreaKm2,"H3Error cellAreaKm2(H3Index h, double *out)",latLng__cellAreaKm2.go,cellAreaKm2,"func cellAreaKm2(cell h3Index) (float64, h3Error)",true,attr: latLng.c
+cellAreaM2,"H3Error cellAreaM2(H3Index h, double *out)",latLng__cellAreaM2.go,cellAreaM2,"func cellAreaM2(cell h3Index) (float64, h3Error)",true,attr: latLng.c
+getHexagonEdgeLengthAvgKm,"H3Error getHexagonEdgeLengthAvgKm(int res, double *out)",latLng_getHexagonEdgeLengthAvgKm.go,getHexagonEdgeLengthAvgKm,"func getHexagonEdgeLengthAvgKm(res int32, out *float64) h3Error",true,attr: latLng.c
+getHexagonEdgeLengthAvgM,"H3Error getHexagonEdgeLengthAvgM(int res, double *out)",latLng_getHexagonEdgeLengthAvgM.go,getHexagonEdgeLengthAvgM,"func getHexagonEdgeLengthAvgM(res int32, out *float64) h3Error",true,attr: latLng.c
+edgeLengthRads,"H3Error edgeLengthRads(H3Index edge, double *length)",latLng_edgeLengthRads.go,edgeLengthRads,"func edgeLengthRads(edge h3Index, length *float64) h3Error",true,attr: latLng.c
+edgeLengthKm,"H3Error edgeLengthKm(H3Index edge, double *length)",latLng_edgeLengthKm.go,edgeLengthKm,"func edgeLengthKm(edge h3Index, length *float64) h3Error",true,attr: latLng.c
+edgeLengthM,"H3Error edgeLengthM(H3Index edge, double *length)",latLng_edgeLengthM.go,edgeLengthM,"func edgeLengthM(edge h3Index, length *float64) h3Error",true,attr: latLng.c
+getNumCells,"H3Error getNumCells(int res, int64_t *out)",latLng__getNumCells.go,getNumCells,"func getNumCells(res int32) (int64, h3Error)",true,attr: latLng.c
 res0CellCount,int res0CellCount(void),baseCells__res0CellCount.go,res0CellCount,func res0CellCount() int32,true,attr: baseCells.c
-getRes0Cells,H3Error getRes0Cells(H3Index *out),baseCells__getRes0Cells.go,getRes0Cells,func getRes0Cells(out []H3Index) H3Error,true,attr: baseCells.c
+getRes0Cells,H3Error getRes0Cells(H3Index *out),baseCells__getRes0Cells.go,getRes0Cells,func getRes0Cells(out []h3Index) h3Error,true,attr: baseCells.c
 pentagonCount,int pentagonCount(void),h3index__pentagonCount.go,pentagonCount,func pentagonCount() int32,true,attr: h3Index.c
-getPentagons,"H3Error getPentagons(int res, H3Index *out)",h3index__getPentagons.go,getPentagons,"func getPentagons(res int32, out []H3Index) H3Error",true,attr: h3Index.c
-getResolution,int getResolution(H3Index h),h3index__getters.go,getResolution,func getResolution(h H3Index) int32,true,attr: h3Index.c
-getBaseCellNumber,int getBaseCellNumber(H3Index h),h3Index_getBaseCellNumber.go,getBaseCellNumber,func getBaseCellNumber(h H3Index) int32,true,attr: h3Index.c
-stringToH3,"H3Error stringToH3(const char *str, H3Index *out)",h3index__stringToH3.go,stringToH3,"func stringToH3(s string) (H3Index, H3Error)",true,attr: h3Index.c
-h3ToString,"H3Error h3ToString(H3Index h, char *str, size_t sz)",h3index__h3ToString.go,h3ToString,"func h3ToString(h H3Index) (string, uint32)",true,attr: h3Index.c
-isValidCell,int isValidCell(H3Index h),h3index__isValidCell.go,isValidCell,func isValidCell(h H3Index) bool,true,attr: h3Index.c
-cellToParent,"H3Error cellToParent(H3Index h, int parentRes, H3Index *parent)",h3index__cellToParent.go,cellToParent,"func cellToParent(h H3Index, parentRes int32) (H3Index, H3Error)",true,attr: h3Index.c
-cellToChildrenSize,"H3Error cellToChildrenSize(H3Index h, int childRes, int64_t *out)",h3index__cellToChildrenSize.go,cellToChildrenSize,"func cellToChildrenSize(h H3Index, childRes int32) (int64, H3Error)",true,attr: h3Index.c
-cellToChildren,"H3Error cellToChildren(H3Index h, int childRes, H3Index *children)",h3index__cellToChildren.go,cellToChildren,"func cellToChildren(h H3Index, childRes int32, children []H3Index) H3Error",true,attr: h3Index.c
-cellToCenterChild,"H3Error cellToCenterChild(H3Index h, int childRes, H3Index *child)",h3index__cellToCenterChild.go,cellToCenterChild,"func cellToCenterChild(h H3Index, childRes int32) (H3Index, H3Error)",true,attr: h3Index.c
-cellToChildPos,"H3Error cellToChildPos(H3Index child, int parentRes, int64_t *out)",h3index__cellToChildPos.go,cellToChildPos,"func cellToChildPos(child H3Index, parentRes int32) (int64, H3Error)",true,attr: h3Index.c
-childPosToCell,"H3Error childPosToCell(int64_t childPos, H3Index parent, int childRes, H3Index *child)",h3index__childPosToCell.go,childPosToCell,"func childPosToCell(childPos int64, parent H3Index, childRes int32) (H3Index, H3Error)",true,attr: h3Index.c
-compactCells,"H3Error compactCells(const H3Index *h3Set, H3Index *compactedSet, const int64_t numHexes)",h3index__compactCells.go,compactCells,"func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Error",true,attr: h3Index.c
-uncompactCellsSize,"H3Error uncompactCellsSize(const H3Index *compactedSet, const int64_t numCompacted, const int res, int64_t *out)",h3index__uncompactCellsSize.go,uncompactCellsSize,"func uncompactCellsSize(compactedSet []H3Index, numCompacted int64, res int32) (int64, H3Error)",true,attr: h3Index.c
-uncompactCells,"H3Error uncompactCells(const H3Index *compactedSet, const int64_t numCompacted, H3Index *outSet, const int64_t numOut, const int res)",h3index__uncompactCells.go,uncompactCells,"func uncompactCells(compactedSet []H3Index, numCompacted int64, outSet []H3Index, numOut int64, res int32) H3Error",true,attr: h3Index.c
-isResClassIII,int isResClassIII(H3Index h),h3index__isResClassIII.go,isResClassIII,func isResClassIII(h H3Index) bool,true,attr: h3Index.c
-isPentagon,int isPentagon(H3Index h),h3index__isPentagon.go,isPentagon,func isPentagon(h H3Index) bool,true,attr: h3Index.c
-maxFaceCount,"H3Error maxFaceCount(H3Index h3, int *out)",h3index__maxFaceCount.go,maxFaceCount,"func maxFaceCount(h3 H3Index, out *int32) H3Error",true,attr: h3Index.c
-getIcosahedronFaces,"H3Error getIcosahedronFaces(H3Index h3, int *out)",h3index__getIcosahedronFaces.go,getIcosahedronFaces,"func getIcosahedronFaces(h H3Index, out []int32) H3Error",true,attr: h3Index.c
-areNeighborCells,"H3Error areNeighborCells(H3Index origin, H3Index destination, int *out)",directedEdge_areNeighborCells.go,areNeighborCells,"func areNeighborCells(origin, destination H3Index) (bool, H3Error)",true,attr: directedEdge.c
-cellsToDirectedEdge,"H3Error cellsToDirectedEdge(H3Index origin, H3Index destination, H3Index *out)",directedEdge_cellsToDirectedEdge.go,cellsToDirectedEdge,"func cellsToDirectedEdge(origin H3Index, destination H3Index) (H3Index, H3Error)",true,attr: directedEdge.c
-isValidDirectedEdge,int isValidDirectedEdge(H3Index edge),directedEdge__isValidDirectedEdge.go,isValidDirectedEdge,func isValidDirectedEdge(edge H3Index) bool,true,attr: directedEdge.c
-getDirectedEdgeOrigin,"H3Error getDirectedEdgeOrigin(H3Index edge, H3Index *out)",directedEdge__getDirectedEdgeOrigin.go,getDirectedEdgeOrigin,"func getDirectedEdgeOrigin(edge H3Index) (H3Index, H3Error)",true,attr: directedEdge.c
-getDirectedEdgeDestination,"H3Error getDirectedEdgeDestination(H3Index edge, H3Index *out)",directedEdge__getDirectedEdgeDestination.go,getDirectedEdgeDestination,"func getDirectedEdgeDestination(edge H3Index, out *H3Index) H3Error",true,attr: directedEdge.c
-directedEdgeToCells,"H3Error directedEdgeToCells(H3Index edge, H3Index *originDestination)",directedEdge__directedEdgeToCells.go,directedEdgeToCells,"func directedEdgeToCells(edge H3Index, originDestination []H3Index) H3Error",true,attr: directedEdge.c
-originToDirectedEdges,"H3Error originToDirectedEdges(H3Index origin, H3Index *edges)",directedEdge__originToDirectedEdges.go,originToDirectedEdges,"func originToDirectedEdges(origin H3Index, edges []H3Index) H3Error",true,attr: directedEdge.c
-directedEdgeToBoundary,"H3Error directedEdgeToBoundary(H3Index edge, CellBoundary *gb)",directedEdge_directedEdgeToBoundary.go,directedEdgeToBoundary,"func directedEdgeToBoundary(edge H3Index, cb *CellBoundary) H3Error",true,attr: directedEdge.c
-cellToVertex,"H3Error cellToVertex(H3Index origin, int vertexNum, H3Index *out)",vertex_cellToVertex.go,cellToVertex,"func cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error",true,attr: vertex.c
-cellToVertexes,"H3Error cellToVertexes(H3Index origin, H3Index *vertexes)",vertex_cellToVertexes.go,cellToVertexes,"func cellToVertexes(cell H3Index, vertexes *[6]H3Index) H3Error",true,attr: vertex.c
-vertexToLatLng,"H3Error vertexToLatLng(H3Index vertex, LatLng *point)",vertex_vertexToLatLng.go,vertexToLatLng,"func vertexToLatLng(vertex H3Index, coord *LatLng) H3Error",true,attr: vertex.c
-isValidVertex,int isValidVertex(H3Index vertex),vertex_isValidVertex.go,isValidVertex,func isValidVertex(vertex H3Index) bool,true,attr: vertex.c
-gridDistance,"H3Error gridDistance(H3Index origin, H3Index h3, int64_t *distance)",localij__gridDistance.go,gridDistance,"func gridDistance(origin H3Index, index H3Index, out *int64) H3Error",true,attr: localij.c
-gridPathCellsSize,"H3Error gridPathCellsSize(H3Index start, H3Index end, int64_t *size)",localij__gridPathCellsSize.go,gridPathCellsSize,"func gridPathCellsSize(start H3Index, end H3Index, size *int64) H3Error",true,attr: localij.c
-gridPathCells,"H3Error gridPathCells(H3Index start, H3Index end, H3Index *out)",localij_gridPathCells.go,gridPathCells,"func gridPathCells(out []H3Index, start H3Index, end H3Index) H3Error",true,attr: localij.c
-cellToLocalIj,"H3Error cellToLocalIj(H3Index origin, H3Index h3, uint32_t mode, CoordIJ *out)",localij__cellToLocalIj.go,cellToLocalIj,"func cellToLocalIj(origin H3Index, index H3Index, mode uint32, out *CoordIJ) H3Error",true,attr: localij.c
-localIjToCell,"H3Error localIjToCell(H3Index origin, const CoordIJ *ij, uint32_t mode, H3Index *out)",localij__localIjToCell.go,localIjToCell,"func localIjToCell(origin H3Index, ij *CoordIJ, mode uint32, out *H3Index) H3Error",true,attr: localij.c
-DIRECTIONS,(C-internal: algos.c),algos_constants.go,DIRECTIONS,var DIRECTIONS,false,kind: var
-K_ALL_CELLS_AT_RES_15,(C-internal: algos.c),algos_constants.go,K_ALL_CELLS_AT_RES_15,const K_ALL_CELLS_AT_RES_15,false,kind: const
-MAX_ONE_RING_SIZE,(C-internal: algos.c),algos_constants.go,MAX_ONE_RING_SIZE,const MAX_ONE_RING_SIZE,false,kind: const
-NEXT_RING_DIRECTION,(C-internal: algos.c),algos_constants.go,NEXT_RING_DIRECTION,const NEXT_RING_DIRECTION,false,kind: const
-POLYGON_TO_CELLS_BUFFER,(C-internal: algos.c),algos_constants.go,POLYGON_TO_CELLS_BUFFER,const POLYGON_TO_CELLS_BUFFER,false,kind: const
-_getEdgeHexagons,(C-internal: algos.c),algos__getEdgeHexagons.go,_getEdgeHexagons,"func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32, numSearchHexes *int64, search []H3Index, found []H3Index) H3Error",false,kind: func
-_gridDiskDistancesInternal,(C-internal: algos.c),algos__gridDiskDistancesInternal.go,_gridDiskDistancesInternal,"func _gridDiskDistancesInternal(origin H3Index, k int32, out []H3Index, distances []int32, maxIdx int64, curK int32) H3Error",false,kind: func
-_gridRingInternal,(C-internal: algos.c),algos__gridRingInternal.go,_gridRingInternal,"func _gridRingInternal(origin H3Index, k int32, out []H3Index) H3Error",false,kind: func
-_vertexGraphToLinkedGeo,(C-internal: algos.c),algos__vertexGraphToLinkedGeo.go,_vertexGraphToLinkedGeo,"func _vertexGraphToLinkedGeo(graph *VertexGraph, out *LinkedGeoPolygon)",false,kind: func
-directionForNeighbor,(C-internal: algos.c),algos__directionForNeighbor.go,_directionForNeighbor,"func _directionForNeighbor(origin H3Index, destination H3Index) Direction",false,kind: func
-h3NeighborRotations,(C-internal: algos.c),algos__h3NeighborRotations.go,h3NeighborRotations,"func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H3Index) H3Error",false,kind: func
-h3SetToVertexGraph,(C-internal: algos.c),algos_h3SetToVertexGraph.go,h3SetToVertexGraph,"func h3SetToVertexGraph(h3Set []H3Index, numHexes int32, graph *VertexGraph) H3Error",false,kind: func
+getPentagons,"H3Error getPentagons(int res, H3Index *out)",h3index__getPentagons.go,getPentagons,"func getPentagons(res int32, out []h3Index) h3Error",true,attr: h3Index.c
+getResolution,int getResolution(H3Index h),h3index__getters.go,getResolution,func getResolution(h h3Index) int32,true,attr: h3Index.c
+getBaseCellNumber,int getBaseCellNumber(H3Index h),h3Index_getBaseCellNumber.go,getBaseCellNumber,func getBaseCellNumber(h h3Index) int32,true,attr: h3Index.c
+stringToH3,"H3Error stringToH3(const char *str, H3Index *out)",h3index__stringToH3.go,stringToH3,"func stringToH3(s string) (h3Index, h3Error)",true,attr: h3Index.c
+h3ToString,"H3Error h3ToString(H3Index h, char *str, size_t sz)",h3index__h3ToString.go,h3ToString,"func h3ToString(h h3Index) (string, uint32)",true,attr: h3Index.c
+isValidCell,int isValidCell(H3Index h),h3index__isValidCell.go,isValidCell,func isValidCell(h h3Index) bool,true,attr: h3Index.c
+cellToParent,"H3Error cellToParent(H3Index h, int parentRes, H3Index *parent)",h3index__cellToParent.go,cellToParent,"func cellToParent(h h3Index, parentRes int32) (h3Index, h3Error)",true,attr: h3Index.c
+cellToChildrenSize,"H3Error cellToChildrenSize(H3Index h, int childRes, int64_t *out)",h3index__cellToChildrenSize.go,cellToChildrenSize,"func cellToChildrenSize(h h3Index, childRes int32) (int64, h3Error)",true,attr: h3Index.c
+cellToChildren,"H3Error cellToChildren(H3Index h, int childRes, H3Index *children)",h3index__cellToChildren.go,cellToChildren,"func cellToChildren(h h3Index, childRes int32, children []h3Index) h3Error",true,attr: h3Index.c
+cellToCenterChild,"H3Error cellToCenterChild(H3Index h, int childRes, H3Index *child)",h3index__cellToCenterChild.go,cellToCenterChild,"func cellToCenterChild(h h3Index, childRes int32) (h3Index, h3Error)",true,attr: h3Index.c
+cellToChildPos,"H3Error cellToChildPos(H3Index child, int parentRes, int64_t *out)",h3index__cellToChildPos.go,cellToChildPos,"func cellToChildPos(child h3Index, parentRes int32) (int64, h3Error)",true,attr: h3Index.c
+childPosToCell,"H3Error childPosToCell(int64_t childPos, H3Index parent, int childRes, H3Index *child)",h3index__childPosToCell.go,childPosToCell,"func childPosToCell(childPos int64, parent h3Index, childRes int32) (h3Index, h3Error)",true,attr: h3Index.c
+compactCells,"H3Error compactCells(const H3Index *h3Set, H3Index *compactedSet, const int64_t numHexes)",h3index__compactCells.go,compactCells,"func compactCells(h3Set []h3Index, compactedSet []h3Index, numHexes int64) h3Error",true,attr: h3Index.c
+uncompactCellsSize,"H3Error uncompactCellsSize(const H3Index *compactedSet, const int64_t numCompacted, const int res, int64_t *out)",h3index__uncompactCellsSize.go,uncompactCellsSize,"func uncompactCellsSize(compactedSet []h3Index, numCompacted int64, res int32) (int64, h3Error)",true,attr: h3Index.c
+uncompactCells,"H3Error uncompactCells(const H3Index *compactedSet, const int64_t numCompacted, H3Index *outSet, const int64_t numOut, const int res)",h3index__uncompactCells.go,uncompactCells,"func uncompactCells(compactedSet []h3Index, numCompacted int64, outSet []h3Index, numOut int64, res int32) h3Error",true,attr: h3Index.c
+isResClassIII,int isResClassIII(H3Index h),h3index__isResClassIII.go,isResClassIII,func isResClassIII(h h3Index) bool,true,attr: h3Index.c
+isPentagon,int isPentagon(H3Index h),h3index__isPentagon.go,isPentagon,func isPentagon(h h3Index) bool,true,attr: h3Index.c
+maxFaceCount,"H3Error maxFaceCount(H3Index h3, int *out)",h3index__maxFaceCount.go,maxFaceCount,"func maxFaceCount(h3 h3Index, out *int32) h3Error",true,attr: h3Index.c
+getIcosahedronFaces,"H3Error getIcosahedronFaces(H3Index h3, int *out)",h3index__getIcosahedronFaces.go,getIcosahedronFaces,"func getIcosahedronFaces(h h3Index, out []int32) h3Error",true,attr: h3Index.c
+areNeighborCells,"H3Error areNeighborCells(H3Index origin, H3Index destination, int *out)",directedEdge_areNeighborCells.go,areNeighborCells,"func areNeighborCells(origin, destination h3Index) (bool, h3Error)",true,attr: directedEdge.c
+cellsToDirectedEdge,"H3Error cellsToDirectedEdge(H3Index origin, H3Index destination, H3Index *out)",directedEdge_cellsToDirectedEdge.go,cellsToDirectedEdge,"func cellsToDirectedEdge(origin h3Index, destination h3Index) (h3Index, h3Error)",true,attr: directedEdge.c
+isValidDirectedEdge,int isValidDirectedEdge(H3Index edge),directedEdge__isValidDirectedEdge.go,isValidDirectedEdge,func isValidDirectedEdge(edge h3Index) bool,true,attr: directedEdge.c
+getDirectedEdgeOrigin,"H3Error getDirectedEdgeOrigin(H3Index edge, H3Index *out)",directedEdge__getDirectedEdgeOrigin.go,getDirectedEdgeOrigin,"func getDirectedEdgeOrigin(edge h3Index) (h3Index, h3Error)",true,attr: directedEdge.c
+getDirectedEdgeDestination,"H3Error getDirectedEdgeDestination(H3Index edge, H3Index *out)",directedEdge__getDirectedEdgeDestination.go,getDirectedEdgeDestination,"func getDirectedEdgeDestination(edge h3Index, out *h3Index) h3Error",true,attr: directedEdge.c
+directedEdgeToCells,"H3Error directedEdgeToCells(H3Index edge, H3Index *originDestination)",directedEdge__directedEdgeToCells.go,directedEdgeToCells,"func directedEdgeToCells(edge h3Index, originDestination []h3Index) h3Error",true,attr: directedEdge.c
+originToDirectedEdges,"H3Error originToDirectedEdges(H3Index origin, H3Index *edges)",directedEdge__originToDirectedEdges.go,originToDirectedEdges,"func originToDirectedEdges(origin h3Index, edges []h3Index) h3Error",true,attr: directedEdge.c
+directedEdgeToBoundary,"H3Error directedEdgeToBoundary(H3Index edge, CellBoundary *gb)",directedEdge_directedEdgeToBoundary.go,directedEdgeToBoundary,"func directedEdgeToBoundary(edge h3Index, cb *CellBoundary) h3Error",true,attr: directedEdge.c
+cellToVertex,"H3Error cellToVertex(H3Index origin, int vertexNum, H3Index *out)",vertex_cellToVertex.go,cellToVertex,"func cellToVertex(cell h3Index, vertexNum int32, out *h3Index) h3Error",true,attr: vertex.c
+cellToVertexes,"H3Error cellToVertexes(H3Index origin, H3Index *vertexes)",vertex_cellToVertexes.go,cellToVertexes,"func cellToVertexes(cell h3Index, vertexes *[6]h3Index) h3Error",true,attr: vertex.c
+vertexToLatLng,"H3Error vertexToLatLng(H3Index vertex, LatLng *point)",vertex_vertexToLatLng.go,vertexToLatLng,"func vertexToLatLng(vertex h3Index, coord *LatLng) h3Error",true,attr: vertex.c
+isValidVertex,int isValidVertex(H3Index vertex),vertex_isValidVertex.go,isValidVertex,func isValidVertex(vertex h3Index) bool,true,attr: vertex.c
+gridDistance,"H3Error gridDistance(H3Index origin, H3Index h3, int64_t *distance)",localij__gridDistance.go,gridDistance,"func gridDistance(origin h3Index, index h3Index, out *int64) h3Error",true,attr: localij.c
+gridPathCellsSize,"H3Error gridPathCellsSize(H3Index start, H3Index end, int64_t *size)",localij__gridPathCellsSize.go,gridPathCellsSize,"func gridPathCellsSize(start h3Index, end h3Index, size *int64) h3Error",true,attr: localij.c
+gridPathCells,"H3Error gridPathCells(H3Index start, H3Index end, H3Index *out)",localij_gridPathCells.go,gridPathCells,"func gridPathCells(out []h3Index, start h3Index, end h3Index) h3Error",true,attr: localij.c
+cellToLocalIj,"H3Error cellToLocalIj(H3Index origin, H3Index h3, uint32_t mode, CoordIJ *out)",localij__cellToLocalIj.go,cellToLocalIj,"func cellToLocalIj(origin h3Index, index h3Index, mode uint32, out *CoordIJ) h3Error",true,attr: localij.c
+localIjToCell,"H3Error localIjToCell(H3Index origin, const CoordIJ *ij, uint32_t mode, H3Index *out)",localij__localIjToCell.go,localIjToCell,"func localIjToCell(origin h3Index, ij *CoordIJ, mode uint32, out *h3Index) h3Error",true,attr: localij.c
+DIRECTIONS,(C-internal: algos.c),algos_constants.go,algosDirections,var algosDirections,false,kind: var
+K_ALL_CELLS_AT_RES_15,(C-internal: algos.c),algos_constants.go,kAllCellsAtRes15,const kAllCellsAtRes15,false,kind: const
+MAX_ONE_RING_SIZE,(C-internal: algos.c),algos_constants.go,maxOneRingSize,const maxOneRingSize,false,kind: const
+NEXT_RING_DIRECTION,(C-internal: algos.c),algos_constants.go,nextRingDirection,const nextRingDirection,false,kind: const
+POLYGON_TO_CELLS_BUFFER,(C-internal: algos.c),algos_constants.go,polygonToCellsBuffer,const polygonToCellsBuffer,false,kind: const
+_getEdgeHexagons,(C-internal: algos.c),algos__getEdgeHexagons.go,_getEdgeHexagons,"func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32, numSearchHexes *int64, search []h3Index, found []h3Index) h3Error",false,kind: func
+_gridDiskDistancesInternal,(C-internal: algos.c),algos__gridDiskDistancesInternal.go,_gridDiskDistancesInternal,"func _gridDiskDistancesInternal(origin h3Index, k int32, out []h3Index, distances []int32, maxIdx int64, curK int32) h3Error",false,kind: func
+_gridRingInternal,(C-internal: algos.c),algos__gridRingInternal.go,_gridRingInternal,"func _gridRingInternal(origin h3Index, k int32, out []h3Index) h3Error",false,kind: func
+_vertexGraphToLinkedGeo,(C-internal: algos.c),algos__vertexGraphToLinkedGeo.go,_vertexGraphToLinkedGeo,"func _vertexGraphToLinkedGeo(graph *vertexGraph, out *linkedGeoPolygon)",false,kind: func
+directionForNeighbor,(C-internal: algos.c),algos__directionForNeighbor.go,_directionForNeighbor,"func _directionForNeighbor(origin h3Index, destination h3Index) direction",false,kind: func
+h3NeighborRotations,(C-internal: algos.c),algos__h3NeighborRotations.go,h3NeighborRotations,"func h3NeighborRotations(origin h3Index, dir direction, rotations *int32, out *h3Index) h3Error",false,kind: func
+h3SetToVertexGraph,(C-internal: algos.c),algos_h3SetToVertexGraph.go,h3SetToVertexGraph,"func h3SetToVertexGraph(h3Set []h3Index, numHexes int32, graph *vertexGraph) h3Error",false,kind: func
 _baseCellIsCwOffset,(C-internal: baseCells.c),baseCells__baseCellIsCwOffset.go,_baseCellIsCwOffset,"func _baseCellIsCwOffset(baseCell int32, testFace int32) bool",false,kind: func
 _baseCellToCCWrot60,(C-internal: baseCells.c),baseCells__baseCellToCCWrot60.go,_baseCellToCCWrot60,"func _baseCellToCCWrot60(baseCell int32, face int32) int32",false,kind: func
-_baseCellToFaceIjk,(C-internal: baseCells.c),baseCells__baseCellToFaceIjk.go,_baseCellToFaceIjk,"func _baseCellToFaceIjk(baseCell int32, h *FaceIJK)",false,kind: func
-_faceIjkToBaseCell,(C-internal: baseCells.c),baseCells__faceIjkToBaseCell.go,_faceIjkToBaseCell,func _faceIjkToBaseCell(h *FaceIJK) int32,false,kind: func
-_faceIjkToBaseCellCCWrot60,(C-internal: baseCells.c),baseCells__faceIjkToBaseCellCCWrot60.go,_faceIjkToBaseCellCCWrot60,func _faceIjkToBaseCellCCWrot60(h *FaceIJK) int32,false,kind: func
-_getBaseCellDirection,(C-internal: baseCells.c),baseCells__getBaseCellDirection.go,_getBaseCellDirection,"func _getBaseCellDirection(originBaseCell int32, neighboringBaseCell int32) Direction",false,kind: func
-_getBaseCellNeighbor,(C-internal: baseCells.c),baseCells__getBaseCellNeighbor.go,_getBaseCellNeighbor,"func _getBaseCellNeighbor(baseCell int32, dir Direction) int32",false,kind: func
+_baseCellToFaceIjk,(C-internal: baseCells.c),baseCells__baseCellToFaceIjk.go,_baseCellToFaceIjk,"func _baseCellToFaceIjk(baseCell int32, h *faceIJK)",false,kind: func
+_faceIjkToBaseCell,(C-internal: baseCells.c),baseCells__faceIjkToBaseCell.go,_faceIjkToBaseCell,func _faceIjkToBaseCell(h *faceIJK) int32,false,kind: func
+_faceIjkToBaseCellCCWrot60,(C-internal: baseCells.c),baseCells__faceIjkToBaseCellCCWrot60.go,_faceIjkToBaseCellCCWrot60,func _faceIjkToBaseCellCCWrot60(h *faceIJK) int32,false,kind: func
+_getBaseCellDirection,(C-internal: baseCells.c),baseCells__getBaseCellDirection.go,_getBaseCellDirection,"func _getBaseCellDirection(originBaseCell int32, neighboringBaseCell int32) direction",false,kind: func
+_getBaseCellNeighbor,(C-internal: baseCells.c),baseCells__getBaseCellNeighbor.go,_getBaseCellNeighbor,"func _getBaseCellNeighbor(baseCell int32, dir direction) int32",false,kind: func
 _isBaseCellPentagon,(C-internal: baseCells.c),baseCells__isBaseCellPentagon.go,_isBaseCellPentagon,func _isBaseCellPentagon(baseCell int32) bool,false,kind: func
 _isBaseCellPolarPentagon,(C-internal: baseCells.c),baseCells__isBaseCellPolarPentagon.go,_isBaseCellPolarPentagon,func _isBaseCellPolarPentagon(baseCell int32) bool,false,kind: func
 baseCellData,(C-internal: baseCells.c),baseCells__data.go,baseCellData,var baseCellData,false,kind: var
 baseCellNeighbor60CCWRots,(C-internal: baseCells.c),baseCells__neighborRotations.go,baseCellNeighbor60CCWRots,var baseCellNeighbor60CCWRots,false,kind: var
 baseCellNeighbors,(C-internal: baseCells.c),baseCells__neighbors.go,baseCellNeighbors,var baseCellNeighbors,false,kind: var
 faceIjkBaseCells,(C-internal: baseCells.c),baseCells__faceIjkBaseCells.go,faceIjkBaseCells,var faceIjkBaseCells,false,kind: var
-_hexRadiusKm,(C-internal: bbox.c),bbox__hexRadiusKm.go,_hexRadiusKm,func _hexRadiusKm(h3Index H3Index) float64,false,kind: func
-bboxCenter,(C-internal: bbox.c),bbox__bboxCenter.go,bboxCenter,func bboxCenter(b *BBox) LatLng,false,kind: func
-bboxContains,(C-internal: bbox.c),bbox__bboxContains.go,bboxContains,"func bboxContains(b *BBox, p *LatLng) bool",false,kind: func
-bboxContainsBBox,(C-internal: bbox.c),bbox__bboxOverlapsContainsBBox.go,bboxContainsBBox,"func bboxContainsBBox(a, b *BBox) bool",false,kind: func
-bboxEquals,(C-internal: bbox.c),bbox__bboxEquals.go,bboxEquals,"func bboxEquals(b1, b2 *BBox) bool",false,kind: func
-bboxHeightRads,(C-internal: bbox.c),bbox__bboxWidthHeightRads.go,bboxHeightRads,func bboxHeightRads(b *BBox) float64,false,kind: func
-bboxHexEstimate,(C-internal: bbox.c),bbox_bboxHexEstimate.go,bboxHexEstimate,"func bboxHexEstimate(bbox *BBox, res int32, out *int64) H3Error",false,kind: func
-bboxIsTransmeridian,(C-internal: bbox.c),bbox__bboxIsTransmeridian.go,bboxIsTransmeridian,func bboxIsTransmeridian(b *BBox) bool,false,kind: func
-bboxNormalization,(C-internal: bbox.c),bbox__bboxNormalization.go,bboxNormalization,"func bboxNormalization(a, b *BBox, aNorm, bNorm *LongitudeNormalization)",false,kind: func
-bboxOverlapsBBox,(C-internal: bbox.c),bbox__bboxOverlapsContainsBBox.go,bboxOverlapsBBox,"func bboxOverlapsBBox(a, b *BBox) bool",false,kind: func
-bboxToCellBoundary,(C-internal: bbox.c),bbox_bboxToCellBoundary.go,bboxToCellBoundary,func bboxToCellBoundary(bbox *BBox) CellBoundary,false,kind: func
-bboxWidthRads,(C-internal: bbox.c),bbox__bboxWidthHeightRads.go,bboxWidthRads,func bboxWidthRads(b *BBox) float64,false,kind: func
-lineHexEstimate,(C-internal: bbox.c),bbox_lineHexEstimate.go,lineHexEstimate,"func lineHexEstimate(origin *LatLng, destination *LatLng, res int32, out *int64) H3Error",false,kind: func
-scaleBBox,(C-internal: bbox.c),bbox__scaleBBox.go,scaleBBox,"func scaleBBox(bbox *BBox, scale float64)",false,kind: func
-_downAp3,(C-internal: coordijk.c),coordijk__downAp3.go,_downAp3,func _downAp3(ijk *CoordIJK),false,kind: func
-_downAp3r,(C-internal: coordijk.c),coordijk__downAp3r.go,_downAp3r,func _downAp3r(ijk *CoordIJK),false,kind: func
-_downAp7,(C-internal: coordijk.c),coordijk__downAp7.go,_downAp7,func _downAp7(ijk *CoordIJK),false,kind: func
-_downAp7r,(C-internal: coordijk.c),coordijk__downAp7r.go,_downAp7r,func _downAp7r(ijk *CoordIJK),false,kind: func
-_hex2dToCoordIJK,(C-internal: coordijk.c),coordijk__hex2dToCoordIJK.go,_hex2dToCoordIJK,"func _hex2dToCoordIJK(v *Vec2d, h *CoordIJK)",false,kind: func
-_ijkAdd,(C-internal: coordijk.c),coordijk__ijkAdd.go,_ijkAdd,"func _ijkAdd(h1, h2, sum *CoordIJK)",false,kind: func
-_ijkMatches,(C-internal: coordijk.c),coordijk__ijkMatches.go,_ijkMatches,"func _ijkMatches(c1, c2 *CoordIJK) bool",false,kind: func
-_ijkNormalize,(C-internal: coordijk.c),coordijk__ijkNormalize.go,_ijkNormalize,func _ijkNormalize(c *CoordIJK),false,kind: func
-_ijkNormalizeCouldOverflow,(C-internal: coordijk.c),coordijk__ijkNormalizeCouldOverflow.go,_ijkNormalizeCouldOverflow,func _ijkNormalizeCouldOverflow(ijk *CoordIJK) bool,false,kind: func
-_ijkRotate60ccw,(C-internal: coordijk.c),coordijk__ijkRotate60ccw.go,_ijkRotate60ccw,func _ijkRotate60ccw(ijk *CoordIJK),false,kind: func
-_ijkRotate60cw,(C-internal: coordijk.c),coordijk__ijkRotate60cw.go,_ijkRotate60cw,func _ijkRotate60cw(ijk *CoordIJK),false,kind: func
-_ijkScale,(C-internal: coordijk.c),coordijk__ijkScale.go,_ijkScale,"func _ijkScale(c *CoordIJK, factor int32)",false,kind: func
-_ijkSub,(C-internal: coordijk.c),coordijk__ijkSub.go,_ijkSub,"func _ijkSub(h1, h2, diff *CoordIJK)",false,kind: func
-_ijkToHex2d,(C-internal: coordijk.c),coordijk__ijkToHex2d.go,_ijkToHex2d,"func _ijkToHex2d(h *CoordIJK, v *Vec2d)",false,kind: func
-_neighbor,(C-internal: coordijk.c),coordijk__neighbor.go,_neighbor,"func _neighbor(ijk *CoordIJK, digit Direction)",false,kind: func
-_rotate60ccw,(C-internal: coordijk.c),coordijk__rotate60ccw.go,_rotate60ccw,func _rotate60ccw(digit Direction) Direction,false,kind: func
-_rotate60cw,(C-internal: coordijk.c),coordijk__rotate60cw.go,_rotate60cw,func _rotate60cw(digit Direction) Direction,false,kind: func
-_setIJK,(C-internal: coordijk.c),coordijk__setIJK.go,_setIJK,"func _setIJK(ijk *CoordIJK, i, j, k int32)",false,kind: func
-_unitIjkToDigit,(C-internal: coordijk.c),coordijk__unitIjkToDigit.go,_unitIjkToDigit,func _unitIjkToDigit(ijk *CoordIJK) Direction,false,kind: func
-_upAp7,(C-internal: coordijk.c),coordijk__upAp7.go,_upAp7,func _upAp7(ijk *CoordIJK),false,kind: func
-_upAp7Checked,(C-internal: coordijk.c),coordijk__upAp7Checked.go,_upAp7Checked,func _upAp7Checked(ijk *CoordIJK) H3Error,false,kind: func
-_upAp7r,(C-internal: coordijk.c),coordijk__upAp7r.go,_upAp7r,func _upAp7r(ijk *CoordIJK),false,kind: func
-_upAp7rChecked,(C-internal: coordijk.c),coordijk__upAp7rChecked.go,_upAp7rChecked,func _upAp7rChecked(ijk *CoordIJK) H3Error,false,kind: func
-cubeToIjk,(C-internal: coordijk.c),coordijk__cubeToIjk.go,cubeToIjk,func cubeToIjk(ijk *CoordIJK),false,kind: func
-ijToIjk,(C-internal: coordijk.c),coordijk__ijToIjk.go,ijToIjk,"func ijToIjk(ij *CoordIJ, ijk *CoordIJK) H3Error",false,kind: func
-ijkDistance,(C-internal: coordijk.c),coordijk__ijkDistance.go,ijkDistance,"func ijkDistance(c1, c2 *CoordIJK) int32",false,kind: func
-ijkToCube,(C-internal: coordijk.c),coordijk__ijkToCube.go,ijkToCube,func ijkToCube(ijk *CoordIJK),false,kind: func
-ijkToIj,(C-internal: coordijk.c),coordijk__ijkToIj.go,ijkToIj,"func ijkToIj(ijk *CoordIJK, ij *CoordIJ)",false,kind: func
-_adjustOverageClassII,(C-internal: faceijk.c),faceijk__adjustOverageClassII.go,_adjustOverageClassII,"func _adjustOverageClassII(fijk *FaceIJK, res int32, pentLeading4 bool, substrate bool) Overage",false,kind: func
-_adjustPentVertOverage,(C-internal: faceijk.c),faceijk__adjustPentVertOverage.go,_adjustPentVertOverage,"func _adjustPentVertOverage(fijk *FaceIJK, res int32) Overage",false,kind: func
-_faceIjkPentToCellBoundary,(C-internal: faceijk.c),faceijk__faceIjkPentToCellBoundary.go,_faceIjkPentToCellBoundary,"func _faceIjkPentToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary)",false,kind: func
-_faceIjkPentToVerts,(C-internal: faceijk.c),faceijk__faceIjkPentToVerts.go,_faceIjkPentToVerts,"func _faceIjkPentToVerts(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK)",false,kind: func
-_faceIjkToCellBoundary,(C-internal: faceijk.c),faceijk__faceIjkToCellBoundary.go,_faceIjkToCellBoundary,"func _faceIjkToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary)",false,kind: func
-_faceIjkToGeo,(C-internal: faceijk.c),faceijk__faceIjkToGeo.go,_faceIjkToGeo,"func _faceIjkToGeo(h *FaceIJK, res int32, g *LatLng)",false,kind: func
-_faceIjkToVerts,(C-internal: faceijk.c),faceijk__faceIjkToVerts.go,_faceIjkToVerts,"func _faceIjkToVerts(fijk *FaceIJK, res *int32, fijkVerts []FaceIJK)",false,kind: func
+_hexRadiusKm,(C-internal: bbox.c),bbox__hexRadiusKm.go,_hexRadiusKm,func _hexRadiusKm(h3Index h3Index) float64,false,kind: func
+bboxCenter,(C-internal: bbox.c),bbox__bboxCenter.go,bboxCenter,func bboxCenter(b *bbox) LatLng,false,kind: func
+bboxContains,(C-internal: bbox.c),bbox__bboxContains.go,bboxContains,"func bboxContains(b *bbox, p *LatLng) bool",false,kind: func
+bboxContainsBBox,(C-internal: bbox.c),bbox__bboxOverlapsContainsBBox.go,bboxContainsBBox,"func bboxContainsBBox(a, b *bbox) bool",false,kind: func
+bboxEquals,(C-internal: bbox.c),bbox__bboxEquals.go,bboxEquals,"func bboxEquals(b1, b2 *bbox) bool",false,kind: func
+bboxHeightRads,(C-internal: bbox.c),bbox__bboxWidthHeightRads.go,bboxHeightRads,func bboxHeightRads(b *bbox) float64,false,kind: func
+bboxHexEstimate,(C-internal: bbox.c),bbox_bboxHexEstimate.go,bboxHexEstimate,"func bboxHexEstimate(bbox *bbox, res int32, out *int64) h3Error",false,kind: func
+bboxIsTransmeridian,(C-internal: bbox.c),bbox__bboxIsTransmeridian.go,bboxIsTransmeridian,func bboxIsTransmeridian(b *bbox) bool,false,kind: func
+bboxNormalization,(C-internal: bbox.c),bbox__bboxNormalization.go,bboxNormalization,"func bboxNormalization(a, b *bbox, aNorm, bNorm *longitudeNormalization)",false,kind: func
+bboxOverlapsBBox,(C-internal: bbox.c),bbox__bboxOverlapsContainsBBox.go,bboxOverlapsBBox,"func bboxOverlapsBBox(a, b *bbox) bool",false,kind: func
+bboxToCellBoundary,(C-internal: bbox.c),bbox_bboxToCellBoundary.go,bboxToCellBoundary,func bboxToCellBoundary(bbox *bbox) CellBoundary,false,kind: func
+bboxWidthRads,(C-internal: bbox.c),bbox__bboxWidthHeightRads.go,bboxWidthRads,func bboxWidthRads(b *bbox) float64,false,kind: func
+lineHexEstimate,(C-internal: bbox.c),bbox_lineHexEstimate.go,lineHexEstimate,"func lineHexEstimate(origin *LatLng, destination *LatLng, res int32, out *int64) h3Error",false,kind: func
+scaleBBox,(C-internal: bbox.c),bbox__scaleBBox.go,scaleBBox,"func scaleBBox(bbox *bbox, scale float64)",false,kind: func
+_downAp3,(C-internal: coordijk.c),coordijk__downAp3.go,_downAp3,func _downAp3(ijk *coordIJK),false,kind: func
+_downAp3r,(C-internal: coordijk.c),coordijk__downAp3r.go,_downAp3r,func _downAp3r(ijk *coordIJK),false,kind: func
+_downAp7,(C-internal: coordijk.c),coordijk__downAp7.go,_downAp7,func _downAp7(ijk *coordIJK),false,kind: func
+_downAp7r,(C-internal: coordijk.c),coordijk__downAp7r.go,_downAp7r,func _downAp7r(ijk *coordIJK),false,kind: func
+_hex2dToCoordIJK,(C-internal: coordijk.c),coordijk__hex2dToCoordIJK.go,_hex2dToCoordIJK,"func _hex2dToCoordIJK(v *vec2d, h *coordIJK)",false,kind: func
+_ijkAdd,(C-internal: coordijk.c),coordijk__ijkAdd.go,_ijkAdd,"func _ijkAdd(h1, h2, sum *coordIJK)",false,kind: func
+_ijkMatches,(C-internal: coordijk.c),coordijk__ijkMatches.go,_ijkMatches,"func _ijkMatches(c1, c2 *coordIJK) bool",false,kind: func
+_ijkNormalize,(C-internal: coordijk.c),coordijk__ijkNormalize.go,_ijkNormalize,func _ijkNormalize(c *coordIJK),false,kind: func
+_ijkNormalizeCouldOverflow,(C-internal: coordijk.c),coordijk__ijkNormalizeCouldOverflow.go,_ijkNormalizeCouldOverflow,func _ijkNormalizeCouldOverflow(ijk *coordIJK) bool,false,kind: func
+_ijkRotate60ccw,(C-internal: coordijk.c),coordijk__ijkRotate60ccw.go,_ijkRotate60ccw,func _ijkRotate60ccw(ijk *coordIJK),false,kind: func
+_ijkRotate60cw,(C-internal: coordijk.c),coordijk__ijkRotate60cw.go,_ijkRotate60cw,func _ijkRotate60cw(ijk *coordIJK),false,kind: func
+_ijkScale,(C-internal: coordijk.c),coordijk__ijkScale.go,_ijkScale,"func _ijkScale(c *coordIJK, factor int32)",false,kind: func
+_ijkSub,(C-internal: coordijk.c),coordijk__ijkSub.go,_ijkSub,"func _ijkSub(h1, h2, diff *coordIJK)",false,kind: func
+_ijkToHex2d,(C-internal: coordijk.c),coordijk__ijkToHex2d.go,_ijkToHex2d,"func _ijkToHex2d(h *coordIJK, v *vec2d)",false,kind: func
+_neighbor,(C-internal: coordijk.c),coordijk__neighbor.go,_neighbor,"func _neighbor(ijk *coordIJK, digit direction)",false,kind: func
+_rotate60ccw,(C-internal: coordijk.c),coordijk__rotate60ccw.go,_rotate60ccw,func _rotate60ccw(digit direction) direction,false,kind: func
+_rotate60cw,(C-internal: coordijk.c),coordijk__rotate60cw.go,_rotate60cw,func _rotate60cw(digit direction) direction,false,kind: func
+_setIJK,(C-internal: coordijk.c),coordijk__setIJK.go,_setIJK,"func _setIJK(ijk *coordIJK, i, j, k int32)",false,kind: func
+_unitIjkToDigit,(C-internal: coordijk.c),coordijk__unitIjkToDigit.go,_unitIjkToDigit,func _unitIjkToDigit(ijk *coordIJK) direction,false,kind: func
+_upAp7,(C-internal: coordijk.c),coordijk__upAp7.go,_upAp7,func _upAp7(ijk *coordIJK),false,kind: func
+_upAp7Checked,(C-internal: coordijk.c),coordijk__upAp7Checked.go,_upAp7Checked,func _upAp7Checked(ijk *coordIJK) h3Error,false,kind: func
+_upAp7r,(C-internal: coordijk.c),coordijk__upAp7r.go,_upAp7r,func _upAp7r(ijk *coordIJK),false,kind: func
+_upAp7rChecked,(C-internal: coordijk.c),coordijk__upAp7rChecked.go,_upAp7rChecked,func _upAp7rChecked(ijk *coordIJK) h3Error,false,kind: func
+cubeToIjk,(C-internal: coordijk.c),coordijk__cubeToIjk.go,cubeToIjk,func cubeToIjk(ijk *coordIJK),false,kind: func
+ijToIjk,(C-internal: coordijk.c),coordijk__ijToIjk.go,ijToIjk,"func ijToIjk(ij *CoordIJ, ijk *coordIJK) h3Error",false,kind: func
+ijkDistance,(C-internal: coordijk.c),coordijk__ijkDistance.go,ijkDistance,"func ijkDistance(c1, c2 *coordIJK) int32",false,kind: func
+ijkToCube,(C-internal: coordijk.c),coordijk__ijkToCube.go,ijkToCube,func ijkToCube(ijk *coordIJK),false,kind: func
+ijkToIj,(C-internal: coordijk.c),coordijk__ijkToIj.go,ijkToIj,"func ijkToIj(ijk *coordIJK, ij *CoordIJ)",false,kind: func
+_adjustOverageClassII,(C-internal: faceijk.c),faceijk__adjustOverageClassII.go,_adjustOverageClassII,"func _adjustOverageClassII(fijk *faceIJK, res int32, pentLeading4 bool, substrate bool) overage",false,kind: func
+_adjustPentVertOverage,(C-internal: faceijk.c),faceijk__adjustPentVertOverage.go,_adjustPentVertOverage,"func _adjustPentVertOverage(fijk *faceIJK, res int32) overage",false,kind: func
+_faceIjkPentToCellBoundary,(C-internal: faceijk.c),faceijk__faceIjkPentToCellBoundary.go,_faceIjkPentToCellBoundary,"func _faceIjkPentToCellBoundary(h *faceIJK, res int32, start int32, length int32, g *CellBoundary)",false,kind: func
+_faceIjkPentToVerts,(C-internal: faceijk.c),faceijk__faceIjkPentToVerts.go,_faceIjkPentToVerts,"func _faceIjkPentToVerts(fijk *faceIJK, res *int32, fijkVerts []faceIJK)",false,kind: func
+_faceIjkToCellBoundary,(C-internal: faceijk.c),faceijk__faceIjkToCellBoundary.go,_faceIjkToCellBoundary,"func _faceIjkToCellBoundary(h *faceIJK, res int32, start int32, length int32, g *CellBoundary)",false,kind: func
+_faceIjkToGeo,(C-internal: faceijk.c),faceijk__faceIjkToGeo.go,_faceIjkToGeo,"func _faceIjkToGeo(h *faceIJK, res int32, g *LatLng)",false,kind: func
+_faceIjkToVerts,(C-internal: faceijk.c),faceijk__faceIjkToVerts.go,_faceIjkToVerts,"func _faceIjkToVerts(fijk *faceIJK, res *int32, fijkVerts []faceIJK)",false,kind: func
 _geoToClosestFace,(C-internal: faceijk.c),faceijk__geoToClosestFace.go,_geoToClosestFace,"func _geoToClosestFace(g *LatLng, face *int32, sqd *float64)",false,kind: func
-_geoToFaceIjk,(C-internal: faceijk.c),faceijk__geoToFaceIjk.go,_geoToFaceIjk,"func _geoToFaceIjk(g *LatLng, res int32, h *FaceIJK)",false,kind: func
-_geoToHex2d,(C-internal: faceijk.c),faceijk__geoToHex2d.go,_geoToHex2d,"func _geoToHex2d(g *LatLng, res int32, face *int32, v *Vec2d)",false,kind: func
-_hex2dToGeo,(C-internal: faceijk.c),faceijk__hex2dToGeo.go,_hex2dToGeo,"func _hex2dToGeo(v *Vec2d, face int32, res int32, substrate int32, g *LatLng)",false,kind: func
+_geoToFaceIjk,(C-internal: faceijk.c),faceijk__geoToFaceIjk.go,_geoToFaceIjk,"func _geoToFaceIjk(g *LatLng, res int32, h *faceIJK)",false,kind: func
+_geoToHex2d,(C-internal: faceijk.c),faceijk__geoToHex2d.go,_geoToHex2d,"func _geoToHex2d(g *LatLng, res int32, face *int32, v *vec2d)",false,kind: func
+_hex2dToGeo,(C-internal: faceijk.c),faceijk__hex2dToGeo.go,_hex2dToGeo,"func _hex2dToGeo(v *vec2d, face int32, res int32, substrate int32, g *LatLng)",false,kind: func
 adjacentFaceDir,(C-internal: faceijk.c),faceijk_constants.go,adjacentFaceDir,var adjacentFaceDir,false,kind: var
 faceNeighbors,(C-internal: faceijk.c),faceijk_neighbors.go,faceNeighbors,var faceNeighbors,false,kind: var
 maxDimByCIIres,(C-internal: faceijk.c),faceijk_constants.go,maxDimByCIIres,var maxDimByCIIres,false,kind: var
 unitScaleByCIIres,(C-internal: faceijk.c),faceijk_constants.go,unitScaleByCIIres,var unitScaleByCIIres,false,kind: var
-H3_GET_BASE_CELL,(C-internal: h3Index.c),h3index__getters.go,getBaseCell,func getBaseCell(h H3Index) int32,false,kind: func
-_faceIjkToH3,(C-internal: h3Index.c),h3index__faceIjkToH3.go,_faceIjkToH3,"func _faceIjkToH3(fijk *FaceIJK, res int32) H3Index",false,kind: func
-_firstOneIndex,(C-internal: h3Index.c),h3index__firstOneIndex.go,_firstOneIndex,func _firstOneIndex(h H3Index) int32,false,kind: func
-_h3LeadingNonZeroDigit,(C-internal: h3Index.c),h3index__leadingNonZeroDigit.go,_h3LeadingNonZeroDigit,func _h3LeadingNonZeroDigit(h H3Index) int32,false,kind: func
-_h3Rotate60ccw,(C-internal: h3Index.c),h3index__h3Rotate60ccw.go,_h3Rotate60ccw,func _h3Rotate60ccw(h H3Index) H3Index,false,kind: func
-_h3Rotate60cw,(C-internal: h3Index.c),h3index__h3Rotate60cw.go,_h3Rotate60cw,func _h3Rotate60cw(h H3Index) H3Index,false,kind: func
-_h3RotatePent60ccw,(C-internal: h3Index.c),h3index__h3RotatePent60ccw.go,_h3RotatePent60ccw,func _h3RotatePent60ccw(h H3Index) H3Index,false,kind: func
-_h3RotatePent60cw,(C-internal: h3Index.c),h3index__h3RotatePent60cw.go,_h3RotatePent60cw,func _h3RotatePent60cw(h H3Index) H3Index,false,kind: func
-_h3ToFaceIjk,(C-internal: h3Index.c),h3index__h3ToFaceIjk.go,_h3ToFaceIjk,"func _h3ToFaceIjk(h H3Index, fijk *FaceIJK) H3Error",false,kind: func
-_h3ToFaceIjkWithInitializedFijk,(C-internal: h3Index.c),h3index__h3ToFaceIjkWithInitializedFijk.go,_h3ToFaceIjkWithInitializedFijk,"func _h3ToFaceIjkWithInitializedFijk(h H3Index, fijk *FaceIJK) int32",false,kind: func
-_hasAll7AfterRes,(C-internal: h3Index.c),h3index__hasAll7AfterRes.go,_hasAll7AfterRes,"func _hasAll7AfterRes(h H3Index, res int32) bool",false,kind: func
-_hasAny7UptoRes,(C-internal: h3Index.c),h3index__hasAny7UptoRes.go,_hasAny7UptoRes,"func _hasAny7UptoRes(h H3Index, res int32) bool",false,kind: func
-_hasChildAtRes,(C-internal: h3Index.c),h3index__hasChildAtRes.go,_hasChildAtRes,"func _hasChildAtRes(h H3Index, childRes int32) bool",false,kind: func
-_hasDeletedSubsequence,(C-internal: h3Index.c),h3index__hasDeletedSubsequence.go,_hasDeletedSubsequence,"func _hasDeletedSubsequence(h H3Index, baseCell int32) bool",false,kind: func
-_hasGoodTopBits,(C-internal: h3Index.c),h3index__hasGoodTopBits.go,_hasGoodTopBits,func _hasGoodTopBits(h H3Index) bool,false,kind: func
-_zeroIndexDigits,(C-internal: h3Index.c),h3index__zeroIndexDigits.go,_zeroIndexDigits,"func _zeroIndexDigits(h H3Index, start, end int32) H3Index",false,kind: func
+H3_GET_BASE_CELL,(C-internal: h3Index.c),h3index__getters.go,getBaseCell,func getBaseCell(h h3Index) int32,false,kind: func
+_faceIjkToH3,(C-internal: h3Index.c),h3index__faceIjkToH3.go,_faceIjkToH3,"func _faceIjkToH3(fijk *faceIJK, res int32) h3Index",false,kind: func
+_firstOneIndex,(C-internal: h3Index.c),h3index__firstOneIndex.go,_firstOneIndex,func _firstOneIndex(h h3Index) int32,false,kind: func
+_h3LeadingNonZeroDigit,(C-internal: h3Index.c),h3index__leadingNonZeroDigit.go,_h3LeadingNonZeroDigit,func _h3LeadingNonZeroDigit(h h3Index) int32,false,kind: func
+_h3Rotate60ccw,(C-internal: h3Index.c),h3index__h3Rotate60ccw.go,_h3Rotate60ccw,func _h3Rotate60ccw(h h3Index) h3Index,false,kind: func
+_h3Rotate60cw,(C-internal: h3Index.c),h3index__h3Rotate60cw.go,_h3Rotate60cw,func _h3Rotate60cw(h h3Index) h3Index,false,kind: func
+_h3RotatePent60ccw,(C-internal: h3Index.c),h3index__h3RotatePent60ccw.go,_h3RotatePent60ccw,func _h3RotatePent60ccw(h h3Index) h3Index,false,kind: func
+_h3RotatePent60cw,(C-internal: h3Index.c),h3index__h3RotatePent60cw.go,_h3RotatePent60cw,func _h3RotatePent60cw(h h3Index) h3Index,false,kind: func
+_h3ToFaceIjk,(C-internal: h3Index.c),h3index__h3ToFaceIjk.go,_h3ToFaceIjk,"func _h3ToFaceIjk(h h3Index, fijk *faceIJK) h3Error",false,kind: func
+_h3ToFaceIjkWithInitializedFijk,(C-internal: h3Index.c),h3index__h3ToFaceIjkWithInitializedFijk.go,_h3ToFaceIjkWithInitializedFijk,"func _h3ToFaceIjkWithInitializedFijk(h h3Index, fijk *faceIJK) int32",false,kind: func
+_hasAll7AfterRes,(C-internal: h3Index.c),h3index__hasAll7AfterRes.go,_hasAll7AfterRes,"func _hasAll7AfterRes(h h3Index, res int32) bool",false,kind: func
+_hasAny7UptoRes,(C-internal: h3Index.c),h3index__hasAny7UptoRes.go,_hasAny7UptoRes,"func _hasAny7UptoRes(h h3Index, res int32) bool",false,kind: func
+_hasChildAtRes,(C-internal: h3Index.c),h3index__hasChildAtRes.go,_hasChildAtRes,"func _hasChildAtRes(h h3Index, childRes int32) bool",false,kind: func
+_hasDeletedSubsequence,(C-internal: h3Index.c),h3index__hasDeletedSubsequence.go,_hasDeletedSubsequence,"func _hasDeletedSubsequence(h h3Index, baseCell int32) bool",false,kind: func
+_hasGoodTopBits,(C-internal: h3Index.c),h3index__hasGoodTopBits.go,_hasGoodTopBits,func _hasGoodTopBits(h h3Index) bool,false,kind: func
+_zeroIndexDigits,(C-internal: h3Index.c),h3index__zeroIndexDigits.go,_zeroIndexDigits,"func _zeroIndexDigits(h h3Index, start, end int32) h3Index",false,kind: func
 isResolutionClassIII,(C-internal: h3Index.c),h3index__isResolutionClassIII.go,isResolutionClassIII,func isResolutionClassIII(res int32) bool,false,kind: func
-makeDirectChild,(C-internal: h3Index.c),h3index__makeDirectChild.go,makeDirectChild,"func makeDirectChild(h H3Index, cellNumber int32) H3Index",false,kind: func
-setH3Index,(C-internal: h3Index.c),h3index__setH3Index.go,setH3Index,"func setH3Index(hp *H3Index, res int32, baseCell int32, initDigit int32)",false,kind: func
-validateChildPos,(C-internal: h3Index.c),h3index__validateChildPos.go,validateChildPos,"func validateChildPos(childPos int64, parent H3Index, childRes int32) H3Error",false,kind: func
-H3_GET_HIGH_BIT,(C-internal: h3Index.h),h3index__mode_highbit.go,getHighBit,func getHighBit(h H3Index) int32,false,kind: func
-H3_GET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,getIndexDigit,"func getIndexDigit(h H3Index, res int32) int32",false,kind: func
-H3_GET_MODE,(C-internal: h3Index.h),h3index__mode_highbit.go,getMode,func getMode(h H3Index) int32,false,kind: func
-H3_GET_RESERVED_BITS,(C-internal: h3Index.h),h3index__reservedBits.go,getReservedBits,func getReservedBits(h H3Index) int32,false,kind: func
-H3_SET_BASE_CELL,(C-internal: h3Index.h),h3index__getters.go,setBaseCell,"func setBaseCell(h H3Index, baseCell int32) H3Index",false,kind: func
-H3_SET_HIGH_BIT,(C-internal: h3Index.h),h3index__mode_highbit.go,setHighBit,"func setHighBit(h H3Index, v int32) H3Index",false,kind: func
-H3_SET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,setIndexDigit,"func setIndexDigit(h H3Index, res int32, digit int32) H3Index",false,kind: func
-H3_SET_MODE,(C-internal: h3Index.h),h3index__mode_highbit.go,setMode,"func setMode(h H3Index, v int32) H3Index",false,kind: func
-H3_SET_RESERVED_BITS,(C-internal: h3Index.h),h3index__reservedBits.go,setReservedBits,"func setReservedBits(h H3Index, v int32) H3Index",false,kind: func
-H3_SET_RESOLUTION,(C-internal: h3Index.h),h3index__getters.go,setResolution,"func setResolution(h H3Index, res int32) H3Index",false,kind: func
+makeDirectChild,(C-internal: h3Index.c),h3index__makeDirectChild.go,makeDirectChild,"func makeDirectChild(h h3Index, cellNumber int32) h3Index",false,kind: func
+setH3Index,(C-internal: h3Index.c),h3index__setH3Index.go,setH3Index,"func setH3Index(hp *h3Index, res int32, baseCell int32, initDigit int32)",false,kind: func
+validateChildPos,(C-internal: h3Index.c),h3index__validateChildPos.go,validateChildPos,"func validateChildPos(childPos int64, parent h3Index, childRes int32) h3Error",false,kind: func
+H3_GET_HIGH_BIT,(C-internal: h3Index.h),h3index__mode_highbit.go,getHighBit,func getHighBit(h h3Index) int32,false,kind: func
+H3_GET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,getIndexDigit,"func getIndexDigit(h h3Index, res int32) int32",false,kind: func
+H3_GET_MODE,(C-internal: h3Index.h),h3index__mode_highbit.go,getMode,func getMode(h h3Index) int32,false,kind: func
+H3_GET_RESERVED_BITS,(C-internal: h3Index.h),h3index__reservedBits.go,getReservedBits,func getReservedBits(h h3Index) int32,false,kind: func
+H3_SET_BASE_CELL,(C-internal: h3Index.h),h3index__getters.go,setBaseCell,"func setBaseCell(h h3Index, baseCell int32) h3Index",false,kind: func
+H3_SET_HIGH_BIT,(C-internal: h3Index.h),h3index__mode_highbit.go,setHighBit,"func setHighBit(h h3Index, v int32) h3Index",false,kind: func
+H3_SET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,setIndexDigit,"func setIndexDigit(h h3Index, res int32, digit int32) h3Index",false,kind: func
+H3_SET_MODE,(C-internal: h3Index.h),h3index__mode_highbit.go,setMode,"func setMode(h h3Index, v int32) h3Index",false,kind: func
+H3_SET_RESERVED_BITS,(C-internal: h3Index.h),h3index__reservedBits.go,setReservedBits,"func setReservedBits(h h3Index, v int32) h3Index",false,kind: func
+H3_SET_RESOLUTION,(C-internal: h3Index.h),h3index__getters.go,setResolution,"func setResolution(h h3Index, res int32) h3Index",false,kind: func
 "H3_VERSION_MAJOR,",(C-internal: h3api.h),h3api_constants.go,,const (,false,kind: block
-_incrementResDigit,(C-internal: iterators.c),iterators__incrementResDigit.go,incrementResDigit,"func incrementResDigit(h *H3Index, res int32)",false,kind: func
-_iterInitParent,(C-internal: iterators.c),iterators__iterInitParent.go,iterInitParent,"func iterInitParent(h H3Index, childRes int32, iter *IterCellsChildren)",false,kind: func
-_null_iter,(C-internal: iterators.c),iterators__null_iter.go,nullIter,func nullIter() IterCellsChildren,false,kind: func
-iterInitBaseCellNum,(C-internal: iterators.c),iterators_iterInitBaseCellNum.go,iterInitBaseCellNum,"func iterInitBaseCellNum(baseCellNum int32, childRes int32) IterCellsChildren",false,kind: func
-iterInitRes,(C-internal: iterators.c),iterators_iterInitRes.go,iterInitRes,func iterInitRes(res int32) IterCellsResolution,false,kind: func
-iterStepChild,(C-internal: iterators.c),iterators__iterStepChild.go,iterStepChild,func iterStepChild(it *IterCellsChildren),false,kind: func
-iterStepRes,(C-internal: iterators.c),iterators_iterStepRes.go,iterStepRes,func iterStepRes(itR *IterCellsResolution),false,kind: func
+_incrementResDigit,(C-internal: iterators.c),iterators__incrementResDigit.go,incrementResDigit,"func incrementResDigit(h *h3Index, res int32)",false,kind: func
+_iterInitParent,(C-internal: iterators.c),iterators__iterInitParent.go,iterInitParent,"func iterInitParent(h h3Index, childRes int32, iter *iterCellsChildren)",false,kind: func
+_null_iter,(C-internal: iterators.c),iterators__null_iter.go,nullIter,func nullIter() iterCellsChildren,false,kind: func
+iterInitBaseCellNum,(C-internal: iterators.c),iterators_iterInitBaseCellNum.go,iterInitBaseCellNum,"func iterInitBaseCellNum(baseCellNum int32, childRes int32) iterCellsChildren",false,kind: func
+iterInitRes,(C-internal: iterators.c),iterators_iterInitRes.go,iterInitRes,func iterInitRes(res int32) iterCellsResolution,false,kind: func
+iterStepChild,(C-internal: iterators.c),iterators__iterStepChild.go,iterStepChild,func iterStepChild(it *iterCellsChildren),false,kind: func
+iterStepRes,(C-internal: iterators.c),iterators_iterStepRes.go,iterStepRes,func iterStepRes(itR *iterCellsResolution),false,kind: func
 _geoAzDistanceRads,(C-internal: latLng.c),latLng__geoAzDistanceRads.go,_geoAzDistanceRads,"func _geoAzDistanceRads(p1 *LatLng, az, distance float64, p2 *LatLng)",false,kind: func
 _geoAzimuthRads,(C-internal: latLng.c),latLng__geoAzimuthRads.go,_geoAzimuthRads,"func _geoAzimuthRads(p1, p2 *LatLng) float64",false,kind: func
 _posAngleRads,(C-internal: latLng.c),latLng__posAngleRads.go,_posAngleRads,func _posAngleRads(rads float64) float64,false,kind: func
@@ -202,71 +202,71 @@ constrainLat,(C-internal: latLng.c),latLng__constrainLat.go,constrainLat,func co
 constrainLng,(C-internal: latLng.c),latLng__constrainLng.go,constrainLng,func constrainLng(lng Angle) Angle,false,kind: func
 geoAlmostEqual,(C-internal: latLng.c),latLng__geoAlmostEqual.go,geoAlmostEqual,"func geoAlmostEqual(p1, p2 *LatLng) bool",false,kind: func
 geoAlmostEqualThreshold,(C-internal: latLng.c),latLng__geoAlmostEqualThreshold.go,geoAlmostEqualThreshold,"func geoAlmostEqualThreshold(p1, p2 *LatLng, threshold float64) bool",false,kind: func
-normalizeLng,(C-internal: latLng.c),latLng__normalizeLng.go,normalizeLng,"func normalizeLng(lng Angle, normalization LongitudeNormalization) Angle",false,kind: func
+normalizeLng,(C-internal: latLng.c),latLng__normalizeLng.go,normalizeLng,"func normalizeLng(lng Angle, normalization longitudeNormalization) Angle",false,kind: func
 setGeoDegs,(C-internal: latLng.c),latLng__setGeoDegs.go,setGeoDegs,"func setGeoDegs(p *LatLng, latDegs, lngDegs float64)",false,kind: func
 triangleArea,(C-internal: latLng.c),latLng__triangleArea.go,triangleArea,"func triangleArea(a, b, c *LatLng) float64",false,kind: func
 triangleEdgeLengthsToArea,(C-internal: latLng.c),latLng__triangleEdgeLengthsToArea.go,triangleEdgeLengthsToArea,"func triangleEdgeLengthsToArea(a, b, c float64) float64",false,kind: func
-addLinkedCoord,(C-internal: linkedGeo.c),linkedGeo__addLinkedCoord.go,addLinkedCoord,"func addLinkedCoord(loop *LinkedGeoLoop, vertex *LatLng) *LinkedLatLng",false,kind: func
-addLinkedLoop,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedLoop.go,addLinkedLoop,"func addLinkedLoop(polygon *LinkedGeoPolygon, loop *LinkedGeoLoop) *LinkedGeoLoop",false,kind: func
-addNewLinkedLoop,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedLoop.go,addNewLinkedLoop,func addNewLinkedLoop(polygon *LinkedGeoPolygon) *LinkedGeoLoop,false,kind: func
-addNewLinkedPolygon,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedPolygon.go,addNewLinkedPolygon,func addNewLinkedPolygon(polygon *LinkedGeoPolygon) *LinkedGeoPolygon,false,kind: func
-countContainers,(C-internal: linkedGeo.c),linkedGeo__countContainers.go,countContainers,"func countContainers(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes []*BBox) int32",false,kind: func
-countLinkedCoords,(C-internal: linkedGeo.c),linkedGeo__countLinkedCoords.go,countLinkedCoords,func countLinkedCoords(loop *LinkedGeoLoop) int32,false,kind: func
-countLinkedLoops,(C-internal: linkedGeo.c),linkedGeo__countLinkedLoops.go,countLinkedLoops,func countLinkedLoops(polygon *LinkedGeoPolygon) int32,false,kind: func
-countLinkedPolygons,(C-internal: linkedGeo.c),linkedGeo__countLinkedPolygons.go,countLinkedPolygons,func countLinkedPolygons(polygon *LinkedGeoPolygon) int32,false,kind: func
-destroyLinkedGeoLoop,(C-internal: linkedGeo.c),linkedGeo_destroyLinkedGeoLoop.go,destroyLinkedGeoLoop,func destroyLinkedGeoLoop(loop *LinkedGeoLoop),false,kind: func
-findDeepestContainer,(C-internal: linkedGeo.c),linkedGeo__findDeepestContainer.go,findDeepestContainer,"func findDeepestContainer(polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon",false,kind: func
-findPolygonForHole,(C-internal: linkedGeo.c),linkedGeo__findPolygonForHole.go,findPolygonForHole,"func findPolygonForHole(loop *LinkedGeoLoop, polygon *LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon",false,kind: func
-normalizeMultiPolygon,(C-internal: linkedGeo.c),linkedGeo__normalizeMultiPolygon.go,normalizeMultiPolygon,func normalizeMultiPolygon(root *LinkedGeoPolygon) H3Error,false,kind: func
-FAILED_DIRECTIONS,(C-internal: localij.c),localij_constants.go,FAILED_DIRECTIONS,var FAILED_DIRECTIONS,false,kind: var
-PENTAGON_ROTATIONS,(C-internal: localij.c),localij_constants.go,PENTAGON_ROTATIONS,var PENTAGON_ROTATIONS,false,kind: var
-PENTAGON_ROTATIONS_REVERSE,(C-internal: localij.c),localij_constants.go,PENTAGON_ROTATIONS_REVERSE,var PENTAGON_ROTATIONS_REVERSE,false,kind: var
-PENTAGON_ROTATIONS_REVERSE_NONPOLAR,(C-internal: localij.c),localij_constants.go,PENTAGON_ROTATIONS_REVERSE_NONPOLAR,var PENTAGON_ROTATIONS_REVERSE_NONPOLAR,false,kind: var
-PENTAGON_ROTATIONS_REVERSE_POLAR,(C-internal: localij.c),localij_constants.go,PENTAGON_ROTATIONS_REVERSE_POLAR,var PENTAGON_ROTATIONS_REVERSE_POLAR,false,kind: var
-cellToLocalIjk,(C-internal: localij.c),localij__cellToLocalIjk.go,cellToLocalIjk,"func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error",false,kind: func
-cubeRound,(C-internal: localij.c),localij__cubeRound.go,cubeRound,"func cubeRound(i, j, k float64, ijk *CoordIJK)",false,kind: func
-localIjkToCell,(C-internal: localij.c),localij_localijktocell.go,localIjkToCell,"func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error",false,kind: func
+addLinkedCoord,(C-internal: linkedGeo.c),linkedGeo__addLinkedCoord.go,addLinkedCoord,"func addLinkedCoord(loop *linkedGeoLoop, vertex *LatLng) *linkedLatLng",false,kind: func
+addLinkedLoop,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedLoop.go,addLinkedLoop,"func addLinkedLoop(polygon *linkedGeoPolygon, loop *linkedGeoLoop) *linkedGeoLoop",false,kind: func
+addNewLinkedLoop,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedLoop.go,addNewLinkedLoop,func addNewLinkedLoop(polygon *linkedGeoPolygon) *linkedGeoLoop,false,kind: func
+addNewLinkedPolygon,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedPolygon.go,addNewLinkedPolygon,func addNewLinkedPolygon(polygon *linkedGeoPolygon) *linkedGeoPolygon,false,kind: func
+countContainers,(C-internal: linkedGeo.c),linkedGeo__countContainers.go,countContainers,"func countContainers(loop *linkedGeoLoop, polygons []*linkedGeoPolygon, bboxes []*bbox) int32",false,kind: func
+countLinkedCoords,(C-internal: linkedGeo.c),linkedGeo__countLinkedCoords.go,countLinkedCoords,func countLinkedCoords(loop *linkedGeoLoop) int32,false,kind: func
+countLinkedLoops,(C-internal: linkedGeo.c),linkedGeo__countLinkedLoops.go,countLinkedLoops,func countLinkedLoops(polygon *linkedGeoPolygon) int32,false,kind: func
+countLinkedPolygons,(C-internal: linkedGeo.c),linkedGeo__countLinkedPolygons.go,countLinkedPolygons,func countLinkedPolygons(polygon *linkedGeoPolygon) int32,false,kind: func
+destroyLinkedGeoLoop,(C-internal: linkedGeo.c),linkedGeo_destroyLinkedGeoLoop.go,destroyLinkedGeoLoop,func destroyLinkedGeoLoop(loop *linkedGeoLoop),false,kind: func
+findDeepestContainer,(C-internal: linkedGeo.c),linkedGeo__findDeepestContainer.go,findDeepestContainer,"func findDeepestContainer(polygons []*linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon",false,kind: func
+findPolygonForHole,(C-internal: linkedGeo.c),linkedGeo__findPolygonForHole.go,findPolygonForHole,"func findPolygonForHole(loop *linkedGeoLoop, polygon *linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon",false,kind: func
+normalizeMultiPolygon,(C-internal: linkedGeo.c),linkedGeo__normalizeMultiPolygon.go,normalizeMultiPolygon,func normalizeMultiPolygon(root *linkedGeoPolygon) h3Error,false,kind: func
+FAILED_DIRECTIONS,(C-internal: localij.c),localij_constants.go,failedDirections,var failedDirections,false,kind: var
+PENTAGON_ROTATIONS,(C-internal: localij.c),localij_constants.go,localijPentagonRotations,var localijPentagonRotations,false,kind: var
+PENTAGON_ROTATIONS_REVERSE,(C-internal: localij.c),localij_constants.go,pentagonRotationsReverse,var pentagonRotationsReverse,false,kind: var
+PENTAGON_ROTATIONS_REVERSE_NONPOLAR,(C-internal: localij.c),localij_constants.go,pentagonRotationsReverseNonpolar,var pentagonRotationsReverseNonpolar,false,kind: var
+PENTAGON_ROTATIONS_REVERSE_POLAR,(C-internal: localij.c),localij_constants.go,pentagonRotationsReversePolar,var pentagonRotationsReversePolar,false,kind: var
+cellToLocalIjk,(C-internal: localij.c),localij__cellToLocalIjk.go,cellToLocalIjk,"func cellToLocalIjk(origin h3Index, h3 h3Index, out *coordIJK) h3Error",false,kind: func
+cubeRound,(C-internal: localij.c),localij__cubeRound.go,cubeRound,"func cubeRound(i, j, k float64, ijk *coordIJK)",false,kind: func
+localIjkToCell,(C-internal: localij.c),localij_localijktocell.go,localIjkToCell,"func localIjkToCell(origin h3Index, ijk *coordIJK, out *h3Index) h3Error",false,kind: func
 _ipow,(C-internal: mathExtensions.c),mathExtensions__ipow.go,_ipow,"func _ipow(base int64, exp int64) int64",false,kind: func
 ADD_INT32S_OVERFLOWS,(C-internal: mathExtensions.h),mathExtensions__overflowChecking.go,addInt32sOverflows,"func addInt32sOverflows(a, b int32) bool",false,kind: func
 SUB_INT32S_OVERFLOWS,(C-internal: mathExtensions.h),mathExtensions__overflowChecking.go,subInt32sOverflows,"func subInt32sOverflows(a, b int32) bool",false,kind: func
-CELL_SCALE_FACTOR,(C-internal: polyfill.c),polyfill_constants.go,CELL_SCALE_FACTOR,const CELL_SCALE_FACTOR,false,kind: const
-CHILD_SCALE_FACTOR,(C-internal: polyfill.c),polyfill_constants.go,CHILD_SCALE_FACTOR,const CHILD_SCALE_FACTOR,false,kind: const
-MAX_EDGE_LENGTH_RADS,(C-internal: polyfill.c),polyfill_constants.go,MAX_EDGE_LENGTH_RADS,var MAX_EDGE_LENGTH_RADS,false,kind: var
-MAX_SIZE_CELL_THRESHOLD,(C-internal: polyfill.c),polyfill_constants.go,MAX_SIZE_CELL_THRESHOLD,const MAX_SIZE_CELL_THRESHOLD,false,kind: const
-NORTH_POLE_CELLS,(C-internal: polyfill.c),polyfill_constants.go,NORTH_POLE_CELLS,var NORTH_POLE_CELLS,false,kind: var
-RES0_BBOXES,(C-internal: polyfill.c),polyfill_constants.go,RES0_BBOXES,var RES0_BBOXES,false,kind: var
-SOUTH_POLE_CELLS,(C-internal: polyfill.c),polyfill_constants.go,SOUTH_POLE_CELLS,var SOUTH_POLE_CELLS,false,kind: var
-VALID_RANGE_BBOX,(C-internal: polyfill.c),polyfill_constants.go,VALID_RANGE_BBOX,var VALID_RANGE_BBOX,false,kind: var
-_iterInitPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,initIterPolygonCompact,"func initIterPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygonCompact",false,kind: func
-baseCellNumToCell,(C-internal: polyfill.c),polyfill__baseCellNumToCell.go,baseCellNumToCell,func baseCellNumToCell(baseCellNum int32) H3Index,false,kind: func
-cellToBBox,(C-internal: polyfill.c),polyfill_cellToBBox.go,cellToBBox,"func cellToBBox(cell H3Index, coverChildren bool) (BBox, H3Error)",false,kind: func
-iterDestroyPolygon,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterDestroyPolygon,func iterDestroyPolygon(iter *IterCellsPolygon),false,kind: func
-iterDestroyPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterDestroyPolygonCompact,func iterDestroyPolygonCompact(iter *IterCellsPolygonCompact),false,kind: func
-iterInitPolygon,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterInitPolygon,"func iterInitPolygon(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygon",false,kind: func
-iterInitPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterInitPolygonCompact,"func iterInitPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygonCompact",false,kind: func
-iterStepPolygon,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterStepPolygon,func iterStepPolygon(iter *IterCellsPolygon),false,kind: func
-iterStepPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterStepPolygonCompact,func iterStepPolygonCompact(iter *IterCellsPolygonCompact),false,kind: func
-nextCell,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,nextCell,func nextCell(cell H3Index) H3Index,false,kind: func
-bboxFromGeoLoop,(C-internal: polygon.c),polygon__bboxFromGeoLoop.go,bboxFromGeoLoop,"func bboxFromGeoLoop(loop []LatLng, bbox *BBox)",false,kind: func
-bboxesFromGeoPolygon,(C-internal: polygon.c),polygon__bboxesFromGeoPolygon.go,bboxesFromGeoPolygon,"func bboxesFromGeoPolygon(polygon *GeoPolygon, bboxes []BBox)",false,kind: func
-cellBoundaryCrossesGeoLoop,(C-internal: polygon.c),polygon__cellBoundaryCrossesGeoLoop.go,cellBoundaryCrossesGeoLoop,"func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *BBox, boundary *CellBoundary, boundaryBBox *BBox) bool",false,kind: func
-cellBoundaryCrossesPolygon,(C-internal: polygon.c),polygon__cellBoundaryCrossesPolygon.go,cellBoundaryCrossesPolygon,"func cellBoundaryCrossesPolygon(poly GeoPolygon, bboxes []BBox, boundary *CellBoundary, boundaryBBox *BBox) bool",false,kind: func
-cellBoundaryInsidePolygon,(C-internal: polygon.c),polygon__cellBoundaryInsidePolygon.go,cellBoundaryInsidePolygon,"func cellBoundaryInsidePolygon(poly GeoPolygon, bboxes []BBox, boundary *CellBoundary, boundaryBBox *BBox) bool",false,kind: func
+CELL_SCALE_FACTOR,(C-internal: polyfill.c),polyfill_constants.go,cellScaleFactor,const cellScaleFactor,false,kind: const
+CHILD_SCALE_FACTOR,(C-internal: polyfill.c),polyfill_constants.go,childScaleFactor,const childScaleFactor,false,kind: const
+MAX_EDGE_LENGTH_RADS,(C-internal: polyfill.c),polyfill_constants.go,maxEdgeLengthRads,var maxEdgeLengthRads,false,kind: var
+MAX_SIZE_CELL_THRESHOLD,(C-internal: polyfill.c),polyfill_constants.go,maxSizeCellThreshold,const maxSizeCellThreshold,false,kind: const
+NORTH_POLE_CELLS,(C-internal: polyfill.c),polyfill_constants.go,northPoleCells,var northPoleCells,false,kind: var
+RES0_BBOXES,(C-internal: polyfill.c),polyfill_constants.go,res0Bboxes,var res0Bboxes,false,kind: var
+SOUTH_POLE_CELLS,(C-internal: polyfill.c),polyfill_constants.go,southPoleCells,var southPoleCells,false,kind: var
+VALID_RANGE_BBOX,(C-internal: polyfill.c),polyfill_constants.go,validRangeBbox,var validRangeBbox,false,kind: var
+_iterInitPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,initIterPolygonCompact,"func initIterPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) iterCellsPolygonCompact",false,kind: func
+baseCellNumToCell,(C-internal: polyfill.c),polyfill__baseCellNumToCell.go,baseCellNumToCell,func baseCellNumToCell(baseCellNum int32) h3Index,false,kind: func
+cellToBBox,(C-internal: polyfill.c),polyfill_cellToBBox.go,cellToBBox,"func cellToBBox(cell h3Index, coverChildren bool) (bbox, h3Error)",false,kind: func
+iterDestroyPolygon,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterDestroyPolygon,func iterDestroyPolygon(iter *iterCellsPolygon),false,kind: func
+iterDestroyPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterDestroyPolygonCompact,func iterDestroyPolygonCompact(iter *iterCellsPolygonCompact),false,kind: func
+iterInitPolygon,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterInitPolygon,"func iterInitPolygon(polygon *GeoPolygon, res int32, flags uint32) iterCellsPolygon",false,kind: func
+iterInitPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterInitPolygonCompact,"func iterInitPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) iterCellsPolygonCompact",false,kind: func
+iterStepPolygon,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterStepPolygon,func iterStepPolygon(iter *iterCellsPolygon),false,kind: func
+iterStepPolygonCompact,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,iterStepPolygonCompact,func iterStepPolygonCompact(iter *iterCellsPolygonCompact),false,kind: func
+nextCell,(C-internal: polyfill.c),polyfill_polygonToCellsExperimental.go,nextCell,func nextCell(cell h3Index) h3Index,false,kind: func
+bboxFromGeoLoop,(C-internal: polygon.c),polygon__bboxFromGeoLoop.go,bboxFromGeoLoop,"func bboxFromGeoLoop(loop []LatLng, bb *bbox)",false,kind: func
+bboxesFromGeoPolygon,(C-internal: polygon.c),polygon__bboxesFromGeoPolygon.go,bboxesFromGeoPolygon,"func bboxesFromGeoPolygon(polygon *GeoPolygon, bboxes []bbox)",false,kind: func
+cellBoundaryCrossesGeoLoop,(C-internal: polygon.c),polygon__cellBoundaryCrossesGeoLoop.go,cellBoundaryCrossesGeoLoop,"func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *bbox, boundary *CellBoundary, boundaryBBox *bbox) bool",false,kind: func
+cellBoundaryCrossesPolygon,(C-internal: polygon.c),polygon__cellBoundaryCrossesPolygon.go,cellBoundaryCrossesPolygon,"func cellBoundaryCrossesPolygon(poly GeoPolygon, bboxes []bbox, boundary *CellBoundary, boundaryBBox *bbox) bool",false,kind: func
+cellBoundaryInsidePolygon,(C-internal: polygon.c),polygon__cellBoundaryInsidePolygon.go,cellBoundaryInsidePolygon,"func cellBoundaryInsidePolygon(poly GeoPolygon, bboxes []bbox, boundary *CellBoundary, boundaryBBox *bbox) bool",false,kind: func
 lineCrossesLine,(C-internal: polygon.c),polygon__lineCrossesLine.go,lineCrossesLine,"func lineCrossesLine(a1, a2, b1, b2 *LatLng) bool",false,kind: func
-pointInsideGeoLoop,(C-internal: polygon.c),polygon__pointInsideGeoLoop.go,pointInsideGeoLoop,"func pointInsideGeoLoop(loop []LatLng, bbox *BBox, coord *LatLng) bool",false,kind: func
-pointInsidePolygon,(C-internal: polygon.c),polygon__pointInsidePolygon.go,pointInsidePolygon,"func pointInsidePolygon(poly GeoPolygon, bboxes []BBox, coord *LatLng) bool",false,kind: func
-validatePolygonFlags,(C-internal: polygon.c),polygon__validatePolygonFlags.go,validatePolygonFlags,func validatePolygonFlags(flags uint32) H3Error,false,kind: func
-GENERIC_LOOP_ALGO(bboxFrom),(C-internal: polygonAlgos.h),linkedGeo__bboxFromLinkedGeoLoop.go,bboxFromLinkedGeoLoop,"func bboxFromLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox)",false,kind: func
+pointInsideGeoLoop,(C-internal: polygon.c),polygon__pointInsideGeoLoop.go,pointInsideGeoLoop,"func pointInsideGeoLoop(loop []LatLng, bbox *bbox, coord *LatLng) bool",false,kind: func
+pointInsidePolygon,(C-internal: polygon.c),polygon__pointInsidePolygon.go,pointInsidePolygon,"func pointInsidePolygon(poly GeoPolygon, bboxes []bbox, coord *LatLng) bool",false,kind: func
+validatePolygonFlags,(C-internal: polygon.c),polygon__validatePolygonFlags.go,validatePolygonFlags,func validatePolygonFlags(flags uint32) h3Error,false,kind: func
+GENERIC_LOOP_ALGO(bboxFrom),(C-internal: polygonAlgos.h),linkedGeo__bboxFromLinkedGeoLoop.go,bboxFromLinkedGeoLoop,"func bboxFromLinkedGeoLoop(loop *linkedGeoLoop, bb *bbox)",false,kind: func
 GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoop,func isClockwiseGeoLoop(loop GeoLoop) bool,false,kind: func
-GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoop,func isClockwiseLinkedGeoLoop(loop *LinkedGeoLoop) bool,false,kind: func
+GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoop,func isClockwiseLinkedGeoLoop(loop *linkedGeoLoop) bool,false,kind: func
 GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoopNormalized,"func isClockwiseGeoLoopNormalized(loop GeoLoop, isTransmeridian bool) bool",false,kind: func
-GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoopNormalized,"func isClockwiseLinkedGeoLoopNormalized(loop *LinkedGeoLoop, isTransmeridian bool) bool",false,kind: func
-GENERIC_LOOP_ALGO(pointInside),(C-internal: polygonAlgos.h),linkedGeo__pointInsideLinkedGeoLoop.go,pointInsideLinkedGeoLoop,"func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bool",false,kind: func
-bboxPrint,(C-internal: utility.c),utility_bboxPrint.go,bboxPrint,func bboxPrint(bbox *BBox),false,kind: func
-bboxPrintln,(C-internal: utility.c),utility_bboxPrintln.go,bboxPrintln,func bboxPrintln(bbox *BBox),false,kind: func
+GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoopNormalized,"func isClockwiseLinkedGeoLoopNormalized(loop *linkedGeoLoop, isTransmeridian bool) bool",false,kind: func
+GENERIC_LOOP_ALGO(pointInside),(C-internal: polygonAlgos.h),linkedGeo__pointInsideLinkedGeoLoop.go,pointInsideLinkedGeoLoop,"func pointInsideLinkedGeoLoop(loop *linkedGeoLoop, bbox *bbox, coord *LatLng) bool",false,kind: func
+bboxPrint,(C-internal: utility.c),utility_bboxPrint.go,bboxPrint,func bboxPrint(bbox *bbox),false,kind: func
+bboxPrintln,(C-internal: utility.c),utility_bboxPrintln.go,bboxPrintln,func bboxPrintln(bbox *bbox),false,kind: func
 cellBoundaryPrint,(C-internal: utility.c),utility_cellBoundaryPrint.go,cellBoundaryPrint,func cellBoundaryPrint(b *CellBoundary),false,kind: func
 cellBoundaryPrintln,(C-internal: utility.c),utility_cellBoundaryPrintln.go,cellBoundaryPrintln,func cellBoundaryPrintln(b *CellBoundary),false,kind: func
-coordIjkPrint,(C-internal: utility.c),utility_coordIjkPrint.go,coordIjkPrint,func coordIjkPrint(c *CoordIJK),false,kind: func
+coordIjkPrint,(C-internal: utility.c),utility_coordIjkPrint.go,coordIjkPrint,func coordIjkPrint(c *coordIJK),false,kind: func
 geoPrint,(C-internal: utility.c),utility_geoPrint.go,geoPrint,func geoPrint(p *LatLng),false,kind: func
 geoPrintNoFmt,(C-internal: utility.c),utility_geoPrintNoFmt.go,geoPrintNoFmt,func geoPrintNoFmt(p *LatLng),false,kind: func
 geoPrintln,(C-internal: utility.c),utility_geoPrintln.go,geoPrintln,func geoPrintln(p *LatLng),false,kind: func
@@ -274,37 +274,37 @@ geoPrintlnNoFmt,(C-internal: utility.c),utility_geoPrintlnNoFmt.go,geoPrintlnNoF
 geoToStringDegs,(C-internal: utility.c),utility_geoToStringDegs.go,geoToStringDegs,func geoToStringDegs(p *LatLng) string,false,kind: func
 geoToStringDegsNoFmt,(C-internal: utility.c),utility_geoToStringDegsNoFmt.go,geoToStringDegsNoFmt,func geoToStringDegsNoFmt(p *LatLng) string,false,kind: func
 geoToStringRads,(C-internal: utility.c),utility_geoToStringRads.go,geoToStringRads,func geoToStringRads(p *LatLng) string,false,kind: func
-h3Print,(C-internal: utility.c),utility_h3Print.go,h3Print,func h3Print(h H3Index),false,kind: func
-h3Println,(C-internal: utility.c),utility_h3Println.go,h3Println,func h3Println(h H3Index),false,kind: func
-iterateAllIndexesAtRes,(C-internal: utility.c),utility__iterateAllIndexesAtRes.go,_iterateAllIndexesAtRes,"func _iterateAllIndexesAtRes(res int32, callback func(H3Index))",false,kind: func
-iterateAllIndexesAtResPartial,(C-internal: utility.c),utility__iterateAllIndexesAtResPartial.go,_iterateAllIndexesAtResPartial,"func _iterateAllIndexesAtResPartial(res int32, callback func(H3Index), baseCells int32)",false,kind: func
-iterateBaseCellIndexesAtRes,(C-internal: utility.c),utility__iterateBaseCellIndexesAtRes.go,_iterateBaseCellIndexesAtRes,"func _iterateBaseCellIndexesAtRes(res int32, callback func(H3Index), baseCell int32)",false,kind: func
-BUFF_SIZE,(C-internal: utility.h),utility_constants.go,BUFF_SIZE,const BUFF_SIZE,false,kind: const
-_v2dAlmostEquals,(C-internal: vec2d.c),vec2d__v2dAlmostEquals.go,_v2dAlmostEquals,"func _v2dAlmostEquals(v1, v2 *Vec2d) bool",false,kind: func
-_v2dIntersect,(C-internal: vec2d.c),vec2d__v2dIntersect.go,_v2dIntersect,"func _v2dIntersect(p0, p1, p2, p3 *Vec2d) Vec2d",false,kind: func
-_v2dMag,(C-internal: vec2d.c),vec2d__v2dMag.go,_v2dMag,func _v2dMag(v *Vec2d) float64,false,kind: func
-_geoToVec3d,(C-internal: vec3d.c),vec3d__geoToVec3d.go,_geoToVec3d,"func _geoToVec3d(geo *LatLng, v *Vec3d)",false,kind: func
-_pointSquareDist,(C-internal: vec3d.c),vec3d__pointSquareDist.go,_pointSquareDist,"func _pointSquareDist(v1, v2 *Vec3d) float64",false,kind: func
+h3Print,(C-internal: utility.c),utility_h3Print.go,h3Print,func h3Print(h h3Index),false,kind: func
+h3Println,(C-internal: utility.c),utility_h3Println.go,h3Println,func h3Println(h h3Index),false,kind: func
+iterateAllIndexesAtRes,(C-internal: utility.c),utility__iterateAllIndexesAtRes.go,_iterateAllIndexesAtRes,"func _iterateAllIndexesAtRes(res int32, callback func(h3Index))",false,kind: func
+iterateAllIndexesAtResPartial,(C-internal: utility.c),utility__iterateAllIndexesAtResPartial.go,_iterateAllIndexesAtResPartial,"func _iterateAllIndexesAtResPartial(res int32, callback func(h3Index), baseCells int32)",false,kind: func
+iterateBaseCellIndexesAtRes,(C-internal: utility.c),utility__iterateBaseCellIndexesAtRes.go,_iterateBaseCellIndexesAtRes,"func _iterateBaseCellIndexesAtRes(res int32, callback func(h3Index), baseCell int32)",false,kind: func
+BUFF_SIZE,(C-internal: utility.h),utility_constants.go,buffSize,const buffSize,false,kind: const
+_v2dAlmostEquals,(C-internal: vec2d.c),vec2d__v2dAlmostEquals.go,_v2dAlmostEquals,"func _v2dAlmostEquals(v1, v2 *vec2d) bool",false,kind: func
+_v2dIntersect,(C-internal: vec2d.c),vec2d__v2dIntersect.go,_v2dIntersect,"func _v2dIntersect(p0, p1, p2, p3 *vec2d) vec2d",false,kind: func
+_v2dMag,(C-internal: vec2d.c),vec2d__v2dMag.go,_v2dMag,func _v2dMag(v *vec2d) float64,false,kind: func
+_geoToVec3d,(C-internal: vec3d.c),vec3d__geoToVec3d.go,_geoToVec3d,"func _geoToVec3d(geo *LatLng, v *vec3d)",false,kind: func
+_pointSquareDist,(C-internal: vec3d.c),vec3d__pointSquareDist.go,_pointSquareDist,"func _pointSquareDist(v1, v2 *vec3d) float64",false,kind: func
 _square,(C-internal: vec3d.c),vec3d__square.go,_square,func _square(x float64) float64,false,kind: func
 DIRECTIONS,(C-internal: vertex.c),vertex_constants.go,directions,var directions,false,kind: var
-DIRECTION_INDEX_OFFSET,(C-internal: vertex.c),vertex_constants.go,DIRECTION_INDEX_OFFSET,const DIRECTION_INDEX_OFFSET,false,kind: const
-directionForVertexNum,(C-internal: vertex.c),vertex__directionForVertexNum.go,directionForVertexNum,"func directionForVertexNum(origin H3Index, vertexNum int32) Direction",false,kind: func
+DIRECTION_INDEX_OFFSET,(C-internal: vertex.c),vertex_constants.go,directionIndexOffset,const directionIndexOffset,false,kind: const
+directionForVertexNum,(C-internal: vertex.c),vertex__directionForVertexNum.go,directionForVertexNum,"func directionForVertexNum(origin h3Index, vertexNum int32) direction",false,kind: func
 directionToVertexNumHex,(C-internal: vertex.c),vertex_constants.go,directionToVertexNumHex,var directionToVertexNumHex,false,kind: var
 directionToVertexNumPent,(C-internal: vertex.c),vertex_constants.go,directionToVertexNumPent,var directionToVertexNumPent,false,kind: var
 pentagonDirectionFaces,(C-internal: vertex.c),vertex_constants.go,pentagonDirectionFaces,var pentagonDirectionFaces,false,kind: var
 revNeighborDirectionsHex,(C-internal: vertex.c),vertex_constants.go,revNeighborDirectionsHex,var revNeighborDirectionsHex,false,kind: var
-vertexNumForDirection,(C-internal: vertex.c),vertex__vertexNumForDirection.go,vertexNumForDirection,"func vertexNumForDirection(origin H3Index, direction Direction) int32",false,kind: func
+vertexNumForDirection,(C-internal: vertex.c),vertex__vertexNumForDirection.go,vertexNumForDirection,"func vertexNumForDirection(origin h3Index, direction direction) int32",false,kind: func
 vertexNumToDirectionHex,(C-internal: vertex.c),vertex_constants.go,vertexNumToDirectionHex,var vertexNumToDirectionHex,false,kind: var
 vertexNumToDirectionPent,(C-internal: vertex.c),vertex_constants.go,vertexNumToDirectionPent,var vertexNumToDirectionPent,false,kind: var
-vertexRotations,(C-internal: vertex.c),vertex__vertexRotations.go,vertexRotations,"func vertexRotations(cell H3Index, out *int32) H3Error",false,kind: func
-INVALID_VERTEX_NUM,(C-internal: vertex.h),vertex_constants.go,INVALID_VERTEX_NUM,const INVALID_VERTEX_NUM,false,kind: const
-PentagonDirectionFaces,(C-internal: vertex.h),vertex_constants.go,PentagonDirectionFaces,type PentagonDirectionFaces struct {,false,kind: type
+vertexRotations,(C-internal: vertex.c),vertex__vertexRotations.go,vertexRotations,"func vertexRotations(cell h3Index, out *int32) h3Error",false,kind: func
+INVALID_VERTEX_NUM,(C-internal: vertex.h),vertex_constants.go,invalidVertexNum,const invalidVertexNum,false,kind: const
+PentagonDirectionFaces,(C-internal: vertex.h),vertex_constants.go,pentagonDirectionFacesEntry,type pentagonDirectionFacesEntry struct {,false,kind: type
 _hashVertex,(C-internal: vertexGraph.c),vertexGraph__hashVertex.go,_hashVertex,"func _hashVertex(vertex *LatLng, res int32, numBuckets int32) uint32",false,kind: func
-_initVertexNode,(C-internal: vertexGraph.c),vertexGraph__initVertexNode.go,_initVertexNode,"func _initVertexNode(node *VertexNode, fromVtx *LatLng, toVtx *LatLng)",false,kind: func
-addVertexNode,(C-internal: vertexGraph.c),vertexGraph_addVertexNode.go,addVertexNode,"func addVertexNode(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode",false,kind: func
-destroyVertexGraph,(C-internal: vertexGraph.c),vertexGraph_destroyVertexGraph.go,destroyVertexGraph,func destroyVertexGraph(graph *VertexGraph),false,kind: func
-findNodeForEdge,(C-internal: vertexGraph.c),vertexGraph_findNodeForEdge.go,findNodeForEdge,"func findNodeForEdge(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode",false,kind: func
-findNodeForVertex,(C-internal: vertexGraph.c),vertexGraph_findNodeForVertex.go,findNodeForVertex,"func findNodeForVertex(graph *VertexGraph, fromVtx *LatLng) *VertexNode",false,kind: func
-firstVertexNode,(C-internal: vertexGraph.c),vertexGraph_firstVertexNode.go,firstVertexNode,func firstVertexNode(graph *VertexGraph) *VertexNode,false,kind: func
-initVertexGraph,(C-internal: vertexGraph.c),vertexGraph__initVertexGraph.go,initVertexGraph,"func initVertexGraph(graph *VertexGraph, numBuckets int32, res int32)",false,kind: func
-removeVertexNode,(C-internal: vertexGraph.c),vertexGraph_removeVertexNode.go,removeVertexNode,"func removeVertexNode(graph *VertexGraph, node *VertexNode) int32",false,kind: func
+_initVertexNode,(C-internal: vertexGraph.c),vertexGraph__initVertexNode.go,_initVertexNode,"func _initVertexNode(node *vertexNode, fromVtx *LatLng, toVtx *LatLng)",false,kind: func
+addVertexNode,(C-internal: vertexGraph.c),vertexGraph_addVertexNode.go,addVertexNode,"func addVertexNode(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode",false,kind: func
+destroyVertexGraph,(C-internal: vertexGraph.c),vertexGraph_destroyVertexGraph.go,destroyVertexGraph,func destroyVertexGraph(graph *vertexGraph),false,kind: func
+findNodeForEdge,(C-internal: vertexGraph.c),vertexGraph_findNodeForEdge.go,findNodeForEdge,"func findNodeForEdge(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode",false,kind: func
+findNodeForVertex,(C-internal: vertexGraph.c),vertexGraph_findNodeForVertex.go,findNodeForVertex,"func findNodeForVertex(graph *vertexGraph, fromVtx *LatLng) *vertexNode",false,kind: func
+firstVertexNode,(C-internal: vertexGraph.c),vertexGraph_firstVertexNode.go,firstVertexNode,func firstVertexNode(graph *vertexGraph) *vertexNode,false,kind: func
+initVertexGraph,(C-internal: vertexGraph.c),vertexGraph__initVertexGraph.go,initVertexGraph,"func initVertexGraph(graph *vertexGraph, numBuckets int32, res int32)",false,kind: func
+removeVertexNode,(C-internal: vertexGraph.c),vertexGraph_removeVertexNode.go,removeVertexNode,"func removeVertexNode(graph *vertexGraph, node *vertexNode) int32",false,kind: func

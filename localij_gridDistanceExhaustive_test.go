@@ -9,12 +9,12 @@ import (
 var maxDistancesForGridDistance = []int32{1, 2, 5, 12, 19, 26}
 
 // Helper function to iterate all indexes at a given resolution (reused from other tests).
-func iterateAllIndexesAtResForGridDistance(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
+func iterateAllIndexesAtResForGridDistance(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index)) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
@@ -29,17 +29,17 @@ func iterateAllIndexesAtResForGridDistance(t *testing.T, res int32, testFunc fun
 	// For higher resolutions, get children of each base cell
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue // Some cells might not have children at certain resolutions
 		}
 
-		children := make([]H3Index, childrenSize)
-		if err := cellToChildren(baseCell, res, children); err != E_SUCCESS {
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(baseCell, res, children); err != eSuccess {
 			continue
 		}
 
 		for _, child := range children {
-			if child != H3_NULL {
+			if child != h3Null {
 				testFunc(t, child)
 			}
 		}
@@ -47,12 +47,12 @@ func iterateAllIndexesAtResForGridDistance(t *testing.T, res int32, testFunc fun
 }
 
 // Helper function to iterate partial indexes at a given resolution (limit to first N base cells).
-func iterateAllIndexesAtResPartialForGridDistance(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), maxBaseCells int32) {
+func iterateAllIndexesAtResPartialForGridDistance(t *testing.T, res int32, testFunc func(t *testing.T, h3 h3Index), maxBaseCells int32) {
 	t.Helper()
 
 	// Get all base cells
-	baseCells := make([]H3Index, NUM_BASE_CELLS)
-	if err := getRes0Cells(baseCells); err != E_SUCCESS {
+	baseCells := make([]h3Index, numBaseCells)
+	if err := getRes0Cells(baseCells); err != eSuccess {
 		t.Fatalf("Failed to get res 0 cells: %v", err)
 	}
 
@@ -74,17 +74,17 @@ func iterateAllIndexesAtResPartialForGridDistance(t *testing.T, res int32, testF
 	for i := int32(0); i < limit; i++ {
 		baseCell := baseCells[i]
 		childrenSize, err := cellToChildrenSize(baseCell, res)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			continue // Some cells might not have children at certain resolutions
 		}
 
-		children := make([]H3Index, childrenSize)
-		if err := cellToChildren(baseCell, res, children); err != E_SUCCESS {
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(baseCell, res, children); err != eSuccess {
 			continue
 		}
 
 		for _, child := range children {
-			if child != H3_NULL {
+			if child != h3Null {
 				testFunc(t, child)
 			}
 		}
@@ -92,12 +92,12 @@ func iterateAllIndexesAtResPartialForGridDistance(t *testing.T, res int32, testF
 }
 
 // Identity distance assertions (ported from gridDistance_identity_assertions).
-func gridDistance_identity_assertions(t *testing.T, h3 H3Index) {
+func gridDistance_identity_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
 	var distance int64
 	err := gridDistance(h3, h3, &distance)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDistance failed: %v", err)
 	}
 	if distance != 0 {
@@ -106,7 +106,7 @@ func gridDistance_identity_assertions(t *testing.T, h3 H3Index) {
 }
 
 // Grid disk distance assertions (ported from gridDistance_gridDisk_assertions).
-func gridDistance_gridDisk_assertions(t *testing.T, h3 H3Index) {
+func gridDistance_gridDisk_assertions(t *testing.T, h3 h3Index) {
 	t.Helper()
 
 	r := getResolution(h3)
@@ -117,15 +117,15 @@ func gridDistance_gridDisk_assertions(t *testing.T, h3 H3Index) {
 
 	var sz int64
 	err := maxGridDiskSize(maxK, &sz)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("maxGridDiskSize failed: %v", err)
 	}
 
-	neighbors := make([]H3Index, sz)
+	neighbors := make([]h3Index, sz)
 	distances := make([]int32, sz)
 
 	err = gridDiskDistances(h3, maxK, neighbors, distances)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("gridDiskDistances failed: %v", err)
 	}
 
@@ -138,7 +138,7 @@ func gridDistance_gridDisk_assertions(t *testing.T, h3 H3Index) {
 		calculatedError := gridDistance(h3, neighbors[i], &calculatedDistance)
 
 		// Don't consider indexes where gridDistance reports failure to generate
-		if calculatedError == E_SUCCESS {
+		if calculatedError == eSuccess {
 			if calculatedDistance != int64(distances[i]) {
 				t.Errorf("gridDiskDistances (%d) does not match gridDistance (%d) for neighbor %x of origin %x", distances[i], calculatedDistance, neighbors[i], h3)
 			}

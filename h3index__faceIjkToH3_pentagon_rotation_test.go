@@ -27,8 +27,8 @@ func Test_h3index_faceIjkToH3_PentagonRotation_ParityWithC(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			g := &LatLng{Lat: Rad(tc.lat), Lng: Rad(tc.lng)}
 
-			var goOut H3Index
-			var cOut H3Index
+			var goOut h3Index
+			var cOut h3Index
 
 			goErr := latLngToCell(g, tc.res, &goOut)
 			cErr := latLngToCellC(g, tc.res, &cOut)

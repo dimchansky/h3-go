@@ -15,7 +15,7 @@ func Test_doublePrecisionVertex(t *testing.T) {
 	// This is the only case yet found where a point indexed to the
 	// cell is shown to be incorrectly outside of the geo boundary
 	// when we use the float version. Presumably more could be found.
-	cell := H3Index(0x81083ffffffffff)
+	cell := h3Index(0x81083ffffffffff)
 	point := LatLng{
 		Lat: Deg(61.890838431),
 		Lng: Deg(8.644221328),
@@ -23,7 +23,7 @@ func Test_doublePrecisionVertex(t *testing.T) {
 
 	var boundary CellBoundary
 	err := cellToBoundary(cell, &boundary)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("cellToBoundary failed: %v", err)
 	}
 
@@ -31,12 +31,12 @@ func Test_doublePrecisionVertex(t *testing.T) {
 	geoloop := make([]LatLng, boundary.NumVerts)
 	copy(geoloop, boundary.Verts[:boundary.NumVerts])
 
-	var bbox BBox
+	var bbox bbox
 	bboxFromGeoLoop(geoloop, &bbox)
 
-	var cell2 H3Index
+	var cell2 h3Index
 	err = latLngToCell(&point, 1, &cell2)
-	if err != E_SUCCESS {
+	if err != eSuccess {
 		t.Fatalf("latLngToCell failed: %v", err)
 	}
 

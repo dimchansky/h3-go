@@ -19,15 +19,15 @@ func TestSpecificCellArea(t *testing.T) {
 	t.Parallel()
 
 	gc := LatLng{0.0, 0.0}
-	for res := int32(0); res <= MAX_H3_RES-1; res++ {
-		var cell H3Index
+	for res := int32(0); res <= maxH3Res-1; res++ {
+		var cell h3Index
 		err := latLngToCell(&gc, res, &cell)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("latLngToCell failed for resolution %d: %v", res, err)
 		}
 
 		area, err := cellAreaKm2(cell)
-		if err != E_SUCCESS {
+		if err != eSuccess {
 			t.Fatalf("cellAreaKm2 failed for resolution %d: %v", res, err)
 		}
 
@@ -40,23 +40,23 @@ func TestSpecificCellArea(t *testing.T) {
 func TestCellAreaInvalid(t *testing.T) {
 	t.Parallel()
 
-	invalid := H3Index(0xFFFFFFFFFFFFFFFF)
+	invalid := h3Index(0xFFFFFFFFFFFFFFFF)
 
 	// Test cellAreaRads2 with invalid input
 	_, err := cellAreaRads2(invalid)
-	if err != E_CELL_INVALID {
-		t.Errorf("cellAreaRads2 invalid input: got %v, want %v", err, E_CELL_INVALID)
+	if err != eCellInvalid {
+		t.Errorf("cellAreaRads2 invalid input: got %v, want %v", err, eCellInvalid)
 	}
 
 	// Test cellAreaKm2 with invalid input
 	_, err = cellAreaKm2(invalid)
-	if err != E_CELL_INVALID {
-		t.Errorf("cellAreaKm2 invalid input: got %v, want %v", err, E_CELL_INVALID)
+	if err != eCellInvalid {
+		t.Errorf("cellAreaKm2 invalid input: got %v, want %v", err, eCellInvalid)
 	}
 
 	// Test cellAreaM2 with invalid input
 	_, err = cellAreaM2(invalid)
-	if err != E_CELL_INVALID {
-		t.Errorf("cellAreaM2 invalid input: got %v, want %v", err, E_CELL_INVALID)
+	if err != eCellInvalid {
+		t.Errorf("cellAreaM2 invalid input: got %v, want %v", err, eCellInvalid)
 	}
 }

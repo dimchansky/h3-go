@@ -12,17 +12,17 @@ package h3
 // versions of H3.
 //
 // Ported from H3 C: localij.c::cellToLocalIj.
-func cellToLocalIj(origin H3Index, index H3Index, mode uint32, out *CoordIJ) H3Error {
+func cellToLocalIj(origin h3Index, index h3Index, mode uint32, out *CoordIJ) h3Error {
 	if mode != 0 {
-		return E_OPTION_INVALID
+		return eOptionInvalid
 	}
-	var ijk CoordIJK
+	var ijk coordIJK
 	failed := cellToLocalIjk(origin, index, &ijk)
-	if failed != E_SUCCESS {
+	if failed != eSuccess {
 		return failed
 	}
 
 	ijkToIj(&ijk, out)
 
-	return E_SUCCESS
+	return eSuccess
 }

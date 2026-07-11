@@ -7,7 +7,7 @@ import "testing"
 func Test_hasAny7UptoRes_parity(t *testing.T) {
 	tests := []struct {
 		name string
-		h    H3Index
+		h    h3Index
 		res  int32
 	}{
 		// Valid H3 indexes (should not have 7s in valid digits)
@@ -51,7 +51,7 @@ func Test_hasAny7UptoRes_parity(t *testing.T) {
 
 	// Test invalid resolution values
 	t.Run("invalid_resolutions", func(t *testing.T) {
-		h := H3Index(0x8a1fb46622dffff)
+		h := h3Index(0x8a1fb46622dffff)
 
 		testCases := []struct {
 			res  int32
@@ -75,7 +75,7 @@ func Test_hasAny7UptoRes_parity(t *testing.T) {
 
 	// Test all resolutions 0-15 with valid H3 index
 	t.Run("all_resolutions", func(t *testing.T) {
-		h := H3Index(0x8a1fb46622dffff)
+		h := h3Index(0x8a1fb46622dffff)
 
 		for res := int32(0); res <= 15; res++ {
 			gotC := hasAny7UptoResC(h, res)

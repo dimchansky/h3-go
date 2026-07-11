@@ -17,7 +17,7 @@ func Test_iterStepRes_parity(t *testing.T) {
 		count := 0
 		maxSteps := 200 // Safety limit
 
-		for goIter.H != H3_NULL && cIter.H != H3_NULL && count < maxSteps {
+		for goIter.H != h3Null && cIter.H != h3Null && count < maxSteps {
 			// Check that Go and C iterators are in sync
 			if goIter.H != cIter.H {
 				t.Errorf("Step %d: H mismatch: go=%x, c=%x", count, uint64(goIter.H), uint64(cIter.H))
@@ -40,9 +40,9 @@ func Test_iterStepRes_parity(t *testing.T) {
 			t.Errorf("Final state mismatch: go=%x, c=%x", uint64(goIter.H), uint64(cIter.H))
 		}
 
-		// Resolution 0 should have exactly NUM_BASE_CELLS cells
-		if count != NUM_BASE_CELLS {
-			t.Errorf("Expected %d cells for resolution 0, got %d", NUM_BASE_CELLS, count)
+		// Resolution 0 should have exactly numBaseCells cells
+		if count != numBaseCells {
+			t.Errorf("Expected %d cells for resolution 0, got %d", numBaseCells, count)
 		}
 	})
 
@@ -54,7 +54,7 @@ func Test_iterStepRes_parity(t *testing.T) {
 		count := 0
 		maxSteps := 1000 // Safety limit for resolution 1
 
-		for goIter.H != H3_NULL && cIter.H != H3_NULL && count < maxSteps {
+		for goIter.H != h3Null && cIter.H != h3Null && count < maxSteps {
 			// Check that Go and C iterators are in sync
 			if goIter.H != cIter.H {
 				t.Errorf("Step %d: H mismatch: go=%x, c=%x", count, uint64(goIter.H), uint64(cIter.H))
@@ -90,10 +90,10 @@ func Test_iterStepRes_nullIterator_parity(t *testing.T) {
 	goIter := iterInitRes(-1) // Invalid resolution -> null iterator
 	cIter := iterInitResC(-1)
 
-	if goIter.H != H3_NULL {
+	if goIter.H != h3Null {
 		t.Errorf("Expected null Go iterator, got H=%x", uint64(goIter.H))
 	}
-	if cIter.H != H3_NULL {
+	if cIter.H != h3Null {
 		t.Errorf("Expected null C iterator, got H=%x", uint64(cIter.H))
 	}
 
@@ -101,10 +101,10 @@ func Test_iterStepRes_nullIterator_parity(t *testing.T) {
 	iterStepRes(&goIter)
 	iterStepResC(&cIter)
 
-	if goIter.H != H3_NULL {
+	if goIter.H != h3Null {
 		t.Errorf("Expected null Go iterator after step, got H=%x", uint64(goIter.H))
 	}
-	if cIter.H != H3_NULL {
+	if cIter.H != h3Null {
 		t.Errorf("Expected null C iterator after step, got H=%x", uint64(cIter.H))
 	}
 }
@@ -116,10 +116,10 @@ func Test_iterStepRes_ordering_parity(t *testing.T) {
 	goIter := iterInitRes(1)
 	cIter := iterInitResC(1)
 
-	cells := make([][2]H3Index, 0, 50) // Store first 50 cells from both iterators
+	cells := make([][2]h3Index, 0, 50) // Store first 50 cells from both iterators
 
-	for i := 0; i < 50 && goIter.H != H3_NULL && cIter.H != H3_NULL; i++ {
-		cells = append(cells, [2]H3Index{goIter.H, cIter.H})
+	for i := 0; i < 50 && goIter.H != h3Null && cIter.H != h3Null; i++ {
+		cells = append(cells, [2]h3Index{goIter.H, cIter.H})
 		iterStepRes(&goIter)
 		iterStepResC(&cIter)
 	}

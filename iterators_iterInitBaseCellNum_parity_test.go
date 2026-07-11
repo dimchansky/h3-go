@@ -55,7 +55,7 @@ func Test_iterInitBaseCellNum_exhaustive_parity(t *testing.T) {
 	t.Parallel()
 
 	// Test all base cells at resolution 0 and 1
-	for baseCellNum := int32(0); baseCellNum < NUM_BASE_CELLS; baseCellNum++ {
+	for baseCellNum := int32(0); baseCellNum < numBaseCells; baseCellNum++ {
 		for childRes := int32(0); childRes <= 1; childRes++ {
 			goResult := iterInitBaseCellNum(baseCellNum, childRes)
 			cResult := iterInitBaseCellNumC(baseCellNum, childRes)

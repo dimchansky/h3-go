@@ -7,20 +7,20 @@ import "testing"
 func Test_ijkToCube_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
+		coord coordIJK
 	}{
-		{"origin", CoordIJK{0, 0, 0}},
-		{"unit i", CoordIJK{1, 0, 0}},
-		{"unit j", CoordIJK{0, 1, 0}},
-		{"unit k", CoordIJK{0, 0, 1}},
-		{"positive coords", CoordIJK{1, 2, 3}},
-		{"negative coords", CoordIJK{-1, -2, -3}},
-		{"mixed coords", CoordIJK{2, -1, 3}},
-		{"large coords", CoordIJK{10, 20, 30}},
-		{"asymmetric", CoordIJK{1, 4, 2}},
-		{"all equal", CoordIJK{5, 5, 5}},
-		{"zeros with non-zero", CoordIJK{0, 0, 7}},
-		{"negative zeros", CoordIJK{-3, 0, 0}},
+		{"origin", coordIJK{0, 0, 0}},
+		{"unit i", coordIJK{1, 0, 0}},
+		{"unit j", coordIJK{0, 1, 0}},
+		{"unit k", coordIJK{0, 0, 1}},
+		{"positive coords", coordIJK{1, 2, 3}},
+		{"negative coords", coordIJK{-1, -2, -3}},
+		{"mixed coords", coordIJK{2, -1, 3}},
+		{"large coords", coordIJK{10, 20, 30}},
+		{"asymmetric", coordIJK{1, 4, 2}},
+		{"all equal", coordIJK{5, 5, 5}},
+		{"zeros with non-zero", coordIJK{0, 0, 7}},
+		{"negative zeros", coordIJK{-3, 0, 0}},
 	}
 
 	for _, tt := range tests {
@@ -43,7 +43,7 @@ func Test_ijkToCube_parity(t *testing.T) {
 
 	// Test that transformation is deterministic
 	t.Run("deterministic", func(t *testing.T) {
-		coord := CoordIJK{3, 1, 4}
+		coord := coordIJK{3, 1, 4}
 
 		// Apply transformation twice
 		result1 := coord

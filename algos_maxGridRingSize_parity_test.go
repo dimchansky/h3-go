@@ -38,7 +38,7 @@ func Test_maxGridRingSize_parity(t *testing.T) {
 			}
 
 			// Compare outputs if no error
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut != cOut {
 					t.Errorf("Output mismatch: Go returned %d, C returned %d", goOut, cOut)
 				}
@@ -46,7 +46,7 @@ func Test_maxGridRingSize_parity(t *testing.T) {
 		})
 	}
 
-	// Test negative k values (should return E_DOMAIN)
+	// Test negative k values (should return eDomain)
 	negativeTests := []int32{-1, -10, -100}
 	for _, k := range negativeTests {
 		t.Run("negative k", func(t *testing.T) {
@@ -55,8 +55,8 @@ func Test_maxGridRingSize_parity(t *testing.T) {
 			goErr := _maxGridRingSize(k, &goOut)
 			cErr := maxGridRingSizeC(k, &cOut)
 
-			if goErr != E_DOMAIN || cErr != E_DOMAIN {
-				t.Errorf("Expected E_DOMAIN for k=%d, got Go=%v, C=%v", k, goErr, cErr)
+			if goErr != eDomain || cErr != eDomain {
+				t.Errorf("Expected eDomain for k=%d, got Go=%v, C=%v", k, goErr, cErr)
 			}
 		})
 	}

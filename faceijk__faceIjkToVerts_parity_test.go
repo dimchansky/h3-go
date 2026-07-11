@@ -6,32 +6,32 @@ import "testing"
 
 func Test_faceijk_faceIjkToVerts_ParityWithC(t *testing.T) {
 	testCases := []struct {
-		fijk FaceIJK
+		fijk faceIJK
 		res  int32
 		desc string
 	}{
 		// Class II resolutions
-		{FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}}, 0, "origin face 0 res 0"},
-		{FaceIJK{Face: 1, Coord: CoordIJK{I: 1, J: 2, K: 3}}, 2, "face 1 res 2"},
-		{FaceIJK{Face: 5, Coord: CoordIJK{I: 10, J: 15, K: 20}}, 4, "face 5 res 4"},
-		{FaceIJK{Face: 9, Coord: CoordIJK{I: 100, J: 200, K: 150}}, 6, "face 9 res 6"},
-		{FaceIJK{Face: 15, Coord: CoordIJK{I: 500, J: 750, K: 250}}, 8, "face 15 res 8"},
+		{faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}}, 0, "origin face 0 res 0"},
+		{faceIJK{Face: 1, Coord: coordIJK{I: 1, J: 2, K: 3}}, 2, "face 1 res 2"},
+		{faceIJK{Face: 5, Coord: coordIJK{I: 10, J: 15, K: 20}}, 4, "face 5 res 4"},
+		{faceIJK{Face: 9, Coord: coordIJK{I: 100, J: 200, K: 150}}, 6, "face 9 res 6"},
+		{faceIJK{Face: 15, Coord: coordIJK{I: 500, J: 750, K: 250}}, 8, "face 15 res 8"},
 
 		// Class III resolutions
-		{FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 0}}, 1, "origin face 0 res 1"},
-		{FaceIJK{Face: 2, Coord: CoordIJK{I: 2, J: 4, K: 6}}, 3, "face 2 res 3"},
-		{FaceIJK{Face: 7, Coord: CoordIJK{I: 25, J: 50, K: 75}}, 5, "face 7 res 5"},
-		{FaceIJK{Face: 12, Coord: CoordIJK{I: 200, J: 400, K: 300}}, 7, "face 12 res 7"},
-		{FaceIJK{Face: 19, Coord: CoordIJK{I: 1000, J: 1500, K: 500}}, 9, "face 19 res 9"},
+		{faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 0}}, 1, "origin face 0 res 1"},
+		{faceIJK{Face: 2, Coord: coordIJK{I: 2, J: 4, K: 6}}, 3, "face 2 res 3"},
+		{faceIJK{Face: 7, Coord: coordIJK{I: 25, J: 50, K: 75}}, 5, "face 7 res 5"},
+		{faceIJK{Face: 12, Coord: coordIJK{I: 200, J: 400, K: 300}}, 7, "face 12 res 7"},
+		{faceIJK{Face: 19, Coord: coordIJK{I: 1000, J: 1500, K: 500}}, 9, "face 19 res 9"},
 
 		// Edge cases
-		{FaceIJK{Face: 0, Coord: CoordIJK{I: 1, J: 0, K: 0}}, 0, "i-axis face 0"},
-		{FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 1, K: 0}}, 0, "j-axis face 0"},
-		{FaceIJK{Face: 0, Coord: CoordIJK{I: 0, J: 0, K: 1}}, 0, "k-axis face 0"},
+		{faceIJK{Face: 0, Coord: coordIJK{I: 1, J: 0, K: 0}}, 0, "i-axis face 0"},
+		{faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 1, K: 0}}, 0, "j-axis face 0"},
+		{faceIJK{Face: 0, Coord: coordIJK{I: 0, J: 0, K: 1}}, 0, "k-axis face 0"},
 
 		// Higher resolutions
-		{FaceIJK{Face: 10, Coord: CoordIJK{I: 5000, J: 7500, K: 2500}}, 10, "high res even"},
-		{FaceIJK{Face: 11, Coord: CoordIJK{I: 10000, J: 15000, K: 5000}}, 11, "high res odd"},
+		{faceIJK{Face: 10, Coord: coordIJK{I: 5000, J: 7500, K: 2500}}, 10, "high res even"},
+		{faceIJK{Face: 11, Coord: coordIJK{I: 10000, J: 15000, K: 5000}}, 11, "high res odd"},
 	}
 
 	for _, tc := range testCases {
@@ -39,12 +39,12 @@ func Test_faceijk_faceIjkToVerts_ParityWithC(t *testing.T) {
 			// Make copies for Go implementation
 			goFijk := tc.fijk
 			goRes := tc.res
-			goVerts := make([]FaceIJK, NUM_HEX_VERTS)
+			goVerts := make([]faceIJK, numHexVerts)
 
 			// Make copies for C implementation
 			cFijk := tc.fijk
 			cRes := tc.res
-			cVerts := make([]FaceIJK, NUM_HEX_VERTS)
+			cVerts := make([]faceIJK, numHexVerts)
 
 			// Test Go implementation
 			_faceIjkToVerts(&goFijk, &goRes, goVerts)
@@ -58,7 +58,7 @@ func Test_faceijk_faceIjkToVerts_ParityWithC(t *testing.T) {
 			}
 
 			// Compare all vertices
-			for v := 0; v < NUM_HEX_VERTS; v++ {
+			for v := 0; v < numHexVerts; v++ {
 				if goVerts[v].Face != cVerts[v].Face {
 					t.Fatalf("vertex %d face mismatch: go=%d c=%d", v, goVerts[v].Face, cVerts[v].Face)
 				}
@@ -93,20 +93,20 @@ func Test_faceijk_faceIjkToVerts_ResolutionModification_ParityWithC(t *testing.T
 		{15, 16, "res 15 -> 16"}, // Edge case - max resolution
 	}
 
-	baseFijk := FaceIJK{Face: 0, Coord: CoordIJK{I: 100, J: 200, K: 150}}
+	baseFijk := faceIJK{Face: 0, Coord: coordIJK{I: 100, J: 200, K: 150}}
 
 	for _, tc := range classIIICases {
 		t.Run(tc.desc, func(t *testing.T) {
 			// Test Go implementation
 			goFijk := baseFijk
 			goRes := tc.originalRes
-			goVerts := make([]FaceIJK, NUM_HEX_VERTS)
+			goVerts := make([]faceIJK, numHexVerts)
 			_faceIjkToVerts(&goFijk, &goRes, goVerts)
 
 			// Test C implementation
 			cFijk := baseFijk
 			cRes := tc.originalRes
-			cVerts := make([]FaceIJK, NUM_HEX_VERTS)
+			cVerts := make([]faceIJK, numHexVerts)
 			_faceIjkToVertsC(&cFijk, &cRes, cVerts)
 
 			// Both should modify resolution the same way
@@ -124,19 +124,19 @@ func Test_faceijk_faceIjkToVerts_ResolutionModification_ParityWithC(t *testing.T
 func Test_faceijk_faceIjkToVerts_ClassII_NoResolutionChange_ParityWithC(t *testing.T) {
 	// Test that Class II resolutions don't get modified
 	classIICases := []int32{0, 2, 4, 6, 8, 10, 12, 14}
-	baseFijk := FaceIJK{Face: 5, Coord: CoordIJK{I: 50, J: 100, K: 75}}
+	baseFijk := faceIJK{Face: 5, Coord: coordIJK{I: 50, J: 100, K: 75}}
 
 	for _, originalRes := range classIICases {
 		// Test Go implementation
 		goFijk := baseFijk
 		goRes := originalRes
-		goVerts := make([]FaceIJK, NUM_HEX_VERTS)
+		goVerts := make([]faceIJK, numHexVerts)
 		_faceIjkToVerts(&goFijk, &goRes, goVerts)
 
 		// Test C implementation
 		cFijk := baseFijk
 		cRes := originalRes
-		cVerts := make([]FaceIJK, NUM_HEX_VERTS)
+		cVerts := make([]faceIJK, numHexVerts)
 		_faceIjkToVertsC(&cFijk, &cRes, cVerts)
 
 		// Resolution should not change for Class II

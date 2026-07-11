@@ -5,11 +5,11 @@ package h3
 // Edges shared between adjacent hexagons are removed, leaving only the boundary edges.
 // The graph is used to generate polygon outlines from sets of hexagons.
 // Ported from H3 C: algos.c::h3SetToVertexGraph.
-func h3SetToVertexGraph(h3Set []H3Index, numHexes int32, graph *VertexGraph) H3Error {
+func h3SetToVertexGraph(h3Set []h3Index, numHexes int32, graph *vertexGraph) h3Error {
 	if numHexes < 1 {
 		// We still need to init the graph, or calls to destroyVertexGraph will fail
 		initVertexGraph(graph, 0, 0)
-		return E_SUCCESS
+		return eSuccess
 	}
 
 	res := getResolution(h3Set[0])
@@ -26,7 +26,7 @@ func h3SetToVertexGraph(h3Set []H3Index, numHexes int32, graph *VertexGraph) H3E
 	for i := int32(0); i < numHexes; i++ {
 		var vertices CellBoundary
 		boundaryErr := cellToBoundary(h3Set[i], &vertices)
-		if boundaryErr != E_SUCCESS {
+		if boundaryErr != eSuccess {
 			// Destroy vertex graph as caller will not know to do so.
 			destroyVertexGraph(graph)
 			return boundaryErr
@@ -50,5 +50,5 @@ func h3SetToVertexGraph(h3Set []H3Index, numHexes int32, graph *VertexGraph) H3E
 		}
 	}
 
-	return E_SUCCESS
+	return eSuccess
 }

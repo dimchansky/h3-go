@@ -33,7 +33,7 @@ func _hashVertexC(vertex *LatLng, res int32, numBuckets int32) uint32 {
 }
 
 // initVertexGraphC wraps the C initVertexGraph function for parity testing.
-func initVertexGraphC(graph *VertexGraph, numBuckets int32, res int32) {
+func initVertexGraphC(graph *vertexGraph, numBuckets int32, res int32) {
 	var cGraph C.VertexGraph
 	C.initVertexGraph(&cGraph, C.int(numBuckets), C.int(res))
 
@@ -45,14 +45,14 @@ func initVertexGraphC(graph *VertexGraph, numBuckets int32, res int32) {
 	// For buckets, we only verify the allocation occurred (non-nil vs nil)
 	// Full bucket testing would require memory allocation tracking
 	if numBuckets > 0 {
-		graph.Buckets = make([]*VertexNode, numBuckets)
+		graph.Buckets = make([]*vertexNode, numBuckets)
 	} else {
 		graph.Buckets = nil
 	}
 }
 
 // addVertexNodeC wraps the C addVertexNode function for parity testing.
-func addVertexNodeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode {
+func addVertexNodeC(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode {
 	// Create a C graph structure - this is simplified for testing
 	// In real usage, we'd need proper memory management
 	var cGraph C.VertexGraph
@@ -87,7 +87,7 @@ func addVertexNodeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexN
 	}
 
 	// Convert C result back to Go
-	goNode := &VertexNode{
+	goNode := &vertexNode{
 		From: LatLng{Lat: Rad(float64(cNode.from.lat)), Lng: Rad(float64(cNode.from.lng))},
 		To:   LatLng{Lat: Rad(float64(cNode.to.lat)), Lng: Rad(float64(cNode.to.lng))},
 	}
@@ -99,7 +99,7 @@ func addVertexNodeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexN
 }
 
 // removeVertexNodeC wraps the C removeVertexNode function for parity testing.
-func removeVertexNodeC(graph *VertexGraph, node *VertexNode) int32 {
+func removeVertexNodeC(graph *vertexGraph, node *vertexNode) int32 {
 	// This is a simplified wrapper for testing purposes.
 	// In a real implementation, we would need to maintain proper C memory structures
 	// and track the actual C node pointers. For parity testing, we'll simulate
@@ -142,7 +142,7 @@ func removeVertexNodeC(graph *VertexGraph, node *VertexNode) int32 {
 }
 
 // firstVertexNodeC wraps the C firstVertexNode function for parity testing.
-func firstVertexNodeC(graph *VertexGraph) *VertexNode {
+func firstVertexNodeC(graph *vertexGraph) *vertexNode {
 	// Create a C graph structure for testing
 	var cGraph C.VertexGraph
 	cGraph.numBuckets = C.int(graph.NumBuckets)
@@ -177,7 +177,7 @@ func firstVertexNodeC(graph *VertexGraph) *VertexNode {
 				// Call C firstVertexNode which should find this node
 				result := C.firstVertexNode(&cGraph)
 				if result != nil {
-					return &VertexNode{
+					return &vertexNode{
 						From: LatLng{Lat: Rad(float64(result.from.lat)), Lng: Rad(float64(result.from.lng))},
 						To:   LatLng{Lat: Rad(float64(result.to.lat)), Lng: Rad(float64(result.to.lng))},
 					}
@@ -191,7 +191,7 @@ func firstVertexNodeC(graph *VertexGraph) *VertexNode {
 }
 
 // findNodeForEdgeC wraps the C findNodeForEdge function for parity testing.
-func findNodeForEdgeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode {
+func findNodeForEdgeC(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode {
 	// Create a C graph structure for testing
 	var cGraph C.VertexGraph
 	cGraph.numBuckets = C.int(graph.NumBuckets)
@@ -255,7 +255,7 @@ func findNodeForEdgeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *Verte
 		// Call C findNodeForEdge
 		result := C.findNodeForEdge(&cGraph, &cFromVtx, cToVtx)
 		if result != nil {
-			return &VertexNode{
+			return &vertexNode{
 				From: LatLng{Lat: Rad(float64(result.from.lat)), Lng: Rad(float64(result.from.lng))},
 				To:   LatLng{Lat: Rad(float64(result.to.lat)), Lng: Rad(float64(result.to.lng))},
 			}
@@ -266,14 +266,14 @@ func findNodeForEdgeC(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *Verte
 }
 
 // findNodeForVertexC wraps the C findNodeForVertex function for parity testing.
-func findNodeForVertexC(graph *VertexGraph, fromVtx *LatLng) *VertexNode {
+func findNodeForVertexC(graph *vertexGraph, fromVtx *LatLng) *vertexNode {
 	// findNodeForVertex is just a wrapper around findNodeForEdge with toVtx=nil
 	// So we can reuse the existing findNodeForEdgeC implementation
 	return findNodeForEdgeC(graph, fromVtx, nil)
 }
 
 // destroyVertexGraphC wraps the C destroyVertexGraph function for parity testing.
-func destroyVertexGraphC(graph *VertexGraph) {
+func destroyVertexGraphC(graph *vertexGraph) {
 	// Create a C graph structure for testing
 	var cGraph C.VertexGraph
 	cGraph.numBuckets = C.int(graph.NumBuckets)
@@ -299,8 +299,8 @@ func destroyVertexGraphC(graph *VertexGraph) {
 }
 
 // _initVertexNodeC wraps the C _initVertexNode function for parity testing.
-func _initVertexNodeC(node *VertexNode, fromVtx *LatLng, toVtx *LatLng) {
-	// Create a C VertexNode
+func _initVertexNodeC(node *vertexNode, fromVtx *LatLng, toVtx *LatLng) {
+	// Create a C vertexNode
 	var cNode C.VertexNode
 
 	// Convert Go LatLng to C LatLng

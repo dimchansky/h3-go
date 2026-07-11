@@ -1,21 +1,21 @@
 package h3
 
 // cellToVertex gets a single vertex for a given cell, as an H3 index, or
-// H3_NULL if the vertex is invalid.
+// h3Null if the vertex is invalid.
 // Ported from H3 C: vertex.c::cellToVertex.
-func cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error {
+func cellToVertex(cell h3Index, vertexNum int32, out *h3Index) h3Error {
 	cellIsPentagon := isPentagon(cell)
 	var cellNumVerts int32
 	if cellIsPentagon {
-		cellNumVerts = NUM_PENT_VERTS
+		cellNumVerts = numPentVerts
 	} else {
-		cellNumVerts = NUM_HEX_VERTS
+		cellNumVerts = numHexVerts
 	}
 	res := int32(getResolution(cell))
 
 	// Check for invalid vertexes
 	if vertexNum < 0 || vertexNum > cellNumVerts-1 {
-		return E_DOMAIN
+		return eDomain
 	}
 
 	// Default the owner and vertex number to the input cell
@@ -27,16 +27,16 @@ func cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error {
 
 	// If the cell is the center child of its parent, it will always have
 	// the lowest index of any neighbor, so we can skip determining the owner
-	if res == 0 || getIndexDigit(cell, res) != int32(CENTER_DIGIT) {
+	if res == 0 || getIndexDigit(cell, res) != int32(centerDigit) {
 		// Get the left neighbor of the vertex, with its rotations
 		left := directionForVertexNum(cell, vertexNum)
-		if left == INVALID_DIGIT {
-			return E_FAILED
+		if left == invalidDigit {
+			return eFailed
 		}
 		lRotations := int32(0)
-		var leftNeighbor H3Index
+		var leftNeighbor h3Index
 		leftNeighborError := h3NeighborRotations(cell, left, &lRotations, &leftNeighbor)
-		if leftNeighborError != E_SUCCESS {
+		if leftNeighborError != eSuccess {
 			return leftNeighborError
 		}
 		// Set to owner if lowest index
@@ -45,28 +45,28 @@ func cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error {
 		}
 
 		// As above, skip the right neighbor if the left is known lowest
-		if res == 0 || getIndexDigit(leftNeighbor, res) != int32(CENTER_DIGIT) {
+		if res == 0 || getIndexDigit(leftNeighbor, res) != int32(centerDigit) {
 			// Get the right neighbor of the vertex, with its rotations
 			// Note that vertex - 1 is the right side, as vertex numbers are CCW
 			right := directionForVertexNum(cell, (vertexNum-1+cellNumVerts)%cellNumVerts)
 			// This case should be unreachable; invalid verts fail earlier
-			if right == INVALID_DIGIT {
-				return E_FAILED
+			if right == invalidDigit {
+				return eFailed
 			}
 			rRotations := int32(0)
-			var rightNeighbor H3Index
+			var rightNeighbor h3Index
 			rightNeighborError := h3NeighborRotations(cell, right, &rRotations, &rightNeighbor)
-			if rightNeighborError != E_SUCCESS {
+			if rightNeighborError != eSuccess {
 				return rightNeighborError
 			}
 			// Set to owner if lowest index
 			if rightNeighbor < owner {
 				owner = rightNeighbor
-				var dir Direction
+				var dir direction
 				if isPentagon(owner) {
 					dir = _directionForNeighbor(owner, cell)
 				} else {
-					dir = directions[(revNeighborDirectionsHex[right]+rRotations)%NUM_HEX_VERTS]
+					dir = directions[(revNeighborDirectionsHex[right]+rRotations)%numHexVerts]
 				}
 				ownerVertexNum = vertexNumForDirection(owner, dir)
 			}
@@ -75,18 +75,18 @@ func cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error {
 		// Determine the vertex number for the left neighbor
 		if owner == leftNeighbor {
 			ownerIsPentagon := isPentagon(owner)
-			var dir Direction
+			var dir direction
 			if ownerIsPentagon {
 				dir = _directionForNeighbor(owner, cell)
 			} else {
-				dir = directions[(revNeighborDirectionsHex[left]+lRotations)%NUM_HEX_VERTS]
+				dir = directions[(revNeighborDirectionsHex[left]+lRotations)%numHexVerts]
 			}
 
 			// For the left neighbor, we need the second vertex of the
 			// edge, which may involve looping around the vertex nums
 			ownerVertexNum = vertexNumForDirection(owner, dir) + 1
-			if ownerVertexNum == NUM_HEX_VERTS ||
-				(ownerIsPentagon && ownerVertexNum == NUM_PENT_VERTS) {
+			if ownerVertexNum == numHexVerts ||
+				(ownerIsPentagon && ownerVertexNum == numPentVerts) {
 				ownerVertexNum = 0
 			}
 		}
@@ -94,9 +94,9 @@ func cellToVertex(cell H3Index, vertexNum int32, out *H3Index) H3Error {
 
 	// Create the vertex index
 	vertex := owner
-	vertex = setMode(vertex, H3_VERTEX_MODE)
+	vertex = setMode(vertex, h3VertexMode)
 	vertex = setReservedBits(vertex, ownerVertexNum)
 	*out = vertex
 
-	return E_SUCCESS
+	return eSuccess
 }

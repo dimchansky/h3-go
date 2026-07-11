@@ -1,15 +1,15 @@
 package h3
 
-// VertexNode mirrors the C struct used in vertexGraph.h.
-type VertexNode struct {
+// vertexNode mirrors the C struct used in vertexGraph.h.
+type vertexNode struct {
 	From LatLng
 	To   LatLng
-	Next *VertexNode
+	Next *vertexNode
 }
 
-// VertexGraph mirrors the C struct used in vertexGraph.h.
-type VertexGraph struct {
-	Buckets    []*VertexNode
+// vertexGraph mirrors the C struct used in vertexGraph.h.
+type vertexGraph struct {
+	Buckets    []*vertexNode
 	NumBuckets int32
 	Size       int32
 	Res        int32

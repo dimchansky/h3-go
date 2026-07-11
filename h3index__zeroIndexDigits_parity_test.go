@@ -5,7 +5,7 @@ package h3
 import "testing"
 
 func Test_h3index_zeroIndexDigits_ParityWithC(t *testing.T) {
-	hs := []H3Index{0x8928308280fffff, 0x821c07fffffffff, 0x8a195da49a2ffff}
+	hs := []h3Index{0x8928308280fffff, 0x821c07fffffffff, 0x8a195da49a2ffff}
 	// start > end: no-op
 	for _, h := range hs {
 		goVal := _zeroIndexDigits(h, 10, 5)

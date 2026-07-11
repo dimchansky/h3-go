@@ -1,12 +1,12 @@
 package h3
 
-// iterStepChild steps a IterCellsChildren to the next child cell.
-// When the iteration is over, IterCellsChildren.H will be H3_NULL.
+// iterStepChild steps a iterCellsChildren to the next child cell.
+// When the iteration is over, iterCellsChildren.H will be h3Null.
 // Handles iterating through hexagon and pentagon cells.
 // Ported from H3 C: iterators.c::iterStepChild.
-func iterStepChild(it *IterCellsChildren) {
-	// once h == H3_NULL, the iterator returns an infinite sequence of H3_NULL
-	if it.H == H3_NULL {
+func iterStepChild(it *iterCellsChildren) {
+	// once h == h3Null, the iterator returns an infinite sequence of h3Null
+	if it.H == h3Null {
 		return
 	}
 	childRes := getResolution(it.H)
@@ -19,8 +19,8 @@ func iterStepChild(it *IterCellsChildren) {
 			*it = nullIter()
 			return
 		}
-		// PENTAGON_SKIPPED_DIGIT == 1
-		if i == it.SkipDigit && getIndexDigit(it.H, i) == int32(PENTAGON_SKIPPED_DIGIT) {
+		// pentagonSkippedDigit == 1
+		if i == it.SkipDigit && getIndexDigit(it.H, i) == int32(pentagonSkippedDigit) {
 			// Then we are iterating through the children of a pentagon cell.
 			// All children of a pentagon have the property that the first
 			// nonzero digit between the parent and child resolutions is
@@ -31,8 +31,8 @@ func iterStepChild(it *IterCellsChildren) {
 			it.SkipDigit -= 1
 			return
 		}
-		// INVALID_DIGIT == 7
-		if getIndexDigit(it.H, i) == int32(INVALID_DIGIT) {
+		// invalidDigit == 7
+		if getIndexDigit(it.H, i) == int32(invalidDigit) {
 			// We have exhausted all the children for the current digit at
 			// resolution i. Call incrementResDigit which will wrap the digit
 			// from 7 to 0 and carry to the next resolution (i-1).

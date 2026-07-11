@@ -8,8 +8,8 @@ import (
 
 func Test_countContainers_parity(t *testing.T) {
 	// Helper to create a simple square loop
-	createSquareLoop := func(x, y float64) *LinkedGeoLoop {
-		loop := &LinkedGeoLoop{}
+	createSquareLoop := func(x, y float64) *linkedGeoLoop {
+		loop := &linkedGeoLoop{}
 		coords := []LatLng{
 			{Lat: Rad(x), Lng: Rad(y)},
 			{Lat: Rad(x), Lng: Rad(y + 0.1)},
@@ -18,9 +18,9 @@ func Test_countContainers_parity(t *testing.T) {
 			{Lat: Rad(x), Lng: Rad(y)}, // Close the loop
 		}
 
-		var prev *LinkedLatLng
+		var prev *linkedLatLng
 		for i, coord := range coords {
-			node := &LinkedLatLng{
+			node := &linkedLatLng{
 				Vertex: coord,
 				Next:   nil,
 			}
@@ -35,116 +35,116 @@ func Test_countContainers_parity(t *testing.T) {
 		return loop
 	}
 
-	// Helper to create bbox for a loop
-	createBboxForLoop := func(loop *LinkedGeoLoop) *BBox {
-		bbox := &BBox{North: Deg(-90), South: Deg(90), East: Deg(-180), West: Deg(180)}
+	// Helper to create bb for a loop
+	createBboxForLoop := func(loop *linkedGeoLoop) *bbox {
+		bb := &bbox{North: Deg(-90), South: Deg(90), East: Deg(-180), West: Deg(180)}
 
-		// Simple bbox calculation (not exact but sufficient for testing)
+		// Simple bb calculation (not exact but sufficient for testing)
 		current := loop.First
 		for current != nil {
-			if current.Vertex.Lat.Rad() > bbox.North.Rad() {
-				bbox.North = current.Vertex.Lat
+			if current.Vertex.Lat.Rad() > bb.North.Rad() {
+				bb.North = current.Vertex.Lat
 			}
-			if current.Vertex.Lat.Rad() < bbox.South.Rad() {
-				bbox.South = current.Vertex.Lat
+			if current.Vertex.Lat.Rad() < bb.South.Rad() {
+				bb.South = current.Vertex.Lat
 			}
-			if current.Vertex.Lng.Rad() > bbox.East.Rad() {
-				bbox.East = current.Vertex.Lng
+			if current.Vertex.Lng.Rad() > bb.East.Rad() {
+				bb.East = current.Vertex.Lng
 			}
-			if current.Vertex.Lng.Rad() < bbox.West.Rad() {
-				bbox.West = current.Vertex.Lng
+			if current.Vertex.Lng.Rad() < bb.West.Rad() {
+				bb.West = current.Vertex.Lng
 			}
 			current = current.Next
 		}
 
-		return bbox
+		return bb
 	}
 
 	tests := []struct {
 		name          string
-		setupTest     func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox)
+		setupTest     func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox)
 		expectedCount int32
 	}{
 		{
 			name: "empty polygons array",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox) {
 				loop := createSquareLoop(0, 0)
-				return loop, []*LinkedGeoPolygon{}, []*BBox{}
+				return loop, []*linkedGeoPolygon{}, []*bbox{}
 			},
 			expectedCount: 0,
 		},
 		{
 			name: "loop not inside any polygon",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox) {
 				// Test loop
 				testLoop := createSquareLoop(0, 0)
 
 				// Polygon that doesn't contain the test loop
-				polygon := &LinkedGeoPolygon{
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(10, 10), // Far away
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
+				return testLoop, []*linkedGeoPolygon{polygon}, []*bbox{bb}
 			},
 			expectedCount: 0,
 		},
 		{
 			name: "loop is the same as polygon's first loop",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox) {
 				// Test loop
 				testLoop := createSquareLoop(0, 0)
 
 				// Polygon with the same loop as its first
-				polygon := &LinkedGeoPolygon{
+				polygon := &linkedGeoPolygon{
 					First: testLoop, // Same loop - should not count as container
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
+				return testLoop, []*linkedGeoPolygon{polygon}, []*bbox{bb}
 			},
 			expectedCount: 0,
 		},
 		{
 			name: "loop inside one polygon",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox) {
 				// Small test loop inside
 				testLoop := createSquareLoop(0.025, 0.025)
 
 				// Larger polygon containing the test loop
-				polygon := &LinkedGeoPolygon{
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0), // Contains test loop
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
+				return testLoop, []*linkedGeoPolygon{polygon}, []*bbox{bb}
 			},
 			expectedCount: 1,
 		},
 		{
 			name: "loop inside multiple nested polygons",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox) {
 				// Small test loop at center
 				testLoop := createSquareLoop(0.04, 0.04)
 
 				// Create nested polygons (each contains the test loop)
-				polygon1 := &LinkedGeoPolygon{
+				polygon1 := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0), // Largest
 				}
 				polygon1.Last = polygon1.First
 
-				polygon2 := &LinkedGeoPolygon{
+				polygon2 := &linkedGeoPolygon{
 					First: createSquareLoop(0.02, 0.02), // Medium
 				}
 				polygon2.Last = polygon2.First
 
-				polygon3 := &LinkedGeoPolygon{
+				polygon3 := &linkedGeoPolygon{
 					First: createSquareLoop(0.03, 0.03), // Smallest but still contains test
 				}
 				polygon3.Last = polygon3.First
@@ -154,41 +154,41 @@ func Test_countContainers_parity(t *testing.T) {
 				bbox3 := createBboxForLoop(polygon3.First)
 
 				return testLoop,
-					[]*LinkedGeoPolygon{polygon1, polygon2, polygon3},
-					[]*BBox{bbox1, bbox2, bbox3}
+					[]*linkedGeoPolygon{polygon1, polygon2, polygon3},
+					[]*bbox{bbox1, bbox2, bbox3}
 			},
 			expectedCount: 3,
 		},
 		{
 			name: "nil loop",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
-				polygon := &LinkedGeoPolygon{
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox) {
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0),
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return nil, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
+				return nil, []*linkedGeoPolygon{polygon}, []*bbox{bb}
 			},
 			expectedCount: 0,
 		},
 		{
 			name: "loop with nil first coordinate",
-			setupTest: func() (*LinkedGeoLoop, []*LinkedGeoPolygon, []*BBox) {
-				testLoop := &LinkedGeoLoop{
+			setupTest: func() (*linkedGeoLoop, []*linkedGeoPolygon, []*bbox) {
+				testLoop := &linkedGeoLoop{
 					First: nil,
 					Last:  nil,
 				}
 
-				polygon := &LinkedGeoPolygon{
+				polygon := &linkedGeoPolygon{
 					First: createSquareLoop(0, 0),
 				}
 				polygon.Last = polygon.First
 
-				bbox := createBboxForLoop(polygon.First)
+				bb := createBboxForLoop(polygon.First)
 
-				return testLoop, []*LinkedGeoPolygon{polygon}, []*BBox{bbox}
+				return testLoop, []*linkedGeoPolygon{polygon}, []*bbox{bb}
 			},
 			expectedCount: 0,
 		},

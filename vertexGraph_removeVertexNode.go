@@ -7,7 +7,7 @@ package h3
 // and removes it from the linked list structure. Once removed, the node is
 // no longer valid and the graph size is decremented.
 // Ported from H3 C: vertexGraph.c::removeVertexNode.
-func removeVertexNode(graph *VertexGraph, node *VertexNode) int32 {
+func removeVertexNode(graph *vertexGraph, node *vertexNode) int32 {
 	// Determine location using hash of the node's from vertex
 	index := _hashVertex(&node.From, graph.Res, graph.NumBuckets)
 	currentNode := graph.Buckets[index]

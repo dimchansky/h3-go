@@ -4,7 +4,7 @@ package h3
 // could have a signed integer overflow. Assumes k is set to 0.
 // Mirrors H3's coordijk.c::_ijkNormalizeCouldOverflow behavior.
 // Ported from H3 C: coordijk.c::_ijkNormalizeCouldOverflow.
-func _ijkNormalizeCouldOverflow(ijk *CoordIJK) bool {
+func _ijkNormalizeCouldOverflow(ijk *coordIJK) bool {
 	// Check for the possibility of overflow
 	var maxVal, minVal int32
 	if ijk.I > ijk.J {
@@ -25,7 +25,7 @@ func _ijkNormalizeCouldOverflow(ijk *CoordIJK) bool {
 			return true
 		}
 		if subInt32sOverflows(0, minVal) {
-			// 0 - INT32_MIN would overflow
+			// 0 - int32Min would overflow
 			return true
 		}
 		// Also check for maxVal - minVal overflow (which happens when minVal is negative)

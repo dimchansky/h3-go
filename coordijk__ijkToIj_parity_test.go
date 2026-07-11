@@ -7,25 +7,25 @@ import "testing"
 func Test_ijkToIj_parity(t *testing.T) {
 	tests := []struct {
 		name  string
-		coord CoordIJK
+		coord coordIJK
 	}{
-		{"origin", CoordIJK{0, 0, 0}},
-		{"unit i", CoordIJK{1, 0, 0}},
-		{"unit j", CoordIJK{0, 1, 0}},
-		{"unit k", CoordIJK{0, 0, 1}},
-		{"positive coords", CoordIJK{1, 2, 3}},
-		{"mixed coords", CoordIJK{3, -2, 5}},
-		{"large coords", CoordIJK{15, 10, 8}},
-		{"negative coords", CoordIJK{-1, -2, -3}},
-		{"asymmetric", CoordIJK{5, 3, 2}},
-		{"small values", CoordIJK{2, 1, 1}},
-		{"normalized", CoordIJK{2, 1, 0}},
-		{"equal components", CoordIJK{3, 3, 3}},
-		{"zero i", CoordIJK{0, 5, 2}},
-		{"zero j", CoordIJK{5, 0, 2}},
-		{"zero k", CoordIJK{5, 3, 0}},
-		{"large k", CoordIJK{2, 3, 10}},
-		{"negative k", CoordIJK{2, 3, -5}},
+		{"origin", coordIJK{0, 0, 0}},
+		{"unit i", coordIJK{1, 0, 0}},
+		{"unit j", coordIJK{0, 1, 0}},
+		{"unit k", coordIJK{0, 0, 1}},
+		{"positive coords", coordIJK{1, 2, 3}},
+		{"mixed coords", coordIJK{3, -2, 5}},
+		{"large coords", coordIJK{15, 10, 8}},
+		{"negative coords", coordIJK{-1, -2, -3}},
+		{"asymmetric", coordIJK{5, 3, 2}},
+		{"small values", coordIJK{2, 1, 1}},
+		{"normalized", coordIJK{2, 1, 0}},
+		{"equal components", coordIJK{3, 3, 3}},
+		{"zero i", coordIJK{0, 5, 2}},
+		{"zero j", coordIJK{5, 0, 2}},
+		{"zero k", coordIJK{5, 3, 0}},
+		{"large k", coordIJK{2, 3, 10}},
+		{"negative k", coordIJK{2, 3, -5}},
 	}
 
 	for _, tt := range tests {
@@ -46,9 +46,9 @@ func Test_ijkToIj_parity(t *testing.T) {
 		})
 	}
 
-	// Test the mathematical relationship: IJ = IJK - K
+	// Test the mathematical relationship: quadIJ = IJK - K
 	t.Run("mathematical_property", func(t *testing.T) {
-		testCoords := []CoordIJK{
+		testCoords := []coordIJK{
 			{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1},
 			{5, 3, 2}, {-2, 4, -1}, {10, -5, 3},
 		}
@@ -69,7 +69,7 @@ func Test_ijkToIj_parity(t *testing.T) {
 
 	// Test that transformation is deterministic
 	t.Run("deterministic", func(t *testing.T) {
-		coord := CoordIJK{7, 3, 2}
+		coord := coordIJK{7, 3, 2}
 
 		// Apply transformation twice
 		var result1, result2 CoordIJ
@@ -86,12 +86,12 @@ func Test_ijkToIj_parity(t *testing.T) {
 	t.Run("edge_cases", func(t *testing.T) {
 		edgeCases := []struct {
 			name     string
-			coord    CoordIJK
+			coord    coordIJK
 			expected CoordIJ
 		}{
-			{"zero_k_no_change", CoordIJK{5, 3, 0}, CoordIJ{5, 3}},
-			{"equal_k_zeros_result", CoordIJK{2, 2, 2}, CoordIJ{0, 0}},
-			{"large_k_negative_result", CoordIJK{1, 1, 5}, CoordIJ{-4, -4}},
+			{"zero_k_no_change", coordIJK{5, 3, 0}, CoordIJ{5, 3}},
+			{"equal_k_zeros_result", coordIJK{2, 2, 2}, CoordIJ{0, 0}},
+			{"large_k_negative_result", coordIJK{1, 1, 5}, CoordIJ{-4, -4}},
 		}
 
 		for _, tc := range edgeCases {

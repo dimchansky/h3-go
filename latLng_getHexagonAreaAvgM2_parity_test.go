@@ -44,7 +44,7 @@ func Test_getHexagonAreaAvgM2_parity(t *testing.T) {
 				return
 			}
 
-			if goErr == E_SUCCESS {
+			if goErr == eSuccess {
 				if goOut != cOut {
 					t.Errorf("getHexagonAreaAvgM2(%d) output mismatch: Go=%v, C=%v", tt.res, goOut, cOut)
 				}

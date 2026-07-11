@@ -1,22 +1,22 @@
 package h3
 
 // cellToParent produces the parent index for a given H3 index at parentRes.
-// Returns (out, err) where err mirrors H3Error codes.
+// Returns (out, err) where err mirrors h3Error codes.
 // Ported from H3 C: h3Index.c::cellToParent.
-func cellToParent(h H3Index, parentRes int32) (H3Index, H3Error) {
+func cellToParent(h h3Index, parentRes int32) (h3Index, h3Error) {
 	childRes := getResolution(h)
-	if parentRes < 0 || parentRes > MAX_H3_RES {
-		return 0, E_RES_DOMAIN
+	if parentRes < 0 || parentRes > maxH3Res {
+		return 0, eResDomain
 	} else if parentRes > childRes {
-		return 0, E_RES_MISMATCH
+		return 0, eResMismatch
 	} else if parentRes == childRes {
-		return h, E_SUCCESS
+		return h, eSuccess
 	}
 	// Set resolution to parentRes
 	parentH := setResolution(h, parentRes)
 	// Set digits above parentRes to 7
 	for i := parentRes + 1; i <= childRes; i++ {
-		parentH = setIndexDigit(parentH, i, int32(H3_DIGIT_MASK))
+		parentH = setIndexDigit(parentH, i, int32(h3DigitMask))
 	}
-	return parentH, E_SUCCESS
+	return parentH, eSuccess
 }

@@ -7,7 +7,7 @@ import (
 
 func TestDescribeH3Error_NoError(t *testing.T) {
 	t.Parallel()
-	err := E_SUCCESS
+	err := eSuccess
 	result := describeH3Error(err)
 	expected := "Success"
 	if result != expected {
@@ -17,7 +17,7 @@ func TestDescribeH3Error_NoError(t *testing.T) {
 
 func TestDescribeH3Error_InvalidCell(t *testing.T) {
 	t.Parallel()
-	err := E_CELL_INVALID
+	err := eCellInvalid
 	result := describeH3Error(err)
 	expected := "Cell argument was not valid"
 	if result != expected {
@@ -27,7 +27,7 @@ func TestDescribeH3Error_InvalidCell(t *testing.T) {
 
 func TestDescribeH3Error_InvalidH3Error(t *testing.T) {
 	t.Parallel()
-	err := H3Error(9001) // Will probably never hit this
+	err := h3Error(9001) // Will probably never hit this
 	result := describeH3Error(err)
 	expected := "Invalid error code"
 	if result != expected {
