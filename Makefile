@@ -1,4 +1,4 @@
-.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff
+.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -44,6 +44,15 @@ api-inventory:
 # Requires testref sources (make -C testref h3-source downloads them).
 check-api:
 	@go run ./tools/apiinventory -h3ver $(H3VER) -verify
+
+# Symbol-level diff between two upstream H3 trees, mapped to the Go port.
+# Usage: make upstream-diff FROM=4.3.0 TO=4.4.0
+# (both trees must exist under testref/; fetch with
+#  make -C testref H3_VERSION=<ver> h3-source)
+FROM ?= 4.3.0
+TO ?= $(H3VER)
+upstream-diff:
+	@go run ./tools/upstreamdiff -from testref/h3-$(FROM) -to testref/h3-$(TO)
 
 # Usage: make test [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration] [COVERAGE=1]
 # Examples:
