@@ -160,7 +160,7 @@ test-c2go:
 	TOOLCHAIN_ENV=""; \
 	if [ -n "$$CC" ]; then TOOLCHAIN_ENV="CC=$$CC CXX=$$CXX SDKROOT=$$SDKROOT"; fi; \
 	LDFLAGS_ENV="-Wl,-dead_strip"; \
-	if [ "$$(uname -s)" != "Darwin" ]; then LDFLAGS_ENV="-Wl,--gc-sections"; fi; \
+	if [ "$$(uname -s)" != "Darwin" ]; then LDFLAGS_ENV="-Wl,--gc-sections -lm"; fi; \
 	env $$TOOLCHAIN_ENV \
 	GOCACHE=$(PWD)/.gocache \
 	CGO_ENABLED=1 \
