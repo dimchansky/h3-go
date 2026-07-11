@@ -16,7 +16,7 @@ func cellToParent(h h3Index, parentRes int32) (h3Index, h3Error) {
 	parentH := setResolution(h, parentRes)
 	// Set digits above parentRes to 7
 	for i := parentRes + 1; i <= childRes; i++ {
-		parentH = setIndexDigit(parentH, i, int32(h3DigitMask))
+		parentH = h3SetIndexDigit(parentH, i, int32(h3DigitMask))
 	}
 	return parentH, eSuccess
 }

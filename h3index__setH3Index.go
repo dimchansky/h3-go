@@ -14,7 +14,7 @@ func setH3Index(hp *h3Index, res int32, baseCell int32, initDigit int32) {
 	h = setBaseCell(h, baseCell)
 	// Initialize digits 1..res
 	for r := int32(1); r <= res; r++ {
-		h = setIndexDigit(h, r, initDigit)
+		h = h3SetIndexDigit(h, r, initDigit)
 	}
 	*hp = h
 }

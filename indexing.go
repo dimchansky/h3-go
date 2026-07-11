@@ -101,6 +101,57 @@ func (c Cell) IcosahedronFaces() ([]int, error) {
 	return faces, nil
 }
 
+// IndexDigit returns the indexing digit of the cell at the given resolution
+// (1..MaxResolution; resolution 0 is the base cell number, not a digit). res
+// may exceed the cell's actual resolution, in which case the stored digit
+// (7 for valid cells) is returned.
+//
+// H3 C API: getIndexDigit (added in H3 4.4.0).
+func (c Cell) IndexDigit(res int) (int, error) {
+	if err := checkRes(res); err != nil {
+		return 0, err
+	}
+	var d int32
+	if errC := getIndexDigit(c, int32(res), &d); errC != eSuccess {
+		return 0, toErr(errC)
+	}
+	return int(d), nil
+}
+
+// ConstructCell creates a cell from its components: a resolution, a base
+// cell number (0..NumBaseCells-1), and res child digits (each 0..6). Only
+// valid cells can be constructed; invalid digit sequences fail with
+// ErrDigitDomain or ErrDeletedDigit.
+//
+// H3 C API: constructCell (added in H3 4.4.0).
+func ConstructCell(res, baseCellNumber int, digits []int) (Cell, error) {
+	if err := checkRes(res); err != nil {
+		return 0, err
+	}
+	if len(digits) < res {
+		return 0, ErrDigitDomain
+	}
+	var d32 [maxH3Res]int32
+	for i := range res {
+		d := digits[i]
+		if d < 0 || d > int(invalidDigit) {
+			return 0, ErrDigitDomain
+		}
+		d32[i] = int32(d)
+	}
+	var out h3Index
+	if errC := constructCell(int32(res), int32(baseCellNumber), d32[:res], &out); errC != eSuccess {
+		return 0, toErr(errC)
+	}
+	return out, nil
+}
+
+// IsValidIndex reports whether the raw 64-bit index is valid for any H3 mode
+// (cell, directed edge, or vertex).
+//
+// H3 C API: isValidIndex (added in H3 4.4.0).
+func IsValidIndex(raw uint64) bool { return isValidIndex(h3Index(raw)) }
+
 // Pentagons returns the 12 pentagonal cells at the given resolution.
 //
 // H3 C API: getPentagons.

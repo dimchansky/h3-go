@@ -8,6 +8,6 @@ func makeDirectChild(h h3Index, cellNumber int32) h3Index {
 	// Set resolution to childRes
 	h = setResolution(h, childRes)
 	// Set the digit at childRes
-	h = setIndexDigit(h, childRes, cellNumber)
+	h = h3SetIndexDigit(h, childRes, cellNumber)
 	return h
 }

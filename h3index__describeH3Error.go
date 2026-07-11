@@ -4,10 +4,10 @@ package h3
 // The string is statically allocated and should not be freed.
 // Ported from H3 C: h3Index.c::describeH3Error.
 func describeH3Error(err h3Error) string {
-	// C checks err >= 0 && err <= 15; h3Error is uint32 so >= 0 always holds.
-	if err <= 15 {
+	// err is always non-negative because it is an unsigned integer (C 4.4.0
+	// checks err < H3_ERROR_END).
+	if err < h3ErrorEnd {
 		return h3ErrorDescriptions[err]
-	} else {
-		return "Invalid error code"
 	}
+	return "Invalid error code"
 }

@@ -6,8 +6,8 @@ package h3
 func _h3Rotate60cw(h h3Index) h3Index {
 	res := getResolution(h)
 	for r := int32(1); r <= res; r++ {
-		oldDigit := getIndexDigit(h, r)
-		h = setIndexDigit(h, r, int32(_rotate60cw(direction(oldDigit))))
+		oldDigit := h3GetIndexDigit(h, r)
+		h = h3SetIndexDigit(h, r, int32(_rotate60cw(direction(oldDigit))))
 	}
 	return h
 }

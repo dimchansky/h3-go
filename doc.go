@@ -1,5 +1,5 @@
 // Package h3 is a pure-Go implementation of Uber's H3 hexagonal hierarchical
-// geospatial indexing system, behaviorally equivalent to H3 C v4.3.0.
+// geospatial indexing system, behaviorally equivalent to H3 C v4.4.0.
 //
 // The production library is safe Go only: no cgo and no unsafe. Behavioral
 // equivalence is enforced by an opt-in parity test suite (build tags
@@ -47,7 +47,7 @@
 // The implementation is a function-by-function port of the C library; every
 // public operation's doc comment carries an "H3 C API:" line naming its C
 // counterpart, and docs/c-api-inventory.csv maps the entire C API surface.
-// All 75 public functions of H3 C v4.3.0 are covered. Intentional behavior
+// All 78 public functions of H3 C v4.4.0 are covered. Intentional behavior
 // differences (Go-idiomatic hole pruning, validated parsing, ...) are
 // documented in docs/DEVIATIONS.md.
 package h3

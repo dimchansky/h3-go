@@ -45,7 +45,7 @@ func Test_h3index_describeH3Error_ParityWithC(t *testing.T) {
 
 func Test_h3index_describeH3Error_InvalidCodes_ParityWithC(t *testing.T) {
 	invalidCodes := []h3Error{
-		h3Error(16),  // Just above valid range
+		h3ErrorEnd,   // Just above valid range (20 as of H3 4.4.0)
 		h3Error(100), // Well above valid range
 		h3Error(255), // Edge case
 	}
@@ -68,8 +68,8 @@ func Test_h3index_describeH3Error_InvalidCodes_ParityWithC(t *testing.T) {
 
 func Test_h3index_describeH3Error_BoundaryValues_ParityWithC(t *testing.T) {
 	boundaryCases := []h3Error{
-		0,  // Minimum valid
-		15, // Maximum valid
+		0,              // Minimum valid
+		h3ErrorEnd - 1, // Maximum valid (19 as of H3 4.4.0)
 	}
 
 	for _, code := range boundaryCases {

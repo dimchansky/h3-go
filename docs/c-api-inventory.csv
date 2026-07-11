@@ -41,9 +41,12 @@ pentagonCount,int pentagonCount(void),h3index__pentagonCount.go,pentagonCount,fu
 getPentagons,"H3Error getPentagons(int res, H3Index *out)",h3index__getPentagons.go,getPentagons,"func getPentagons(res int32, out []h3Index) h3Error",true,attr: h3Index.c
 getResolution,int getResolution(H3Index h),h3index__getters.go,getResolution,func getResolution(h h3Index) int32,true,attr: h3Index.c
 getBaseCellNumber,int getBaseCellNumber(H3Index h),h3Index_getBaseCellNumber.go,getBaseCellNumber,func getBaseCellNumber(h h3Index) int32,true,attr: h3Index.c
+getIndexDigit,"H3Error getIndexDigit(H3Index h, int res, int *out)",h3index_getIndexDigit.go,getIndexDigit,"func getIndexDigit(h h3Index, res int32, out *int32) h3Error",true,attr: h3Index.c
+constructCell,"H3Error constructCell(int res, int baseCellNumber, const int *digits, H3Index *out)",h3index_constructCell.go,constructCell,"func constructCell(res int32, baseCellNumber int32, digits []int32, out *h3Index) h3Error",true,attr: h3Index.c
 stringToH3,"H3Error stringToH3(const char *str, H3Index *out)",h3index__stringToH3.go,stringToH3,"func stringToH3(s string) (h3Index, h3Error)",true,attr: h3Index.c
 h3ToString,"H3Error h3ToString(H3Index h, char *str, size_t sz)",h3index__h3ToString.go,h3ToString,"func h3ToString(h h3Index) (string, uint32)",true,attr: h3Index.c
 isValidCell,int isValidCell(H3Index h),h3index__isValidCell.go,isValidCell,func isValidCell(h h3Index) bool,true,attr: h3Index.c
+isValidIndex,int isValidIndex(H3Index h),h3index_isValidIndex.go,isValidIndex,func isValidIndex(h h3Index) bool,true,attr: h3Index.c
 cellToParent,"H3Error cellToParent(H3Index h, int parentRes, H3Index *parent)",h3index__cellToParent.go,cellToParent,"func cellToParent(h h3Index, parentRes int32) (h3Index, h3Error)",true,attr: h3Index.c
 cellToChildrenSize,"H3Error cellToChildrenSize(H3Index h, int childRes, int64_t *out)",h3index__cellToChildrenSize.go,cellToChildrenSize,"func cellToChildrenSize(h h3Index, childRes int32) (int64, h3Error)",true,attr: h3Index.c
 cellToChildren,"H3Error cellToChildren(H3Index h, int childRes, H3Index *children)",h3index__cellToChildren.go,cellToChildren,"func cellToChildren(h h3Index, childRes int32, children []h3Index) h3Error",true,attr: h3Index.c
@@ -177,15 +180,16 @@ makeDirectChild,(C-internal: h3Index.c),h3index__makeDirectChild.go,makeDirectCh
 setH3Index,(C-internal: h3Index.c),h3index__setH3Index.go,setH3Index,"func setH3Index(hp *h3Index, res int32, baseCell int32, initDigit int32)",false,kind: func
 validateChildPos,(C-internal: h3Index.c),h3index__validateChildPos.go,validateChildPos,"func validateChildPos(childPos int64, parent h3Index, childRes int32) h3Error",false,kind: func
 H3_GET_HIGH_BIT,(C-internal: h3Index.h),h3index__mode_highbit.go,getHighBit,func getHighBit(h h3Index) int32,false,kind: func
-H3_GET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,getIndexDigit,"func getIndexDigit(h h3Index, res int32) int32",false,kind: func
+H3_GET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,h3GetIndexDigit,"func h3GetIndexDigit(h h3Index, res int32) int32",false,kind: func
 H3_GET_MODE,(C-internal: h3Index.h),h3index__mode_highbit.go,getMode,func getMode(h h3Index) int32,false,kind: func
 H3_GET_RESERVED_BITS,(C-internal: h3Index.h),h3index__reservedBits.go,getReservedBits,func getReservedBits(h h3Index) int32,false,kind: func
 H3_SET_BASE_CELL,(C-internal: h3Index.h),h3index__getters.go,setBaseCell,"func setBaseCell(h h3Index, baseCell int32) h3Index",false,kind: func
 H3_SET_HIGH_BIT,(C-internal: h3Index.h),h3index__mode_highbit.go,setHighBit,"func setHighBit(h h3Index, v int32) h3Index",false,kind: func
-H3_SET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,setIndexDigit,"func setIndexDigit(h h3Index, res int32, digit int32) h3Index",false,kind: func
+H3_SET_INDEX_DIGIT,(C-internal: h3Index.h),h3index__indexDigit.go,h3SetIndexDigit,"func h3SetIndexDigit(h h3Index, res int32, digit int32) h3Index",false,kind: func
 H3_SET_MODE,(C-internal: h3Index.h),h3index__mode_highbit.go,setMode,"func setMode(h h3Index, v int32) h3Index",false,kind: func
 H3_SET_RESERVED_BITS,(C-internal: h3Index.h),h3index__reservedBits.go,setReservedBits,"func setReservedBits(h h3Index, v int32) h3Index",false,kind: func
 H3_SET_RESOLUTION,(C-internal: h3Index.h),h3index__getters.go,setResolution,"func setResolution(h h3Index, res int32) h3Index",false,kind: func
+H3_ERROR_END,(C-internal: h3api.h),h3api_constants.go,,h3ErrorEnd h3Error = 20,false,kind: other
 "H3_VERSION_MAJOR,",(C-internal: h3api.h),h3api_constants.go,,const (,false,kind: block
 _incrementResDigit,(C-internal: iterators.c),iterators__incrementResDigit.go,incrementResDigit,"func incrementResDigit(h *h3Index, res int32)",false,kind: func
 _iterInitParent,(C-internal: iterators.c),iterators__iterInitParent.go,iterInitParent,"func iterInitParent(h h3Index, childRes int32, iter *iterCellsChildren)",false,kind: func
@@ -257,8 +261,8 @@ pointInsideGeoLoop,(C-internal: polygon.c),polygon__pointInsideGeoLoop.go,pointI
 pointInsidePolygon,(C-internal: polygon.c),polygon__pointInsidePolygon.go,pointInsidePolygon,"func pointInsidePolygon(poly GeoPolygon, bboxes []bbox, coord *LatLng) bool",false,kind: func
 validatePolygonFlags,(C-internal: polygon.c),polygon__validatePolygonFlags.go,validatePolygonFlags,func validatePolygonFlags(flags uint32) h3Error,false,kind: func
 GENERIC_LOOP_ALGO(bboxFrom),(C-internal: polygonAlgos.h),linkedGeo__bboxFromLinkedGeoLoop.go,bboxFromLinkedGeoLoop,"func bboxFromLinkedGeoLoop(loop *linkedGeoLoop, bb *bbox)",false,kind: func
-GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoop,func isClockwiseGeoLoop(loop GeoLoop) bool,false,kind: func
 GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoop,func isClockwiseLinkedGeoLoop(loop *linkedGeoLoop) bool,false,kind: func
+GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoop,func isClockwiseGeoLoop(loop GeoLoop) bool,false,kind: func
 GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoopNormalized,"func isClockwiseGeoLoopNormalized(loop GeoLoop, isTransmeridian bool) bool",false,kind: func
 GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoopNormalized,"func isClockwiseLinkedGeoLoopNormalized(loop *linkedGeoLoop, isTransmeridian bool) bool",false,kind: func
 GENERIC_LOOP_ALGO(pointInside),(C-internal: polygonAlgos.h),linkedGeo__pointInsideLinkedGeoLoop.go,pointInsideLinkedGeoLoop,"func pointInsideLinkedGeoLoop(loop *linkedGeoLoop, bbox *bbox, coord *LatLng) bool",false,kind: func

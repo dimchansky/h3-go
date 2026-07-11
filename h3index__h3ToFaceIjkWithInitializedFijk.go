@@ -25,7 +25,7 @@ func _h3ToFaceIjkWithInitializedFijk(h h3Index, fijk *faceIJK) int32 {
 			_downAp7r(ijk)
 		}
 
-		_neighbor(ijk, direction(getIndexDigit(h, r)))
+		_neighbor(ijk, direction(h3GetIndexDigit(h, r)))
 	}
 
 	return possibleOverage

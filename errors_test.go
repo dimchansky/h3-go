@@ -29,6 +29,10 @@ func TestToErrMapping(t *testing.T) {
 		{eMemoryAlloc, ErrMemoryAlloc},
 		{eMemoryBounds, ErrMemoryBounds},
 		{eOptionInvalid, ErrOptionInvalid},
+		{eIndexInvalid, ErrIndexInvalid},
+		{eBaseCellDomain, ErrBaseCellDomain},
+		{eDigitDomain, ErrDigitDomain},
+		{eDeletedDigit, ErrDeletedDigit},
 	}
 	for _, c := range cases {
 		got := toErr(c.code)
@@ -47,8 +51,8 @@ func TestToErrMapping(t *testing.T) {
 	if got := toErr(h3Error(42)); !errors.Is(got, ErrFailed) {
 		t.Errorf("toErr(42) = %v, want ErrFailed", got)
 	}
-	if got := toErr(h3Error(16)); !errors.Is(got, ErrFailed) {
-		t.Errorf("toErr(16) = %v, want ErrFailed", got)
+	if got := toErr(h3ErrorEnd); !errors.Is(got, ErrFailed) {
+		t.Errorf("toErr(h3ErrorEnd) = %v, want ErrFailed", got)
 	}
 }
 
@@ -56,7 +60,7 @@ func TestSentinelMessages(t *testing.T) {
 	t.Parallel()
 
 	// Every sentinel carries the C describeH3Error text with an "h3: " prefix.
-	for code := h3Error(1); code <= 15; code++ {
+	for code := h3Error(1); code < h3ErrorEnd; code++ {
 		err := toErr(code)
 		if err == nil {
 			t.Fatalf("toErr(%d) = nil", code)
@@ -72,7 +76,7 @@ func TestSentinelsDistinct(t *testing.T) {
 	t.Parallel()
 
 	seen := map[error]h3Error{}
-	for code := h3Error(1); code <= 15; code++ {
+	for code := h3Error(1); code < h3ErrorEnd; code++ {
 		err := toErr(code)
 		if prev, dup := seen[err]; dup {
 			t.Errorf("codes %d and %d map to the same sentinel %v", prev, code, err)
@@ -129,8 +133,8 @@ func TestCuratedConstants(t *testing.T) {
 		t.Errorf("MaxCellBoundaryVerts = %d, want 10", MaxCellBoundaryVerts)
 	}
 	v := [3]int{VersionMajor, VersionMinor, VersionPatch}
-	if v != [3]int{4, 3, 0} {
-		t.Errorf("Version = %v, want [4 3 0]", v)
+	if v != [3]int{4, 4, 0} {
+		t.Errorf("Version = %v, want [4 4 0]", v)
 	}
 
 	// The error message text must never look like a Go-style wrapped chain.

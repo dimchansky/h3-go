@@ -42,7 +42,7 @@ func TestGetBaseCellNumber_parity(t *testing.T) {
 					if randomDigit == 7 || (_isBaseCellPentagon(baseCell) && randomDigit == 1 && digit == 1) {
 						randomDigit = 0
 					}
-					h = setIndexDigitC(h, digit, randomDigit)
+					h = h3SetIndexDigitC(h, digit, randomDigit)
 				}
 			}
 

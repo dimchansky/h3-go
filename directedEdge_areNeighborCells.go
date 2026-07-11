@@ -38,8 +38,8 @@ func areNeighborCells(origin, destination h3Index) (bool, h3Error) {
 			return false, err2
 		}
 		if originParent == destinationParent {
-			originResDigit := direction(getIndexDigit(origin, parentRes+1))
-			destinationResDigit := direction(getIndexDigit(destination, parentRes+1))
+			originResDigit := direction(h3GetIndexDigit(origin, parentRes+1))
+			destinationResDigit := direction(h3GetIndexDigit(destination, parentRes+1))
 			if originResDigit == centerDigit ||
 				destinationResDigit == centerDigit {
 				return true, eSuccess

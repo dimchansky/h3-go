@@ -1,12 +1,12 @@
 # h3-go — pure Go port of Uber H3
 
 A **pure-Go** implementation of [Uber's H3](https://github.com/uber/h3) hexagonal
-hierarchical geospatial indexing system, behaviorally equivalent to **H3 C v4.3.0**.
+hierarchical geospatial indexing system, behaviorally equivalent to **H3 C v4.4.0**.
 No cgo, no external dependencies, and the production library is **safe Go only**
 (no `unsafe` — enforced in CI).
 
-All **75/75** public functions of H3 C 4.3.0 are covered: ported
-function-by-function, validated against the original C objects by a 224-file cgo
+All **78/78** public functions of H3 C 4.4.0 are covered: ported
+function-by-function, validated against the original C objects by a 227-file cgo
 parity suite, and exposed through an idiomatic, strongly typed Go API.
 
 ```go

@@ -29,22 +29,22 @@ func childPosToCell(childPos int64, parent h3Index, childRes int32) (h3Index, h3
 			if inPent {
 				pentWidth := 1 + (5*(resWidth-1))/6
 				if idx < pentWidth {
-					child = setIndexDigit(child, parentRes+res, 0)
+					child = h3SetIndexDigit(child, parentRes+res, 0)
 				} else {
 					idx -= pentWidth
 					inPent = false
-					child = setIndexDigit(child, parentRes+res, int32((idx/resWidth)+2))
+					child = h3SetIndexDigit(child, parentRes+res, int32((idx/resWidth)+2))
 					idx %= resWidth
 				}
 			} else {
-				child = setIndexDigit(child, parentRes+res, int32(idx/resWidth))
+				child = h3SetIndexDigit(child, parentRes+res, int32(idx/resWidth))
 				idx %= resWidth
 			}
 		}
 	} else {
 		for res := int32(1); res <= resOffset; res++ {
 			resWidth := _ipow(7, int64(resOffset-res))
-			child = setIndexDigit(child, parentRes+res, int32(idx/resWidth))
+			child = h3SetIndexDigit(child, parentRes+res, int32(idx/resWidth))
 			idx %= resWidth
 		}
 	}

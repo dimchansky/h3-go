@@ -179,16 +179,16 @@ func nextCell(cell h3Index) h3Index {
 		// and we're only moving up one level
 		parent := cell
 		parent = setResolution(parent, res-1)
-		parent = setIndexDigit(parent, res, int32(h3DigitMask))
+		parent = h3SetIndexDigit(parent, res, int32(h3DigitMask))
 
 		// If not the last sibling of parent, return next sibling
-		digit := direction(getIndexDigit(cell, res))
+		digit := direction(h3GetIndexDigit(cell, res))
 		if digit < invalidDigit-1 {
 			nextDigit := digit + 1
 			if isPentagon(parent) && digit == centerDigit {
 				nextDigit = digit + 2 // Skip missing pentagon child
 			}
-			cell = setIndexDigit(cell, res, int32(nextDigit))
+			cell = h3SetIndexDigit(cell, res, int32(nextDigit))
 			return cell
 		}
 		// Move up to the parent for the next loop iteration

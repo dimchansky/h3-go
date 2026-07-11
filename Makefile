@@ -124,7 +124,7 @@ $(SMRCPTR):
 #   make test-c2go TIMEOUT=30s                  # Run all tests with 30s timeout
 #   make test-c2go COVERAGE=1                   # Run tests with coverage report
 #   make test-c2go COVERAGE=1 COVERPROFILE=coverage-c2go.out  # Save to specific file
-H3VER ?= 4.3.0
+H3VER ?= 4.4.0
 TEST ?=
 VERBOSE ?=
 TIMEOUT ?= 30s

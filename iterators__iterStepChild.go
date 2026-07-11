@@ -20,7 +20,7 @@ func iterStepChild(it *iterCellsChildren) {
 			return
 		}
 		// pentagonSkippedDigit == 1
-		if i == it.SkipDigit && getIndexDigit(it.H, i) == int32(pentagonSkippedDigit) {
+		if i == it.SkipDigit && h3GetIndexDigit(it.H, i) == int32(pentagonSkippedDigit) {
 			// Then we are iterating through the children of a pentagon cell.
 			// All children of a pentagon have the property that the first
 			// nonzero digit between the parent and child resolutions is
@@ -32,7 +32,7 @@ func iterStepChild(it *iterCellsChildren) {
 			return
 		}
 		// invalidDigit == 7
-		if getIndexDigit(it.H, i) == int32(invalidDigit) {
+		if h3GetIndexDigit(it.H, i) == int32(invalidDigit) {
 			// We have exhausted all the children for the current digit at
 			// resolution i. Call incrementResDigit which will wrap the digit
 			// from 7 to 0 and carry to the next resolution (i-1).

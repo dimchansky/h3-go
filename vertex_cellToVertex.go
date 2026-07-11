@@ -27,7 +27,7 @@ func cellToVertex(cell h3Index, vertexNum int32, out *h3Index) h3Error {
 
 	// If the cell is the center child of its parent, it will always have
 	// the lowest index of any neighbor, so we can skip determining the owner
-	if res == 0 || getIndexDigit(cell, res) != int32(centerDigit) {
+	if res == 0 || h3GetIndexDigit(cell, res) != int32(centerDigit) {
 		// Get the left neighbor of the vertex, with its rotations
 		left := directionForVertexNum(cell, vertexNum)
 		if left == invalidDigit {
@@ -45,7 +45,7 @@ func cellToVertex(cell h3Index, vertexNum int32, out *h3Index) h3Error {
 		}
 
 		// As above, skip the right neighbor if the left is known lowest
-		if res == 0 || getIndexDigit(leftNeighbor, res) != int32(centerDigit) {
+		if res == 0 || h3GetIndexDigit(leftNeighbor, res) != int32(centerDigit) {
 			// Get the right neighbor of the vertex, with its rotations
 			// Note that vertex - 1 is the right side, as vertex numbers are CCW
 			right := directionForVertexNum(cell, (vertexNum-1+cellNumVerts)%cellNumVerts)

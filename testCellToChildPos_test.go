@@ -175,7 +175,7 @@ func Test_cellToChildPos_invalid_digit(t *testing.T) {
 
 	// random res 8 cell
 	child := h3Index(0x88283080ddfffff)
-	child = setIndexDigit(child, 6, int32(invalidDigit))
+	child = h3SetIndexDigit(child, 6, int32(invalidDigit))
 
 	_, err := cellToChildPos(child, 0)
 	if err != eCellInvalid {
@@ -188,7 +188,7 @@ func Test_cellToChildPos_invalid_pentagon_digit(t *testing.T) {
 
 	// Res 7 hexagon child of a pentagon
 	child := h3Index(0x870800006ffffff)
-	child = setIndexDigit(child, 7, int32(invalidDigit))
+	child = h3SetIndexDigit(child, 7, int32(invalidDigit))
 
 	_, err := cellToChildPos(child, 0)
 	if err != eCellInvalid {

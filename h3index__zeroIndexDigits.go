@@ -13,7 +13,7 @@ func _zeroIndexDigits(h h3Index, start, end int32) h3Index {
 		return h
 	}
 	for r := start; r <= end; r++ {
-		h = setIndexDigit(h, r, 0)
+		h = h3SetIndexDigit(h, r, 0)
 	}
 	return h
 }

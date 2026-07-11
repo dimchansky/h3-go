@@ -80,7 +80,7 @@ var isBaseCellPentagonArr = [128]bool{
 
 // h3ErrorDescriptions contains error message strings for each h3Error code.
 // Mirrored from H3 C: h3Index.c::H3ErrorDescriptions.
-var h3ErrorDescriptions = [16]string{
+var h3ErrorDescriptions = [h3ErrorEnd]string{
 	/* eSuccess */ "Success",
 	/* eFailed */ "The operation failed but a more specific error is not available",
 	/* eDomain */ "Argument was outside of acceptable range",
@@ -97,4 +97,8 @@ var h3ErrorDescriptions = [16]string{
 	/* eMemoryAlloc */ "Memory allocation failed",
 	/* eMemoryBounds */ "Bounds of provided memory were insufficient",
 	/* eOptionInvalid */ "Mode or flags argument was not valid",
+	/* eIndexInvalid */ "Index argument was not valid",
+	/* eBaseCellDomain */ "Base cell number was outside of acceptable range",
+	/* eDigitDomain */ "Child digits invalid",
+	/* eDeletedDigit */ "Deleted subsequence indicates invalid index",
 }

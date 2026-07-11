@@ -124,8 +124,8 @@ func TestAreNeighborCells_invalid(t *testing.T) {
 	dest := origin
 
 	// Test 1: Invalid digit in origin (invalidDigit = 7)
-	origin = setIndexDigit(origin, 5, int32(invalidDigit))
-	dest = setIndexDigit(dest, 5, int32(jkAxesDigit))
+	origin = h3SetIndexDigit(origin, 5, int32(invalidDigit))
+	dest = h3SetIndexDigit(dest, 5, int32(jkAxesDigit))
 
 	// Debug info
 	t.Logf("Test 1 - Invalid digit origin:")
@@ -143,8 +143,8 @@ func TestAreNeighborCells_invalid(t *testing.T) {
 	// Test 2: Invalid k subsequence - origin with kAxesDigit, dest with ikAxesDigit
 	setH3Index(&origin, 5, 4, int32(centerDigit))
 	dest = origin
-	origin = setIndexDigit(origin, 5, int32(kAxesDigit))
-	dest = setIndexDigit(dest, 5, int32(ikAxesDigit))
+	origin = h3SetIndexDigit(origin, 5, int32(kAxesDigit))
+	dest = h3SetIndexDigit(dest, 5, int32(ikAxesDigit))
 
 	t.Logf("Test 2 - Invalid k subsequence (K->IK):")
 	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
@@ -158,8 +158,8 @@ func TestAreNeighborCells_invalid(t *testing.T) {
 	// Test 3: Invalid k subsequence - origin with ikAxesDigit, dest with kAxesDigit
 	setH3Index(&origin, 5, 4, int32(centerDigit))
 	dest = origin
-	origin = setIndexDigit(origin, 5, int32(ikAxesDigit))
-	dest = setIndexDigit(dest, 5, int32(kAxesDigit))
+	origin = h3SetIndexDigit(origin, 5, int32(ikAxesDigit))
+	dest = h3SetIndexDigit(dest, 5, int32(kAxesDigit))
 
 	t.Logf("Test 3 - Invalid k subsequence (IK->K):")
 	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
@@ -182,7 +182,7 @@ func Test_debugIsValidCell(t *testing.T) {
 	setH3Index(&origin, 5, 0, int32(centerDigit))
 
 	// Set invalid digit (invalidDigit = 7) at resolution 5
-	origin = setIndexDigit(origin, 5, int32(invalidDigit))
+	origin = h3SetIndexDigit(origin, 5, int32(invalidDigit))
 
 	t.Logf("Debug isValidCell for cell: %x", origin)
 	t.Logf("  Mode: %d", getMode(origin))
@@ -202,7 +202,7 @@ func Test_debugIsValidCell(t *testing.T) {
 	res := getResolution(origin)
 	t.Logf("  Digits from 1 to %d:", res)
 	for r := int32(1); r <= res; r++ {
-		digit := getIndexDigit(origin, r)
+		digit := h3GetIndexDigit(origin, r)
 		t.Logf("    Digit at res %d: %d", r, digit)
 	}
 }

@@ -49,7 +49,7 @@ func _faceIjkToH3(fijk *faceIJK, res int32) h3Index {
 		_ijkSub(&lastIJK, &lastCenter, &diff)
 		_ijkNormalize(&diff)
 
-		h = setIndexDigit(h, r+1, int32(_unitIjkToDigit(&diff)))
+		h = h3SetIndexDigit(h, r+1, int32(_unitIjkToDigit(&diff)))
 	}
 
 	// fijkBC should now hold the IJK of the base cell in the

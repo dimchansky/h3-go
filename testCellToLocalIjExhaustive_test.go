@@ -149,14 +149,14 @@ func h3ToLocalIj_coordinates_assertions(t *testing.T, h3 h3Index) {
 			t.Errorf("res 0 cell at 0,0,0 failed for %#016x: got ijk=%+v", h3, ijk)
 		}
 	case 1:
-		expected := unitVecs[getIndexDigit(h3, 1)]
+		expected := unitVecs[h3GetIndexDigit(h3, 1)]
 		if !_ijkMatches(&ijk, &expected) {
 			t.Errorf("res 1 cell at expected coordinates failed for %#016x: got ijk=%+v, expected=%+v", h3, ijk, expected)
 		}
 	case 2:
-		expected := unitVecs[getIndexDigit(h3, 1)]
+		expected := unitVecs[h3GetIndexDigit(h3, 1)]
 		_downAp7r(&expected)
-		_neighbor(&expected, direction(getIndexDigit(h3, 2)))
+		_neighbor(&expected, direction(h3GetIndexDigit(h3, 2)))
 		if !_ijkMatches(&ijk, &expected) {
 			t.Errorf("res 2 cell at expected coordinates failed for %#016x: got ijk=%+v, expected=%+v", h3, ijk, expected)
 		}
@@ -272,11 +272,11 @@ func h3ToLocalIj_invalid_assertions(t *testing.T, h3 h3Index) {
 				}
 				// Valgrind / ASAN / UBSAN are used to test these assertions
 				h3Invalid := h3
-				h3Invalid = setIndexDigit(h3Invalid, 0, int32(dir))
+				h3Invalid = h3SetIndexDigit(h3Invalid, 0, int32(dir))
 				var ij2 CoordIJ
 				cellToLocalIj(h3Invalid, neighbors[i], 0, &ij2) // Should not crash
 				neighborInvalid := neighbors[i]
-				neighborInvalid = setIndexDigit(neighborInvalid, 0, int32(dir))
+				neighborInvalid = h3SetIndexDigit(neighborInvalid, 0, int32(dir))
 				cellToLocalIj(h3, neighborInvalid, 0, &ij2) // Should not crash
 				var out h3Index
 				localIjToCell(h3Invalid, &ij, 0, &out) // Should not crash

@@ -54,16 +54,16 @@ func h3NeighborRotations(origin h3Index, dir direction, rotations *int32, out *h
 
 			break
 		} else {
-			oldDigit := direction(getIndexDigit(current, r+1))
+			oldDigit := direction(h3GetIndexDigit(current, r+1))
 			var nextDir direction
 			if oldDigit == invalidDigit {
 				// Only possible on invalid input
 				return eCellInvalid
 			} else if isResolutionClassIII(r + 1) {
-				current = setIndexDigit(current, r+1, int32(newDigitII[oldDigit][dir]))
+				current = h3SetIndexDigit(current, r+1, int32(newDigitII[oldDigit][dir]))
 				nextDir = newAdjustmentII[oldDigit][dir]
 			} else {
-				current = setIndexDigit(current, r+1, int32(newDigitIII[oldDigit][dir]))
+				current = h3SetIndexDigit(current, r+1, int32(newDigitIII[oldDigit][dir]))
 				nextDir = newAdjustmentIII[oldDigit][dir]
 			}
 

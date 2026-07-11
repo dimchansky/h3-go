@@ -21,6 +21,14 @@ const (
 	eMemoryAlloc      h3Error = 13
 	eMemoryBounds     h3Error = 14
 	eOptionInvalid    h3Error = 15
+	eIndexInvalid     h3Error = 16
+	eBaseCellDomain   h3Error = 17
+	eDigitDomain      h3Error = 18
+	eDeletedDigit     h3Error = 19
+
+	// h3ErrorEnd is a sentinel: one past the last valid code.
+	// Ported from H3 C: h3api.h::H3_ERROR_END.
+	h3ErrorEnd h3Error = 20
 )
 
 // H3 version constants.
@@ -28,6 +36,6 @@ const (
 // Ported from H3 C: h3api.h::H3_VERSION_MAJOR, H3_VERSION_MINOR, H3_VERSION_PATCH.
 const (
 	h3VersionMajor = 4
-	h3VersionMinor = 3
+	h3VersionMinor = 4
 	h3VersionPatch = 0
 )

@@ -25,17 +25,17 @@ func Test_h3index_bits_ParityWithC(t *testing.T) {
 	// Index digit get/set at several resolutions
 	for _, h := range hs {
 		for res := int32(0); res <= 15; res++ {
-			if getIndexDigit(h, res) != getIndexDigitC(h, res) {
-				t.Fatalf("getIndexDigit mismatch h=%x res=%d", uint64(h), res)
+			if h3GetIndexDigit(h, res) != h3GetIndexDigitC(h, res) {
+				t.Fatalf("h3GetIndexDigit mismatch h=%x res=%d", uint64(h), res)
 			}
 		}
 		// Set to each possible digit and verify parity
 		for res := int32(1); res <= 15; res++ {
 			for d := int32(0); d <= 7; d++ {
-				goH := setIndexDigit(h, res, d)
-				cH := setIndexDigitC(h, res, d)
+				goH := h3SetIndexDigit(h, res, d)
+				cH := h3SetIndexDigitC(h, res, d)
 				if goH != cH {
-					t.Fatalf("setIndexDigit mismatch h=%x res=%d d=%d: go=%x c=%x", uint64(h), res, d, uint64(goH), uint64(cH))
+					t.Fatalf("h3SetIndexDigit mismatch h=%x res=%d d=%d: go=%x c=%x", uint64(h), res, d, uint64(goH), uint64(cH))
 				}
 			}
 		}

@@ -47,11 +47,23 @@ var (
 	// ErrOptionInvalid corresponds to eOptionInvalid: mode or flags
 	// argument was not valid.
 	ErrOptionInvalid = errors.New("h3: " + describeH3Error(eOptionInvalid))
+	// ErrIndexInvalid corresponds to eIndexInvalid: index argument was not
+	// valid (H3 C 4.4.0).
+	ErrIndexInvalid = errors.New("h3: " + describeH3Error(eIndexInvalid))
+	// ErrBaseCellDomain corresponds to eBaseCellDomain: base cell number was
+	// outside of acceptable range (H3 C 4.4.0).
+	ErrBaseCellDomain = errors.New("h3: " + describeH3Error(eBaseCellDomain))
+	// ErrDigitDomain corresponds to eDigitDomain: child digits invalid
+	// (H3 C 4.4.0).
+	ErrDigitDomain = errors.New("h3: " + describeH3Error(eDigitDomain))
+	// ErrDeletedDigit corresponds to eDeletedDigit: deleted subsequence
+	// indicates invalid index (H3 C 4.4.0).
+	ErrDeletedDigit = errors.New("h3: " + describeH3Error(eDeletedDigit))
 )
 
 // errTable maps H3 C error codes to the public sentinel errors. Index 0
 // (eSuccess) is nil.
-var errTable = [16]error{
+var errTable = [h3ErrorEnd]error{
 	eSuccess:          nil,
 	eFailed:           ErrFailed,
 	eDomain:           ErrDomain,
@@ -68,6 +80,10 @@ var errTable = [16]error{
 	eMemoryAlloc:      ErrMemoryAlloc,
 	eMemoryBounds:     ErrMemoryBounds,
 	eOptionInvalid:    ErrOptionInvalid,
+	eIndexInvalid:     ErrIndexInvalid,
+	eBaseCellDomain:   ErrBaseCellDomain,
+	eDigitDomain:      ErrDigitDomain,
+	eDeletedDigit:     ErrDeletedDigit,
 }
 
 // toErr converts an internal H3 C error code to the public sentinel error.

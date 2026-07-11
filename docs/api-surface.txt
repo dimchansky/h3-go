@@ -24,6 +24,7 @@ func CellToLocalIJ
 func CellsAtRes
 func CellsToMultiPolygon
 func CompactCells
+func ConstructCell
 func Deg
 func GreatCircleDistanceKm
 func GreatCircleDistanceM
@@ -33,6 +34,7 @@ func HexagonAreaAvgKm2
 func HexagonAreaAvgM2
 func HexagonEdgeLengthAvgKm
 func HexagonEdgeLengthAvgM
+func IsValidIndex
 func LatLngDegs
 func LatLngToCell
 func LocalIJToCell
@@ -100,6 +102,7 @@ method (Cell) GridPathLen
 method (Cell) GridRing
 method (Cell) GridRingUnsafe
 method (Cell) IcosahedronFaces
+method (Cell) IndexDigit
 method (Cell) IsNeighbor
 method (Cell) IsPentagon
 method (Cell) IsResClassIII
@@ -139,11 +142,15 @@ type GeoLoop
 type GeoPolygon
 type LatLng
 type Vertex
+var ErrBaseCellDomain
 var ErrCellInvalid
+var ErrDeletedDigit
+var ErrDigitDomain
 var ErrDirectedEdgeInvalid
 var ErrDomain
 var ErrDuplicateInput
 var ErrFailed
+var ErrIndexInvalid
 var ErrLatLngDomain
 var ErrMemoryAlloc
 var ErrMemoryBounds

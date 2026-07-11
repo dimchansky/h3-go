@@ -37,6 +37,33 @@ import (
 	"unsafe"
 )
 
+// getIndexDigitC calls the original C implementation (H3 4.4.0+).
+func getIndexDigitC(h h3Index, res int32) (int32, h3Error) {
+	var out C.int
+	err := C.getIndexDigit(C.H3Index(h), C.int(res), &out)
+	return int32(out), h3Error(err)
+}
+
+// constructCellC calls the original C implementation (H3 4.4.0+).
+func constructCellC(res int32, baseCellNumber int32, digits []int32) (h3Index, h3Error) {
+	var out C.H3Index
+	var cDigits *C.int
+	if len(digits) > 0 {
+		buf := make([]C.int, len(digits))
+		for i, d := range digits {
+			buf[i] = C.int(d)
+		}
+		cDigits = &buf[0]
+	}
+	err := C.constructCell(C.int(res), C.int(baseCellNumber), cDigits, &out)
+	return h3Index(out), h3Error(err)
+}
+
+// isValidIndexC calls the original C implementation (H3 4.4.0+).
+func isValidIndexC(h h3Index) bool {
+	return C.isValidIndex(C.H3Index(h)) != 0
+}
+
 // getResolutionC calls the original C implementation.
 func getResolutionC(h h3Index) int32 { return int32(C.getResolution(C.H3Index(h))) }
 
@@ -72,13 +99,13 @@ func setReservedBitsC(h h3Index, v int32) h3Index {
 	return h3Index(C.h3_set_reserved_bits_c(C.H3Index(h), C.int(v)))
 }
 
-// getIndexDigitC exposes H3_GET_INDEX_DIGIT.
-func getIndexDigitC(h h3Index, res int32) int32 {
+// h3GetIndexDigitC exposes H3_GET_INDEX_DIGIT.
+func h3GetIndexDigitC(h h3Index, res int32) int32 {
 	return int32(C.h3_get_index_digit_c(C.H3Index(h), C.int(res)))
 }
 
-// setIndexDigitC exposes H3_SET_INDEX_DIGIT.
-func setIndexDigitC(h h3Index, res int32, digit int32) h3Index {
+// h3SetIndexDigitC exposes H3_SET_INDEX_DIGIT.
+func h3SetIndexDigitC(h h3Index, res int32, digit int32) h3Index {
 	return h3Index(C.h3_set_index_digit_c(C.H3Index(h), C.int(res), C.int(digit)))
 }
 

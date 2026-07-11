@@ -177,7 +177,7 @@ func TestMoreDeletedSubsequenceInvalid(t *testing.T) {
 			}
 
 			for d := int32(0); d <= 6; d++ {
-				hTest := setIndexDigit(h, res, d)
+				hTest := h3SetIndexDigit(h, res, d)
 				if d == 1 {
 					if isValidCell(hTest) {
 						t.Error("fail on deleted subsequence")
@@ -300,14 +300,14 @@ func TestSetH3Index(t *testing.T) {
 	}
 
 	for i := int32(1); i <= 5; i++ {
-		if getIndexDigit(h, i) != 1 {
-			t.Errorf("digit %d: got %d, expected 1", i, getIndexDigit(h, i))
+		if h3GetIndexDigit(h, i) != 1 {
+			t.Errorf("digit %d: got %d, expected 1", i, h3GetIndexDigit(h, i))
 		}
 	}
 
 	for i := int32(6); i <= maxH3Res; i++ {
-		if getIndexDigit(h, i) != int32(invalidDigit) {
-			t.Errorf("blanked digit %d: got %d, expected %d", i, getIndexDigit(h, i), invalidDigit)
+		if h3GetIndexDigit(h, i) != int32(invalidDigit) {
+			t.Errorf("blanked digit %d: got %d, expected %d", i, h3GetIndexDigit(h, i), invalidDigit)
 		}
 	}
 

@@ -5,7 +5,7 @@ package h3
 func _h3LeadingNonZeroDigit(h h3Index) int32 {
 	res := getResolution(h)
 	for r := int32(1); r <= res; r++ {
-		d := getIndexDigit(h, r)
+		d := h3GetIndexDigit(h, r)
 		if d != 0 {
 			return d
 		}

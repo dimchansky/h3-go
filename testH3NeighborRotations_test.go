@@ -100,7 +100,7 @@ func doCell(t *testing.T, h h3Index, maxK int32, testOutput *TestOutput) {
 // recursiveH3IndexToGeo recursively generates all valid H3 indexes at a given resolution.
 func recursiveH3IndexToGeo(t *testing.T, h h3Index, res int32, maxK int32, testOutput *TestOutput) {
 	for d := int32(0); d < 7; d++ {
-		current := setIndexDigit(h, res, d)
+		current := h3SetIndexDigit(h, res, d)
 
 		// skip the pentagonal deleted subsequence
 		if _isBaseCellPentagon(int32(getBaseCell(current))) &&

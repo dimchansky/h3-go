@@ -11,11 +11,11 @@ func _h3RotatePent60ccw(h h3Index) h3Index {
 
 	for r := int32(1); r <= res; r++ {
 		// rotate this digit
-		oldDigit := getIndexDigit(h, r)
-		h = setIndexDigit(h, r, int32(_rotate60ccw(direction(oldDigit))))
+		oldDigit := h3GetIndexDigit(h, r)
+		h = h3SetIndexDigit(h, r, int32(_rotate60ccw(direction(oldDigit))))
 
 		// look for the first non-zero digit so we can adjust for deleted k-axes sequence if necessary
-		if !foundFirstNonZeroDigit && getIndexDigit(h, r) != 0 {
+		if !foundFirstNonZeroDigit && h3GetIndexDigit(h, r) != 0 {
 			foundFirstNonZeroDigit = true
 
 			// adjust for deleted k-axes sequence

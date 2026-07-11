@@ -69,7 +69,7 @@ func localIjkToCell(origin h3Index, ijk *coordIJK, out *h3Index) h3Error {
 		_ijkSub(&lastIJK, &lastCenter, &diff)
 		_ijkNormalize(&diff)
 
-		*out = setIndexDigit(*out, r+1, int32(_unitIjkToDigit(&diff)))
+		*out = h3SetIndexDigit(*out, r+1, int32(_unitIjkToDigit(&diff)))
 	}
 
 	// ijkCopy should now hold the IJK of the base cell in the
