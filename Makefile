@@ -1,4 +1,4 @@
-.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff
+.PHONY: test test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -44,6 +44,17 @@ api-inventory:
 # Requires testref sources (make -C testref h3-source downloads them).
 check-api:
 	@go run ./tools/apiinventory -h3ver $(H3VER) -verify
+
+# Ecosystem-level completeness gate: named test cases, input-driven programs,
+# CLI registrations, fuzzers, benchmarks, filters, helpers, fixtures, and
+# build definitions must have reviewed dispositions. Requires testref sources.
+check-test-inventory:
+	@go run ./tools/testinventory -h3ver $(H3VER) -verify
+
+# Pure-Go ports of the three large input-driven upstream executables.
+test-upstream-fixtures:
+	@H3_UPSTREAM_FIXTURE_ROOT=testref/h3-$(H3VER)/tests/inputfiles \
+		CGO_ENABLED=0 go test -run '^TestUpstream.*Fixtures$$' .
 
 # Symbol-level diff between two upstream H3 trees, mapped to the Go port.
 # Usage: make upstream-diff FROM=4.3.0 TO=4.4.0

@@ -13,7 +13,7 @@
 // Output: a Markdown report (stdout) with three sections — library symbol
 // changes (functions, tables, macros, types) each mapped to its Go file,
 // public-header (h3api.h.in) symbol changes, and upstream test-file changes
-// cross-checked against docs/ported-c-tests.md. Symbols whose Go mapping is
+// cross-checked against docs/upstream-test-inventory.csv. Symbols whose Go mapping is
 // missing or ambiguous are flagged for human review; the tool never edits
 // Go code.
 package main
@@ -310,7 +310,7 @@ func main() {
 	from := flag.String("from", "", "path to the old upstream tree (e.g. testref/h3-4.3.0)")
 	to := flag.String("to", "", "path to the new upstream tree (e.g. testref/h3-4.4.0)")
 	repo := flag.String("repo", ".", "repository root containing the Go port")
-	portedTests := flag.String("ported-tests", "docs/ported-c-tests.md", "list of ported upstream test files")
+	portedTests := flag.String("ported-tests", "docs/upstream-test-inventory.csv", "reviewed upstream test inventory")
 	strict := flag.Bool("strict", false, "exit 1 if any changed lib symbol lacks a Go mapping")
 	flag.Parse()
 	if *from == "" || *to == "" {
