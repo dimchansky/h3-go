@@ -44,7 +44,15 @@ expected to match C behavior exactly and is enforced by the cgo parity suite.
 8. **Resolution/k bounds are pre-checked** in public wrappers before int32
    narrowing, so absurd values (e.g. `res = 2^40+9`) cannot wrap into valid
    range. C relies on callers passing `int`.
-9. **Iterators are range-over-func.** The C iterator structs
+9. **`gridRing` with negative k is memory-safe.** C `gridRing` reaches
+   `memset(out, 0, 6*k*sizeof(H3Index))` after `gridRingUnsafe` rejects
+   k < 0 — a negative size wrapped to a huge `size_t`, i.e. undefined
+   behavior (it happens to be a no-op with macOS's end-pointer memset and a
+   segfault with glibc's). The Go port zeroes by ranging over the caller's
+   slice, so invalid k simply returns the domain error. Worth reporting
+   upstream. The parity test therefore checks the Go behavior only for this
+   input (C-UB inputs are out of parity scope by policy).
+10. **Iterators are range-over-func.** The C iterator structs
    (`IterCellsChildren`, ...) are internal; `Cell.ChildrenSeq`, `CellsAtRes`,
    and `PolygonToCellsExperimentalSeq` expose `iter.Seq[Cell]`. Input
    validation happens before the sequence is returned; invalid input yields
@@ -52,7 +60,7 @@ expected to match C behavior exactly and is enforced by the cgo parity suite.
 
 ## Naming
 
-10. Ported implementation identifiers keep C names, unexported (mechanical
+11. Ported implementation identifiers keep C names, unexported (mechanical
     case change only; see tools/unexport). Attribution comments
     (`Ported from H3 C: <file>::<name>`) are never rewritten. Public
     wrappers carry `H3 C API: <name>` doc lines; `make check-api` enforces
