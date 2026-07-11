@@ -281,26 +281,32 @@ func Test_invalid_negativeIj(t *testing.T) {
 func Test_localIjToCell_overflow_i(t *testing.T) {
 	t.Parallel()
 
-	var origin h3Index
-	setH3Index(&origin, 2, 2, int32(centerDigit))
-	ij := CoordIJ{I: math.MinInt32, J: math.MaxInt32}
-	var out h3Index
-	err := localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("High magnitude I and J components fail")
+	// 4.4.0 upstream loops over every resolution here.
+	for res := int32(0); res <= maxH3Res; res++ {
+		var origin h3Index
+		setH3Index(&origin, res, 2, int32(centerDigit))
+		ij := CoordIJ{I: math.MinInt32, J: math.MaxInt32}
+		var out h3Index
+		err := localIjToCell(origin, &ij, 0, &out)
+		if err == eSuccess {
+			t.Errorf("High magnitude I and J components fail (res %d)", res)
+		}
 	}
 }
 
 func Test_localIjToCell_overflow_j(t *testing.T) {
 	t.Parallel()
 
-	var origin h3Index
-	setH3Index(&origin, 2, 2, int32(centerDigit))
-	ij := CoordIJ{I: math.MaxInt32, J: math.MinInt32}
-	var out h3Index
-	err := localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("High magnitude J and I components fail")
+	// 4.4.0 upstream loops over every resolution here.
+	for res := int32(0); res <= maxH3Res; res++ {
+		var origin h3Index
+		setH3Index(&origin, res, 2, int32(centerDigit))
+		ij := CoordIJ{I: math.MaxInt32, J: math.MinInt32}
+		var out h3Index
+		err := localIjToCell(origin, &ij, 0, &out)
+		if err == eSuccess {
+			t.Errorf("High magnitude J and I components fail (res %d)", res)
+		}
 	}
 }
 

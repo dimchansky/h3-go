@@ -22,6 +22,7 @@ Tests ported:
 - testCellToLocalIjInternal.c
 - testCellToParent.c
 - testCompactCells.c
+- testConstructCell.c
 - testCoordIjInternal.c
 - testCoordIjkInternal.c
 - testDescribeH3Error.c
@@ -45,6 +46,7 @@ Tests ported:
 - testH3Index.c
 - testH3IndexInternal.c
 - testH3IteratorsInternal.c
+- testIndexDigits.c
 - testH3NeighborRotations.c
 - testH3SetToVertexGraphInternal.c
 - testLatLng.c

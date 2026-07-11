@@ -112,4 +112,8 @@ func TestIsValidIndex(t *testing.T) {
 	if IsValidIndex(0) || IsValidIndex(^uint64(0)) {
 		t.Error("zero/all-ones must not be valid indexes")
 	}
+	// Corrupted index (high bit set), from upstream testH3Index.c isValidIndex.
+	if IsValidIndex(uint64(sfCellRes9) | 1<<63) {
+		t.Error("high-bit-corrupted index must not be valid")
+	}
 }

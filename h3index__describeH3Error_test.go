@@ -34,3 +34,29 @@ func TestDescribeH3Error_InvalidH3Error(t *testing.T) {
 		t.Errorf("describeH3Error(%v) = %q, want %q", err, result, expected)
 	}
 }
+
+// The following tests are ported from H3 C 4.4.0 testDescribeH3Error.c.
+
+func TestDescribeH3Error_InvalidH3ErrorEnd(t *testing.T) {
+	t.Parallel()
+	if got := describeH3Error(h3ErrorEnd); got != "Invalid error code" {
+		t.Errorf("describeH3Error(h3ErrorEnd) = %q, want invalid-code message", got)
+	}
+}
+
+func TestDescribeH3Error_InvalidH3ErrorEndPlus(t *testing.T) {
+	t.Parallel()
+	// Try to catch if someone adds an error code after H3_ERROR_END.
+	if got := describeH3Error(h3ErrorEnd + 1); got != "Invalid error code" {
+		t.Errorf("describeH3Error(h3ErrorEnd+1) = %q, want invalid-code message", got)
+	}
+}
+
+func TestDescribeH3Error_ErrorCodesNotValidIndexes(t *testing.T) {
+	t.Parallel()
+	for e := eSuccess; e < h3ErrorEnd; e++ {
+		if isValidIndex(h3Index(e)) {
+			t.Errorf("error code %d must not be a valid index", e)
+		}
+	}
+}

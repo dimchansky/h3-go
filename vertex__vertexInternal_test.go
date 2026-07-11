@@ -96,3 +96,16 @@ func TestDirectionForVertexNum_badVerts(t *testing.T) {
 		t.Error("invalid pent vertex should return invalid direction")
 	}
 }
+
+// TestDirectionForNeighbor_invalid is ported from H3 C 4.4.0:
+// testVertexInternal.c::directionForNeighbor_invalid.
+func TestDirectionForNeighbor_invalid(t *testing.T) {
+	t.Parallel()
+	if got := _directionForNeighbor(0, 0); got != invalidDigit {
+		t.Errorf("directionForNeighbor(0, 0) = %v, want invalidDigit", got)
+	}
+	origin := ^h3Index(0)
+	if got := _directionForNeighbor(origin, origin); got != invalidDigit {
+		t.Errorf("directionForNeighbor(all ones) = %v, want invalidDigit", got)
+	}
+}

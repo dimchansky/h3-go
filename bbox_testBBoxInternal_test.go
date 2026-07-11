@@ -529,3 +529,14 @@ func TestScaleBBox_clampWestNeg(t *testing.T) {
 	scaleBBox(&bb, 2)
 	assertBBox(t, &bb, &expected)
 }
+
+// TestBBoxHexEstimate_invalidRes is ported from H3 C 4.4.0:
+// testBBoxInternal.c::bboxHexEstimate_invalidRes.
+func TestBBoxHexEstimate_invalidRes(t *testing.T) {
+	t.Parallel()
+	var numHexagons int64
+	bb := bbox{North: Rad(1.0), South: Rad(1.0), East: Rad(0.0), West: Rad(1.0)}
+	if err := bboxHexEstimate(&bb, 1, &numHexagons); err != eFailed {
+		t.Errorf("bboxHexEstimate of invalid latitude difference (0): got %v, want eFailed", err)
+	}
+}
