@@ -6,6 +6,7 @@ package h3
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include "h3api.h"
 #include "h3Index.h"
 
@@ -418,6 +419,10 @@ func compactCellsC(h3Set []h3Index, compactedSet []h3Index, numHexes int64) uint
 	defer C.free(unsafe.Pointer(cH3Set))
 	cCompactedSet := (*C.H3Index)(C.malloc(C.size_t(numHexes) * C.size_t(C.sizeof_H3Index)))
 	defer C.free(unsafe.Pointer(cCompactedSet))
+	// C compactCells writes only the compacted prefix; zero the buffer so the
+	// remainder copied back to Go is deterministic (malloc garbage differs by
+	// platform: macOS hands out fresh zeroed pages, glibc reuses dirty heap).
+	C.memset(unsafe.Pointer(cCompactedSet), 0, C.size_t(numHexes)*C.size_t(C.sizeof_H3Index))
 
 	// Copy Go slice to C array
 	h3Slice := (*[1 << 30]C.H3Index)(unsafe.Pointer(cH3Set))[:numHexes:numHexes]

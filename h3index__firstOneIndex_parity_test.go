@@ -9,7 +9,9 @@ func Test_firstOneIndex_parity(t *testing.T) {
 		name string
 		h    h3Index
 	}{
-		{"zero", 0},
+		// h = 0 is excluded: _firstOneIndex is only defined for nonzero
+		// inputs (C uses __builtin_clzll, undefined for 0 and
+		// platform-dependent in practice); see the zero_edge_case subtest.
 		{"single bit 0", 1},
 		{"single bit 1", 2},
 		{"single bit 2", 4},
