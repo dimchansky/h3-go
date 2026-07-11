@@ -159,13 +159,16 @@ test-c2go:
 	fi; \
 	TOOLCHAIN_ENV=""; \
 	if [ -n "$$CC" ]; then TOOLCHAIN_ENV="CC=$$CC CXX=$$CXX SDKROOT=$$SDKROOT"; fi; \
-	LDFLAGS_ENV="-Wl,-dead_strip"; \
-	if [ "$$(uname -s)" != "Darwin" ]; then LDFLAGS_ENV="-Wl,--gc-sections -lm"; fi; \
+	CFLAGS_ENV=""; LDFLAGS_ENV="-lm"; \
+	if [ "$$(uname -s)" = "Darwin" ]; then \
+		CFLAGS_ENV="-ffunction-sections -fdata-sections"; \
+		LDFLAGS_ENV="-Wl,-dead_strip"; \
+	fi; \
 	env $$TOOLCHAIN_ENV \
 	GOCACHE=$(PWD)/.gocache \
 	CGO_ENABLED=1 \
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib -I$$APPS_BASE/include -I$$APPS_BASE/lib" \
-	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
+	CGO_CFLAGS="$$CFLAGS_ENV" \
 	CGO_LDFLAGS="$$LDFLAGS_ENV" \
 	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="c2go" ./... || { \
 		echo; \
