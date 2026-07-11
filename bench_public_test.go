@@ -61,3 +61,57 @@ func BenchmarkParseCell(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkAppendGridDisk(b *testing.B) {
+	c := Cell(0x8928308280fffff)
+	buf := make([]Cell, 0, 64)
+	b.ReportAllocs()
+	for b.Loop() {
+		out, err := c.AppendGridDisk(buf, 2)
+		if err != nil {
+			b.Fatal(err)
+		}
+		_ = out
+	}
+}
+
+func BenchmarkAppendGridDiskDistances(b *testing.B) {
+	c := Cell(0x8928308280fffff)
+	buf := make([]Cell, 0, 64)
+	distBuf := make([]int32, 0, 64)
+	b.ReportAllocs()
+	for b.Loop() {
+		cells, dists, err := c.AppendGridDiskDistances(buf, distBuf, 2)
+		if err != nil {
+			b.Fatal(err)
+		}
+		_, _ = cells, dists
+	}
+}
+
+func BenchmarkGridPath(b *testing.B) {
+	c := Cell(0x8928308280fffff)
+	other, err := LatLngToCell(LatLngDegs(37.8, -122.5), 9)
+	if err != nil {
+		b.Fatal(err)
+	}
+	buf := make([]Cell, 0, 128)
+	b.ReportAllocs()
+	for b.Loop() {
+		out, err := c.AppendGridPath(buf, other)
+		if err != nil {
+			b.Fatal(err)
+		}
+		_ = out
+	}
+}
+
+func BenchmarkDirectedEdges(b *testing.B) {
+	c := Cell(0x8928308280fffff)
+	b.ReportAllocs()
+	for b.Loop() {
+		if _, err := c.DirectedEdges(); err != nil {
+			b.Fatal(err)
+		}
+	}
+}

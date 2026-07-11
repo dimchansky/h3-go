@@ -9,3 +9,58 @@ package h3
 // — use IsValid to verify), parsed with ParseVertex, or produced by
 // operations such as Cell.Vertex.
 type Vertex uint64
+
+// Vertex returns the cell's topological vertex with the given number
+// (0..5 for hexagons, 0..4 for pentagons).
+//
+// H3 C API: cellToVertex.
+func (c Cell) Vertex(vertexNum int) (Vertex, error) {
+	if vertexNum < 0 || vertexNum >= numHexVerts {
+		return 0, ErrDomain
+	}
+	var out h3Index
+	if errC := cellToVertex(c, int32(vertexNum), &out); errC != eSuccess {
+		return 0, toErr(errC)
+	}
+	return Vertex(out), nil
+}
+
+// Vertexes returns all topological vertexes of the cell: 6 for hexagons, 5
+// for pentagons.
+//
+// H3 C API: cellToVertexes.
+func (c Cell) Vertexes() ([]Vertex, error) {
+	var raw [6]h3Index
+	if errC := cellToVertexes(c, &raw); errC != eSuccess {
+		return nil, toErr(errC)
+	}
+	out := make([]Vertex, 0, 6)
+	for _, v := range raw {
+		if v != h3Null { // pentagons leave the last slot empty
+			out = append(out, Vertex(v))
+		}
+	}
+	return out, nil
+}
+
+// IsValid reports whether the index is a valid H3 vertex index.
+//
+// H3 C API: isValidVertex.
+func (v Vertex) IsValid() bool { return isValidVertex(h3Index(v)) }
+
+// Resolution returns the vertex's resolution. It is a pure bit accessor and
+// does not validate the index.
+//
+// H3 C API: getResolution.
+func (v Vertex) Resolution() int { return int(getResolution(h3Index(v))) }
+
+// LatLng returns the geographic coordinates of the vertex.
+//
+// H3 C API: vertexToLatLng.
+func (v Vertex) LatLng() (LatLng, error) {
+	var g LatLng
+	if errC := vertexToLatLng(h3Index(v), &g); errC != eSuccess {
+		return LatLng{}, toErr(errC)
+	}
+	return g, nil
+}

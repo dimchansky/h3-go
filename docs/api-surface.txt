@@ -16,9 +16,14 @@ const TwoPi
 const VersionMajor
 const VersionMinor
 const VersionPatch
+func CellToLocalIJ
 func Deg
+func GridDisksUnsafe
 func LatLngDegs
 func LatLngToCell
+func LocalIJToCell
+func MaxGridDiskSize
+func MaxGridRingSize
 func NewLatLng
 func NumCells
 func ParseCell
@@ -45,13 +50,32 @@ method (Angle) SinCos
 method (Angle) String
 method (Angle) Tan
 method (Cell) AppendChildren
+method (Cell) AppendGridDisk
+method (Cell) AppendGridDiskDistances
+method (Cell) AppendGridDiskUnsafe
+method (Cell) AppendGridPath
+method (Cell) AppendGridRing
+method (Cell) AppendGridRingUnsafe
 method (Cell) BaseCellNumber
 method (Cell) Boundary
 method (Cell) CenterChild
 method (Cell) ChildAtPos
 method (Cell) ChildPos
 method (Cell) Children
+method (Cell) DirectedEdgeTo
+method (Cell) DirectedEdges
+method (Cell) GridDisk
+method (Cell) GridDiskDistances
+method (Cell) GridDiskDistancesSafe
+method (Cell) GridDiskDistancesUnsafe
+method (Cell) GridDiskUnsafe
+method (Cell) GridDistance
+method (Cell) GridPath
+method (Cell) GridPathLen
+method (Cell) GridRing
+method (Cell) GridRingUnsafe
 method (Cell) IcosahedronFaces
+method (Cell) IsNeighbor
 method (Cell) IsPentagon
 method (Cell) IsResClassIII
 method (Cell) IsValid
@@ -61,10 +85,21 @@ method (Cell) NumChildren
 method (Cell) Parent
 method (Cell) Resolution
 method (Cell) String
+method (Cell) Vertex
+method (Cell) Vertexes
+method (DirectedEdge) Boundary
+method (DirectedEdge) Cells
+method (DirectedEdge) Destination
+method (DirectedEdge) IsValid
 method (DirectedEdge) MarshalText
+method (DirectedEdge) Origin
+method (DirectedEdge) Resolution
 method (DirectedEdge) String
 method (LatLng) Cell
+method (Vertex) IsValid
+method (Vertex) LatLng
 method (Vertex) MarshalText
+method (Vertex) Resolution
 method (Vertex) String
 type Angle
 type Cell
