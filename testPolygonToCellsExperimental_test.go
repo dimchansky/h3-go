@@ -86,12 +86,12 @@ func isTransmeridianCell(h h3Index) bool {
 
 	minLng := math.Pi
 	maxLng := -math.Pi
-	for i := int32(0); i < boundary.NumVerts; i++ {
-		if boundary.Verts[i].Lng.Rad() < minLng {
-			minLng = boundary.Verts[i].Lng.Rad()
+	for i := int32(0); i < boundary.numVerts; i++ {
+		if boundary.verts[i].Lng.Rad() < minLng {
+			minLng = boundary.verts[i].Lng.Rad()
 		}
-		if boundary.Verts[i].Lng.Rad() > maxLng {
-			maxLng = boundary.Verts[i].Lng.Rad()
+		if boundary.verts[i].Lng.Rad() > maxLng {
+			maxLng = boundary.verts[i].Lng.Rad()
 		}
 	}
 
@@ -487,11 +487,11 @@ func TestPolygonToCellsExact(t *testing.T) {
 		t.Fatalf("cellToBoundary failed: %v", err)
 	}
 
-	verts := make([]LatLng, boundary.NumVerts+1)
-	for i := int32(0); i < boundary.NumVerts; i++ {
-		verts[i] = boundary.Verts[i]
+	verts := make([]LatLng, boundary.numVerts+1)
+	for i := int32(0); i < boundary.numVerts; i++ {
+		verts[i] = boundary.verts[i]
 	}
-	verts[boundary.NumVerts] = boundary.Verts[0]
+	verts[boundary.numVerts] = boundary.verts[0]
 
 	someHexagon := GeoPolygon{
 		GeoLoop: verts,

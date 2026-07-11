@@ -45,18 +45,18 @@ func Test_directedEdgeToBoundary_parity(t *testing.T) {
 			}
 
 			// Check number of vertices matches
-			if goBoundary.NumVerts != cBoundary.NumVerts {
-				t.Errorf("NumVerts mismatch: Go=%d, C=%d", goBoundary.NumVerts, cBoundary.NumVerts)
+			if goBoundary.numVerts != cBoundary.numVerts {
+				t.Errorf("NumVerts mismatch: Go=%d, C=%d", goBoundary.numVerts, cBoundary.numVerts)
 				return
 			}
 
 			// Check each vertex coordinate with appropriate tolerance
 			const tolerance = 1e-12
-			for i := int32(0); i < goBoundary.NumVerts; i++ {
-				goLat := goBoundary.Verts[i].Lat.Rad()
-				goLng := goBoundary.Verts[i].Lng.Rad()
-				cLat := cBoundary.Verts[i].Lat.Rad()
-				cLng := cBoundary.Verts[i].Lng.Rad()
+			for i := int32(0); i < goBoundary.numVerts; i++ {
+				goLat := goBoundary.verts[i].Lat.Rad()
+				goLng := goBoundary.verts[i].Lng.Rad()
+				cLat := cBoundary.verts[i].Lat.Rad()
+				cLng := cBoundary.verts[i].Lng.Rad()
 
 				if math.Abs(goLat-cLat) > tolerance {
 					t.Errorf("Vertex %d lat mismatch: Go=%.15f, C=%.15f, diff=%.15e",
@@ -143,23 +143,23 @@ func Test_directedEdgeToBoundary_comprehensive_parity(t *testing.T) {
 				}
 
 				// Check boundary properties
-				if goBoundary.NumVerts != cBoundary.NumVerts {
-					t.Errorf("Edge %d NumVerts mismatch: Go=%d, C=%d", i, goBoundary.NumVerts, cBoundary.NumVerts)
+				if goBoundary.numVerts != cBoundary.numVerts {
+					t.Errorf("Edge %d NumVerts mismatch: Go=%d, C=%d", i, goBoundary.numVerts, cBoundary.numVerts)
 					continue
 				}
 
 				// Directed edges should have 2 vertices (sometimes 3 with distortion)
-				if goBoundary.NumVerts < 2 || goBoundary.NumVerts > 3 {
-					t.Errorf("Edge %d has unexpected vertex count: %d", i, goBoundary.NumVerts)
+				if goBoundary.numVerts < 2 || goBoundary.numVerts > 3 {
+					t.Errorf("Edge %d has unexpected vertex count: %d", i, goBoundary.numVerts)
 				}
 
 				// Check coordinate precision
 				const tolerance = 1e-12
-				for j := int32(0); j < goBoundary.NumVerts; j++ {
-					if math.Abs(goBoundary.Verts[j].Lat.Rad()-cBoundary.Verts[j].Lat.Rad()) > tolerance {
+				for j := int32(0); j < goBoundary.numVerts; j++ {
+					if math.Abs(goBoundary.verts[j].Lat.Rad()-cBoundary.verts[j].Lat.Rad()) > tolerance {
 						t.Errorf("Edge %d vertex %d lat mismatch", i, j)
 					}
-					if math.Abs(goBoundary.Verts[j].Lng.Rad()-cBoundary.Verts[j].Lng.Rad()) > tolerance {
+					if math.Abs(goBoundary.verts[j].Lng.Rad()-cBoundary.verts[j].Lng.Rad()) > tolerance {
 						t.Errorf("Edge %d vertex %d lng mismatch", i, j)
 					}
 				}

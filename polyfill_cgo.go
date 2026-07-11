@@ -155,13 +155,10 @@ func bboxToCellBoundaryC(bbox *bbox) CellBoundary {
 	cBoundary := C.bboxToCellBoundary(&cBBox)
 
 	// Convert C CellBoundary to Go CellBoundary
-	boundary := CellBoundary{
-		NumVerts: int32(cBoundary.numVerts),
-		Verts:    make([]LatLng, int32(cBoundary.numVerts)),
-	}
+	boundary := CellBoundary{numVerts: int32(cBoundary.numVerts)}
 
-	for i := int32(0); i < boundary.NumVerts; i++ {
-		boundary.Verts[i] = LatLng{
+	for i := int32(0); i < boundary.numVerts; i++ {
+		boundary.verts[i] = LatLng{
 			Lat: Angle(cBoundary.verts[i].lat),
 			Lng: Angle(cBoundary.verts[i].lng),
 		}

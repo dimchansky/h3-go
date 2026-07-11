@@ -26,6 +26,6 @@ func vertexToLatLng(vertex h3Index, coord *LatLng) h3Error {
 	}
 
 	// Copy from boundary to output coord
-	*coord = gb.Verts[0]
+	*coord = gb.verts[0]
 	return eSuccess
 }

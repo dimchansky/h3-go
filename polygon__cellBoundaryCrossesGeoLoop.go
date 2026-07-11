@@ -9,11 +9,10 @@ func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *bbox, boundary *CellB
 	}
 	var loopNorm, boundNorm longitudeNormalization
 	bboxNormalization(loopBBox, boundaryBBox, &loopNorm, &boundNorm)
-	// Normalize boundary longitudes
-	normalBoundary := CellBoundary{NumVerts: boundary.NumVerts, Verts: make([]LatLng, boundary.NumVerts)}
-	copy(normalBoundary.Verts, boundary.Verts)
-	for i := int32(0); i < normalBoundary.NumVerts; i++ {
-		normalBoundary.Verts[i].Lng = normalizeLng(normalBoundary.Verts[i].Lng, boundNorm)
+	// Normalize boundary longitudes into a stack copy (C copies the struct).
+	normalBoundary := *boundary
+	for i := int32(0); i < normalBoundary.numVerts; i++ {
+		normalBoundary.verts[i].Lng = normalizeLng(normalBoundary.verts[i].Lng, boundNorm)
 	}
 	normalBoundaryBBox := bbox{
 		North: boundaryBBox.North,
@@ -34,9 +33,9 @@ func cellBoundaryCrossesGeoLoop(geoloop GeoLoop, loopBBox *bbox, boundary *CellB
 			(loop1.Lng >= normalBoundaryBBox.East && loop2.Lng >= normalBoundaryBBox.East) {
 			continue
 		}
-		for j := int32(0); j < normalBoundary.NumVerts; j++ {
-			a := normalBoundary.Verts[j]
-			b := normalBoundary.Verts[(j+1)%normalBoundary.NumVerts]
+		for j := int32(0); j < normalBoundary.numVerts; j++ {
+			a := normalBoundary.verts[j]
+			b := normalBoundary.verts[(j+1)%normalBoundary.numVerts]
 			if lineCrossesLine(&loop1, &loop2, &a, &b) {
 				return true
 			}

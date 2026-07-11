@@ -211,17 +211,12 @@ func _faceIjkToCellBoundaryC(h *faceIJK, res int32, start int32, length int32, g
 	C.face_ijk_to_cell_boundary_c(&ch, C.int(res), C.int(start), C.int(length), &cg)
 
 	// Copy results back to Go struct
-	g.NumVerts = int32(cg.numVerts)
-
-	// Ensure Go slice has enough capacity
-	if len(g.Verts) < int(g.NumVerts) {
-		g.Verts = make([]LatLng, g.NumVerts)
-	}
+	g.numVerts = int32(cg.numVerts)
 
 	// Copy vertices from C to Go
-	for i := int32(0); i < g.NumVerts; i++ {
-		g.Verts[i].Lat = Rad(float64(cg.verts[i].lat))
-		g.Verts[i].Lng = Rad(float64(cg.verts[i].lng))
+	for i := int32(0); i < g.numVerts; i++ {
+		g.verts[i].Lat = Rad(float64(cg.verts[i].lat))
+		g.verts[i].Lng = Rad(float64(cg.verts[i].lng))
 	}
 }
 
@@ -240,16 +235,11 @@ func _faceIjkPentToCellBoundaryC(h *faceIJK, res int32, start int32, length int3
 	C.face_ijk_pent_to_cell_boundary_c(&ch, C.int(res), C.int(start), C.int(length), &cg)
 
 	// Copy results back to Go struct
-	g.NumVerts = int32(cg.numVerts)
-
-	// Ensure Go slice has enough capacity
-	if len(g.Verts) < int(g.NumVerts) {
-		g.Verts = make([]LatLng, g.NumVerts)
-	}
+	g.numVerts = int32(cg.numVerts)
 
 	// Copy vertices from C to Go
-	for i := int32(0); i < g.NumVerts; i++ {
-		g.Verts[i].Lat = Rad(float64(cg.verts[i].lat))
-		g.Verts[i].Lng = Rad(float64(cg.verts[i].lng))
+	for i := int32(0); i < g.numVerts; i++ {
+		g.verts[i].Lat = Rad(float64(cg.verts[i].lat))
+		g.verts[i].Lng = Rad(float64(cg.verts[i].lng))
 	}
 }

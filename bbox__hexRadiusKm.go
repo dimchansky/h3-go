@@ -9,5 +9,5 @@ func _hexRadiusKm(h3Index h3Index) float64 {
 	var h3Boundary CellBoundary
 	cellToLatLng(h3Index, &h3Center)
 	cellToBoundary(h3Index, &h3Boundary)
-	return greatCircleDistanceKm(&h3Center, &h3Boundary.Verts[0])
+	return greatCircleDistanceKm(&h3Center, &h3Boundary.verts[0])
 }

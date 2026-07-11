@@ -28,8 +28,8 @@ func Test_doublePrecisionVertex(t *testing.T) {
 	}
 
 	// Convert CellBoundary to GeoLoop (slice of LatLng)
-	geoloop := make([]LatLng, boundary.NumVerts)
-	copy(geoloop, boundary.Verts[:boundary.NumVerts])
+	geoloop := make([]LatLng, boundary.numVerts)
+	copy(geoloop, boundary.verts[:boundary.numVerts])
 
 	var bbox bbox
 	bboxFromGeoLoop(geoloop, &bbox)

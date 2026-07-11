@@ -22,9 +22,9 @@ func cellAreaRads2(cell h3Index) (float64, h3Error) {
 	}
 
 	area := 0.0
-	for i := int32(0); i < cb.NumVerts; i++ {
-		j := (i + 1) % cb.NumVerts
-		area += triangleArea(&cb.Verts[i], &cb.Verts[j], &c)
+	for i := int32(0); i < cb.numVerts; i++ {
+		j := (i + 1) % cb.numVerts
+		area += triangleArea(&cb.verts[i], &cb.verts[j], &c)
 	}
 
 	return area, eSuccess

@@ -113,16 +113,16 @@ func Test_bboxToCellBoundary_parity(t *testing.T) {
 			cBoundary := bboxToCellBoundaryC(&tt.bbox)
 
 			// Compare number of vertices
-			if goBoundary.NumVerts != cBoundary.NumVerts {
-				t.Errorf("NumVerts mismatch: Go=%d, C=%d", goBoundary.NumVerts, cBoundary.NumVerts)
+			if goBoundary.numVerts != cBoundary.numVerts {
+				t.Errorf("NumVerts mismatch: Go=%d, C=%d", goBoundary.numVerts, cBoundary.numVerts)
 				return
 			}
 
 			// Compare each vertex
 			tolerance := 1e-15 // Very tight tolerance for simple coordinate assignments
-			for i := int32(0); i < goBoundary.NumVerts; i++ {
-				goVert := goBoundary.Verts[i]
-				cVert := cBoundary.Verts[i]
+			for i := int32(0); i < goBoundary.numVerts; i++ {
+				goVert := goBoundary.verts[i]
+				cVert := cBoundary.verts[i]
 
 				if math.Abs(float64(goVert.Lat-cVert.Lat)) > tolerance {
 					t.Errorf("Vertex %d Lat mismatch: Go=%.15f, C=%.15f, diff=%.15f",
@@ -151,8 +151,8 @@ func Test_bboxToCellBoundary_vertex_order_parity(t *testing.T) {
 	cBoundary := bboxToCellBoundaryC(&bbox)
 
 	// Both should have 4 vertices
-	if goBoundary.NumVerts != 4 || cBoundary.NumVerts != 4 {
-		t.Fatalf("Expected 4 vertices, got Go=%d, C=%d", goBoundary.NumVerts, cBoundary.NumVerts)
+	if goBoundary.numVerts != 4 || cBoundary.numVerts != 4 {
+		t.Fatalf("Expected 4 vertices, got Go=%d, C=%d", goBoundary.numVerts, cBoundary.numVerts)
 	}
 
 	// Expected vertex order (CCW): NE, NW, SW, SE
@@ -170,19 +170,19 @@ func Test_bboxToCellBoundary_vertex_order_parity(t *testing.T) {
 	tolerance := 1e-15
 	for i, expected := range expectedOrder {
 		// Check Go implementation
-		if math.Abs(float64(goBoundary.Verts[i].Lat-expected.lat)) > tolerance ||
-			math.Abs(float64(goBoundary.Verts[i].Lng-expected.lng)) > tolerance {
+		if math.Abs(float64(goBoundary.verts[i].Lat-expected.lat)) > tolerance ||
+			math.Abs(float64(goBoundary.verts[i].Lng-expected.lng)) > tolerance {
 			t.Errorf("Go vertex %d (%s): expected (%.15f, %.15f), got (%.15f, %.15f)",
 				i, expected.name, float64(expected.lat), float64(expected.lng),
-				float64(goBoundary.Verts[i].Lat), float64(goBoundary.Verts[i].Lng))
+				float64(goBoundary.verts[i].Lat), float64(goBoundary.verts[i].Lng))
 		}
 
 		// Check C implementation
-		if math.Abs(float64(cBoundary.Verts[i].Lat-expected.lat)) > tolerance ||
-			math.Abs(float64(cBoundary.Verts[i].Lng-expected.lng)) > tolerance {
+		if math.Abs(float64(cBoundary.verts[i].Lat-expected.lat)) > tolerance ||
+			math.Abs(float64(cBoundary.verts[i].Lng-expected.lng)) > tolerance {
 			t.Errorf("C vertex %d (%s): expected (%.15f, %.15f), got (%.15f, %.15f)",
 				i, expected.name, float64(expected.lat), float64(expected.lng),
-				float64(cBoundary.Verts[i].Lat), float64(cBoundary.Verts[i].Lng))
+				float64(cBoundary.verts[i].Lat), float64(cBoundary.verts[i].Lng))
 		}
 	}
 }
@@ -215,18 +215,18 @@ func Test_bboxToCellBoundary_comprehensive_parity(t *testing.T) {
 			cBoundary := bboxToCellBoundaryC(&bbox)
 
 			// Compare results
-			if goBoundary.NumVerts != cBoundary.NumVerts {
-				t.Errorf("NumVerts mismatch: Go=%d, C=%d", goBoundary.NumVerts, cBoundary.NumVerts)
+			if goBoundary.numVerts != cBoundary.numVerts {
+				t.Errorf("NumVerts mismatch: Go=%d, C=%d", goBoundary.numVerts, cBoundary.numVerts)
 				return
 			}
 
 			tolerance := 1e-15
-			for j := int32(0); j < goBoundary.NumVerts; j++ {
-				if math.Abs(float64(goBoundary.Verts[j].Lat-cBoundary.Verts[j].Lat)) > tolerance ||
-					math.Abs(float64(goBoundary.Verts[j].Lng-cBoundary.Verts[j].Lng)) > tolerance {
+			for j := int32(0); j < goBoundary.numVerts; j++ {
+				if math.Abs(float64(goBoundary.verts[j].Lat-cBoundary.verts[j].Lat)) > tolerance ||
+					math.Abs(float64(goBoundary.verts[j].Lng-cBoundary.verts[j].Lng)) > tolerance {
 					t.Errorf("Vertex %d mismatch: Go=(%.15f, %.15f), C=(%.15f, %.15f)",
-						j, float64(goBoundary.Verts[j].Lat), float64(goBoundary.Verts[j].Lng),
-						float64(cBoundary.Verts[j].Lat), float64(cBoundary.Verts[j].Lng))
+						j, float64(goBoundary.verts[j].Lat), float64(goBoundary.verts[j].Lng),
+						float64(cBoundary.verts[j].Lat), float64(cBoundary.verts[j].Lng))
 				}
 			}
 		})

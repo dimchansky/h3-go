@@ -20,7 +20,7 @@ func _faceIjkToCellBoundary(h *faceIJK, res int32, start int32, length int32, g 
 	// convert each vertex to lat/lng
 	// adjust the face of each vertex as appropriate and introduce
 	// edge-crossing vertices as needed
-	g.NumVerts = 0
+	g.numVerts = 0
 	lastFace := int32(-1)
 	lastOverage := noOverage
 
@@ -83,15 +83,8 @@ func _faceIjkToCellBoundary(h *faceIJK, res int32, start int32, length int32, g 
 			isIntersectionAtVertex := _v2dAlmostEquals(&orig2d0, &inter) ||
 				_v2dAlmostEquals(&orig2d1, &inter)
 			if !isIntersectionAtVertex {
-				// Ensure we have space in the boundary
-				if len(g.Verts) <= int(g.NumVerts) {
-					// Extend the slice if needed
-					newVerts := make([]LatLng, g.NumVerts+1, (g.NumVerts+1)*2)
-					copy(newVerts, g.Verts)
-					g.Verts = newVerts
-				}
-				_hex2dToGeo(&inter, centerIJK.Face, adjRes, 1, &g.Verts[g.NumVerts])
-				g.NumVerts++
+				_hex2dToGeo(&inter, centerIJK.Face, adjRes, 1, &g.verts[g.numVerts])
+				g.numVerts++
 			}
 		}
 
@@ -99,17 +92,10 @@ func _faceIjkToCellBoundary(h *faceIJK, res int32, start int32, length int32, g 
 		// vert == start + numHexVerts is only used to test for possible
 		// intersection on last edge
 		if vert < start+numHexVerts {
-			// Ensure we have space in the boundary
-			if len(g.Verts) <= int(g.NumVerts) {
-				// Extend the slice if needed
-				newVerts := make([]LatLng, g.NumVerts+1, (g.NumVerts+1)*2)
-				copy(newVerts, g.Verts)
-				g.Verts = newVerts
-			}
 			var vec vec2d
 			_ijkToHex2d(&fijk.Coord, &vec)
-			_hex2dToGeo(&vec, fijk.Face, adjRes, 1, &g.Verts[g.NumVerts])
-			g.NumVerts++
+			_hex2dToGeo(&vec, fijk.Face, adjRes, 1, &g.verts[g.numVerts])
+			g.numVerts++
 		}
 		lastFace = fijk.Face
 		lastOverage = overage

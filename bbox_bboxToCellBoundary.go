@@ -6,8 +6,8 @@ package h3
 func bboxToCellBoundary(bbox *bbox) CellBoundary {
 	// Convert bbox to cell boundary, CCW vertex order
 	return CellBoundary{
-		NumVerts: 4,
-		Verts: []LatLng{
+		numVerts: 4,
+		verts: [MaxCellBoundaryVerts]LatLng{
 			{Lat: bbox.North, Lng: bbox.East},
 			{Lat: bbox.North, Lng: bbox.West},
 			{Lat: bbox.South, Lng: bbox.West},

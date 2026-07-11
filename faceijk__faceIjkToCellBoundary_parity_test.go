@@ -76,11 +76,9 @@ func Test_faceIjkToCellBoundary_parity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Prepare Go boundary result
 			var goBoundary CellBoundary
-			goBoundary.Verts = make([]LatLng, 20) // Generous allocation for potential intersection vertices
 
 			// Prepare C boundary result
 			var cBoundary CellBoundary
-			cBoundary.Verts = make([]LatLng, 20) // Generous allocation for potential intersection vertices
 
 			// Call Go implementation
 			_faceIjkToCellBoundary(&tt.fijk, tt.res, tt.start, tt.length, &goBoundary)
@@ -89,20 +87,20 @@ func Test_faceIjkToCellBoundary_parity(t *testing.T) {
 			_faceIjkToCellBoundaryC(&tt.fijk, tt.res, tt.start, tt.length, &cBoundary)
 
 			// Compare number of vertices
-			if goBoundary.NumVerts != cBoundary.NumVerts {
-				t.Errorf("Vertex count mismatch: Go=%d, C=%d", goBoundary.NumVerts, cBoundary.NumVerts)
+			if goBoundary.numVerts != cBoundary.numVerts {
+				t.Errorf("Vertex count mismatch: Go=%d, C=%d", goBoundary.numVerts, cBoundary.numVerts)
 			}
 
 			// Compare each vertex with floating point tolerance
-			minVerts := goBoundary.NumVerts
-			if cBoundary.NumVerts < minVerts {
-				minVerts = cBoundary.NumVerts
+			minVerts := goBoundary.numVerts
+			if cBoundary.numVerts < minVerts {
+				minVerts = cBoundary.numVerts
 			}
 
 			const tolerance = 1e-12 // High precision tolerance for lat/lng comparisons
 			for i := int32(0); i < minVerts; i++ {
-				goVert := goBoundary.Verts[i]
-				cVert := cBoundary.Verts[i]
+				goVert := goBoundary.verts[i]
+				cVert := cBoundary.verts[i]
 
 				latDiff := goVert.Lat - cVert.Lat
 				if latDiff < 0 {
@@ -124,7 +122,7 @@ func Test_faceIjkToCellBoundary_parity(t *testing.T) {
 			}
 
 			t.Logf("Generated %d vertices for face=%d, ijk=(%d,%d,%d), res=%d",
-				goBoundary.NumVerts, tt.fijk.Face, tt.fijk.Coord.I, tt.fijk.Coord.J, tt.fijk.Coord.K, tt.res)
+				goBoundary.numVerts, tt.fijk.Face, tt.fijk.Coord.I, tt.fijk.Coord.J, tt.fijk.Coord.K, tt.res)
 		})
 	}
 }
@@ -162,24 +160,22 @@ func Test_faceIjkToCellBoundary_edge_crossing_parity(t *testing.T) {
 
 			// Prepare boundary results
 			var goBoundary CellBoundary
-			goBoundary.Verts = make([]LatLng, 30) // Extra space for potential intersection vertices
 
 			var cBoundary CellBoundary
-			cBoundary.Verts = make([]LatLng, 30)
 
 			// Test full boundary
 			_faceIjkToCellBoundary(&tt.fijk, tt.res, 0, numHexVerts, &goBoundary)
 			_faceIjkToCellBoundaryC(&tt.fijk, tt.res, 0, numHexVerts, &cBoundary)
 
 			// Compare results
-			if goBoundary.NumVerts != cBoundary.NumVerts {
-				t.Errorf("Vertex count mismatch: Go=%d, C=%d", goBoundary.NumVerts, cBoundary.NumVerts)
+			if goBoundary.numVerts != cBoundary.numVerts {
+				t.Errorf("Vertex count mismatch: Go=%d, C=%d", goBoundary.numVerts, cBoundary.numVerts)
 			}
 
 			const tolerance = 1e-12
-			for i := int32(0); i < goBoundary.NumVerts && i < cBoundary.NumVerts; i++ {
-				goVert := goBoundary.Verts[i]
-				cVert := cBoundary.Verts[i]
+			for i := int32(0); i < goBoundary.numVerts && i < cBoundary.numVerts; i++ {
+				goVert := goBoundary.verts[i]
+				cVert := cBoundary.verts[i]
 
 				latDiff := goVert.Lat - cVert.Lat
 				if latDiff < 0 {
@@ -197,7 +193,7 @@ func Test_faceIjkToCellBoundary_edge_crossing_parity(t *testing.T) {
 			}
 
 			t.Logf("Class III boundary generated %d vertices (potential edge crossings)",
-				goBoundary.NumVerts)
+				goBoundary.numVerts)
 		})
 	}
 }

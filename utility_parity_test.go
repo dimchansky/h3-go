@@ -125,16 +125,16 @@ func Test_geoPrint_parity(t *testing.T) {
 func Test_cellBoundaryPrint_parity(t *testing.T) {
 	testCases := []*CellBoundary{
 		{
-			NumVerts: 3,
-			Verts: []LatLng{
+			numVerts: 3,
+			verts: [MaxCellBoundaryVerts]LatLng{
 				{Lat: Rad(0.0), Lng: Rad(0.0)},
 				{Lat: Rad(1.0), Lng: Rad(1.0)},
 				{Lat: Rad(2.0), Lng: Rad(2.0)},
 			},
 		},
 		{
-			NumVerts: 6,
-			Verts: []LatLng{
+			numVerts: 6,
+			verts: [MaxCellBoundaryVerts]LatLng{
 				{Lat: Rad(0.1), Lng: Rad(0.1)},
 				{Lat: Rad(0.2), Lng: Rad(0.2)},
 				{Lat: Rad(0.3), Lng: Rad(0.3)},

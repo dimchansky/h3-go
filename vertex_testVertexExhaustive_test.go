@@ -113,7 +113,7 @@ func cellToVertex_point_assertions(t *testing.T, h3 h3Index) {
 	}
 
 	// This test won't work if there are distortion vertexes in the boundary
-	if numVerts < int32(gb.NumVerts) {
+	if numVerts < int32(gb.numVerts) {
 		return
 	}
 
@@ -134,7 +134,7 @@ func cellToVertex_point_assertions(t *testing.T, h3 h3Index) {
 			continue
 		}
 
-		almostEqual := geoAlmostEqualThreshold(&gb.Verts[i], &coord, 0.000001)
+		almostEqual := geoAlmostEqualThreshold(&gb.verts[i], &coord, 0.000001)
 		if !almostEqual {
 			t.Errorf("Vertex coordinates mismatch for cell %#016x (res=%d, %s), vertexNum=%d:\n"+
 				"  vertex index: %#016x\n"+
@@ -144,10 +144,10 @@ func cellToVertex_point_assertions(t *testing.T, h3 h3Index) {
 				h3, getResolution(h3),
 				map[bool]string{true: "pentagon", false: "hexagon"}[isPent],
 				i, vertex,
-				gb.Verts[i].Lat.Deg(), gb.Verts[i].Lng.Deg(),
+				gb.verts[i].Lat.Deg(), gb.verts[i].Lng.Deg(),
 				coord.Lat.Deg(), coord.Lng.Deg(),
-				(gb.Verts[i].Lat - coord.Lat).Deg(),
-				(gb.Verts[i].Lng - coord.Lng).Deg())
+				(gb.verts[i].Lat - coord.Lat).Deg(),
+				(gb.verts[i].Lng - coord.Lng).Deg())
 		}
 	}
 }

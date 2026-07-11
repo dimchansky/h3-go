@@ -9,17 +9,17 @@ func Test_cellBoundaryCrossesGeoLoop_ParityWithC(t *testing.T) {
 	var loopBBox bbox
 	bboxFromGeoLoop(loop, &loopBBox)
 	// Boundary crossing the square
-	boundary := CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: -1, Lng: 1}, {Lat: 3, Lng: 1}}}
+	boundary := CellBoundary{numVerts: 2, verts: [MaxCellBoundaryVerts]LatLng{{Lat: -1, Lng: 1}, {Lat: 3, Lng: 1}}}
 	var boundaryBBox bbox
-	bboxFromGeoLoop(boundary.Verts, &boundaryBBox)
+	bboxFromGeoLoop(boundary.verts[:boundary.numVerts], &boundaryBBox)
 	goVal := cellBoundaryCrossesGeoLoop(loop, &loopBBox, &boundary, &boundaryBBox)
 	cVal := cellBoundaryCrossesGeoLoopC(loop, loopBBox, boundary, boundaryBBox)
 	if goVal != cVal {
 		t.Fatalf("cellBoundaryCrossesGeoLoop mismatch (crossing)")
 	}
 	// Boundary outside
-	boundary = CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: -1, Lng: -1}, {Lat: -2, Lng: -2}}}
-	bboxFromGeoLoop(boundary.Verts, &boundaryBBox)
+	boundary = CellBoundary{numVerts: 2, verts: [MaxCellBoundaryVerts]LatLng{{Lat: -1, Lng: -1}, {Lat: -2, Lng: -2}}}
+	bboxFromGeoLoop(boundary.verts[:boundary.numVerts], &boundaryBBox)
 	goVal = cellBoundaryCrossesGeoLoop(loop, &loopBBox, &boundary, &boundaryBBox)
 	cVal = cellBoundaryCrossesGeoLoopC(loop, loopBBox, boundary, boundaryBBox)
 	if goVal != cVal {

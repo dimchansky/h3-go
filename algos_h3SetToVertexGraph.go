@@ -33,9 +33,9 @@ func h3SetToVertexGraph(h3Set []h3Index, numHexes int32, graph *vertexGraph) h3E
 		}
 
 		// Iterate through every edge
-		for j := int32(0); j < vertices.NumVerts; j++ {
-			fromVtx := &vertices.Verts[j]
-			toVtx := &vertices.Verts[(j+1)%vertices.NumVerts]
+		for j := int32(0); j < vertices.numVerts; j++ {
+			fromVtx := &vertices.verts[j]
+			toVtx := &vertices.verts[(j+1)%vertices.numVerts]
 
 			// If we've seen this edge already, it will be reversed
 			edge := findNodeForEdge(graph, toVtx, fromVtx)

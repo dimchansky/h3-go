@@ -47,8 +47,8 @@ linters:
       # C names and C-shaped bodies (docs/public-api-architecture.md §7):
       # var-naming, var-declaration, indent-error-flow, increment-decrement,
       # unreachable-code, superfluous-else, empty-block.
-      # `exported` is re-enabled in Phase 3 once the public surface is final.
       rules:
+        - name: exported
         - name: blank-imports
         - name: context-as-argument
         - name: context-keys-type

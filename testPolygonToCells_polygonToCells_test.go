@@ -50,9 +50,9 @@ func fillIndex_assertions(h h3Index) {
 			continue
 		}
 
-		verts := make([]LatLng, boundary.NumVerts)
-		for j := int32(0); j < boundary.NumVerts; j++ {
-			verts[j] = boundary.Verts[j]
+		verts := make([]LatLng, boundary.numVerts)
+		for j := int32(0); j < boundary.numVerts; j++ {
+			verts[j] = boundary.verts[j]
 		}
 		polygon := GeoPolygon{
 			GeoLoop: verts,
@@ -255,11 +255,11 @@ func TestPolygonToCellsExactStandard(t *testing.T) {
 	}
 
 	// Create vertices with one extra to close the polygon
-	verts := make([]LatLng, boundary.NumVerts+1)
-	for i := int32(0); i < boundary.NumVerts; i++ {
-		verts[i] = boundary.Verts[i]
+	verts := make([]LatLng, boundary.numVerts+1)
+	for i := int32(0); i < boundary.numVerts; i++ {
+		verts[i] = boundary.verts[i]
 	}
-	verts[boundary.NumVerts] = boundary.Verts[0]
+	verts[boundary.numVerts] = boundary.verts[0]
 
 	someGeoLoop := GeoLoop(verts)
 	someHexagon := GeoPolygon{GeoLoop: someGeoLoop, Holes: nil}

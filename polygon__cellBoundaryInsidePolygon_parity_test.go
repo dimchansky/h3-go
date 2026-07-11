@@ -14,17 +14,17 @@ func Test_cellBoundaryInsidePolygon_ParityWithC(t *testing.T) {
 		bboxFromGeoLoop(poly.Holes[i], &bboxes[i+1])
 	}
 	// Boundary inside outer but crossing hole; not contained
-	boundary := CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: 0.25, Lng: 0.25}, {Lat: 0.75, Lng: 0.75}}}
+	boundary := CellBoundary{numVerts: 2, verts: [MaxCellBoundaryVerts]LatLng{{Lat: 0.25, Lng: 0.25}, {Lat: 0.75, Lng: 0.75}}}
 	var boundaryBBox bbox
-	bboxFromGeoLoop(boundary.Verts, &boundaryBBox)
+	bboxFromGeoLoop(boundary.verts[:boundary.numVerts], &boundaryBBox)
 	goVal := cellBoundaryInsidePolygon(poly, bboxes, &boundary, &boundaryBBox)
 	cVal := cellBoundaryInsidePolygonC(poly, bboxes, boundary, boundaryBBox)
 	if goVal != cVal {
 		t.Fatalf("cellBoundaryInsidePolygon mismatch (inside/cross hole)")
 	}
 	// Boundary fully inside hole should be false
-	boundary = CellBoundary{NumVerts: 2, Verts: []LatLng{{Lat: 1.0, Lng: 0.6}, {Lat: 1.4, Lng: 1.4}}}
-	bboxFromGeoLoop(boundary.Verts, &boundaryBBox)
+	boundary = CellBoundary{numVerts: 2, verts: [MaxCellBoundaryVerts]LatLng{{Lat: 1.0, Lng: 0.6}, {Lat: 1.4, Lng: 1.4}}}
+	bboxFromGeoLoop(boundary.verts[:boundary.numVerts], &boundaryBBox)
 	goVal = cellBoundaryInsidePolygon(poly, bboxes, &boundary, &boundaryBBox)
 	cVal = cellBoundaryInsidePolygonC(poly, bboxes, boundary, boundaryBBox)
 	if goVal != cVal {

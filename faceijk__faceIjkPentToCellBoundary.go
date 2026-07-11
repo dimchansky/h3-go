@@ -20,7 +20,7 @@ func _faceIjkPentToCellBoundary(h *faceIJK, res int32, start int32, length int32
 	// convert each vertex to lat/lng
 	// adjust the face of each vertex as appropriate and introduce
 	// edge-crossing vertices as needed
-	g.NumVerts = 0
+	g.numVerts = 0
 	var lastFijk faceIJK
 
 	for vert := start; vert < start+length+additionalIteration; vert++ {
@@ -79,32 +79,18 @@ func _faceIjkPentToCellBoundary(h *faceIJK, res int32, start int32, length int32
 			// find the intersection and add the lat/lng point to the result
 			inter := _v2dIntersect(&orig2d0, &orig2d1, edge0, edge1)
 
-			// Ensure we have space in the boundary
-			if len(g.Verts) <= int(g.NumVerts) {
-				// Extend the slice if needed
-				newVerts := make([]LatLng, g.NumVerts+1, (g.NumVerts+1)*2)
-				copy(newVerts, g.Verts)
-				g.Verts = newVerts
-			}
-			_hex2dToGeo(&inter, tmpFijk.Face, adjRes, 1, &g.Verts[g.NumVerts])
-			g.NumVerts++
+			_hex2dToGeo(&inter, tmpFijk.Face, adjRes, 1, &g.verts[g.numVerts])
+			g.numVerts++
 		}
 
 		// convert vertex to lat/lng and add to the result
 		// vert == start + numPentVerts is only used to test for possible
 		// intersection on last edge
 		if vert < start+numPentVerts {
-			// Ensure we have space in the boundary
-			if len(g.Verts) <= int(g.NumVerts) {
-				// Extend the slice if needed
-				newVerts := make([]LatLng, g.NumVerts+1, (g.NumVerts+1)*2)
-				copy(newVerts, g.Verts)
-				g.Verts = newVerts
-			}
 			var vec vec2d
 			_ijkToHex2d(&fijk.Coord, &vec)
-			_hex2dToGeo(&vec, fijk.Face, adjRes, 1, &g.Verts[g.NumVerts])
-			g.NumVerts++
+			_hex2dToGeo(&vec, fijk.Face, adjRes, 1, &g.verts[g.numVerts])
+			g.numVerts++
 		}
 		lastFijk = fijk
 	}

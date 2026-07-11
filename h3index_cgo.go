@@ -365,17 +365,12 @@ func cellToBoundaryC(h h3Index, cb *CellBoundary) uint32 {
 
 	if err == 0 {
 		// Copy results back to Go struct
-		cb.NumVerts = int32(cCb.numVerts)
-
-		// Ensure Go slice has enough capacity
-		if len(cb.Verts) < int(cb.NumVerts) {
-			cb.Verts = make([]LatLng, cb.NumVerts)
-		}
+		cb.numVerts = int32(cCb.numVerts)
 
 		// Copy vertices from C to Go
-		for i := int32(0); i < cb.NumVerts; i++ {
-			cb.Verts[i].Lat = Rad(float64(cCb.verts[i].lat))
-			cb.Verts[i].Lng = Rad(float64(cCb.verts[i].lng))
+		for i := int32(0); i < cb.numVerts; i++ {
+			cb.verts[i].Lat = Rad(float64(cCb.verts[i].lat))
+			cb.verts[i].Lng = Rad(float64(cCb.verts[i].lng))
 		}
 	}
 

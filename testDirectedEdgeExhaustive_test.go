@@ -165,16 +165,16 @@ func directedEdge_boundary_assertions(t *testing.T, h3 h3Index) {
 			continue
 		}
 
-		if edgeBoundary.NumVerts != revEdgeBoundary.NumVerts {
+		if edgeBoundary.numVerts != revEdgeBoundary.numVerts {
 			t.Errorf("NumVerts mismatch for edge %#016x: edge=%d, reverse=%d",
-				edges[i], edgeBoundary.NumVerts, revEdgeBoundary.NumVerts)
+				edges[i], edgeBoundary.numVerts, revEdgeBoundary.numVerts)
 			continue
 		}
 
-		for j := int32(0); j < edgeBoundary.NumVerts; j++ {
+		for j := int32(0); j < edgeBoundary.numVerts; j++ {
 			almostEqual := geoAlmostEqualThreshold(
-				&edgeBoundary.Verts[j],
-				&revEdgeBoundary.Verts[revEdgeBoundary.NumVerts-1-j],
+				&edgeBoundary.verts[j],
+				&revEdgeBoundary.verts[revEdgeBoundary.numVerts-1-j],
 				0.000001)
 			if !almostEqual {
 				t.Errorf("Vertex mismatch for edge %#016x at position %d", edges[i], j)

@@ -822,8 +822,8 @@ func TestCellBoundaryInsidePolygonInside(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
 	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
@@ -849,8 +849,8 @@ func TestCellBoundaryInsidePolygonInsideTransmeridianWest(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts: []LatLng{
+		numVerts: 4,
+		verts: [MaxCellBoundaryVerts]LatLng{
 			{0.6, math.Pi - 0.1},
 			{0.6, math.Pi - 0.2},
 			{0.4, math.Pi - 0.2},
@@ -881,8 +881,8 @@ func TestCellBoundaryInsidePolygonInsideTransmeridianEast(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts: []LatLng{
+		numVerts: 4,
+		verts: [MaxCellBoundaryVerts]LatLng{
 			{0.6, -math.Pi + 0.4},
 			{0.6, -math.Pi + 0.2},
 			{0.4, -math.Pi + 0.2},
@@ -915,8 +915,8 @@ func TestCellBoundaryInsidePolygonInsideWithHole(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
 	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
@@ -937,8 +937,8 @@ func TestCellBoundaryInsidePolygonNotInside(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{1.6, 1.6}, {1.6, 1.4}, {1.4, 1.4}, {1.4, 1.6}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{1.6, 1.6}, {1.6, 1.4}, {1.4, 1.4}, {1.4, 1.6}},
 	}
 	boundaryBBox := bbox{1.6, 1.4, 1.6, 1.4}
 
@@ -959,8 +959,8 @@ func TestCellBoundaryInsidePolygonNotInsideIntersect(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{0.6, 0.6}, {1.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{0.6, 0.6}, {1.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
 	boundaryBBox := bbox{1.6, 0.4, 0.6, 0.4}
 
@@ -988,8 +988,8 @@ func TestCellBoundaryInsidePolygonNotInsideIntersectHole(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
 	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
@@ -1017,8 +1017,8 @@ func TestCellBoundaryInsidePolygonNotInsideWithinHole(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{0.6, 0.6}, {0.6, 0.4}, {0.4, 0.4}, {0.4, 0.6}},
 	}
 	boundaryBBox := bbox{0.6, 0.4, 0.6, 0.4}
 
@@ -1039,8 +1039,8 @@ func TestCellBoundaryInsidePolygonNotInsideContains(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{0, 0}, {0, 1}, {1, 1}, {1, 0}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{0, 0}, {0, 1}, {1, 1}, {1, 0}},
 	}
 	boundaryBBox := bbox{0, 1, 0, 1}
 
@@ -1068,8 +1068,8 @@ func TestCellBoundaryInsidePolygonNotInsideContainsHole(t *testing.T) {
 	bboxesFromGeoPolygon(&polygon, bboxes)
 
 	boundary := CellBoundary{
-		NumVerts: 4,
-		Verts:    []LatLng{{0.9, 0.9}, {0.9, 0.1}, {0.1, 0.1}, {0.1, 0.9}},
+		numVerts: 4,
+		verts:    [MaxCellBoundaryVerts]LatLng{{0.9, 0.9}, {0.9, 0.1}, {0.1, 0.1}, {0.1, 0.9}},
 	}
 	boundaryBBox := bbox{0.9, 0.1, 0.9, 0.1}
 

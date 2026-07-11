@@ -5,7 +5,7 @@ package h3
 // Ported from H3 C: polygon.c::cellBoundaryInsidePolygon.
 func cellBoundaryInsidePolygon(poly GeoPolygon, bboxes []bbox, boundary *CellBoundary, boundaryBBox *bbox) bool {
 	// First test a single point (first vertex). Fails fast via bboxContains.
-	if !pointInsidePolygon(poly, bboxes, &boundary.Verts[0]) {
+	if !pointInsidePolygon(poly, bboxes, &boundary.verts[0]) {
 		return false
 	}
 	// If outer loop crossings exist, not contained
@@ -13,7 +13,7 @@ func cellBoundaryInsidePolygon(poly GeoPolygon, bboxes []bbox, boundary *CellBou
 		return false
 	}
 	// Convert boundary to loop for point-inside checks
-	boundaryLoop := GeoLoop(boundary.Verts)
+	boundaryLoop := GeoLoop(boundary.verts[:boundary.numVerts])
 	// Check hole intersections or containment
 	for i := 0; i < len(poly.Holes); i++ {
 		hole := poly.Holes[i]

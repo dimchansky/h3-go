@@ -13,8 +13,8 @@ func edgeLengthRads(edge h3Index, length *float64) h3Error {
 	}
 
 	*length = 0.0
-	for i := int32(0); i < cb.NumVerts-1; i++ {
-		*length += greatCircleDistanceRads(&cb.Verts[i], &cb.Verts[i+1])
+	for i := int32(0); i < cb.numVerts-1; i++ {
+		*length += greatCircleDistanceRads(&cb.verts[i], &cb.verts[i+1])
 	}
 
 	return eSuccess

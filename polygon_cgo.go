@@ -171,15 +171,15 @@ func cellBoundaryCrossesGeoLoopC(geoloop GeoLoop, loopBBox bbox, boundary CellBo
 	cBoundaryBBox.east = C.double(boundaryBBox.East)
 	cBoundaryBBox.west = C.double(boundaryBBox.West)
 	var cb C.CellBoundary
-	n := boundary.NumVerts
+	n := boundary.numVerts
 	if n > 0 {
 		if n > int32(C.MAX_CELL_BNDRY_VERTS) {
 			n = int32(C.MAX_CELL_BNDRY_VERTS)
 		}
 		cb.numVerts = C.int(n)
 		for i := int32(0); i < n; i++ {
-			cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
-			cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
+			cb.verts[i].lat = C.double(boundary.verts[i].Lat)
+			cb.verts[i].lng = C.double(boundary.verts[i].Lng)
 		}
 	} else {
 		cb.numVerts = 0
@@ -219,15 +219,15 @@ func cellBoundaryInsidePolygonC(poly GeoPolygon, bboxes []bbox, boundary CellBou
 	cBoundaryBBox.west = C.double(boundaryBBox.West)
 	// boundary
 	var cb C.CellBoundary
-	n := boundary.NumVerts
+	n := boundary.numVerts
 	if n > 0 {
 		if n > int32(C.MAX_CELL_BNDRY_VERTS) {
 			n = int32(C.MAX_CELL_BNDRY_VERTS)
 		}
 		cb.numVerts = C.int(n)
 		for i := int32(0); i < n; i++ {
-			cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
-			cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
+			cb.verts[i].lat = C.double(boundary.verts[i].Lat)
+			cb.verts[i].lng = C.double(boundary.verts[i].Lng)
 		}
 	}
 	if C.cellBoundaryInsidePolygon(&cp, cbptr, &cb, &cBoundaryBBox) {
@@ -265,15 +265,15 @@ func cellBoundaryCrossesPolygonC(poly GeoPolygon, bboxes []bbox, boundary CellBo
 	cBoundaryBBox.west = C.double(boundaryBBox.West)
 	// boundary
 	var cb C.CellBoundary
-	n := boundary.NumVerts
+	n := boundary.numVerts
 	if n > 0 {
 		if n > int32(C.MAX_CELL_BNDRY_VERTS) {
 			n = int32(C.MAX_CELL_BNDRY_VERTS)
 		}
 		cb.numVerts = C.int(n)
 		for i := int32(0); i < n; i++ {
-			cb.verts[i].lat = C.double(boundary.Verts[i].Lat)
-			cb.verts[i].lng = C.double(boundary.Verts[i].Lng)
+			cb.verts[i].lat = C.double(boundary.verts[i].Lat)
+			cb.verts[i].lng = C.double(boundary.verts[i].Lng)
 		}
 	}
 	if C.cellBoundaryCrossesPolygon(&cp, cbptr, &cb, &cBoundaryBBox) {

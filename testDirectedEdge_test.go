@@ -634,14 +634,14 @@ func TestDirectedEdgeToBoundary(t *testing.T) {
 				t.Fatalf("directedEdgeToBoundary failed: %v", err)
 			}
 
-			if edgeBoundary.NumVerts != 2 {
-				t.Errorf("Expected 2 vertices for edge %d, got %d", i, edgeBoundary.NumVerts)
+			if edgeBoundary.numVerts != 2 {
+				t.Errorf("Expected 2 vertices for edge %d, got %d", i, edgeBoundary.numVerts)
 				continue
 			}
 
-			for j := int32(0); j < edgeBoundary.NumVerts; j++ {
+			for j := int32(0); j < edgeBoundary.numVerts; j++ {
 				expectedIdx := expectedVertices[i][j]
-				if !geoAlmostEqual(&edgeBoundary.Verts[j], &boundary.Verts[expectedIdx]) {
+				if !geoAlmostEqual(&edgeBoundary.verts[j], &boundary.verts[expectedIdx]) {
 					t.Errorf("Edge %d vertex %d does not match expected", i, j)
 				}
 			}
@@ -685,14 +685,14 @@ func TestDirectedEdgeToBoundaryPentagonClassIII(t *testing.T) {
 				t.Fatalf("directedEdgeToBoundary failed: %v", err)
 			}
 
-			if edgeBoundary.NumVerts != 3 {
-				t.Errorf("Expected 3 vertices for Class III pentagon edge %d, got %d", i, edgeBoundary.NumVerts)
+			if edgeBoundary.numVerts != 3 {
+				t.Errorf("Expected 3 vertices for Class III pentagon edge %d, got %d", i, edgeBoundary.numVerts)
 				continue
 			}
 
-			for j := int32(0); j < edgeBoundary.NumVerts; j++ {
+			for j := int32(0); j < edgeBoundary.numVerts; j++ {
 				expectedIdx := expectedVertices[i][j]
-				if expectedIdx >= 0 && !geoAlmostEqual(&edgeBoundary.Verts[j], &boundary.Verts[expectedIdx]) {
+				if expectedIdx >= 0 && !geoAlmostEqual(&edgeBoundary.verts[j], &boundary.verts[expectedIdx]) {
 					t.Errorf("Pentagon edge %d vertex %d does not match expected", i, j)
 				}
 			}
@@ -740,14 +740,14 @@ func TestDirectedEdgeToBoundaryPentagonClassII(t *testing.T) {
 				t.Fatalf("directedEdgeToBoundary failed: %v", err)
 			}
 
-			if edgeBoundary.NumVerts != 2 {
-				t.Errorf("Expected 2 vertices for Class II pentagon edge %d, got %d", i, edgeBoundary.NumVerts)
+			if edgeBoundary.numVerts != 2 {
+				t.Errorf("Expected 2 vertices for Class II pentagon edge %d, got %d", i, edgeBoundary.numVerts)
 				continue
 			}
 
-			for j := int32(0); j < edgeBoundary.NumVerts; j++ {
+			for j := int32(0); j < edgeBoundary.numVerts; j++ {
 				expectedIdx := expectedVertices[i][j]
-				if expectedIdx >= 0 && !geoAlmostEqual(&edgeBoundary.Verts[j], &boundary.Verts[expectedIdx]) {
+				if expectedIdx >= 0 && !geoAlmostEqual(&edgeBoundary.verts[j], &boundary.verts[expectedIdx]) {
 					t.Errorf("Pentagon edge %d vertex %d does not match expected", i, j)
 				}
 			}

@@ -66,8 +66,8 @@ func Test_cellToBoundary_classIIIEdgeVertex(t *testing.T) {
 			t.Errorf("cellToBoundary failed for hex %d: %v", i, err)
 			continue
 		}
-		if b.NumVerts != 7 {
-			t.Errorf("expected 7 vertices for hex %d, got %d", i, b.NumVerts)
+		if b.numVerts != 7 {
+			t.Errorf("expected 7 vertices for hex %d, got %d", i, b.numVerts)
 		}
 	}
 }
@@ -87,8 +87,8 @@ func Test_cellToBoundary_classIIIEdgeVertex_exact(t *testing.T) {
 	}
 
 	expected := CellBoundary{
-		NumVerts: 7,
-		Verts: []LatLng{
+		numVerts: 7,
+		verts: [MaxCellBoundaryVerts]LatLng{
 			{Lat: Deg(18.043333154), Lng: Deg(-66.27836523500002)},
 			{Lat: Deg(18.042238363), Lng: Deg(-66.27929062800001)},
 			{Lat: Deg(18.040818259), Lng: Deg(-66.27854193899998)},
@@ -99,23 +99,23 @@ func Test_cellToBoundary_classIIIEdgeVertex_exact(t *testing.T) {
 		},
 	}
 
-	if boundary.NumVerts != expected.NumVerts {
-		t.Errorf("expected %d vertices, got %d", expected.NumVerts, boundary.NumVerts)
+	if boundary.numVerts != expected.numVerts {
+		t.Errorf("expected %d vertices, got %d", expected.numVerts, boundary.numVerts)
 	}
 
 	// Check each vertex with tolerance
 	tolerance := 1e-9
-	for i := 0; i < int(boundary.NumVerts) && i < len(boundary.Verts); i++ {
-		latDiff := math.Abs(boundary.Verts[i].Lat.Deg() - expected.Verts[i].Lat.Deg())
-		lngDiff := math.Abs(boundary.Verts[i].Lng.Deg() - expected.Verts[i].Lng.Deg())
+	for i := 0; i < int(boundary.numVerts) && i < len(boundary.verts); i++ {
+		latDiff := math.Abs(boundary.verts[i].Lat.Deg() - expected.verts[i].Lat.Deg())
+		lngDiff := math.Abs(boundary.verts[i].Lng.Deg() - expected.verts[i].Lng.Deg())
 
 		if latDiff > tolerance {
 			t.Errorf("vertex %d latitude mismatch: expected %f, got %f, diff %f",
-				i, expected.Verts[i].Lat.Deg(), boundary.Verts[i].Lat.Deg(), latDiff)
+				i, expected.verts[i].Lat.Deg(), boundary.verts[i].Lat.Deg(), latDiff)
 		}
 		if lngDiff > tolerance {
 			t.Errorf("vertex %d longitude mismatch: expected %f, got %f, diff %f",
-				i, expected.Verts[i].Lng.Deg(), boundary.Verts[i].Lng.Deg(), lngDiff)
+				i, expected.verts[i].Lng.Deg(), boundary.verts[i].Lng.Deg(), lngDiff)
 		}
 	}
 }
@@ -132,8 +132,8 @@ func Test_cellToBoundary_coslngConstrain(t *testing.T) {
 	}
 
 	expected := CellBoundary{
-		NumVerts: 6,
-		Verts: []LatLng{
+		numVerts: 6,
+		verts: [MaxCellBoundaryVerts]LatLng{
 			{Lat: Deg(-52.0130533678236091), Lng: Deg(-34.6232931343713091)},
 			{Lat: Deg(-52.0041156384652012), Lng: Deg(-34.6096733160584549)},
 			{Lat: Deg(-51.9929610229502472), Lng: Deg(-34.6165157145896387)},
@@ -143,23 +143,23 @@ func Test_cellToBoundary_coslngConstrain(t *testing.T) {
 		},
 	}
 
-	if boundary.NumVerts != expected.NumVerts {
-		t.Errorf("expected %d vertices, got %d", expected.NumVerts, boundary.NumVerts)
+	if boundary.numVerts != expected.numVerts {
+		t.Errorf("expected %d vertices, got %d", expected.numVerts, boundary.numVerts)
 	}
 
 	// Check each vertex with tolerance
 	tolerance := 1e-9
-	for i := 0; i < int(boundary.NumVerts) && i < len(boundary.Verts); i++ {
-		latDiff := math.Abs(boundary.Verts[i].Lat.Deg() - expected.Verts[i].Lat.Deg())
-		lngDiff := math.Abs(boundary.Verts[i].Lng.Deg() - expected.Verts[i].Lng.Deg())
+	for i := 0; i < int(boundary.numVerts) && i < len(boundary.verts); i++ {
+		latDiff := math.Abs(boundary.verts[i].Lat.Deg() - expected.verts[i].Lat.Deg())
+		lngDiff := math.Abs(boundary.verts[i].Lng.Deg() - expected.verts[i].Lng.Deg())
 
 		if latDiff > tolerance {
 			t.Errorf("vertex %d latitude mismatch: expected %f, got %f, diff %f",
-				i, expected.Verts[i].Lat.Deg(), boundary.Verts[i].Lat.Deg(), latDiff)
+				i, expected.verts[i].Lat.Deg(), boundary.verts[i].Lat.Deg(), latDiff)
 		}
 		if lngDiff > tolerance {
 			t.Errorf("vertex %d longitude mismatch: expected %f, got %f, diff %f",
-				i, expected.Verts[i].Lng.Deg(), boundary.Verts[i].Lng.Deg(), lngDiff)
+				i, expected.verts[i].Lng.Deg(), boundary.verts[i].Lng.Deg(), lngDiff)
 		}
 	}
 }

@@ -18,7 +18,7 @@ func directedEdgeToBoundary(edge h3Index, cb *CellBoundary) h3Error {
 	if startVertex == invalidVertexNum {
 		// This is not actually an edge (i.e. no valid direction),
 		// so return no vertices.
-		cb.NumVerts = 0
+		cb.numVerts = 0
 		return eDirEdgeInvalid
 	}
 

@@ -50,10 +50,10 @@ func TestVertexHash(t *testing.T) {
 			t.Fatalf("cellToBoundary failed: %v", err)
 		}
 
-		numVerts := int(boundary.NumVerts)
+		numVerts := int(boundary.numVerts)
 		for i := 0; i < numVerts; i++ {
-			hash1 := _hashVertex(&boundary.Verts[i], int32(res), numBuckets)
-			hash2 := _hashVertex(&boundary.Verts[(i+1)%numVerts], int32(res), numBuckets)
+			hash1 := _hashVertex(&boundary.verts[i], int32(res), numBuckets)
+			hash2 := _hashVertex(&boundary.verts[(i+1)%numVerts], int32(res), numBuckets)
 
 			if hash1 == hash2 {
 				t.Errorf("Hashes must not be equal at res %d, vertex %d: both are %d", res, i, hash1)

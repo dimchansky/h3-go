@@ -18,14 +18,14 @@ func cellBBoxAssertions(t *testing.T, h3 h3Index) {
 		t.Fatalf("cellToBoundary failed for cell %x: %v", h3, err)
 	}
 
-	for j := int32(0); j < verts.NumVerts; j++ {
-		if !bboxContains(&bbox, &verts.Verts[j]) {
+	for j := int32(0); j < verts.numVerts; j++ {
+		if !bboxContains(&bbox, &verts.verts[j]) {
 			t.Errorf("bbox does not contain cell vertex %d for cell %x", j, h3)
 			t.Logf("Cell: %x", h3)
 			t.Logf("bbox: North=%f, South=%f, East=%f, West=%f",
 				bbox.North.Deg(), bbox.South.Deg(), bbox.East.Deg(), bbox.West.Deg())
 			t.Logf("Vertex: Lat=%f, Lng=%f",
-				verts.Verts[j].Lat.Deg(), verts.Verts[j].Lng.Deg())
+				verts.verts[j].Lat.Deg(), verts.verts[j].Lng.Deg())
 		}
 	}
 }
@@ -61,15 +61,15 @@ func childBBoxAssertions(t *testing.T, h3 h3Index) {
 				t.Fatalf("cellToBoundary failed for child cell %x: %v", children[i], err)
 			}
 
-			for j := int32(0); j < childVerts.NumVerts; j++ {
-				if !bboxContains(&bbox, &childVerts.Verts[j]) {
+			for j := int32(0); j < childVerts.numVerts; j++ {
+				if !bboxContains(&bbox, &childVerts.verts[j]) {
 					t.Errorf("bbox does not contain child vertex %d for parent %x, child %x", j, h3, children[i])
 					t.Logf("Parent: %x", h3)
 					t.Logf("bbox: North=%f, South=%f, East=%f, West=%f",
 						bbox.North.Deg(), bbox.South.Deg(), bbox.East.Deg(), bbox.West.Deg())
 					t.Logf("Child: %x", children[i])
 					t.Logf("Vertex: Lat=%f, Lng=%f",
-						childVerts.Verts[j].Lat.Deg(), childVerts.Verts[j].Lng.Deg())
+						childVerts.verts[j].Lat.Deg(), childVerts.verts[j].Lng.Deg())
 				}
 			}
 		}

@@ -17,7 +17,22 @@ const VersionMajor
 const VersionMinor
 const VersionPatch
 func Deg
+func LatLngDegs
+func LatLngToCell
+func NewLatLng
+func NumCells
+func ParseCell
+func ParseDirectedEdge
+func ParseVertex
+func Pentagons
 func Rad
+func Res0Cells
+method (*Cell) UnmarshalText
+method (*CellBoundary) At
+method (*CellBoundary) Len
+method (*CellBoundary) Verts
+method (*DirectedEdge) UnmarshalText
+method (*Vertex) UnmarshalText
 method (Angle) Abs
 method (Angle) Cos
 method (Angle) Deg
@@ -29,6 +44,28 @@ method (Angle) Sin
 method (Angle) SinCos
 method (Angle) String
 method (Angle) Tan
+method (Cell) AppendChildren
+method (Cell) BaseCellNumber
+method (Cell) Boundary
+method (Cell) CenterChild
+method (Cell) ChildAtPos
+method (Cell) ChildPos
+method (Cell) Children
+method (Cell) IcosahedronFaces
+method (Cell) IsPentagon
+method (Cell) IsResClassIII
+method (Cell) IsValid
+method (Cell) LatLng
+method (Cell) MarshalText
+method (Cell) NumChildren
+method (Cell) Parent
+method (Cell) Resolution
+method (Cell) String
+method (DirectedEdge) MarshalText
+method (DirectedEdge) String
+method (LatLng) Cell
+method (Vertex) MarshalText
+method (Vertex) String
 type Angle
 type Cell
 type CellBoundary

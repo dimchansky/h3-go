@@ -19,11 +19,15 @@ type LatLng struct {
 	Lng Angle // longitude
 }
 
-// CellBoundary mirrors the CellBoundary struct from h3api.h
-// A polyline of vertices (closed or open depending on context).
+// CellBoundary is the boundary of a cell or directed edge, in ccw order.
+//
+// It mirrors the C CellBoundary struct from h3api.h: a fixed-size array of
+// up to MaxCellBoundaryVerts vertices plus a count. It is a value type;
+// copying is cheap and involves no heap allocation. The zero value is an
+// empty boundary. Access the vertices with Len, At, or Verts.
 type CellBoundary struct {
-	NumVerts int32    // number of vertices (matches C int)
-	Verts    []LatLng // vertices in ccw order
+	numVerts int32                        // number of vertices (matches C int)
+	verts    [MaxCellBoundaryVerts]LatLng // vertices in ccw order
 }
 
 // GeoLoop is a simple loop of LatLng coordinates (closed implicitly).

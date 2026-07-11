@@ -266,15 +266,15 @@ func geoPrintlnNoFmtC(p *LatLng) {
 func cellBoundaryPrintC(b *CellBoundary) {
 	// C CellBoundary has a fixed array of 10 LatLng vertices
 	var cBoundary C.CellBoundary
-	cBoundary.numVerts = C.int(b.NumVerts)
+	cBoundary.numVerts = C.int(b.numVerts)
 
 	// Copy vertices to the fixed-size C array
-	for i := 0; i < len(b.Verts) && i < 10; i++ {
+	for i := 0; i < len(b.verts) && i < 10; i++ {
 		// We need to access the array elements directly
 		// This is a workaround since we can't easily assign to the fixed array
 		cVertPtr := (*C.LatLng)(unsafe.Pointer(uintptr(unsafe.Pointer(&cBoundary.verts[0])) + uintptr(i)*unsafe.Sizeof(C.LatLng{})))
-		cVertPtr.lat = C.double(b.Verts[i].Lat.Rad())
-		cVertPtr.lng = C.double(b.Verts[i].Lng.Rad())
+		cVertPtr.lat = C.double(b.verts[i].Lat.Rad())
+		cVertPtr.lng = C.double(b.verts[i].Lng.Rad())
 	}
 	C.cellBoundaryPrint_wrapper(&cBoundary)
 }
@@ -283,15 +283,15 @@ func cellBoundaryPrintC(b *CellBoundary) {
 func cellBoundaryPrintlnC(b *CellBoundary) {
 	// C CellBoundary has a fixed array of 10 LatLng vertices
 	var cBoundary C.CellBoundary
-	cBoundary.numVerts = C.int(b.NumVerts)
+	cBoundary.numVerts = C.int(b.numVerts)
 
 	// Copy vertices to the fixed-size C array
-	for i := 0; i < len(b.Verts) && i < 10; i++ {
+	for i := 0; i < len(b.verts) && i < 10; i++ {
 		// We need to access the array elements directly
 		// This is a workaround since we can't easily assign to the fixed array
 		cVertPtr := (*C.LatLng)(unsafe.Pointer(uintptr(unsafe.Pointer(&cBoundary.verts[0])) + uintptr(i)*unsafe.Sizeof(C.LatLng{})))
-		cVertPtr.lat = C.double(b.Verts[i].Lat.Rad())
-		cVertPtr.lng = C.double(b.Verts[i].Lng.Rad())
+		cVertPtr.lat = C.double(b.verts[i].Lat.Rad())
+		cVertPtr.lng = C.double(b.verts[i].Lng.Rad())
 	}
 	C.cellBoundaryPrintln_wrapper(&cBoundary)
 }

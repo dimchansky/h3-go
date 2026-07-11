@@ -9,8 +9,8 @@ import "fmt"
 //nolint:unused // ported from H3 C for parity completeness; exercised by cgo && c2go parity tests
 func cellBoundaryPrintln(b *CellBoundary) {
 	fmt.Print("{\n")
-	for v := 0; v < int(b.NumVerts); v++ {
-		str := geoToStringDegsNoFmt(&b.Verts[v])
+	for v := 0; v < int(b.numVerts); v++ {
+		str := geoToStringDegsNoFmt(&b.verts[v])
 		fmt.Printf("   %s\n", str)
 	}
 	fmt.Print("}\n")

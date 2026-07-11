@@ -68,11 +68,9 @@ func Test_cellToBoundary_parity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Prepare Go boundary result
 			var goBoundary CellBoundary
-			goBoundary.Verts = make([]LatLng, 10) // Allocate space for vertices
 
 			// Prepare C boundary result
 			var cBoundary CellBoundary
-			cBoundary.Verts = make([]LatLng, 10) // Allocate space for vertices
 
 			// Call Go implementation
 			goErr := cellToBoundary(tt.h3, &goBoundary)
@@ -92,21 +90,21 @@ func Test_cellToBoundary_parity(t *testing.T) {
 			}
 
 			// Compare number of vertices
-			if goBoundary.NumVerts != cBoundary.NumVerts {
-				t.Errorf("Vertex count mismatch: Go=%d, C=%d", goBoundary.NumVerts, cBoundary.NumVerts)
+			if goBoundary.numVerts != cBoundary.numVerts {
+				t.Errorf("Vertex count mismatch: Go=%d, C=%d", goBoundary.numVerts, cBoundary.numVerts)
 				return
 			}
 
 			// Verify reasonable vertex count (5-10 for pentagons with edge intersections, 6-12 for hexagons)
-			if goBoundary.NumVerts < 5 || goBoundary.NumVerts > 12 {
-				t.Errorf("Unexpected vertex count: got=%d, expected 5-12", goBoundary.NumVerts)
+			if goBoundary.numVerts < 5 || goBoundary.numVerts > 12 {
+				t.Errorf("Unexpected vertex count: got=%d, expected 5-12", goBoundary.numVerts)
 			}
 
 			// Compare each vertex with floating point tolerance
 			const tolerance = 1e-12 // Floating point precision tolerance for lat/lng comparisons
-			for i := int32(0); i < goBoundary.NumVerts; i++ {
-				goVert := goBoundary.Verts[i]
-				cVert := cBoundary.Verts[i]
+			for i := int32(0); i < goBoundary.numVerts; i++ {
+				goVert := goBoundary.verts[i]
+				cVert := cBoundary.verts[i]
 
 				latDiff := goVert.Lat - cVert.Lat
 				if latDiff < 0 {
@@ -128,7 +126,7 @@ func Test_cellToBoundary_parity(t *testing.T) {
 			}
 
 			t.Logf("Generated %d vertices for %s (h3Index: 0x%x)",
-				goBoundary.NumVerts, tt.desc, uint64(tt.h3))
+				goBoundary.numVerts, tt.desc, uint64(tt.h3))
 		})
 	}
 }
@@ -160,11 +158,9 @@ func Test_cellToBoundary_invalid_cells_parity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Prepare Go boundary result
 			var goBoundary CellBoundary
-			goBoundary.Verts = make([]LatLng, 10)
 
 			// Prepare C boundary result
 			var cBoundary CellBoundary
-			cBoundary.Verts = make([]LatLng, 10)
 
 			// Call Go implementation
 			goErr := cellToBoundary(tt.h3, &goBoundary)

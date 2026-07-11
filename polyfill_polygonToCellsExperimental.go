@@ -319,7 +319,7 @@ func iterStepPolygonCompact(iter *iterCellsPolygonCompact) {
 					bboxBoundary := bboxToCellBoundary(&bbox)
 					if bboxContainsBBox(&bbox, &iter.bboxes[0]) ||
 						pointInsidePolygon(*iter.polygon, iter.bboxes,
-							&bboxBoundary.Verts[0]) ||
+							&bboxBoundary.verts[0]) ||
 						cellBoundaryCrossesPolygon(*iter.polygon,
 							iter.bboxes, &bboxBoundary, &bbox) {
 						iter.Cell = cell
