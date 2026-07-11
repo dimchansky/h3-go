@@ -29,7 +29,9 @@ import "C"
 // _ipowC invokes the original C implementation for parity tests.
 // Add more wrappers from mathExtensions.c here as needed.
 func _ipowC(base, exp int64) int64 {
-	return int64(C._ipow_c_wrapper(C.longlong(base), C.longlong(exp)))
+	// C.int64_t (not C.longlong): int64_t is `long` on linux/amd64 glibc but
+	// `long long` on darwin, so the stdint spelling is the portable one.
+	return int64(C._ipow_c_wrapper(C.int64_t(base), C.int64_t(exp)))
 }
 
 // addInt32sOverflowsC invokes the original C ADD_INT32S_OVERFLOWS macro for parity tests.
