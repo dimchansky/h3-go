@@ -914,9 +914,13 @@ Goal: when H3 `4.4.x`/`4.5.x` releases, produce a reviewable, function-scoped up
 4. **Port function-by-function**: update the Go body next to the C diff; the parity
    harness retargets with `make test-c2go H3VER=4.4.0` — no code changes needed for the
    harness itself (include paths are injected at test time by design).
-5. **Update tests (mandatory, from the tool's test-change table)**: port
-   upstream's new/changed `testXxx.c` cases (tracked in
-   `docs/ported-c-tests.md`); extend parity tests for new functions. A sync
+5. **Update tests (mandatory, from both completeness tools)**: run
+   `make check-test-inventory H3VER=<new>` and review every new/stale row in
+   `docs/upstream-test-inventory.csv`; port meaningful behavior and document
+   exclusions. Discovery includes named `TEST` cases, input-driven programs,
+   CLI registrations, fuzzers, benchmarks, filters, helpers, fixtures, and
+   CMake definitions (overview in `docs/ported-c-tests.md`). Extend parity
+   tests for new functions. A sync
    is complete only when the six review dimensions are all covered: (a)
    public API additions/removals, (b) implementation changes to existing
    public functions, (c) internal helper changes, (d) constants/tables/
@@ -1291,4 +1295,3 @@ No production feature in the proposed design requires `unsafe`; consequently no 
 alternative with a performance penalty needs to be traded off anywhere. The one historical
 candidate — bridging `[]Cell` to a differently-defined index type — is dissolved by the
 alias rather than worked around.
-

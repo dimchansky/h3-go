@@ -50,6 +50,8 @@ make test-c2go               # full parity suite vs the original C objects
 make test-c2go TEST=Test_gridDisk_parity   # single parity test
 make check-api               # C-API completeness gate
 make api-inventory           # regenerate docs/c-api-inventory.csv
+make check-test-inventory    # case-level upstream test completeness gate
+make test-upstream-fixtures  # 526,546 golden conversion/boundary records
 ```
 
 Differential testing against the official cgo binding:
@@ -77,7 +79,11 @@ the short version:
    `make test-c2go` (`H3VER=` selects the tree).
 4. Add/extend a `<cfile>_cgo.go` wrapper and a `*_parity_test.go`
    (both `//go:build cgo && c2go`), then `make test-c2go H3VER=<ver>`.
-5. Port new upstream `testXxx.c` cases and record them in
+5. Audit every changed upstream test-ecosystem entry, port meaningful
+   behavior, update `docs/upstream-test-inventory.csv`, and run
+   `make check-test-inventory`. The scope includes named `TEST` cases,
+   input-driven executables, CLI registrations, fuzzers, benchmarks,
+   filters, support sources, fixtures, and build definitions; see
    [docs/ported-c-tests.md](docs/ported-c-tests.md).
 6. Add the public wrapper with its `H3 C API:` line, tests (including an
    allocation assertion if it returns collections), and regenerate the
