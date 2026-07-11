@@ -1,4 +1,4 @@
-// Tests ported from testGridDistanceExhaustive.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testGridDistanceExhaustive.c.
 package h3
 
 import (
@@ -30,12 +30,12 @@ func iterateAllIndexesAtResForGridDistance(t *testing.T, res int32, testFunc fun
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
 		if err != eSuccess {
-			continue // Some cells might not have children at certain resolutions
+			t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		children := make([]h3Index, childrenSize)
 		if err := cellToChildren(baseCell, res, children); err != eSuccess {
-			continue
+			t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		for _, child := range children {
@@ -75,12 +75,12 @@ func iterateAllIndexesAtResPartialForGridDistance(t *testing.T, res int32, testF
 		baseCell := baseCells[i]
 		childrenSize, err := cellToChildrenSize(baseCell, res)
 		if err != eSuccess {
-			continue // Some cells might not have children at certain resolutions
+			t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		children := make([]h3Index, childrenSize)
 		if err := cellToChildren(baseCell, res, children); err != eSuccess {
-			continue
+			t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		for _, child := range children {

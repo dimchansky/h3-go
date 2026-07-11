@@ -1,4 +1,4 @@
-// Tests ported from testCellToLocalIjExhaustive.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testCellToLocalIjExhaustive.c.
 package h3
 
 import (
@@ -39,12 +39,12 @@ func iterateAllIndexesAtResForCellToLocalIj(t *testing.T, res int32, testFunc fu
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
 		if err != eSuccess {
-			continue // Some cells might not have children at certain resolutions
+			t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		children := make([]h3Index, childrenSize)
 		if err := cellToChildren(baseCell, res, children); err != eSuccess {
-			continue
+			t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		for _, child := range children {
@@ -84,12 +84,12 @@ func iterateAllIndexesAtResPartialForCellToLocalIj(t *testing.T, res int32, test
 		baseCell := baseCells[i]
 		childrenSize, err := cellToChildrenSize(baseCell, res)
 		if err != eSuccess {
-			continue // Some cells might not have children at certain resolutions
+			t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		children := make([]h3Index, childrenSize)
 		if err := cellToChildren(baseCell, res, children); err != eSuccess {
-			continue
+			t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		for _, child := range children {
@@ -192,7 +192,10 @@ func h3ToLocalIj_neighbors_assertions(t *testing.T, h3 h3Index) {
 		var offset h3Index
 		err = h3NeighborRotations(h3, d, &rotations, &offset)
 		if err != eSuccess {
-			continue // Some neighbors may not be valid
+			// Pentagon K-axes directions are skipped above, so every
+			// remaining direction must yield a neighbor.
+			t.Errorf("h3NeighborRotations failed for %#016x direction %d: %v", h3, d, err)
+			return
 		}
 
 		ij := CoordIJ{I: 0, J: 0}

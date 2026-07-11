@@ -1,4 +1,4 @@
-// Tests ported from testVertexExhaustive.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testVertexExhaustive.c.
 package h3
 
 import (
@@ -27,12 +27,12 @@ func iterateAllIndexesAtRes(t *testing.T, res int32, testFunc func(t *testing.T,
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
 		if err != eSuccess {
-			continue // Some cells might not have children at certain resolutions
+			t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		children := make([]h3Index, childrenSize)
 		if err := cellToChildren(baseCell, res, children); err != eSuccess {
-			continue
+			t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		for _, child := range children {
@@ -102,8 +102,7 @@ func cellToVertex_point_assertions(t *testing.T, h3 h3Index) {
 
 	var gb CellBoundary
 	if err := cellToBoundary(h3, &gb); err != eSuccess {
-		t.Skipf("Failed to get cell boundary for h3=%#016x: %v", h3, err)
-		return
+		t.Fatalf("cellToBoundary(%#016x) failed: %v", h3, err)
 	}
 
 	numVerts := int32(numHexVerts)
@@ -157,8 +156,7 @@ func cellToVertex_uniqueness_assertions(t *testing.T, h3 h3Index) {
 
 	var originVerts [numHexVerts]h3Index
 	if err := cellToVertexes(h3, &originVerts); err != eSuccess {
-		t.Skipf("Failed to get vertexes for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
-		return
+		t.Fatalf("cellToVertexes(%#016x) failed: %v", h3, err)
 	}
 
 	isPent := isPentagon(h3)
@@ -181,8 +179,7 @@ func cellToVertex_validity_assertions(t *testing.T, h3 h3Index) {
 
 	var verts [numHexVerts]h3Index
 	if err := cellToVertexes(h3, &verts); err != eSuccess {
-		t.Skipf("Failed to get vertexes for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
-		return
+		t.Fatalf("cellToVertexes(%#016x) failed: %v", h3, err)
 	}
 
 	isPent := isPentagon(h3)
@@ -217,13 +214,11 @@ func cellToVertex_neighbor_assertions(t *testing.T, h3 h3Index) {
 	var neighborVerts [numHexVerts]h3Index
 
 	if err := gridDisk(h3, 1, neighbors); err != eSuccess {
-		t.Skipf("Failed to get neighbors for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
-		return
+		t.Fatalf("gridDisk(%#016x, 1) failed: %v", h3, err)
 	}
 
 	if err := cellToVertexes(h3, &originVerts); err != eSuccess {
-		t.Skipf("Failed to get vertexes for cell %#016x (res=%d): %v", h3, getResolution(h3), err)
-		return
+		t.Fatalf("cellToVertexes(%#016x) failed: %v", h3, err)
 	}
 
 	isPent := isPentagon(h3)
@@ -234,7 +229,7 @@ func cellToVertex_neighbor_assertions(t *testing.T, h3 h3Index) {
 		}
 
 		if err := cellToVertexes(neighbor, &neighborVerts); err != eSuccess {
-			continue
+			t.Fatalf("cellToVertexes(%#016x) failed: %v", neighbor, err)
 		}
 
 		// Calculate the set intersection

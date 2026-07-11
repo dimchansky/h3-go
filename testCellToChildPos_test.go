@@ -1,4 +1,4 @@
-// Tests ported from testCellToChildPos.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testCellToChildPos.c.
 package h3
 
 import (
@@ -27,12 +27,12 @@ func iterateAllIndexesAtResForChildPos(t *testing.T, res int32, testFunc func(t 
 	for _, baseCell := range baseCells {
 		childrenSize, err := cellToChildrenSize(baseCell, res)
 		if err != eSuccess {
-			continue // Some cells might not have children at certain resolutions
+			t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		children := make([]h3Index, childrenSize)
 		if err := cellToChildren(baseCell, res, children); err != eSuccess {
-			continue
+			t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 		}
 
 		for _, child := range children {
@@ -53,13 +53,13 @@ func childPos_assertions(t *testing.T, h3 h3Index) {
 		childRes := parentRes + resolutionOffset
 		numChildren, err := cellToChildrenSize(h3, childRes)
 		if err != eSuccess {
-			continue
+			t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", h3, childRes, err)
 		}
 
 		children := make([]h3Index, numChildren)
 		err = cellToChildren(h3, childRes, children)
 		if err != eSuccess {
-			continue
+			t.Fatalf("cellToChildren(%#x, %d) failed: %v", h3, childRes, err)
 		}
 
 		for i, child := range children {

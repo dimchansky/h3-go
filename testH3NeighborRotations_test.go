@@ -1,4 +1,4 @@
-// Tests ported from testH3NeighborRotations.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testH3NeighborRotations.c.
 package h3
 
 import (
@@ -116,66 +116,21 @@ func recursiveH3IndexToGeo(t *testing.T, h h3Index, res int32, maxK int32, testO
 	}
 }
 
-// TestH3NeighborRotations tests gridDiskUnsafe vs. gridDiskDistancesSafe
-// This is a comprehensive test that validates the consistency between
-// the two grid disk algorithms across all base cells and resolutions.
+// TestH3NeighborRotations tests gridDiskUnsafe vs. gridDiskDistancesSafe.
+// Upstream CI (CMakeTests.cmake) runs testH3NeighborRotations three times
+// with arguments 0, 1 and 2 (resolution) and the default maxK of 5; each run
+// covers every index at that resolution across all 122 base cells.
 func TestH3NeighborRotations(t *testing.T) {
 	t.Parallel()
 
-	// Test parameters - using smaller values for reasonable test time
-	const resolution = int32(1)
-	const maxK = int32(3)
-
-	testOutput := &TestOutput{0, 0, 0, 0, 0}
-
-	// Generate test cases for all base cells
-	for bc := int32(0); bc < numBaseCells; bc++ {
-		rootCell := h3Index(h3CellMode << h3ModeOffset)
-		rootCell = setBaseCell(rootCell, bc)
-
-		if resolution == 0 {
-			doCell(t, rootCell, maxK, testOutput)
-		} else {
-			rootRes := getResolution(rootCell)
-			rootCell = setResolution(rootCell, resolution)
-			recursiveH3IndexToGeo(t, rootCell, rootRes+1, maxK, testOutput)
-		}
-	}
-
-	t.Logf("ret0: %d", testOutput.ret0)
-	t.Logf("ret1: %d", testOutput.ret1)
-	t.Logf("ret2: %d", testOutput.ret2)
-
-	// ret2 should never occur, as it can only happen if we run over a pentagon
-	if testOutput.ret2 > 0 || testOutput.ret0ValidationFailures > 0 ||
-		testOutput.ret1ValidationFailures > 0 {
-		t.Errorf("FAILED\nfailed0: %d\nfailed1: %d",
-			testOutput.ret0ValidationFailures,
-			testOutput.ret1ValidationFailures)
-	}
-}
-
-// TestH3NeighborRotationsMultipleResolutions tests multiple resolutions.
-func TestH3NeighborRotationsMultipleResolutions(t *testing.T) {
-	t.Parallel()
-
-	// Test multiple resolutions with smaller maxK for performance
-	resolutions := []int32{0, 1, 2}
-	maxK := int32(2)
-
-	for _, resolution := range resolutions {
+	for _, resolution := range []int32{0, 1, 2} {
 		t.Run(fmt.Sprintf("resolution_%d", resolution), func(t *testing.T) {
 			t.Parallel()
 
+			const maxK = int32(5)
 			testOutput := &TestOutput{0, 0, 0, 0, 0}
 
-			// Test a subset of base cells for higher resolutions
-			maxBaseCells := numBaseCells
-			if resolution > 1 {
-				maxBaseCells = 10 // Limit to first 10 base cells for performance
-			}
-
-			for bc := int32(0); bc < int32(maxBaseCells); bc++ {
+			for bc := int32(0); bc < numBaseCells; bc++ {
 				rootCell := h3Index(h3CellMode << h3ModeOffset)
 				rootCell = setBaseCell(rootCell, bc)
 
@@ -188,6 +143,10 @@ func TestH3NeighborRotationsMultipleResolutions(t *testing.T) {
 				}
 			}
 
+			t.Logf("ret0: %d ret1: %d ret2: %d",
+				testOutput.ret0, testOutput.ret1, testOutput.ret2)
+
+			// ret2 should never occur, as it can only happen if we run over a pentagon
 			if testOutput.ret2 > 0 || testOutput.ret0ValidationFailures > 0 ||
 				testOutput.ret1ValidationFailures > 0 {
 				t.Errorf("Resolution %d FAILED\nfailed0: %d\nfailed1: %d",

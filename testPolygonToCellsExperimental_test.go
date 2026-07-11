@@ -1,4 +1,4 @@
-// Tests ported from testPolygonToCellsExperimental.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testPolygonToCellsExperimental.c.
 package h3
 
 import (
@@ -758,13 +758,12 @@ func TestPolygonToCellsNullPolygon(t *testing.T) {
 				t.Errorf("Expected 0 estimated size, got %d", numHexagons)
 			}
 
-			var hexagons []h3Index
-			if numHexagons > 0 {
-				hexagons = make([]h3Index, numHexagons)
-				err = polygonToCellsExperimental(&nullGeoPolygon, res, flags, numHexagons, hexagons)
-				if err != eSuccess {
-					t.Fatalf("polygonToCellsExperimental failed: %v", err)
-				}
+			// The 0-vertex polygon with a declared buffer size of 0 must
+			// succeed (writing nothing), not report eMemoryBounds.
+			hexagons := make([]h3Index, numHexagons)
+			err = polygonToCellsExperimental(&nullGeoPolygon, res, flags, numHexagons, hexagons)
+			if err != eSuccess {
+				t.Fatalf("polygonToCellsExperimental failed: %v", err)
 			}
 
 			actualNumIndexes := countNonNullIndexesWithSize(hexagons, numHexagons)
@@ -1238,5 +1237,86 @@ func TestInvalidFlags(t *testing.T) {
 	}
 }
 
-// Note: The C fillIndex test uses iterateAllIndexesAtRes which is not available in Go yet.
-// This test would need to be implemented once that function is ported.
+// fillIndexExperimental_assertions checks that filling a cell's own boundary
+// with polygonToCellsExperimental (center containment) returns exactly the
+// cell's children at each depth.
+func fillIndexExperimental_assertions(t *testing.T, h h3Index) {
+	t.Helper()
+
+	if isTransmeridianCell(h) {
+		// TODO: these do not work correctly
+		return
+	}
+
+	currentRes := getResolution(h)
+	// TODO: Not testing more than one depth because the assertions fail.
+	for nextRes := currentRes; nextRes <= currentRes+1; nextRes++ {
+		var boundary CellBoundary
+		if err := cellToBoundary(h, &boundary); err != eSuccess {
+			t.Fatalf("cellToBoundary(%#x) failed: %v", h, err)
+		}
+
+		verts := make([]LatLng, boundary.numVerts)
+		copy(verts, boundary.verts[:boundary.numVerts])
+		polygon := GeoPolygon{
+			GeoLoop: verts,
+			Holes:   nil,
+		}
+
+		polygonToCellsSize, err := maxPolygonToCellsSizeExperimental(&polygon, nextRes, 0)
+		if err != eSuccess {
+			t.Fatalf("maxPolygonToCellsSizeExperimental(%#x, res %d) failed: %v", h, nextRes, err)
+		}
+
+		polygonToCellsOut := make([]h3Index, polygonToCellsSize)
+		if err := polygonToCellsExperimental(&polygon, nextRes, uint32(ContainmentCenter),
+			polygonToCellsSize, polygonToCellsOut); err != eSuccess {
+			t.Fatalf("polygonToCellsExperimental(%#x, res %d) failed: %v", h, nextRes, err)
+		}
+
+		polygonToCellsCount := countNonNullIndexesWithSize(polygonToCellsOut, polygonToCellsSize)
+
+		childrenSize, err := cellToChildrenSize(h, nextRes)
+		if err != eSuccess {
+			t.Fatalf("cellToChildrenSize(%#x, res %d) failed: %v", h, nextRes, err)
+		}
+
+		children := make([]h3Index, childrenSize)
+		if err := cellToChildren(h, nextRes, children); err != eSuccess {
+			t.Fatalf("cellToChildren(%#x, res %d) failed: %v", h, nextRes, err)
+		}
+
+		cellToChildrenCount := countNonNullIndexesWithSize(children, childrenSize)
+
+		if polygonToCellsCount != cellToChildrenCount {
+			t.Errorf("PolygonToCells count matches cellToChildren count for %#x res %d: %d != %d",
+				h, nextRes, polygonToCellsCount, cellToChildrenCount)
+		}
+
+		// Verify all children are found in the polygonToCells output.
+		for _, child := range children {
+			if child == h3Null {
+				continue
+			}
+			found := false
+			for _, cell := range polygonToCellsOut {
+				if cell == child {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Errorf("All indexes match between polygonToCells and cellToChildren: %#x missing for %#x res %d",
+					child, h, nextRes)
+			}
+		}
+	}
+}
+
+func TestFillIndexExperimental(t *testing.T) {
+	t.Parallel()
+
+	_iterateAllIndexesAtRes(0, func(h h3Index) { fillIndexExperimental_assertions(t, h) })
+	_iterateAllIndexesAtRes(1, func(h h3Index) { fillIndexExperimental_assertions(t, h) })
+	_iterateAllIndexesAtRes(2, func(h h3Index) { fillIndexExperimental_assertions(t, h) })
+}

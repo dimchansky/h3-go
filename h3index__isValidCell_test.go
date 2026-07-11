@@ -1,4 +1,4 @@
-// Tests ported from testH3Index.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testH3Index.c.
 package h3
 
 import (
@@ -266,8 +266,8 @@ func TestStringToH3(t *testing.T) {
 			h3, err := stringToH3(tc.input)
 
 			if tc.wantErr {
-				if err == eSuccess {
-					t.Error("expected error but got success")
+				if err != eFailed {
+					t.Errorf("expected eFailed, got %v", err)
 				}
 				return
 			}

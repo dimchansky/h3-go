@@ -1,4 +1,4 @@
-// Tests ported from testLatLngInternal.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testLatLngInternal.c.
 
 package h3
 

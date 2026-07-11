@@ -1,4 +1,4 @@
-// Tests ported from testDirectedEdge.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testDirectedEdge.c.
 package h3
 
 import (
@@ -114,66 +114,36 @@ func TestAreNeighborCells(t *testing.T) {
 func TestAreNeighborCells_invalid(t *testing.T) {
 	t.Parallel()
 
-	// PARITY TEST: This test reveals a behavioral difference between C and Go implementations.
-	// The C areNeighborCells function validates input cells and returns eCellInvalid
-	// for invalid cells, but the Go implementation does not perform this validation.
-
-	// Create test cells with specific digits
+	// Invalid index digit in origin is rejected.
 	var origin h3Index
 	setH3Index(&origin, 5, 0, int32(centerDigit))
 	dest := origin
-
-	// Test 1: Invalid digit in origin (invalidDigit = 7)
 	origin = h3SetIndexDigit(origin, 5, int32(invalidDigit))
 	dest = h3SetIndexDigit(dest, 5, int32(jkAxesDigit))
 
-	// Debug info
-	t.Logf("Test 1 - Invalid digit origin:")
-	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
-	t.Logf("  Dest cell: %x (isValid: %v)", dest, isValidCell(dest))
-
-	_, err := areNeighborCells(origin, dest)
-	// BEHAVIOR DIFFERENCE: C returns eCellInvalid, Go returns eSuccess
-	if err != eCellInvalid {
-		t.Logf("PARITY DIFFERENCE: C would return eCellInvalid, Go returned %v", err)
-		// For now, document this difference rather than failing the test
-		// TODO: Fix Go implementation to match C behavior
+	if _, err := areNeighborCells(origin, dest); err != eCellInvalid {
+		t.Errorf("Invalid index digit origin: expected eCellInvalid, got %v", err)
 	}
 
-	// Test 2: Invalid k subsequence - origin with kAxesDigit, dest with ikAxesDigit
+	// Invalid k subsequence origin is rejected (pentagon base cell 4).
 	setH3Index(&origin, 5, 4, int32(centerDigit))
 	dest = origin
 	origin = h3SetIndexDigit(origin, 5, int32(kAxesDigit))
 	dest = h3SetIndexDigit(dest, 5, int32(ikAxesDigit))
 
-	t.Logf("Test 2 - Invalid k subsequence (K->IK):")
-	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
-	t.Logf("  Dest cell: %x (isValid: %v)", dest, isValidCell(dest))
-
-	_, err = areNeighborCells(origin, dest)
-	if err != eCellInvalid {
-		t.Logf("PARITY DIFFERENCE: C would return eCellInvalid, Go returned %v", err)
+	if _, err := areNeighborCells(origin, dest); err != eCellInvalid {
+		t.Errorf("Invalid k subsequence origin: expected eCellInvalid, got %v", err)
 	}
 
-	// Test 3: Invalid k subsequence - origin with ikAxesDigit, dest with kAxesDigit
+	// Invalid k subsequence destination is rejected.
 	setH3Index(&origin, 5, 4, int32(centerDigit))
 	dest = origin
 	origin = h3SetIndexDigit(origin, 5, int32(ikAxesDigit))
 	dest = h3SetIndexDigit(dest, 5, int32(kAxesDigit))
 
-	t.Logf("Test 3 - Invalid k subsequence (IK->K):")
-	t.Logf("  Origin cell: %x (isValid: %v)", origin, isValidCell(origin))
-	t.Logf("  Dest cell: %x (isValid: %v)", dest, isValidCell(dest))
-
-	_, err = areNeighborCells(origin, dest)
-	if err != eCellInvalid {
-		t.Logf("PARITY DIFFERENCE: C would return eCellInvalid, Go returned %v", err)
+	if _, err := areNeighborCells(origin, dest); err != eCellInvalid {
+		t.Errorf("Invalid k subsequence destination: expected eCellInvalid, got %v", err)
 	}
-
-	// Mark as expected failure for now - this documents the behavioral difference
-	// that needs to be fixed in the Go implementation
-	t.Log("This test documents behavioral differences between C and Go implementations")
-	t.Log("The Go areNeighborCells function should validate input cells like the C version does")
 }
 
 func Test_debugIsValidCell(t *testing.T) {
@@ -282,7 +252,7 @@ func TestCellsToDirectedEdgeAndFriends(t *testing.T) {
 	invalidEdge = (invalidEdge & ^h3Index(0xF<<59)) | (h3Index(h3DirectededgeMode) << 59) // Set mode
 	err = directedEdgeToCells(invalidEdge, originDestination)
 	if err == eSuccess {
-		t.Error("Expected error for invalid edges")
+		t.Error("Expected error for invalid edge")
 	}
 
 	largerRing := make([]h3Index, 19)

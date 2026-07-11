@@ -1,4 +1,4 @@
-// Tests ported from testH3Api.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testH3Api.c.
 package h3
 
 import (

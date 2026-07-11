@@ -1,4 +1,4 @@
-// Tests ported from testGridRing.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testGridRing.c.
 package h3
 
 import (

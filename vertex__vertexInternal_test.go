@@ -2,7 +2,7 @@ package h3
 
 import "testing"
 
-// Tests ported from testVertexInternal.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testVertexInternal.c.
 
 func TestVertexNumForDirection_hex(t *testing.T) {
 	t.Parallel()

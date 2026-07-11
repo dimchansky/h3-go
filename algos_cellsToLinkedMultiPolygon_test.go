@@ -1,4 +1,4 @@
-// Tests ported from testCellsToLinkedMultiPolygon.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testCellsToLinkedMultiPolygon.c.
 package h3
 
 import (
@@ -420,15 +420,8 @@ func TestCellsToLinkedMultiPolygon_specificLeak(t *testing.T) {
 	set := []h3Index{0xd60006d60000f100, 0x3c3c403c1300d668}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	// Note: C test expects eFailed, but Go implementation returns eCellInvalid
-	// This indicates Go does more thorough input validation than C
-	// Both errors indicate failure, but Go is more specific about the cause
-	if err == eSuccess {
-		t.Errorf("Expected error for invalid cells, got success")
-	}
-	// Accept both eFailed and eCellInvalid as valid error responses
-	if err != eFailed && err != eCellInvalid {
-		t.Errorf("Expected eFailed or eCellInvalid for invalid cells, got %v", err)
+	if err != eFailed {
+		t.Errorf("Expected eFailed for invalid cells, got %v", err)
 	}
 }
 

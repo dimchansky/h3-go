@@ -1,4 +1,4 @@
-// Tests ported from testGridDisk.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testGridDisk.c.
 package h3
 
 import (

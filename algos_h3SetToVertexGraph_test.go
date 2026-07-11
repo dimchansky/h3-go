@@ -1,4 +1,4 @@
-// Tests ported from testH3SetToVertexGraphInternal.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testH3SetToVertexGraphInternal.c.
 package h3
 
 import (

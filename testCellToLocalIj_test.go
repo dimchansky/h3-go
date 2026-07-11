@@ -1,4 +1,4 @@
-// Tests ported from testCellToLocalIj.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testCellToLocalIj.c.
 package h3
 
 import (
@@ -36,24 +36,24 @@ func Test_ijBaseCells(t *testing.T) {
 	// Test out of range base cell (1)
 	ij.I = 2
 	err = localIjToCell(origin, &ij, 0, &retrieved)
-	if err == eSuccess {
-		t.Error("out of range base cell (1) should fail")
+	if err != eFailed {
+		t.Errorf("out of range base cell (1): expected eFailed, got %v", err)
 	}
 
 	// Test out of range base cell (2)
 	ij.I = 0
 	ij.J = 2
 	err = localIjToCell(origin, &ij, 0, &retrieved)
-	if err == eSuccess {
-		t.Error("out of range base cell (2) should fail")
+	if err != eFailed {
+		t.Errorf("out of range base cell (2): expected eFailed, got %v", err)
 	}
 
 	// Test out of range base cell (3)
 	ij.I = -2
 	ij.J = -2
 	err = localIjToCell(origin, &ij, 0, &retrieved)
-	if err == eSuccess {
-		t.Error("out of range base cell (3) should fail")
+	if err != eFailed {
+		t.Errorf("out of range base cell (3): expected eFailed, got %v", err)
 	}
 }
 
@@ -149,8 +149,8 @@ func Test_cellToLocalIjFailed(t *testing.T) {
 
 	// Test pent1 to bc3 - should fail
 	err = cellToLocalIj(pent1, bc3, 0, &ij)
-	if err == eSuccess {
-		t.Error("found quadIJ (5) should fail")
+	if err != eFailed {
+		t.Errorf("found quadIJ (5): expected eFailed, got %v", err)
 	}
 }
 
@@ -273,23 +273,22 @@ func Test_invalid_negativeIj(t *testing.T) {
 	ij := CoordIJ{I: -14671840, J: math.MinInt32}
 	var out h3Index
 	err := localIjToCell(index, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("Negative I and J components fail")
+	if err != eFailed {
+		t.Errorf("Negative I and J components: expected eFailed, got %v", err)
 	}
 }
 
 func Test_localIjToCell_overflow_i(t *testing.T) {
 	t.Parallel()
 
-	// 4.4.0 upstream loops over every resolution here.
 	for res := int32(0); res <= maxH3Res; res++ {
 		var origin h3Index
 		setH3Index(&origin, res, 2, int32(centerDigit))
 		ij := CoordIJ{I: math.MinInt32, J: math.MaxInt32}
 		var out h3Index
 		err := localIjToCell(origin, &ij, 0, &out)
-		if err == eSuccess {
-			t.Errorf("High magnitude I and J components fail (res %d)", res)
+		if err != eFailed {
+			t.Errorf("High magnitude I and J components (res %d): expected eFailed, got %v", res, err)
 		}
 	}
 }
@@ -297,15 +296,14 @@ func Test_localIjToCell_overflow_i(t *testing.T) {
 func Test_localIjToCell_overflow_j(t *testing.T) {
 	t.Parallel()
 
-	// 4.4.0 upstream loops over every resolution here.
 	for res := int32(0); res <= maxH3Res; res++ {
 		var origin h3Index
 		setH3Index(&origin, res, 2, int32(centerDigit))
 		ij := CoordIJ{I: math.MaxInt32, J: math.MinInt32}
 		var out h3Index
 		err := localIjToCell(origin, &ij, 0, &out)
-		if err == eSuccess {
-			t.Errorf("High magnitude J and I components fail (res %d)", res)
+		if err != eFailed {
+			t.Errorf("High magnitude J and I components (res %d): expected eFailed, got %v", res, err)
 		}
 	}
 }
@@ -313,63 +311,59 @@ func Test_localIjToCell_overflow_j(t *testing.T) {
 func Test_localIjToCell_overflow_ij(t *testing.T) {
 	t.Parallel()
 
-	var origin h3Index
-	setH3Index(&origin, 2, 2, int32(centerDigit))
-	ij := CoordIJ{I: math.MinInt32, J: math.MinInt32}
-	var out h3Index
-	err := localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("High magnitude J and I components fail")
+	for res := int32(0); res <= maxH3Res; res++ {
+		var origin h3Index
+		setH3Index(&origin, res, 2, int32(centerDigit))
+		ij := CoordIJ{I: math.MinInt32, J: math.MinInt32}
+		var out h3Index
+		err := localIjToCell(origin, &ij, 0, &out)
+		if err != eFailed {
+			t.Errorf("High magnitude J and I components (res %d): expected eFailed, got %v", res, err)
+		}
 	}
 }
 
 func Test_localIjToCell_overflow_particularCases(t *testing.T) {
 	t.Parallel()
 
-	var origin h3Index
-	setH3Index(&origin, 2, 2, int32(centerDigit))
+	for res := int32(0); res <= maxH3Res; res++ {
+		var origin h3Index
+		setH3Index(&origin, res, 2, int32(centerDigit))
 
-	var originRes3 h3Index
-	setH3Index(&originRes3, 2, 2, int32(centerDigit))
+		var out h3Index
 
-	var out h3Index
+		ij := CoordIJ{I: 553648127, J: -2145378272}
+		err := localIjToCell(origin, &ij, 0, &out)
+		if err != eFailed {
+			t.Errorf("Particular high magnitude J and I components (1, res %d): expected eFailed, got %v", res, err)
+		}
 
-	// Test case 1
-	ij := CoordIJ{I: 553648127, J: -2145378272}
-	err := localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("Particular high magnitude J and I components fail (1)")
-	}
+		ij.I = math.MaxInt32 - 10
+		ij.J = -11
+		err = localIjToCell(origin, &ij, 0, &out)
+		if err != eFailed {
+			t.Errorf("Particular high magnitude J and I components (2, res %d): expected eFailed, got %v", res, err)
+		}
 
-	// Test case 2
-	ij.I = math.MaxInt32 - 10
-	ij.J = -11
-	err = localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("Particular high magnitude J and I components fail (2)")
-	}
+		ij.I = 553648127
+		ij.J = -2145378272
+		err = localIjToCell(origin, &ij, 0, &out)
+		if err != eFailed {
+			t.Errorf("Particular high magnitude J and I components (3, res %d): expected eFailed, got %v", res, err)
+		}
 
-	// Test case 3
-	ij.I = 553648127
-	ij.J = -2145378272
-	err = localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("Particular high magnitude J and I components fail (3)")
-	}
+		ij.I = math.MaxInt32 - 10
+		ij.J = -10
+		err = localIjToCell(origin, &ij, 0, &out)
+		if err != eFailed {
+			t.Errorf("Particular high magnitude J and I components (4, res %d): expected eFailed, got %v", res, err)
+		}
 
-	// Test case 4
-	ij.I = math.MaxInt32 - 10
-	ij.J = -10
-	err = localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("Particular high magnitude J and I components fail (4)")
-	}
-
-	// Test case 5
-	ij.I = math.MaxInt32 - 10
-	ij.J = -9
-	err = localIjToCell(origin, &ij, 0, &out)
-	if err == eSuccess {
-		t.Error("Particular high magnitude J and I components fail (5)")
+		ij.I = math.MaxInt32 - 10
+		ij.J = -9
+		err = localIjToCell(origin, &ij, 0, &out)
+		if err != eFailed {
+			t.Errorf("Particular high magnitude J and I components (5, res %d): expected eFailed, got %v", res, err)
+		}
 	}
 }

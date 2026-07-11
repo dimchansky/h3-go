@@ -1,4 +1,4 @@
-// Tests ported from testGridDistance.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testGridDistance.c.
 package h3
 
 import (
@@ -61,7 +61,7 @@ func Test_gridDistance_testIndexDistance2(t *testing.T) {
 
 	origin := h3Index(0x820c4ffffffffff)
 	// Destination is on the other side of the pentagon
-	destination := h3Index(0x821ce7ffffffffff)
+	destination := h3Index(0x821ce7fffffffff)
 
 	// TODO doesn't work because of pentagon distortion. Both should be 5.
 	var distance int64
@@ -140,15 +140,6 @@ func Test_gridDistance_edge(t *testing.T) {
 
 	origin := h3Index(0x832830fffffffff)
 	dest := h3Index(0x832834fffffffff)
-
-	// First check if these cells are actually neighbors
-	areNeighbors, neighborErr := areNeighborCells(origin, dest)
-	if neighborErr != eSuccess {
-		t.Fatalf("areNeighborCells failed: %v", neighborErr)
-	}
-	if !areNeighbors {
-		t.Skip("Test cells are not neighbors - skipping edge test")
-	}
 
 	edge, err := cellsToDirectedEdge(origin, dest)
 	if err != eSuccess {

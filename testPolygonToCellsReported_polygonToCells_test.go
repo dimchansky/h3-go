@@ -1,4 +1,4 @@
-// Tests ported from testPolygonToCellsReported.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testPolygonToCellsReported.c.
 package h3
 
 import (

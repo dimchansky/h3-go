@@ -1,4 +1,4 @@
-// Tests ported from testCellToLocalIjInternal.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testCellToLocalIjInternal.c.
 package h3
 
 import (

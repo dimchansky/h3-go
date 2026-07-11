@@ -1,4 +1,4 @@
-// Tests ported from testVec3dInternal.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testVec3dInternal.c.
 package h3
 
 import (

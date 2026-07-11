@@ -10,7 +10,10 @@ package h3
 // Ported from H3 C: polyfill.c::polygonToCellsExperimental.
 func polygonToCellsExperimental(polygon *GeoPolygon, res int32, flags uint32,
 	size int64, out []h3Index) h3Error {
-	if len(out) == 0 || int64(len(out)) < size {
+	// Go-only guard: C trusts the caller that `out` holds `size` entries; a
+	// shorter slice would otherwise panic mid-iteration. A zero size with an
+	// empty polygon is valid and must succeed, matching C.
+	if int64(len(out)) < size {
 		return eMemoryBounds
 	}
 

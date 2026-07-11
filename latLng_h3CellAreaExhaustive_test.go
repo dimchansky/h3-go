@@ -1,4 +1,4 @@
-// Tests ported from testH3CellAreaExhaustive.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testH3CellAreaExhaustive.c.
 package h3
 
 import (
@@ -25,11 +25,11 @@ func iterateAllDirectedEdgesAtRes(t *testing.T, res int32, testFunc func(t *test
 			// Get children at the specified resolution
 			childrenSize, err := cellToChildrenSize(baseCell, res)
 			if err != eSuccess {
-				continue
+				t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 			}
 			cells = make([]h3Index, childrenSize)
 			if err := cellToChildren(baseCell, res, cells); err != eSuccess {
-				continue
+				t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 			}
 		}
 
@@ -42,7 +42,7 @@ func iterateAllDirectedEdgesAtRes(t *testing.T, res int32, testFunc func(t *test
 			// Get all directed edges from this cell
 			edges := make([]h3Index, 6)
 			if err := originToDirectedEdges(cell, edges); err != eSuccess {
-				continue
+				t.Fatalf("originToDirectedEdges(%#x) failed: %v", cell, err)
 			}
 
 			// Test each valid edge
@@ -65,18 +65,18 @@ func haversineAssert(t *testing.T, edge h3Index) {
 	// Get origin cell
 	origin, err := getDirectedEdgeOrigin(edge)
 	if err != eSuccess {
-		t.Skipf("Failed to get edge origin: %v", err)
+		t.Fatalf("getDirectedEdgeOrigin(%#x) failed: %v", edge, err)
 	}
 	if err := cellToLatLng(origin, &a); err != eSuccess {
-		t.Skipf("Failed to get origin LatLng: %v", err)
+		t.Fatalf("cellToLatLng(%#x) failed: %v", origin, err)
 	}
 
 	// Get destination cell
 	if err := getDirectedEdgeDestination(edge, &destination); err != eSuccess {
-		t.Skipf("Failed to get edge destination: %v", err)
+		t.Fatalf("getDirectedEdgeDestination(%#x) failed: %v", edge, err)
 	}
 	if err := cellToLatLng(destination, &b); err != eSuccess {
-		t.Skipf("Failed to get destination LatLng: %v", err)
+		t.Fatalf("cellToLatLng(%#x) failed: %v", destination, err)
 	}
 
 	// Test greatCircleDistanceRads
@@ -125,7 +125,7 @@ func edgeLengthAssert(t *testing.T, edge h3Index) {
 	// Test edgeLengthRads
 	var lengthRads float64
 	if err := edgeLengthRads(edge, &lengthRads); err != eSuccess {
-		t.Skipf("Failed to get edge length in rads: %v", err)
+		t.Fatalf("edgeLengthRads(%#x) failed: %v", edge, err)
 	}
 	if lengthRads <= 0 {
 		t.Errorf("edgeLengthRads: edge has non-positive length %v", lengthRads)
@@ -134,7 +134,7 @@ func edgeLengthAssert(t *testing.T, edge h3Index) {
 	// Test edgeLengthKm
 	var lengthKm float64
 	if err := edgeLengthKm(edge, &lengthKm); err != eSuccess {
-		t.Skipf("Failed to get edge length in km: %v", err)
+		t.Fatalf("edgeLengthKm(%#x) failed: %v", edge, err)
 	}
 	if lengthKm <= 0 {
 		t.Errorf("edgeLengthKm: edge has non-positive length %v", lengthKm)
@@ -143,7 +143,7 @@ func edgeLengthAssert(t *testing.T, edge h3Index) {
 	// Test edgeLengthM
 	var lengthM float64
 	if err := edgeLengthM(edge, &lengthM); err != eSuccess {
-		t.Skipf("Failed to get edge length in m: %v", err)
+		t.Fatalf("edgeLengthM(%#x) failed: %v", edge, err)
 	}
 	if lengthM <= 0 {
 		t.Errorf("edgeLengthM: edge has non-positive length %v", lengthM)
@@ -157,7 +157,7 @@ func cellAreaAssert(t *testing.T, cell h3Index) {
 	// Test cellAreaRads2
 	areaRads, err := cellAreaRads2(cell)
 	if err != eSuccess {
-		t.Skipf("Failed to get cell area in rads2: %v", err)
+		t.Fatalf("cellAreaRads2(%#x) failed: %v", cell, err)
 	}
 	if areaRads <= 0 {
 		t.Errorf("cellAreaRads2: cell has non-positive area %v", areaRads)
@@ -166,7 +166,7 @@ func cellAreaAssert(t *testing.T, cell h3Index) {
 	// Test cellAreaKm2
 	areaKm2, err := cellAreaKm2(cell)
 	if err != eSuccess {
-		t.Skipf("Failed to get cell area in km2: %v", err)
+		t.Fatalf("cellAreaKm2(%#x) failed: %v", cell, err)
 	}
 	if areaKm2 <= 0 {
 		t.Errorf("cellAreaKm2: cell has non-positive area %v", areaKm2)
@@ -175,7 +175,7 @@ func cellAreaAssert(t *testing.T, cell h3Index) {
 	// Test cellAreaM2
 	areaM2, err := cellAreaM2(cell)
 	if err != eSuccess {
-		t.Skipf("Failed to get cell area in m2: %v", err)
+		t.Fatalf("cellAreaM2(%#x) failed: %v", cell, err)
 	}
 	if areaM2 <= 0 {
 		t.Errorf("cellAreaM2: cell has non-positive area %v", areaM2)
@@ -211,11 +211,11 @@ func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(h3Index) (float64,
 			// Get children at the specified resolution
 			childrenSize, err := cellToChildrenSize(baseCell, res)
 			if err != eSuccess {
-				continue
+				t.Fatalf("cellToChildrenSize(%#x, %d) failed: %v", baseCell, res, err)
 			}
 			cells = make([]h3Index, childrenSize)
 			if err := cellToChildren(baseCell, res, cells); err != eSuccess {
-				continue
+				t.Fatalf("cellToChildren(%#x, %d) failed: %v", baseCell, res, err)
 			}
 		}
 
@@ -223,9 +223,10 @@ func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(h3Index) (float64,
 		for _, cell := range cells {
 			if cell != h3Null {
 				cellArea, err := cellAreaFunc(cell)
-				if err == eSuccess {
-					area += cellArea
+				if err != eSuccess {
+					t.Fatalf("cell area callback(%#x) failed: %v", cell, err)
 				}
+				area += cellArea
 			}
 		}
 	}

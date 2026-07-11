@@ -1,4 +1,4 @@
-// Tests ported from testPolyfillInternal.c
+// Tests ported from H3 v4.4.0: src/apps/testapps/testPolyfillInternal.c.
 
 package h3
 
