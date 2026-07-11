@@ -95,6 +95,6 @@ jobs:
       - name: Fetch upstream H3 sources
         run: make -C testref h3-source
       - name: Run cgo parity tests
-        run: make test-c2go TIMEOUT=300s
+        run: make test-c2go TIMEOUT=300s VERBOSE=1
         env:
           GOTRACEBACK: system
