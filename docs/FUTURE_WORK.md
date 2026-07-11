@@ -358,6 +358,12 @@ hidden `sync.Pool`.
 
 ### Planned / promising (no blockers, do when convenient)
 
+- **Report the `gridRing` negative-k UB upstream.** C `gridRing` executes
+  `memset(out, 0, 6*k*sizeof(H3Index))` after `gridRingUnsafe` rejects
+  k < 0 — a negative size wrapped to a huge `size_t` (no-op under macOS's
+  end-pointer memset, segfault under glibc). Found by this repo's parity
+  suite on Linux CI; details in DEVIATIONS.md item 9. The Go port is
+  unaffected (bounded slice zeroing).
 - **Push and watch the first GitHub CI run.** The workflow (matrix build,
   no-unsafe gate, api-gates job, parity job) is verified locally
   command-for-command but has never executed on GitHub runners. Commits and

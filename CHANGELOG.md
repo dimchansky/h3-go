@@ -8,7 +8,11 @@ contain breaking changes (called out explicitly below).
 ## [Unreleased]
 
 - CI: version-agnostic parity/include paths (no H3 version hardcoded in
-  code); platform-independent allocation assertions.
+  code); platform-independent allocation assertions; Linux parity build
+  fixes (portable `C.int64_t`, `-lm`, no section-GC linker flags) and
+  platform-deterministic parity tests (avoids C UB in `gridRing(k<0)` and
+  `clz(0)`, zeroed C output buffers). Discovered upstream-reportable UB in
+  C `gridRing` with negative k.
 - Public-readiness documentation: README overhaul, CONTRIBUTING, SECURITY,
   changelog.
 
