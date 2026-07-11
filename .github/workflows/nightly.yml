@@ -1,0 +1,64 @@
+# Scheduled / manual / release-tag confidence checks that are too expensive
+# or too low-signal to run on every push. Policy: docs/ci-policy.md.
+name: Nightly
+
+on:
+  schedule:
+    - cron: '17 3 * * *' # 03:17 UTC daily
+  workflow_dispatch:
+  push:
+    tags: [ 'v*' ] # release gate: tags get the full battery
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  race:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Test (race)
+        run: go test -race ./...
+
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Fetch upstream H3 sources
+        run: make -C testref h3-source
+      - name: Run cgo parity tests
+        run: make test-c2go TIMEOUT=300s
+        env:
+          GOTRACEBACK: system
+      - name: C-API completeness gate
+        run: make check-api
+
+  fuzz-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Fuzz (short smoke on each target)
+        run: |
+          for target in FuzzParseCell FuzzLatLngToCell FuzzHierarchyRoundTrip; do
+            CGO_ENABLED=0 go test -fuzz "$target" -fuzztime 60s -run '^$' .
+          done
+
+  uberdiff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Differential tests vs official cgo binding
+        run: make test-uberdiff

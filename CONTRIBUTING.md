@@ -88,7 +88,9 @@ the short version:
 - Keep commits focused; describe *what* changed and *why* (see `git log`
   for the house style — prefixes like `api:`, `c2go:`, `docs:`, `ci:`).
 - Run `make fmt lint test check-unsafe` before pushing; run the parity suite
-  if you touched ported code or the harness.
+  if you touched ported code or the harness. CI is tiered
+  ([docs/ci-policy.md](docs/ci-policy.md)): docs-only changes skip Go jobs,
+  and the race detector runs on PRs/nightly/tags rather than every push.
 - Benchmark deltas are expected for performance-related changes
   (`make bench`), and allocation assertions must keep passing — new
   convenience APIs must not add allocations to existing paths.

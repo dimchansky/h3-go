@@ -189,6 +189,8 @@ Deeper documentation:
 - [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md) — backlog: deferred features,
   profiling-gated ideas, rejected designs, pre-v1.0.0 checklist.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — development workflow and porting rules.
+- [docs/ci-policy.md](docs/ci-policy.md) — what CI runs when, and why the
+  expensive suites are tiered.
 
 ## Development
 

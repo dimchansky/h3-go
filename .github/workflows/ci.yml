@@ -1,3 +1,9 @@
+# Tiered CI. Policy: docs/ci-policy.md.
+#  - Docs-only changes run nothing but the classifier (~10s).
+#  - Code changes get fast feedback (< ~3 min) from fmt/lint/tests/gates,
+#    with the parity suite in parallel.
+#  - The race detector runs as a merge gate (PRs), nightly, on tags, and on
+#    demand — not on every push (see the assessment in docs/ci-policy.md).
 name: CI
 
 on:
@@ -6,71 +12,106 @@ on:
   pull_request:
     branches: [ "**" ]
 
+# A newer commit on the same branch/PR obsoletes in-flight runs.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-test-lint:
+  # Classify the change: docs-only vs code. Fails open (code=true) whenever
+  # the base commit cannot be determined, so validation is never skipped by
+  # accident. Only *.md, LICENSE, NOTICE, and .gitignore count as docs —
+  # everything else (including workflows, Makefile, docs/api-surface.txt,
+  # docs/c-api-inventory.csv) is code.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: filter
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=$(git merge-base "origin/${{ github.base_ref }}" HEAD) || BASE=""
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE" 2>/dev/null; then
+            echo "cannot determine base; running full validation"
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          CHANGED=$(git diff --name-only "$BASE" HEAD)
+          printf 'changed files:\n%s\n' "$CHANGED"
+          if printf '%s\n' "$CHANGED" | grep -vE '(\.md$|^LICENSE$|^NOTICE$|^\.gitignore$)' | grep -q .; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs-only change; skipping Go jobs"
+            echo "code=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Fast required checks: formatting, lint, no-unsafe gate, pure-Go tests
+  # (includes examples, allocation assertions, fuzz seed corpora).
+  fast:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         # Oldest supported (go.mod floor) + latest stable.
         go-version: [ '1.24.x', 'stable' ]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
-
-      - name: Cache Go build
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-${{ matrix.go-version }}-
-
-      - name: Download deps
-        run: go mod download
-
       - name: Format (gofmt)
         run: make fmt
-
       - name: No-unsafe gate (DR-007)
         run: make check-unsafe
-
       - name: golangci-lint
         if: matrix.go-version == 'stable'
         uses: golangci/golangci-lint-action@v7
         with:
           version: v2.4.0
           args: --timeout=5m
-
       - name: Install smrcptr
         if: matrix.go-version == 'stable'
         run: go install github.com/nikolaydubina/smrcptr@latest
-
       - name: Check receiver consistency (smrcptr)
         if: matrix.go-version == 'stable'
         run: smrcptr ./...
-
       - name: Test (pure Go)
         run: CGO_ENABLED=0 go test ./...
 
+  # Race detector: merge gate for PRs into the default branch. Production
+  # code has no goroutines, sync primitives, or mutable globals (read-only
+  # tables only), so per-push race runs add ~9 minutes for little signal;
+  # nightly.yml re-runs it on schedule, tags, and manual dispatch.
+  race:
+    needs: changes
+    if: github.event_name == 'pull_request' && needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
       - name: Test (race)
         run: go test -race ./...
 
-  # Gates that need the upstream C sources (header parse only, no compile).
+  # Gates that need the upstream C header (parse only, no compile).
   api-gates:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: 'stable'
       - name: Fetch upstream H3 sources
@@ -82,14 +123,16 @@ jobs:
           make api-inventory
           git diff --exit-code docs/c-api-inventory.csv
 
-  # Full parity suite against the original C implementation.
+  # Full parity suite against the original C implementation. This is the
+  # port's core correctness check, so it runs for every code change (in
+  # parallel with `fast`; ~5-6 min including source download).
   parity:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: 'stable'
       - name: Fetch upstream H3 sources
