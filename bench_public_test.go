@@ -115,3 +115,47 @@ func BenchmarkDirectedEdges(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkAppendPolygonToCells(b *testing.B) {
+	p := sfTestPolygon()
+	buf := make([]Cell, 0, 4096)
+	b.ReportAllocs()
+	for b.Loop() {
+		out, err := AppendPolygonToCells(buf, p, 9)
+		if err != nil {
+			b.Fatal(err)
+		}
+		_ = out
+	}
+}
+
+func BenchmarkAppendCompactCells(b *testing.B) {
+	parent := Cell(0x8928308280fffff)
+	cells, err := parent.Children(12)
+	if err != nil {
+		b.Fatal(err)
+	}
+	buf := make([]Cell, 0, len(cells))
+	b.ReportAllocs()
+	for b.Loop() {
+		out, err := AppendCompactCells(buf, cells)
+		if err != nil {
+			b.Fatal(err)
+		}
+		_ = out
+	}
+}
+
+func BenchmarkCellsToMultiPolygon(b *testing.B) {
+	c := Cell(0x8928308280fffff)
+	disk, err := c.GridDisk(2)
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ReportAllocs()
+	for b.Loop() {
+		if _, err := CellsToMultiPolygon(disk); err != nil {
+			b.Fatal(err)
+		}
+	}
+}

@@ -16,22 +16,43 @@ const TwoPi
 const VersionMajor
 const VersionMinor
 const VersionPatch
+func AppendCompactCells
+func AppendPolygonToCells
+func AppendPolygonToCellsExperimental
+func AppendUncompactCells
 func CellToLocalIJ
+func CellsAtRes
+func CellsToMultiPolygon
+func CompactCells
 func Deg
+func GreatCircleDistanceKm
+func GreatCircleDistanceM
+func GreatCircleDistanceRads
 func GridDisksUnsafe
+func HexagonAreaAvgKm2
+func HexagonAreaAvgM2
+func HexagonEdgeLengthAvgKm
+func HexagonEdgeLengthAvgM
 func LatLngDegs
 func LatLngToCell
 func LocalIJToCell
 func MaxGridDiskSize
 func MaxGridRingSize
+func MaxPolygonToCellsSize
+func MaxPolygonToCellsSizeExperimental
 func NewLatLng
 func NumCells
 func ParseCell
 func ParseDirectedEdge
 func ParseVertex
 func Pentagons
+func PolygonToCells
+func PolygonToCellsExperimental
+func PolygonToCellsExperimentalSeq
 func Rad
 func Res0Cells
+func UncompactCells
+func UncompactCellsSize
 method (*Cell) UnmarshalText
 method (*CellBoundary) At
 method (*CellBoundary) Len
@@ -56,12 +77,16 @@ method (Cell) AppendGridDiskUnsafe
 method (Cell) AppendGridPath
 method (Cell) AppendGridRing
 method (Cell) AppendGridRingUnsafe
+method (Cell) AreaKm2
+method (Cell) AreaM2
+method (Cell) AreaRads2
 method (Cell) BaseCellNumber
 method (Cell) Boundary
 method (Cell) CenterChild
 method (Cell) ChildAtPos
 method (Cell) ChildPos
 method (Cell) Children
+method (Cell) ChildrenSeq
 method (Cell) DirectedEdgeTo
 method (Cell) DirectedEdges
 method (Cell) GridDisk
@@ -91,6 +116,9 @@ method (DirectedEdge) Boundary
 method (DirectedEdge) Cells
 method (DirectedEdge) Destination
 method (DirectedEdge) IsValid
+method (DirectedEdge) LengthKm
+method (DirectedEdge) LengthM
+method (DirectedEdge) LengthRads
 method (DirectedEdge) MarshalText
 method (DirectedEdge) Origin
 method (DirectedEdge) Resolution
