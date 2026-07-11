@@ -79,8 +79,8 @@ jobs:
         run: make check-api
       - name: Inventory is up to date
         run: |
-          go run ./tools/apiinventory > /tmp/inventory.csv
-          diff -u docs/c-api-inventory.csv /tmp/inventory.csv
+          make api-inventory
+          git diff --exit-code docs/c-api-inventory.csv
 
   # Full parity suite against the original C implementation.
   parity:

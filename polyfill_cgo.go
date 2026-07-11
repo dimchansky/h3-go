@@ -3,7 +3,6 @@
 package h3
 
 /*
-#cgo CPPFLAGS: -I${SRCDIR}/testref/h3-4.3.0/src/h3lib/include
 
 #include <stdlib.h>
 #include <stdbool.h>

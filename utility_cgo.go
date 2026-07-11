@@ -3,7 +3,8 @@
 package h3
 
 /*
-#cgo CFLAGS: -I${SRCDIR}/testref/h3-4.3.0/src/h3lib/include -I${SRCDIR}/testref/h3-4.3.0/src/apps/applib/include
+// NOTE: include directories (h3lib and apps/applib) are provided via
+// CGO_CPPFLAGS by `make test-c2go` -- no H3 version is hardcoded here.
 #cgo CFLAGS: -std=c99
 
 #include <stdint.h>

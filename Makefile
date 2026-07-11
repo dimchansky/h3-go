@@ -36,14 +36,14 @@ check-unsafe:
 
 # Regenerate the C-API inventory (requires testref sources; see make ref).
 api-inventory:
-	@go run ./tools/apiinventory > docs/c-api-inventory.csv
-	@echo "docs/c-api-inventory.csv regenerated"
+	@go run ./tools/apiinventory -h3ver $(H3VER) > docs/c-api-inventory.csv
+	@echo "docs/c-api-inventory.csv regenerated (H3 $(H3VER))"
 
 # Completeness gate: every H3 C public function must be ported AND publicly
 # represented (an "H3 C API:" doc line or a documented omission).
 # Requires testref sources (make -C testref h3-source downloads them).
 check-api:
-	@go run ./tools/apiinventory -verify
+	@go run ./tools/apiinventory -h3ver $(H3VER) -verify
 
 # Usage: make test [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration] [COVERAGE=1]
 # Examples:
@@ -141,6 +141,7 @@ test-c2go:
 	CXX=$$(command -v xcrun >/dev/null 2>&1 && xcrun --find clang++ || true); \
 	SDKROOT=$$(command -v xcrun >/dev/null 2>&1 && xcrun --sdk macosx --show-sdk-path || true); \
 	INC_BASE="$(PWD)/testref/h3-$(H3VER)/src/h3lib"; \
+	APPS_BASE="$(PWD)/testref/h3-$(H3VER)/src/apps/applib"; \
 	if [ ! -d "$$INC_BASE" ]; then \
 		echo "H3 C sources not found at $$INC_BASE. Run 'make ref' or set H3VER=..."; \
 		exit 1; \
@@ -163,7 +164,7 @@ test-c2go:
 	env $$TOOLCHAIN_ENV \
 	GOCACHE=$(PWD)/.gocache \
 	CGO_ENABLED=1 \
-	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib" \
+	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib -I$$APPS_BASE/include -I$$APPS_BASE/lib" \
 	CGO_CFLAGS="-ffunction-sections -fdata-sections" \
 	CGO_LDFLAGS="$$LDFLAGS_ENV" \
 	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="c2go" ./... || { \
