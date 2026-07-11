@@ -7,6 +7,15 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- **4.4.0 sync completion**: the v0.2.0 sync ported the implementation delta
+  but missed the upstream *test* delta. Now closed: ported the new
+  `testConstructCell.c` and `testIndexDigits.c` suites and the 4.4.0
+  additions to five existing test files; full symbol-level audit recorded in
+  `docs/sync/4.3.0-to-4.4.0.md` (all implementation changes verified —
+  the remaining 4.4.0 code changes were release-behavior no-ops).
+- New `tools/upstreamdiff` (`make upstream-diff FROM=... TO=...`): symbol-level
+  C tree diff mapped to the Go port via attribution comments; upstream-sync
+  documentation now makes this review mandatory.
 - CI: version-agnostic parity/include paths (no H3 version hardcoded in
   code); platform-independent allocation assertions; Linux parity build
   fixes (portable `C.int64_t`, `-lm`, no section-GC linker flags) and

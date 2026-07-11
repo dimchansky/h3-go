@@ -896,18 +896,32 @@ Goal: when H3 `4.4.x`/`4.5.x` releases, produce a reviewable, function-scoped up
 1. **Fetch & diff**: `make -C testref H3VER=4.4.0` (download alongside 4.3.0), then
    `git diff --no-index testref/h3-4.3.0/src/h3lib testref/h3-4.4.0/src/h3lib` — the diff
    is naturally per-C-function because upstream code is function-organized.
-2. **Map changed C functions → Go files**: for each changed C function name, grep
-   `Ported from H3 C: <file>::<name>` (or consult `docs/c-api-inventory.csv`). The
-   one-function-per-file layout makes each port update a self-contained diff.
+2. **Symbol-level diff (mandatory)**: run
+   `make upstream-diff FROM=<old> TO=<new>` (`tools/upstreamdiff`). It parses C
+   function/table/macro/type boundaries in both trees, reports every changed,
+   added, or removed symbol, maps each to its Go file via the attribution
+   comments, and flags unmapped symbols and upstream **test-file** changes.
+   Every row must be reviewed to a disposition (ported / no-behavior-change /
+   intentionally-not-mirrored) recorded in `docs/sync/<old>-to-<new>.md`.
+   **An API-inventory pass alone is NOT sufficient** — it proves public
+   functions exist, not that their implementations match; the 4.3.0→4.4.0
+   sync initially missed the upstream test delta for exactly this reason
+   (see docs/sync/4.3.0-to-4.4.0.md).
 3. **Detect added/removed API**: rerun
-   `go run ./tools/apiinventory -h3ver 4.4.0 > docs/c-api-inventory.csv`; new
+   `go run ./tools/apiinventory -h3ver <new> > docs/c-api-inventory.csv`; new
    `H3_EXPORT`s appear as `MISSING`, removed ones as stale attributions. The CI
    completeness gate then *requires* either a port + wrapper or an omissions entry.
 4. **Port function-by-function**: update the Go body next to the C diff; the parity
    harness retargets with `make test-c2go H3VER=4.4.0` — no code changes needed for the
    harness itself (include paths are injected at test time by design).
-5. **Update tests**: port upstream's new/changed `testXxx.c` cases (tracked in
-   `docs/ported-c-tests.md` as today); extend parity tests for new functions.
+5. **Update tests (mandatory, from the tool's test-change table)**: port
+   upstream's new/changed `testXxx.c` cases (tracked in
+   `docs/ported-c-tests.md`); extend parity tests for new functions. A sync
+   is complete only when the six review dimensions are all covered: (a)
+   public API additions/removals, (b) implementation changes to existing
+   public functions, (c) internal helper changes, (d) constants/tables/
+   structs/macros, (e) upstream test changes, (f) the corresponding Go
+   parity and public API tests.
 6. **Preserve intentional Go deviations**: they are enumerable — `Angle` fields,
    `int32` mapping, fixed-array `CellBoundary`, dst-slice out-params, iterator structs.
    Each is documented at its declaration and listed in this file; a `docs/DEVIATIONS.md`

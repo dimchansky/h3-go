@@ -64,10 +64,14 @@ The full workflow is
 [docs/public-api-architecture.md §10](docs/public-api-architecture.md#10-upstream-synchronization-workflow);
 the short version:
 
-1. Fetch the new version: `make -C testref H3_VERSION=<ver> h3-source`, then
-   diff `testref/h3-<old>` vs `testref/h3-<new>`.
-2. `go run ./tools/apiinventory -h3ver <ver> -verify` lists anything new or
-   missing.
+1. Fetch the new version: `make -C testref H3_VERSION=<ver> h3-source`.
+2. Run the **symbol-level diff** — this step is mandatory, an API check alone
+   does not prove implementation equivalence:
+   `make upstream-diff FROM=<old> TO=<ver>`. Review every changed/added/
+   removed symbol AND every changed upstream test file to a recorded
+   disposition in `docs/sync/<old>-to-<ver>.md`.
+   Then `go run ./tools/apiinventory -h3ver <ver> -verify` for the public-API
+   completeness view.
 3. Port each changed C function in its own file, preserving the attribution
    comment. Never hardcode an H3 version in code — include paths come from
    `make test-c2go` (`H3VER=` selects the tree).
