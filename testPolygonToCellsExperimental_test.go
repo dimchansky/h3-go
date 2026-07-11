@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Test fixtures - ported from C
+// Test fixtures - ported from C.
 var (
 	sfVerts = []LatLng{
 		{Lat: 0.659966917655, Lng: -2.1364398519396},
@@ -98,7 +98,7 @@ func isTransmeridianCell(h H3Index) bool {
 	return maxLng-minLng > math.Pi-(math.Pi/4)
 }
 
-// countNonNullIndexesWithSize counts non-null H3 indexes in a slice up to size
+// countNonNullIndexesWithSize counts non-null H3 indexes in a slice up to size.
 func countNonNullIndexesWithSize(indexes []H3Index, size int64) int64 {
 	var count int64
 	for i := int64(0); i < size && i < int64(len(indexes)); i++ {

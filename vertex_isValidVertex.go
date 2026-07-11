@@ -2,7 +2,7 @@ package h3
 
 // isValidVertex determines whether the input is a valid H3 vertex.
 // Returns true if the vertex index is valid, false otherwise.
-// Ported from H3 C: vertex.c::isValidVertex
+// Ported from H3 C: vertex.c::isValidVertex.
 func isValidVertex(vertex H3Index) bool {
 	if getMode(vertex) != H3_VERTEX_MODE {
 		return false

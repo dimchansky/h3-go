@@ -14,7 +14,7 @@ package h3
 //   - Lines are drawn in grid space, and may not correspond exactly to either Cartesian
 //     lines or great arcs.
 //
-// Ported from H3 C: localij.c::gridPathCells
+// Ported from H3 C: localij.c::gridPathCells.
 func gridPathCells(out []H3Index, start H3Index, end H3Index) H3Error {
 	var distance int64
 	if err := gridDistance(start, end, &distance); err != E_SUCCESS {

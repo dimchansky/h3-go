@@ -4,7 +4,7 @@ package h3
 // The function creates a new LinkedGeoPolygon, links it to the provided polygon
 // as the next element, and returns a pointer to the new polygon. This is used
 // to extend linked lists of polygons in multi-polygon structures.
-// Ported from H3 C: linkedGeo.c::addNewLinkedPolygon
+// Ported from H3 C: linkedGeo.c::addNewLinkedPolygon.
 func addNewLinkedPolygon(polygon *LinkedGeoPolygon) *LinkedGeoPolygon {
 	// Assert that polygon.next is nil (equivalent to assert(polygon->next == NULL))
 	if polygon.Next != nil {

@@ -2,7 +2,7 @@ package h3
 
 // bboxToCellBoundary converts a bounding box to a cell boundary with 4 vertices
 // in counter-clockwise order.
-// Ported from H3 C: bbox.c::bboxToCellBoundary
+// Ported from H3 C: bbox.c::bboxToCellBoundary.
 func bboxToCellBoundary(bbox *BBox) CellBoundary {
 	// Convert bbox to cell boundary, CCW vertex order
 	return CellBoundary{

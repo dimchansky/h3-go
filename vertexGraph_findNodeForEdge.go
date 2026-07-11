@@ -4,7 +4,7 @@ package h3
 // Searches the graph for an edge from fromVtx to toVtx. If toVtx is nil,
 // matches any edge starting from fromVtx (wildcard search).
 // Returns the matching VertexNode or nil if not found.
-// Ported from H3 C: vertexGraph.c::findNodeForEdge
+// Ported from H3 C: vertexGraph.c::findNodeForEdge.
 func findNodeForEdge(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode {
 	// Determine location using hash function
 	index := _hashVertex(fromVtx, graph.Res, graph.NumBuckets)

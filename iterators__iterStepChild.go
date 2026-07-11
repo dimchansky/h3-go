@@ -3,7 +3,7 @@ package h3
 // iterStepChild steps a IterCellsChildren to the next child cell.
 // When the iteration is over, IterCellsChildren.H will be H3_NULL.
 // Handles iterating through hexagon and pentagon cells.
-// Ported from H3 C: iterators.c::iterStepChild
+// Ported from H3 C: iterators.c::iterStepChild.
 func iterStepChild(it *IterCellsChildren) {
 	// once h == H3_NULL, the iterator returns an infinite sequence of H3_NULL
 	if it.H == H3_NULL {

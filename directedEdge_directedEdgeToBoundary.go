@@ -4,7 +4,7 @@ package h3
 // Gets the boundary coordinates that define a directed edge between two cells.
 // The boundary may contain additional distortion vertices if the edge crosses
 // an icosahedral face edge.
-// Ported from H3 C: directedEdge.c::directedEdgeToBoundary
+// Ported from H3 C: directedEdge.c::directedEdgeToBoundary.
 func directedEdgeToBoundary(edge H3Index, cb *CellBoundary) H3Error {
 	// Get the origin and neighbor direction from the edge
 	direction := getReservedBits(edge)

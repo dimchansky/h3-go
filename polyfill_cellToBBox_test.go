@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// cellBBoxAssertions tests that a cell's bounding box contains all its vertices
+// cellBBoxAssertions tests that a cell's bounding box contains all its vertices.
 func cellBBoxAssertions(t *testing.T, h3 H3Index) {
 	bbox, err := cellToBBox(h3, false)
 	if err != E_SUCCESS {
@@ -22,18 +22,18 @@ func cellBBoxAssertions(t *testing.T, h3 H3Index) {
 		if !bboxContains(&bbox, &verts.Verts[j]) {
 			t.Errorf("BBox does not contain cell vertex %d for cell %x", j, h3)
 			t.Logf("Cell: %x", h3)
-			t.Logf("BBox: North=%f, South=%f, East=%f, West=%f", 
+			t.Logf("BBox: North=%f, South=%f, East=%f, West=%f",
 				bbox.North.Deg(), bbox.South.Deg(), bbox.East.Deg(), bbox.West.Deg())
-			t.Logf("Vertex: Lat=%f, Lng=%f", 
+			t.Logf("Vertex: Lat=%f, Lng=%f",
 				verts.Verts[j].Lat.Deg(), verts.Verts[j].Lng.Deg())
 		}
 	}
 }
 
-// childBBoxAssertions tests that a cell's child-covering bounding box contains all vertices of its children
+// childBBoxAssertions tests that a cell's child-covering bounding box contains all vertices of its children.
 func childBBoxAssertions(t *testing.T, h3 H3Index) {
 	parentRes := getResolution(h3)
-	
+
 	bbox, err := cellToBBox(h3, true)
 	if err != E_SUCCESS {
 		t.Fatalf("cellToBBox with coverChildren=true failed for cell %x: %v", h3, err)
@@ -42,7 +42,7 @@ func childBBoxAssertions(t *testing.T, h3 H3Index) {
 	for resolutionOffset := int32(0); resolutionOffset < 5; resolutionOffset++ {
 		// Test whether all verts of all children are inside the bbox
 		childRes := parentRes + resolutionOffset
-		
+
 		numChildren, err := cellToChildrenSize(h3, childRes)
 		if err != E_SUCCESS {
 			t.Fatalf("cellToChildrenSize failed for cell %x at resolution %d: %v", h3, childRes, err)
@@ -60,15 +60,15 @@ func childBBoxAssertions(t *testing.T, h3 H3Index) {
 			if err != E_SUCCESS {
 				t.Fatalf("cellToBoundary failed for child cell %x: %v", children[i], err)
 			}
-			
+
 			for j := int32(0); j < childVerts.NumVerts; j++ {
 				if !bboxContains(&bbox, &childVerts.Verts[j]) {
 					t.Errorf("BBox does not contain child vertex %d for parent %x, child %x", j, h3, children[i])
 					t.Logf("Parent: %x", h3)
-					t.Logf("BBox: North=%f, South=%f, East=%f, West=%f", 
+					t.Logf("BBox: North=%f, South=%f, East=%f, West=%f",
 						bbox.North.Deg(), bbox.South.Deg(), bbox.East.Deg(), bbox.West.Deg())
 					t.Logf("Child: %x", children[i])
-					t.Logf("Vertex: Lat=%f, Lng=%f", 
+					t.Logf("Vertex: Lat=%f, Lng=%f",
 						childVerts.Verts[j].Lat.Deg(), childVerts.Verts[j].Lng.Deg())
 				}
 			}
@@ -78,17 +78,17 @@ func childBBoxAssertions(t *testing.T, h3 H3Index) {
 
 func TestCellBBox_correctness(t *testing.T) {
 	t.Parallel()
-	
+
 	// Test resolution 0
 	_iterateAllIndexesAtRes(0, func(h3 H3Index) {
 		cellBBoxAssertions(t, h3)
 	})
-	
+
 	// Test resolution 1
 	_iterateAllIndexesAtRes(1, func(h3 H3Index) {
 		cellBBoxAssertions(t, h3)
 	})
-	
+
 	// Test resolution 2
 	_iterateAllIndexesAtRes(2, func(h3 H3Index) {
 		cellBBoxAssertions(t, h3)
@@ -97,17 +97,17 @@ func TestCellBBox_correctness(t *testing.T) {
 
 func TestChildBBox_correctness(t *testing.T) {
 	t.Parallel()
-	
+
 	// Test resolution 0
 	_iterateAllIndexesAtRes(0, func(h3 H3Index) {
 		childBBoxAssertions(t, h3)
 	})
-	
+
 	// Test resolution 1
 	_iterateAllIndexesAtRes(1, func(h3 H3Index) {
 		childBBoxAssertions(t, h3)
 	})
-	
+
 	// Test resolution 2
 	_iterateAllIndexesAtRes(2, func(h3 H3Index) {
 		childBBoxAssertions(t, h3)

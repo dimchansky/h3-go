@@ -7,7 +7,7 @@ import "math"
 // Note that no guarantee is provided as to the level of accuracy, and the bounding
 // box may have a significant margin of error.
 //
-// Ported from H3 C: polyfill.c::cellToBBox
+// Ported from H3 C: polyfill.c::cellToBBox.
 func cellToBBox(cell H3Index, coverChildren bool) (BBox, H3Error) {
 	res := getResolution(cell)
 	var out BBox

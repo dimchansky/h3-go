@@ -3,7 +3,7 @@ package h3
 // isClockwiseLinkedGeoLoopNormalized determines clockwise winding order with normalization
 // for loops crossing the antimeridian. This is a helper function that handles the core
 // algorithm for winding order detection.
-// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(isClockwiseNormalized) -> isClockwiseLinkedGeoLoopNormalized
+// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(isClockwiseNormalized) -> isClockwiseLinkedGeoLoopNormalized.
 func isClockwiseLinkedGeoLoopNormalized(loop *LinkedGeoLoop, isTransmeridian bool) bool {
 	sum := 0.0
 	var a, b LatLng
@@ -55,7 +55,7 @@ func isClockwiseLinkedGeoLoopNormalized(loop *LinkedGeoLoop, isTransmeridian boo
 // is clockwise. In GeoJSON, clockwise loops are always inner loops (holes).
 // This function uses the shoelace formula to calculate the signed area and determine
 // orientation, with proper handling of transmeridian polygons.
-// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(isClockwise) -> isClockwiseLinkedGeoLoop
+// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(isClockwise) -> isClockwiseLinkedGeoLoop.
 func isClockwiseLinkedGeoLoop(loop *LinkedGeoLoop) bool {
 	return isClockwiseLinkedGeoLoopNormalized(loop, false)
 }

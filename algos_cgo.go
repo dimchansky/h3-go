@@ -1,4 +1,4 @@
-//go:build cgo
+//go:build cgo && c2go
 
 package h3
 
@@ -392,18 +392,18 @@ func h3SetToVertexGraphCForParity(h3Set []H3Index) VertexGraphCResult {
 	if len(h3Set) == 0 {
 		return VertexGraphCResult{Err: E_SUCCESS, Size: 0, NumBuckets: 0, Res: 0}
 	}
-	
+
 	var cGraph C.VertexGraph
 	err := H3Error(C.h3SetToVertexGraph_c_wrapper(
 		(*C.H3Index)(&h3Set[0]),
 		C.int(len(h3Set)),
 		&cGraph,
 	))
-	
+
 	result := VertexGraphCResult{
 		Err: err,
 	}
-	
+
 	// Only read properties and clean up if the operation succeeded
 	if err == E_SUCCESS {
 		result.Size = int32(cGraph.size)
@@ -411,6 +411,6 @@ func h3SetToVertexGraphCForParity(h3Set []H3Index) VertexGraphCResult {
 		result.Res = int32(cGraph.res)
 		C.destroyVertexGraph(&cGraph)
 	}
-	
+
 	return result
 }

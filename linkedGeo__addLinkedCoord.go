@@ -5,7 +5,7 @@ package h3
 // and manages the loop's first/last pointers to maintain the linked list structure.
 // If the loop is empty, the coordinate becomes both first and last.
 // Otherwise, it's appended after the current last coordinate.
-// Ported from H3 C: linkedGeo.c::addLinkedCoord
+// Ported from H3 C: linkedGeo.c::addLinkedCoord.
 func addLinkedCoord(loop *LinkedGeoLoop, vertex *LatLng) *LinkedLatLng {
 	// Create a new coordinate node (equivalent to H3_MEMORY(malloc)(sizeof(*coord)))
 	coord := &LinkedLatLng{

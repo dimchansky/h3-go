@@ -14,7 +14,7 @@ package h3
 // - Returns nil if no suitable parent polygon is found
 // - Used in polygon normalization to assign holes to their proper parent polygons
 //
-// Ported from H3 C: linkedGeo.c::findPolygonForHole (static function)
+// Ported from H3 C: linkedGeo.c::findPolygonForHole (static function).
 func findPolygonForHole(loop *LinkedGeoLoop, polygon *LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon {
 	polygonCount := len(bboxes)
 

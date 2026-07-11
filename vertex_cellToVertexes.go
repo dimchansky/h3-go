@@ -2,7 +2,7 @@ package h3
 
 // cellToVertexes gets all vertexes for the given cell.
 // If the cell is a pentagon, will fill the final slot with H3_NULL.
-// Ported from H3 C: vertex.c::cellToVertexes
+// Ported from H3 C: vertex.c::cellToVertexes.
 func cellToVertexes(cell H3Index, vertexes *[6]H3Index) H3Error {
 	// Get all vertexes. If the cell is a pentagon, will fill the final slot
 	// with H3_NULL.

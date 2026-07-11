@@ -10,7 +10,7 @@ package h3
 // level, handling base cell transitions, and managing pentagon special cases with
 // missing K-subsequences.
 //
-// Ported from H3 C: algos.c::h3NeighborRotations
+// Ported from H3 C: algos.c::h3NeighborRotations.
 func h3NeighborRotations(origin H3Index, dir Direction, rotations *int32, out *H3Index) H3Error {
 	current := origin
 

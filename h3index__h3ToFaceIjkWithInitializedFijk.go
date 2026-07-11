@@ -3,7 +3,7 @@ package h3
 // _h3ToFaceIjkWithInitializedFijk converts H3Index to FaceIJK address with initialized face.
 // The FaceIJK address should be initialized with the desired face and normalized base cell coordinates.
 // Returns 1 if the possibility of overage exists, otherwise 0.
-// Ported from H3 C: h3Index.c::_h3ToFaceIjkWithInitializedFijk
+// Ported from H3 C: h3Index.c::_h3ToFaceIjkWithInitializedFijk.
 func _h3ToFaceIjkWithInitializedFijk(h H3Index, fijk *FaceIJK) int32 {
 	ijk := &fijk.Coord
 	res := getResolution(h)

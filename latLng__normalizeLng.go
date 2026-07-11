@@ -1,6 +1,6 @@
 package h3
 
-// LongitudeNormalization mirrors the C enum in latLng.h
+// LongitudeNormalization mirrors the C enum in latLng.h.
 type LongitudeNormalization int
 
 const (
@@ -10,7 +10,7 @@ const (
 )
 
 // normalizeLng normalizes an input longitude according to the strategy.
-// Ported from H3 C: latLng.c::normalizeLng
+// Ported from H3 C: latLng.c::normalizeLng.
 func normalizeLng(lng Angle, normalization LongitudeNormalization) Angle {
 	switch normalization {
 	case NORMALIZE_EAST:

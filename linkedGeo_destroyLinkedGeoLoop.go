@@ -3,7 +3,7 @@ package h3
 // destroyLinkedGeoLoop frees all allocated memory for coordinates in a linked geo loop.
 // The caller is responsible for freeing memory allocated to input loop struct.
 // Mirrors the behavior of the C destroyLinkedGeoLoop function.
-// Ported from H3 C: linkedGeo.c::destroyLinkedGeoLoop
+// Ported from H3 C: linkedGeo.c::destroyLinkedGeoLoop.
 func destroyLinkedGeoLoop(loop *LinkedGeoLoop) {
 	if loop == nil {
 		return

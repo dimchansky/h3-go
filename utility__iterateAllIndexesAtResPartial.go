@@ -4,7 +4,7 @@ package h3
 // for base cells from 0 up to (but not including) the specified baseCells limit.
 // The callback function is called for each valid H3 index encountered.
 // This function is useful for testing or partial iteration through the H3 grid.
-// Ported from H3 C: utility.c::iterateAllIndexesAtResPartial
+// Ported from H3 C: utility.c::iterateAllIndexesAtResPartial.
 func _iterateAllIndexesAtResPartial(res int32, callback func(H3Index), baseCells int32) {
 	// Assert equivalent: ensure baseCells doesn't exceed maximum
 	if baseCells > NUM_BASE_CELLS {

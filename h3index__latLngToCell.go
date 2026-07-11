@@ -3,7 +3,7 @@ package h3
 import "math"
 
 // latLngToCell encodes a coordinate pair into an H3Index at the given resolution.
-// Ported from H3 C: h3Index.c::latLngToCell
+// Ported from H3 C: h3Index.c::latLngToCell.
 func latLngToCell(g *LatLng, res int32, out *H3Index) H3Error {
 	if res < 0 || res > MAX_H3_RES {
 		return E_RES_DOMAIN

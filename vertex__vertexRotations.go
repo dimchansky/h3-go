@@ -2,7 +2,7 @@ package h3
 
 // vertexRotations gets the number of CCW rotations of the cell's vertex numbers
 // compared to the directional layout of its neighbors.
-// Ported from H3 C: vertex.c::vertexRotations
+// Ported from H3 C: vertex.c::vertexRotations.
 func vertexRotations(cell H3Index, out *int32) H3Error {
 	// Get the face and other info for the origin
 	var fijk FaceIJK

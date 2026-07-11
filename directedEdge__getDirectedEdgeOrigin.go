@@ -5,7 +5,7 @@ package h3
 // This function validates that the input is a directed edge index and then
 // extracts the origin cell by changing the mode to H3_CELL_MODE and clearing
 // the reserved bits that store the edge direction.
-// Ported from H3 C: directedEdge.c::getDirectedEdgeOrigin
+// Ported from H3 C: directedEdge.c::getDirectedEdgeOrigin.
 func getDirectedEdgeOrigin(edge H3Index) (H3Index, H3Error) {
 	if getMode(edge) != H3_DIRECTEDEDGE_MODE {
 		return 0, E_DIR_EDGE_INVALID

@@ -5,7 +5,7 @@ package h3
 // The area is calculated by breaking the cell into spherical triangles and
 // summing up their areas. Note that some H3 cells (hexagons and pentagons)
 // are irregular, and have more than 6 or 5 sides.
-// Ported from H3 C: latLng.c::cellAreaRads2
+// Ported from H3 C: latLng.c::cellAreaRads2.
 func cellAreaRads2(cell H3Index) (float64, H3Error) {
 	var c LatLng
 	var cb CellBoundary

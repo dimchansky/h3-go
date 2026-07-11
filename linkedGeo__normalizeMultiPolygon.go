@@ -14,7 +14,7 @@ package h3
 // - Outer loops become new polygons, holes are added as inner loops to their containers
 // - Memory management: In Go, we don't need explicit cleanup like C's destroyLinkedGeoLoop
 //
-// Ported from H3 C: linkedGeo.c::normalizeMultiPolygon
+// Ported from H3 C: linkedGeo.c::normalizeMultiPolygon.
 func normalizeMultiPolygon(root *LinkedGeoPolygon) H3Error {
 	// Handle nil input
 	if root == nil {

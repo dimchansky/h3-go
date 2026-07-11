@@ -1,7 +1,7 @@
 package h3
 
 // getHexagonEdgeLengthAvgM gets the average edge length in meters of H3 hexagons at a given resolution.
-// Ported from H3 C: latLng.c::getHexagonEdgeLengthAvgM
+// Ported from H3 C: latLng.c::getHexagonEdgeLengthAvgM.
 func getHexagonEdgeLengthAvgM(res int32, out *float64) H3Error {
 	lens := [16]float64{
 		1281256.011, 483056.8391, 182512.9565, 68979.22179,

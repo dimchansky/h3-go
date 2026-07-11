@@ -3,7 +3,7 @@ package h3
 // cellToBoundary determines the cell boundary in spherical coordinates for an H3 index.
 // Pentagon cells are handled with 5 vertices, hexagon cells with 6 vertices.
 // All boundaries are returned in counter-clockwise order.
-// Ported from H3 C: h3Index.c::cellToBoundary
+// Ported from H3 C: h3Index.c::cellToBoundary.
 func cellToBoundary(h3 H3Index, cb *CellBoundary) H3Error {
 	var fijk FaceIJK
 	err := _h3ToFaceIjk(h3, &fijk)

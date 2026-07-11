@@ -2,7 +2,7 @@ package h3
 
 // maxGridDiskSize calculates the maximum number of cells that can be in the result of gridDisk for the given k.
 // Formula source and proof: https://oeis.org/A003215
-// Ported from H3 C: algos.c::maxGridDiskSize
+// Ported from H3 C: algos.c::maxGridDiskSize.
 func maxGridDiskSize(k int32, out *int64) H3Error {
 	if k < 0 {
 		return E_DOMAIN

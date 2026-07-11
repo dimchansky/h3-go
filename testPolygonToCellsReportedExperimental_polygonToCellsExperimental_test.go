@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// countNonNullIndexes counts the number of non-null H3Index values in a slice
+// countNonNullIndexes counts the number of non-null H3Index values in a slice.
 func countNonNullIndexes(indexes []H3Index) int64 {
 	var count int64
 	for _, idx := range indexes {

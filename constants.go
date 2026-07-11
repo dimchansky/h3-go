@@ -4,7 +4,7 @@ package h3
 // Keep values in sync with the referenced H3 version used in tests.
 
 const (
-	// Mathematical constants
+	// Mathematical constants.
 	M_PI                = 3.14159265358979323846
 	M_PI_2              = 1.5707963267948966
 	M_2PI               = 6.28318530717958647692528676655900576839433
@@ -24,14 +24,14 @@ const (
 	INV_RES0_U_GNOMONIC = 2.61803398874989588842
 	RES0_U_GNOMONIC     = 0.38196601125010500003
 
-	// Earth radius (km)
+	// Earth radius (km).
 	EARTH_RADIUS_KM = 6371.007180918475
 
-	// Epsilon constants from latLng.h
+	// Epsilon constants from latLng.h.
 	EPSILON_DEG = .000000001             // epsilon of ~0.1mm in degrees
 	EPSILON_RAD = EPSILON_DEG * M_PI_180 // epsilon of ~0.1mm in radians
 
-	// Resolution and topology
+	// Resolution and topology.
 	MAX_H3_RES      = 15
 	NUM_ICOSA_FACES = 20
 	NUM_BASE_CELLS  = 122
@@ -39,22 +39,22 @@ const (
 	NUM_PENT_VERTS  = 5
 	NUM_PENTAGONS   = 12
 
-	// Base cell constants
+	// Base cell constants.
 	INVALID_BASE_CELL = 127
 	INVALID_ROTATIONS = -1
 	MAX_FACE_COORD    = 2
 
-	// Face constants
+	// Face constants.
 	INVALID_FACE = -1
 
-	// Modes
+	// Modes.
 	H3_CELL_MODE         = 1
 	H3_DIRECTEDEDGE_MODE = 2
 	H3_EDGE_MODE         = 3
 	H3_VERTEX_MODE       = 4
 )
 
-// Integer limits for overflow checking (from stdint.h)
+// Integer limits for overflow checking (from stdint.h).
 const (
 	INT32_MAX   = 2147483647
 	INT32_MIN   = -2147483648

@@ -11,7 +11,7 @@ package h3
 // - Selects the polygon with the highest container count (most deeply nested)
 // - Used in polygon normalization to find parent polygons for holes
 //
-// Ported from H3 C: linkedGeo.c::findDeepestContainer (static function)
+// Ported from H3 C: linkedGeo.c::findDeepestContainer (static function).
 func findDeepestContainer(polygons []*LinkedGeoPolygon, bboxes []*BBox) *LinkedGeoPolygon {
 	if len(polygons) != len(bboxes) {
 		panic("findDeepestContainer: polygons and bboxes must have same length")

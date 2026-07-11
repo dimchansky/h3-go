@@ -1,7 +1,7 @@
 package h3
 
 // getPentagons generates all pentagons at the specified resolution.
-// Ported from H3 C: h3Index.c::getPentagons
+// Ported from H3 C: h3Index.c::getPentagons.
 func getPentagons(res int32, out []H3Index) H3Error {
 	if res < 0 || res > MAX_H3_RES {
 		return E_RES_DOMAIN

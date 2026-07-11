@@ -3,7 +3,7 @@ package h3
 // iterInitParent initializes a parent iterator in-place for iterating through
 // the children of a given parent cell at a given resolution. This function
 // sets up the iterator state for stepping through all child cells.
-// Ported from H3 C: iterators.c::_iterInitParent
+// Ported from H3 C: iterators.c::_iterInitParent.
 func iterInitParent(h H3Index, childRes int32, iter *IterCellsChildren) {
 	iter.ParentRes = getResolution(h)
 

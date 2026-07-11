@@ -1,9 +1,9 @@
 package h3
 
-// Direction represents H3 directions/digits (from coordijk.h)
+// Direction represents H3 directions/digits (from coordijk.h).
 type Direction int32
 
-// Direction enum (from coordijk.h)
+// Direction enum (from coordijk.h).
 const (
 	CENTER_DIGIT           Direction = 0
 	K_AXES_DIGIT           Direction = 1

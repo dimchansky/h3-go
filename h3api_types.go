@@ -2,7 +2,7 @@ package h3
 
 // This file contains types that mirror the H3 C API types defined in h3api.h
 
-// H3Index mirrors C H3Index (uint64) from h3api.h
+// H3Index mirrors C H3Index (uint64) from h3api.h.
 type H3Index uint64
 
 // LatLng mirrors the C struct from h3api.h
@@ -20,11 +20,11 @@ type CellBoundary struct {
 }
 
 // GeoLoop is a simple loop of LatLng coordinates (closed implicitly).
-// Mirrors the GeoLoop type from h3api.h
+// Mirrors the GeoLoop type from h3api.h.
 type GeoLoop []LatLng
 
 // GeoPolygon is an outer loop with optional holes.
-// Mirrors the GeoPolygon struct from h3api.h
+// Mirrors the GeoPolygon struct from h3api.h.
 type GeoPolygon struct {
 	GeoLoop GeoLoop
 	Holes   []GeoLoop
@@ -37,20 +37,20 @@ type CoordIJ struct {
 	J int32 // j component
 }
 
-// LinkedLatLng mirrors the C struct from h3api.h - a coordinate node in a linked geo structure
+// LinkedLatLng mirrors the C struct from h3api.h - a coordinate node in a linked geo structure.
 type LinkedLatLng struct {
 	Vertex LatLng
 	Next   *LinkedLatLng
 }
 
-// LinkedGeoLoop mirrors the C struct from h3api.h - a loop node in a linked geo structure
+// LinkedGeoLoop mirrors the C struct from h3api.h - a loop node in a linked geo structure.
 type LinkedGeoLoop struct {
 	First *LinkedLatLng
 	Last  *LinkedLatLng
 	Next  *LinkedGeoLoop
 }
 
-// LinkedGeoPolygon mirrors the C struct from h3api.h - a polygon node in a linked geo structure
+// LinkedGeoPolygon mirrors the C struct from h3api.h - a polygon node in a linked geo structure.
 type LinkedGeoPolygon struct {
 	First *LinkedGeoLoop
 	Last  *LinkedGeoLoop

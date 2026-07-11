@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Helper function to iterate all directed edges at a given resolution
+// Helper function to iterate all directed edges at a given resolution.
 func iterateAllDirectedEdgesAtRes(t *testing.T, res int32, testFunc func(t *testing.T, edge H3Index)) {
 	t.Helper()
 
@@ -55,7 +55,7 @@ func iterateAllDirectedEdgesAtRes(t *testing.T, res int32, testFunc func(t *test
 	}
 }
 
-// Test haversine distance functions for positivity and commutativity
+// Test haversine distance functions for positivity and commutativity.
 func haversineAssert(t *testing.T, edge H3Index) {
 	t.Helper()
 
@@ -118,7 +118,7 @@ func haversineAssert(t *testing.T, edge H3Index) {
 	}
 }
 
-// Test edge length calculation functions for positivity
+// Test edge length calculation functions for positivity.
 func edgeLengthAssert(t *testing.T, edge H3Index) {
 	t.Helper()
 
@@ -150,7 +150,7 @@ func edgeLengthAssert(t *testing.T, edge H3Index) {
 	}
 }
 
-// Test cell area calculation functions for positivity
+// Test cell area calculation functions for positivity.
 func cellAreaAssert(t *testing.T, cell H3Index) {
 	t.Helper()
 
@@ -190,7 +190,7 @@ func cellAreaAssert(t *testing.T, cell H3Index) {
 	}
 }
 
-// Test sum of all cell areas equals earth surface area
+// Test sum of all cell areas equals earth surface area.
 func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(H3Index) (float64, H3Error), target float64, tol float64) {
 	t.Helper()
 
@@ -237,7 +237,7 @@ func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(H3Index) (float64,
 	}
 }
 
-// Test haversine distances between neighboring cells
+// Test haversine distances between neighboring cells.
 func TestHaversineDistances(t *testing.T) {
 	t.Parallel()
 
@@ -259,7 +259,7 @@ func TestHaversineDistances(t *testing.T) {
 	})
 }
 
-// Test edge length functions
+// Test edge length functions.
 func TestEdgeLength(t *testing.T) {
 	t.Parallel()
 
@@ -281,7 +281,7 @@ func TestEdgeLength(t *testing.T) {
 	})
 }
 
-// Test cell area positivity
+// Test cell area positivity.
 func TestCellAreaPositive(t *testing.T) {
 	t.Parallel()
 
@@ -303,7 +303,7 @@ func TestCellAreaPositive(t *testing.T) {
 	})
 }
 
-// Test that sum of all cell areas equals earth surface area
+// Test that sum of all cell areas equals earth surface area.
 func TestCellAreaEarth(t *testing.T) {
 	t.Parallel()
 

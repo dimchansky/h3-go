@@ -4,7 +4,7 @@ package h3
 // This function determines if two H3 cells are adjacent to each other.
 // Uses an optimized approach for cells that share the same parent, falling back
 // to gridDisk check for cells that don't share a parent.
-// Ported from H3 C: directedEdge.c::areNeighborCells
+// Ported from H3 C: directedEdge.c::areNeighborCells.
 func areNeighborCells(origin, destination H3Index) (bool, H3Error) {
 	// Make sure they're hexagon indexes
 	if getMode(origin) != H3_CELL_MODE ||

@@ -18,12 +18,51 @@ linters:
     - godot
     - nolintlint
     - misspell
+    - depguard
   settings:
+    depguard:
+      rules:
+        # DR-007 (docs/public-api-architecture.md): the production library is
+        # safe Go only. The cgo parity files are tagged cgo && c2go and are
+        # not selected under lint's default build tags, so no exception is
+        # needed here; make check-unsafe is the authoritative gate.
+        no-unsafe:
+          deny:
+            - pkg: unsafe
+              desc: production code must not use unsafe (DR-007); unsafe is allowed only in cgo && c2go tagged parity files
     misspell:
       locale: US
     nolintlint:
       require-explanation: true
       require-specific: true
+    gocritic:
+      # The ported layer intentionally mirrors H3 C statement-for-statement
+      # (docs/public-api-architecture.md §7); these style rewrites would
+      # reduce line-level traceability to the C source.
+      disabled-checks:
+        - assignOp
+        - ifElseChain
+    revive:
+      # Explicit rule set. Omitted on purpose, because the ported layer keeps
+      # C names and C-shaped bodies (docs/public-api-architecture.md §7):
+      # var-naming, var-declaration, indent-error-flow, increment-decrement,
+      # unreachable-code, superfluous-else, empty-block.
+      # `exported` is re-enabled in Phase 3 once the public surface is final.
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: package-comments
+        - name: range
+        - name: receiver-naming
+        - name: redefines-builtin-id
+        - name: time-naming
+        - name: unexported-return
   exclusions:
     # v1: issues.exclude-use-default: false
     presets: []

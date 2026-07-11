@@ -5,7 +5,7 @@ package h3
 //
 // The size is the maximum of either the number of points in the geoloop or the
 // number of cells in the bounding box of the geoloop.
-// Ported from H3 C: algos.c::maxPolygonToCellsSize
+// Ported from H3 C: algos.c::maxPolygonToCellsSize.
 func maxPolygonToCellsSize(geoPolygon *GeoPolygon, res int32, flags uint32, out *int64) H3Error {
 	flagErr := validatePolygonFlags(flags)
 	if flagErr != E_SUCCESS {

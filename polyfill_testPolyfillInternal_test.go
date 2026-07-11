@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Fixtures - equivalent to C struct sfGeoPolygon
+// Fixtures - equivalent to C struct sfGeoPolygon.
 var sfGeoPolygonInternal = GeoPolygon{
 	GeoLoop: []LatLng{
 		{Lat: 0.659966917655, Lng: -2.1364398519396},

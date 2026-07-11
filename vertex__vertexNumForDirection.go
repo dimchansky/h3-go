@@ -5,7 +5,7 @@ package h3
 // the next number in sequence.
 // Returns the number for the first topological vertex, or INVALID_VERTEX_NUM
 // if the direction is not valid for this cell.
-// Ported from H3 C: vertex.c::vertexNumForDirection
+// Ported from H3 C: vertex.c::vertexNumForDirection.
 func vertexNumForDirection(origin H3Index, direction Direction) int32 {
 	isPent := isPentagon(origin)
 

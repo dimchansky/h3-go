@@ -5,7 +5,7 @@ package h3
 // The function creates a new VertexNode with the given from/to vertices and adds it
 // to the appropriate bucket in the graph's hash table. If an identical edge already
 // exists, it returns the existing node instead of creating a duplicate.
-// Ported from H3 C: vertexGraph.c::addVertexNode
+// Ported from H3 C: vertexGraph.c::addVertexNode.
 func addVertexNode(graph *VertexGraph, fromVtx *LatLng, toVtx *LatLng) *VertexNode {
 	// Create the new node
 	node := &VertexNode{

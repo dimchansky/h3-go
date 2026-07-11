@@ -3,7 +3,7 @@ package h3
 // uncompactCellsSize takes a compacted set of hexagons and provides
 // the exact size of the uncompacted set of hexagons.
 // Returns (numOut, err) where err mirrors H3Error codes.
-// Ported from H3 C: h3Index.c::uncompactCellsSize
+// Ported from H3 C: h3Index.c::uncompactCellsSize.
 func uncompactCellsSize(compactedSet []H3Index, numCompacted int64, res int32) (int64, H3Error) {
 	numOut := int64(0)
 	for i := int64(0); i < numCompacted; i++ {

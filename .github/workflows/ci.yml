@@ -9,6 +9,10 @@ on:
 jobs:
   build-test-lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Oldest supported (go.mod floor) + latest stable.
+        go-version: [ '1.24.x', 'stable' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,7 +20,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '>=1.22.0'
+          go-version: ${{ matrix.go-version }}
           check-latest: true
 
       - name: Cache Go build
@@ -25,9 +29,9 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go-${{ matrix.go-version }}-
 
       - name: Download deps
         run: go mod download
@@ -35,17 +39,26 @@ jobs:
       - name: Format (gofmt)
         run: make fmt
 
+      - name: No-unsafe gate (DR-007)
+        run: make check-unsafe
+
       - name: golangci-lint
+        if: matrix.go-version == 'stable'
         uses: golangci/golangci-lint-action@v7
         with:
           version: v2.4.0
           args: --timeout=5m
 
       - name: Install smrcptr
+        if: matrix.go-version == 'stable'
         run: go install github.com/nikolaydubina/smrcptr@latest
 
       - name: Check receiver consistency (smrcptr)
+        if: matrix.go-version == 'stable'
         run: smrcptr ./...
+
+      - name: Test (pure Go)
+        run: CGO_ENABLED=0 go test ./...
 
       - name: Test (race)
         run: go test -race ./...

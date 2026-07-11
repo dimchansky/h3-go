@@ -4,7 +4,7 @@ package h3
 // The caller is responsible for freeing memory allocated to input polygon struct.
 // The function frees all polygons in the linked list except the first (input) polygon,
 // and all loops and coordinates within each polygon.
-// Ported from H3 C: linkedGeo.c::destroyLinkedMultiPolygon
+// Ported from H3 C: linkedGeo.c::destroyLinkedMultiPolygon.
 func destroyLinkedMultiPolygon(polygon *LinkedGeoPolygon) {
 	if polygon == nil {
 		return

@@ -7,7 +7,7 @@ package h3
 // A nonzero failure code may be returned in some cases, for example,
 // if a pentagon is encountered. Failure cases may be fixed in future versions.
 //
-// Ported from H3 C: algos.c::gridRingUnsafe
+// Ported from H3 C: algos.c::gridRingUnsafe.
 func gridRingUnsafe(origin H3Index, k int32, out []H3Index) H3Error {
 	if k < 0 {
 		return E_DOMAIN

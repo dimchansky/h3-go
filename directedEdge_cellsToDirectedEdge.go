@@ -3,7 +3,7 @@ package h3
 // cellsToDirectedEdge returns a directed edge H3 index based on the provided origin and destination.
 // Creates a directed edge from the origin cell to the destination cell by determining
 // the direction and encoding it in the reserved bits with H3_DIRECTEDEDGE_MODE.
-// Ported from H3 C: directedEdge.c::cellsToDirectedEdge
+// Ported from H3 C: directedEdge.c::cellsToDirectedEdge.
 func cellsToDirectedEdge(origin H3Index, destination H3Index) (H3Index, H3Error) {
 	// Determine the IJK direction from the origin to the destination
 	direction := _directionForNeighbor(origin, destination)

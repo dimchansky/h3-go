@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Test fixtures - mirrors the C test fixtures
+// Test fixtures - mirrors the C test fixtures.
 func getTestVertices() (center, vertex1, vertex2, vertex3, vertex4, vertex5, vertex6 LatLng) {
 	setGeoDegs(&center, 37.77362016769341, -122.41673772517154)
 	setGeoDegs(&vertex1, 87.372002166, 166.160981117)

@@ -8,7 +8,7 @@ package h3
 // Origin leading digit -> index leading digit -> rotations 60 cw
 // Either being 1 (K axis) is invalid.
 // No good default at 0.
-// Ported from H3 C: localij.c::PENTAGON_ROTATIONS
+// Ported from H3 C: localij.c::PENTAGON_ROTATIONS.
 var PENTAGON_ROTATIONS = [7][7]int32{
 	{0, -1, 0, 0, 0, 0, 0},       // 0
 	{-1, -1, -1, -1, -1, -1, -1}, // 1
@@ -23,7 +23,7 @@ var PENTAGON_ROTATIONS = [7][7]int32{
 // reversing the rotation introduced in PENTAGON_ROTATIONS when the origin is on a pentagon
 // (regardless of the base cell of the index).
 // Reverse base cell direction -> leading index digit -> rotations 60 ccw
-// Ported from H3 C: localij.c::PENTAGON_ROTATIONS_REVERSE
+// Ported from H3 C: localij.c::PENTAGON_ROTATIONS_REVERSE.
 var PENTAGON_ROTATIONS_REVERSE = [7][7]int32{
 	{0, 0, 0, 0, 0, 0, 0},        // 0
 	{-1, -1, -1, -1, -1, -1, -1}, // 1
@@ -38,7 +38,7 @@ var PENTAGON_ROTATIONS_REVERSE = [7][7]int32{
 // reversing the rotation introduced in PENTAGON_ROTATIONS when the index is on a
 // non-polar pentagon and the origin is not.
 // Reverse base cell direction -> leading index digit -> rotations 60 ccw
-// Ported from H3 C: localij.c::PENTAGON_ROTATIONS_REVERSE_NONPOLAR
+// Ported from H3 C: localij.c::PENTAGON_ROTATIONS_REVERSE_NONPOLAR.
 var PENTAGON_ROTATIONS_REVERSE_NONPOLAR = [7][7]int32{
 	{0, 0, 0, 0, 0, 0, 0},        // 0
 	{-1, -1, -1, -1, -1, -1, -1}, // 1
@@ -53,7 +53,7 @@ var PENTAGON_ROTATIONS_REVERSE_NONPOLAR = [7][7]int32{
 // reversing the rotation introduced in PENTAGON_ROTATIONS when the index is on a
 // polar pentagon and the origin is not.
 // Reverse base cell direction -> leading index digit -> rotations 60 ccw
-// Ported from H3 C: localij.c::PENTAGON_ROTATIONS_REVERSE_POLAR
+// Ported from H3 C: localij.c::PENTAGON_ROTATIONS_REVERSE_POLAR.
 var PENTAGON_ROTATIONS_REVERSE_POLAR = [7][7]int32{
 	{0, 0, 0, 0, 0, 0, 0},        // 0
 	{-1, -1, -1, -1, -1, -1, -1}, // 1
@@ -72,7 +72,7 @@ var PENTAGON_ROTATIONS_REVERSE_POLAR = [7][7]int32{
 // within the pentagon base cell.
 //
 // This logic prevents unfolding across more than one icosahedron face.
-// Ported from H3 C: localij.c::FAILED_DIRECTIONS
+// Ported from H3 C: localij.c::FAILED_DIRECTIONS.
 var FAILED_DIRECTIONS = [7][7]bool{
 	{false, false, false, false, false, false, false}, // 0
 	{false, false, false, false, false, false, false}, // 1

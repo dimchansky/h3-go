@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-// Maximum distances for each resolution, mirroring C constant
+// Maximum distances for each resolution, mirroring C constant.
 var maxDistances = []int32{1, 2, 5, 12, 19, 26}
 
-// Helper function to iterate all indexes at a given resolution (reused from other tests)
+// Helper function to iterate all indexes at a given resolution (reused from other tests).
 func iterateAllIndexesAtResForGridPath(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
 	t.Helper()
 
@@ -46,7 +46,7 @@ func iterateAllIndexesAtResForGridPath(t *testing.T, res int32, testFunc func(t 
 	}
 }
 
-// Helper function to iterate partial indexes at a given resolution (limit to first N base cells)
+// Helper function to iterate partial indexes at a given resolution (limit to first N base cells).
 func iterateAllIndexesAtResPartial(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), maxBaseCells int32) {
 	t.Helper()
 
@@ -91,7 +91,7 @@ func iterateAllIndexesAtResPartial(t *testing.T, res int32, testFunc func(t *tes
 	}
 }
 
-// Property-based testing of gridPathCells output (ported from gridPathCells_assertions)
+// Property-based testing of gridPathCells output (ported from gridPathCells_assertions).
 func gridPathCells_assertions(t *testing.T, start, end H3Index) {
 	t.Helper()
 
@@ -142,7 +142,7 @@ func gridPathCells_assertions(t *testing.T, start, end H3Index) {
 	}
 }
 
-// Tests for invalid gridPathCells input (ported from gridPathCells_invalid_assertions)
+// Tests for invalid gridPathCells input (ported from gridPathCells_invalid_assertions).
 func gridPathCells_invalid_assertions(t *testing.T, start, end H3Index) {
 	t.Helper()
 
@@ -159,7 +159,7 @@ func gridPathCells_invalid_assertions(t *testing.T, start, end H3Index) {
 	}
 }
 
-// Test for lines from an index to all neighbors within a gridDisk (ported from gridPathCells_gridDisk_assertions)
+// Test for lines from an index to all neighbors within a gridDisk (ported from gridPathCells_gridDisk_assertions).
 func gridPathCells_gridDisk_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -200,7 +200,7 @@ func gridPathCells_gridDisk_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Main exhaustive test function (ported from gridPathCells_gridDisk test)
+// Main exhaustive test function (ported from gridPathCells_gridDisk test).
 func Test_gridPathCells_gridDisk(t *testing.T) {
 	t.Parallel()
 

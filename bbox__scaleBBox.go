@@ -4,7 +4,7 @@ package h3
 // Scales both width and height by the factor, rather than scaling area, which will scale at scale^2.
 // This function may not behave well for extreme values, and should be used
 // within a reasonable domain, and does not guarantee reasonable results for extreme values.
-// Ported from H3 C: bbox.c::scaleBBox
+// Ported from H3 C: bbox.c::scaleBBox.
 func scaleBBox(bbox *BBox, scale float64) {
 	width := bboxWidthRads(bbox)
 	height := bboxHeightRads(bbox)

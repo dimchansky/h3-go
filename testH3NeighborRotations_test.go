@@ -7,7 +7,7 @@ import (
 )
 
 // TestOutput represents validation results from the h3NeighborRotations tests
-// This corresponds to the TestOutput struct in the C code
+// This corresponds to the TestOutput struct in the C code.
 type TestOutput struct {
 	ret0                   int
 	ret0ValidationFailures int
@@ -16,7 +16,7 @@ type TestOutput struct {
 	ret2                   int
 }
 
-// doCell tests gridDiskUnsafe vs gridDiskDistancesSafe for a specific cell at various k values
+// doCell tests gridDiskUnsafe vs gridDiskDistancesSafe for a specific cell at various k values.
 func doCell(t *testing.T, h H3Index, maxK int32, testOutput *TestOutput) {
 	for k := int32(0); k < maxK; k++ {
 		var maxSz int64
@@ -97,7 +97,7 @@ func doCell(t *testing.T, h H3Index, maxK int32, testOutput *TestOutput) {
 	}
 }
 
-// recursiveH3IndexToGeo recursively generates all valid H3 indexes at a given resolution
+// recursiveH3IndexToGeo recursively generates all valid H3 indexes at a given resolution.
 func recursiveH3IndexToGeo(t *testing.T, h H3Index, res int32, maxK int32, testOutput *TestOutput) {
 	for d := int32(0); d < 7; d++ {
 		current := setIndexDigit(h, res, d)
@@ -118,7 +118,7 @@ func recursiveH3IndexToGeo(t *testing.T, h H3Index, res int32, maxK int32, testO
 
 // TestH3NeighborRotations tests gridDiskUnsafe vs. gridDiskDistancesSafe
 // This is a comprehensive test that validates the consistency between
-// the two grid disk algorithms across all base cells and resolutions
+// the two grid disk algorithms across all base cells and resolutions.
 func TestH3NeighborRotations(t *testing.T) {
 	t.Parallel()
 
@@ -155,7 +155,7 @@ func TestH3NeighborRotations(t *testing.T) {
 	}
 }
 
-// TestH3NeighborRotationsMultipleResolutions tests multiple resolutions
+// TestH3NeighborRotationsMultipleResolutions tests multiple resolutions.
 func TestH3NeighborRotationsMultipleResolutions(t *testing.T) {
 	t.Parallel()
 

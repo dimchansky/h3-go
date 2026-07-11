@@ -3,7 +3,7 @@ package h3
 // directionForVertexNum gets the direction for a given vertex number. This returns the direction for
 // the neighbor between the given vertex number and the next number in sequence.
 // Returns INVALID_DIGIT if the vertex number is invalid.
-// Ported from H3 C: vertex.c::directionForVertexNum
+// Ported from H3 C: vertex.c::directionForVertexNum.
 func directionForVertexNum(origin H3Index, vertexNum int32) Direction {
 	isPent := isPentagon(origin)
 	// Check for invalid vertexes

@@ -4,7 +4,7 @@ import "math"
 
 // lineHexEstimate returns an estimated number of hexagons that trace
 // the cartesian-projected line.
-// Ported from H3 C: bbox.c::lineHexEstimate
+// Ported from H3 C: bbox.c::lineHexEstimate.
 func lineHexEstimate(origin *LatLng, destination *LatLng, res int32, out *int64) H3Error {
 	// Get the area of the pentagon as the maximally-distorted area possible
 	var pentagons = make([]H3Index, NUM_PENTAGONS)

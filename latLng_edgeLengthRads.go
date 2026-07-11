@@ -3,7 +3,7 @@ package h3
 // edgeLengthRads returns the length of a directed edge in radians.
 // The length is calculated by summing the great circle distances between
 // consecutive vertices of the edge boundary.
-// Ported from H3 C: latLng.c::H3_EXPORT(edgeLengthRads)
+// Ported from H3 C: latLng.c::H3_EXPORT(edgeLengthRads).
 func edgeLengthRads(edge H3Index, length *float64) H3Error {
 	var cb CellBoundary
 

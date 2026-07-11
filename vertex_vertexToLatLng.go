@@ -2,7 +2,7 @@ package h3
 
 // vertexToLatLng gets the geocoordinates of an H3 vertex.
 // Converts a vertex H3 index to geographic coordinates (latitude and longitude).
-// Ported from H3 C: vertex.c::vertexToLatLng
+// Ported from H3 C: vertex.c::vertexToLatLng.
 func vertexToLatLng(vertex H3Index, coord *LatLng) H3Error {
 	// Get the vertex number and owner from the vertex
 	vertexNum := getReservedBits(vertex)

@@ -170,7 +170,7 @@ func TestPointInsideGeoLoopTransmeridian(t *testing.T) {
 	}
 }
 
-// Helper function to create a linked loop like the C code
+// Helper function to create a linked loop like the C code.
 func createLinkedLoop(verts []LatLng) *LinkedGeoLoop {
 	loop := &LinkedGeoLoop{}
 	for i := range verts {

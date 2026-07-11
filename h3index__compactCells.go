@@ -5,7 +5,7 @@ package h3
 // also done for all parents recursively to get the minimum number of hex
 // addresses that perfectly cover the defined space.
 // The compactedSet slice is modified in place. Remaining slots are filled with H3_NULL.
-// Ported from H3 C: h3Index.c::compactCells
+// Ported from H3 C: h3Index.c::compactCells.
 func compactCells(h3Set []H3Index, compactedSet []H3Index, numHexes int64) H3Error {
 	if numHexes == 0 {
 		return E_SUCCESS

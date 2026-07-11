@@ -6,7 +6,7 @@ package h3
 // 1. The loop being tested is not the polygon's first loop (to avoid self-containment)
 // 2. The loop's first vertex is inside the polygon's first loop
 // This is used in normalizeMultiPolygon to find parent polygons for holes.
-// Ported from H3 C: linkedGeo.c::countContainers (static function)
+// Ported from H3 C: linkedGeo.c::countContainers (static function).
 func countContainers(loop *LinkedGeoLoop, polygons []*LinkedGeoPolygon, bboxes []*BBox) int32 {
 	if len(polygons) != len(bboxes) {
 		panic("countContainers: polygons and bboxes must have same length")

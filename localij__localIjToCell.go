@@ -8,7 +8,7 @@ package h3
 // This function's output is not guaranteed to be compatible across different
 // versions of H3.
 //
-// Ported from H3 C: localij.c::localIjToCell
+// Ported from H3 C: localij.c::localIjToCell.
 func localIjToCell(origin H3Index, ij *CoordIJ, mode uint32, out *H3Index) H3Error {
 	if mode != 0 {
 		return E_OPTION_INVALID

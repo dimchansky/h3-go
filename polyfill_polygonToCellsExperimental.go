@@ -7,7 +7,7 @@ package h3
 // This function uses an iterator-based approach to efficiently find cells within
 // the polygon boundaries using various containment modes.
 //
-// Ported from H3 C: polyfill.c::polygonToCellsExperimental
+// Ported from H3 C: polyfill.c::polygonToCellsExperimental.
 func polygonToCellsExperimental(polygon *GeoPolygon, res int32, flags uint32,
 	size int64, out []H3Index) H3Error {
 	if len(out) == 0 || int64(len(out)) < size {
@@ -39,7 +39,7 @@ func polygonToCellsExperimental(polygon *GeoPolygon, res int32, flags uint32,
 // cells within the target polygon. The test for including edge cells is defined
 // by the polyfill mode passed in the flags argument.
 //
-// Ported from H3 C: polyfill.c::iterInitPolygon
+// Ported from H3 C: polyfill.c::iterInitPolygon.
 func iterInitPolygon(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygon {
 	// Create the sub-iterator for compact cells
 	cellIter := iterInitPolygonCompact(polygon, res, flags)
@@ -59,7 +59,7 @@ func iterInitPolygon(polygon *GeoPolygon, res int32, flags uint32) IterCellsPoly
 // iterStepPolygon increments the polyfill iterator, outputting the latest cell at the
 // desired resolution.
 //
-// Ported from H3 C: polyfill.c::iterStepPolygon
+// Ported from H3 C: polyfill.c::iterStepPolygon.
 func iterStepPolygon(iter *IterCellsPolygon) {
 	if iter.Cell == H3_NULL {
 		return
@@ -88,7 +88,7 @@ func iterStepPolygon(iter *IterCellsPolygon) {
 // iterDestroyPolygon destroys an iterator, releasing any allocated memory.
 // Iterators destroyed in this manner are safe to use but will always return H3_NULL.
 //
-// Ported from H3 C: polyfill.c::iterDestroyPolygon
+// Ported from H3 C: polyfill.c::iterDestroyPolygon.
 func iterDestroyPolygon(iter *IterCellsPolygon) {
 	iterDestroyPolygonCompact(&(iter.cellIter))
 	// null out the child iterator by passing H3_NULL
@@ -100,7 +100,7 @@ func iterDestroyPolygon(iter *IterCellsPolygon) {
 // iterInitPolygonCompact initializes a IterCellsPolygonCompact struct representing
 // the sequence of compact cells within the target polygon.
 //
-// Ported from H3 C: polyfill.c::iterInitPolygonCompact
+// Ported from H3 C: polyfill.c::iterInitPolygonCompact.
 func iterInitPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygonCompact {
 	iter := initIterPolygonCompact(polygon, res, flags)
 
@@ -113,7 +113,7 @@ func iterInitPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCe
 
 // initIterPolygonCompact is the internal initialization function without stepping
 //
-// Ported from H3 C: polyfill.c::_iterInitPolygonCompact
+// Ported from H3 C: polyfill.c::_iterInitPolygonCompact.
 func initIterPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCellsPolygonCompact {
 	iter := IterCellsPolygonCompact{
 		// Initialize output properties. The first valid cell will be set in iterStep
@@ -146,15 +146,15 @@ func initIterPolygonCompact(polygon *GeoPolygon, res int32, flags uint32) IterCe
 	return iter
 }
 
-// iterErrorPolygonCompact sets an error state and cleans up the iterator
-func iterErrorPolygonCompact(iter *IterCellsPolygonCompact, error H3Error) {
+// iterErrorPolygonCompact sets an error state and cleans up the iterator.
+func iterErrorPolygonCompact(iter *IterCellsPolygonCompact, errCode H3Error) {
 	iterDestroyPolygonCompact(iter)
-	iter.Error = error
+	iter.Error = errCode
 }
 
 // iterDestroyPolygonCompact destroys an iterator, releasing any allocated memory.
 //
-// Ported from H3 C: polyfill.c::iterDestroyPolygonCompact
+// Ported from H3 C: polyfill.c::iterDestroyPolygonCompact.
 func iterDestroyPolygonCompact(iter *IterCellsPolygonCompact) {
 	iter.Cell = H3_NULL
 	iter.Error = E_SUCCESS
@@ -166,7 +166,7 @@ func iterDestroyPolygonCompact(iter *IterCellsPolygonCompact) {
 
 // nextCell finds the next cell in the sequence of all cells to check in the iteration.
 //
-// Ported from H3 C: polyfill.c::nextCell
+// Ported from H3 C: polyfill.c::nextCell.
 func nextCell(cell H3Index) H3Index {
 	res := getResolution(cell)
 	for {
@@ -199,7 +199,7 @@ func nextCell(cell H3Index) H3Index {
 
 // iterStepPolygonCompact increments the polyfill iterator, running the polygon to cells algorithm.
 //
-// Ported from H3 C: polyfill.c::iterStepPolygonCompact
+// Ported from H3 C: polyfill.c::iterStepPolygonCompact.
 func iterStepPolygonCompact(iter *IterCellsPolygonCompact) {
 	cell := iter.Cell
 

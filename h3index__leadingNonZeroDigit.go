@@ -1,7 +1,7 @@
 package h3
 
 // _h3LeadingNonZeroDigit returns the highest resolution non-zero digit.
-// Ported from H3 C: h3Index.c::_h3LeadingNonZeroDigit
+// Ported from H3 C: h3Index.c::_h3LeadingNonZeroDigit.
 func _h3LeadingNonZeroDigit(h H3Index) int32 {
 	res := getResolution(h)
 	for r := int32(1); r <= res; r++ {

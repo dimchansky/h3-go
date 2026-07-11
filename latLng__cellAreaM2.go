@@ -4,7 +4,7 @@ package h3
 //
 // This function converts the result from cellAreaKm2 (kilometers^2) to
 // square meters by multiplying by 1,000,000 (1000 * 1000).
-// Ported from H3 C: latLng.c::cellAreaM2
+// Ported from H3 C: latLng.c::cellAreaM2.
 func cellAreaM2(cell H3Index) (float64, H3Error) {
 	areaKm2, err := cellAreaKm2(cell)
 	if err != E_SUCCESS {

@@ -4,7 +4,7 @@ package h3
 // an array of hexagon IDs sorted first by the original hex IDs and then by the
 // k-ring (0 to max), with no guaranteed sorting within each k-ring group.
 // The memory block should be equal to maxGridDiskSize(k) * length
-// Ported from H3 C: algos.c::gridDisksUnsafe
+// Ported from H3 C: algos.c::gridDisksUnsafe.
 func gridDisksUnsafe(h3Set []H3Index, k int32, out []H3Index) H3Error {
 	if len(h3Set) == 0 || len(out) == 0 {
 		return E_FAILED

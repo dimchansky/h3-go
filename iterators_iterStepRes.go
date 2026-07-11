@@ -4,7 +4,7 @@ package h3
 // When the iteration is exhausted, the iterator's H field becomes H3_NULL.
 // This iterator cycles through all cells at the target resolution by iterating
 // through all base cells and their children.
-// Ported from H3 C: iterators.c::iterStepRes
+// Ported from H3 C: iterators.c::iterStepRes.
 func iterStepRes(itR *IterCellsResolution) {
 	// reached the end of over iterator; emits H3_NULL from now on
 	if itR.H == H3_NULL {

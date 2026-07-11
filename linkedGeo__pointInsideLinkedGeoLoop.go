@@ -6,12 +6,12 @@ import (
 
 const (
 	// DBL_EPSILON represents the smallest positive floating-point number
-	// such that 1.0 + DBL_EPSILON != 1.0
+	// such that 1.0 + DBL_EPSILON != 1.0.
 	DBL_EPSILON = 2.220446049250313e-16
 )
 
 // normalizeLngTransmeridian normalizes longitude for transmeridian arcs
-// This is the NORMALIZE_LNG macro from polygonAlgos.h
+// This is the NORMALIZE_LNG macro from polygonAlgos.h.
 func normalizeLngTransmeridian(lng float64, isTransmeridian bool) float64 {
 	if isTransmeridian && lng < 0 {
 		return lng + 2*math.Pi
@@ -23,7 +23,7 @@ func normalizeLngTransmeridian(lng float64, isTransmeridian bool) float64 {
 // This is the core algorithm for determining if a coordinate lies within a polygon
 // defined by a linked list of coordinates. Uses ray casting with proper handling
 // of edge cases and transmeridian polygons.
-// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(pointInside) -> pointInsideLinkedGeoLoop
+// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(pointInside) -> pointInsideLinkedGeoLoop.
 func pointInsideLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox, coord *LatLng) bool {
 	// fail fast if we're outside the bounding box
 	if !bboxContains(bbox, coord) {

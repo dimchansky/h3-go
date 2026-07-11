@@ -10,7 +10,7 @@ package h3
 //
 // The algorithm follows a point-in-polygon approach for center points to ensure
 // that adjacent polygons with zero overlap have zero overlapping hexagons.
-// Ported from H3 C: algos.c::polygonToCells
+// Ported from H3 C: algos.c::polygonToCells.
 func polygonToCells(geoPolygon *GeoPolygon, res int32, flags uint32, out []H3Index) H3Error {
 	flagErr := validatePolygonFlags(flags)
 	if flagErr != E_SUCCESS {

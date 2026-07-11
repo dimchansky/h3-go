@@ -3,7 +3,7 @@ package h3
 // uncompactCells takes a compressed set of cells and expands back to the
 // original set of cells. Skips elements that are H3_NULL.
 // The outSet slice is modified in place with the expanded cells.
-// Ported from H3 C: h3Index.c::uncompactCells
+// Ported from H3 C: h3Index.c::uncompactCells.
 func uncompactCells(compactedSet []H3Index, numCompacted int64, outSet []H3Index, numOut int64, res int32) H3Error {
 	i := int64(0)
 

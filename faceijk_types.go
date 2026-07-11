@@ -1,7 +1,7 @@
 package h3
 
 // FaceIJK represents a face number and IJK coordinates on that face-centered coordinate system.
-// Mirrors the FaceIJK struct from faceijk.h
+// Mirrors the FaceIJK struct from faceijk.h.
 type FaceIJK struct {
 	Face  int32    // face number
 	Coord CoordIJK // ijk coordinates on that face

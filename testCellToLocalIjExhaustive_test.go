@@ -5,19 +5,19 @@ import (
 	"testing"
 )
 
-// Maximum distances for each resolution, mirroring C constant MAX_DISTANCES
+// Maximum distances for each resolution, mirroring C constant MAX_DISTANCES.
 var maxDistancesForCellToLocalIj = []int32{1, 2, 5, 12, 19, 26}
 
-// Traversal constants from C implementation DIRECTIONS
+// Traversal constants from C implementation DIRECTIONS.
 var directionsForCellToLocalIj = []CoordIJ{
 	{I: 0, J: 1}, {I: -1, J: 0}, {I: -1, J: -1},
 	{I: 0, J: -1}, {I: 1, J: 0}, {I: 1, J: 1},
 }
 
-// Next ring direction from C implementation NEXT_RING_DIRECTION
+// Next ring direction from C implementation NEXT_RING_DIRECTION.
 var nextRingDirectionForCellToLocalIj = CoordIJ{I: 1, J: 0}
 
-// Helper function to iterate all indexes at a given resolution
+// Helper function to iterate all indexes at a given resolution.
 func iterateAllIndexesAtResForCellToLocalIj(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
 	t.Helper()
 
@@ -55,7 +55,7 @@ func iterateAllIndexesAtResForCellToLocalIj(t *testing.T, res int32, testFunc fu
 	}
 }
 
-// Helper function to iterate partial indexes at a given resolution (limit to first N base cells)
+// Helper function to iterate partial indexes at a given resolution (limit to first N base cells).
 func iterateAllIndexesAtResPartialForCellToLocalIj(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), maxBaseCells int32) {
 	t.Helper()
 
@@ -100,7 +100,7 @@ func iterateAllIndexesAtResPartialForCellToLocalIj(t *testing.T, res int32, test
 	}
 }
 
-// Test that the local coordinates for an index map to itself (ported from localIjToH3_identity_assertions)
+// Test that the local coordinates for an index map to itself (ported from localIjToH3_identity_assertions).
 func localIjToH3_identity_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -123,7 +123,7 @@ func localIjToH3_identity_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Test that coordinates for an index match some simple rules about index digits (ported from h3ToLocalIj_coordinates_assertions)
+// Test that coordinates for an index match some simple rules about index digits (ported from h3ToLocalIj_coordinates_assertions).
 func h3ToLocalIj_coordinates_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -143,28 +143,29 @@ func h3ToLocalIj_coordinates_assertions(t *testing.T, h3 H3Index) {
 		return
 	}
 
-	if r == 0 {
+	switch r {
+	case 0:
 		if !_ijkMatches(&ijk, &UNIT_VECS[0]) {
 			t.Errorf("res 0 cell at 0,0,0 failed for %#016x: got ijk=%+v", h3, ijk)
 		}
-	} else if r == 1 {
+	case 1:
 		expected := UNIT_VECS[getIndexDigit(h3, 1)]
 		if !_ijkMatches(&ijk, &expected) {
 			t.Errorf("res 1 cell at expected coordinates failed for %#016x: got ijk=%+v, expected=%+v", h3, ijk, expected)
 		}
-	} else if r == 2 {
+	case 2:
 		expected := UNIT_VECS[getIndexDigit(h3, 1)]
 		_downAp7r(&expected)
 		_neighbor(&expected, Direction(getIndexDigit(h3, 2)))
 		if !_ijkMatches(&ijk, &expected) {
 			t.Errorf("res 2 cell at expected coordinates failed for %#016x: got ijk=%+v, expected=%+v", h3, ijk, expected)
 		}
-	} else {
+	default:
 		t.Errorf("resolution supported by test function (coordinates) for %#016x: res=%d", h3, r)
 	}
 }
 
-// Test the immediate neighbors of an index are at the expected locations in local IJ coordinate space (ported from h3ToLocalIj_neighbors_assertions)
+// Test the immediate neighbors of an index are at the expected locations in local IJ coordinate space (ported from h3ToLocalIj_neighbors_assertions).
 func h3ToLocalIj_neighbors_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -222,7 +223,7 @@ func h3ToLocalIj_neighbors_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Test the immediate neighbors of an index with invalid digits return error (ported from h3ToLocalIj_invalid_assertions)
+// Test the immediate neighbors of an index with invalid digits return error (ported from h3ToLocalIj_invalid_assertions).
 func h3ToLocalIj_invalid_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -284,7 +285,7 @@ func h3ToLocalIj_invalid_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Test that neighbors (k-ring) can be converted back to indexes in local IJ coordinate space (ported from localIjToH3_gridDisk_assertions)
+// Test that neighbors (k-ring) can be converted back to indexes in local IJ coordinate space (ported from localIjToH3_gridDisk_assertions).
 func localIjToH3_gridDisk_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -333,7 +334,7 @@ func localIjToH3_gridDisk_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Test traversing the local IJ coordinate space (ported from localIjToH3_traverse_assertions)
+// Test traversing the local IJ coordinate space (ported from localIjToH3_traverse_assertions).
 func localIjToH3_traverse_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -411,7 +412,7 @@ func localIjToH3_traverse_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Test localIjToH3_identity (ported from C test)
+// Test localIjToH3_identity (ported from C test).
 func TestLocalIjToH3_Identity(t *testing.T) {
 	t.Parallel()
 	iterateAllIndexesAtResForCellToLocalIj(t, 0, localIjToH3_identity_assertions)
@@ -419,7 +420,7 @@ func TestLocalIjToH3_Identity(t *testing.T) {
 	iterateAllIndexesAtResForCellToLocalIj(t, 2, localIjToH3_identity_assertions)
 }
 
-// Test h3ToLocalIj_coordinates (ported from C test)
+// Test h3ToLocalIj_coordinates (ported from C test).
 func TestH3ToLocalIj_Coordinates(t *testing.T) {
 	t.Parallel()
 	iterateAllIndexesAtResForCellToLocalIj(t, 0, h3ToLocalIj_coordinates_assertions)
@@ -427,7 +428,7 @@ func TestH3ToLocalIj_Coordinates(t *testing.T) {
 	iterateAllIndexesAtResForCellToLocalIj(t, 2, h3ToLocalIj_coordinates_assertions)
 }
 
-// Test h3ToLocalIj_neighbors (ported from C test)
+// Test h3ToLocalIj_neighbors (ported from C test).
 func TestH3ToLocalIj_Neighbors(t *testing.T) {
 	t.Parallel()
 	iterateAllIndexesAtResForCellToLocalIj(t, 0, h3ToLocalIj_neighbors_assertions)
@@ -435,14 +436,14 @@ func TestH3ToLocalIj_Neighbors(t *testing.T) {
 	iterateAllIndexesAtResForCellToLocalIj(t, 2, h3ToLocalIj_neighbors_assertions)
 }
 
-// Test h3ToLocalIj_invalid (ported from C test)
+// Test h3ToLocalIj_invalid (ported from C test).
 func TestH3ToLocalIj_Invalid(t *testing.T) {
 	t.Parallel()
 	iterateAllIndexesAtResForCellToLocalIj(t, 1, h3ToLocalIj_invalid_assertions)
 	iterateAllIndexesAtResForCellToLocalIj(t, 2, h3ToLocalIj_invalid_assertions)
 }
 
-// Test localIjToH3_gridDisk (ported from C test)
+// Test localIjToH3_gridDisk (ported from C test).
 func TestLocalIjToH3_GridDisk(t *testing.T) {
 	t.Parallel()
 	iterateAllIndexesAtResForCellToLocalIj(t, 0, localIjToH3_gridDisk_assertions)
@@ -453,7 +454,7 @@ func TestLocalIjToH3_GridDisk(t *testing.T) {
 	// Further resolutions aren't tested to save time.
 }
 
-// Test localIjToH3_traverse (ported from C test)
+// Test localIjToH3_traverse (ported from C test).
 func TestLocalIjToH3_Traverse(t *testing.T) {
 	t.Parallel()
 	iterateAllIndexesAtResForCellToLocalIj(t, 0, localIjToH3_traverse_assertions)

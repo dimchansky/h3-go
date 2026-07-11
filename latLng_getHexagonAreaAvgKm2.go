@@ -1,7 +1,7 @@
 package h3
 
 // getHexagonAreaAvgKm2 gets the average area in square kilometers of H3 hexagons at a given resolution.
-// Ported from H3 C: latLng.c::getHexagonAreaAvgKm2
+// Ported from H3 C: latLng.c::getHexagonAreaAvgKm2.
 func getHexagonAreaAvgKm2(res int32, out *float64) H3Error {
 	areas := [16]float64{
 		4.357449416078383e+06, 6.097884417941332e+05, 8.680178039899720e+04,

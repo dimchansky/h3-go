@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-// Maximum distances for each resolution, mirroring C constant
+// Maximum distances for each resolution, mirroring C constant.
 var maxDistancesForGridDistance = []int32{1, 2, 5, 12, 19, 26}
 
-// Helper function to iterate all indexes at a given resolution (reused from other tests)
+// Helper function to iterate all indexes at a given resolution (reused from other tests).
 func iterateAllIndexesAtResForGridDistance(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
 	t.Helper()
 
@@ -46,7 +46,7 @@ func iterateAllIndexesAtResForGridDistance(t *testing.T, res int32, testFunc fun
 	}
 }
 
-// Helper function to iterate partial indexes at a given resolution (limit to first N base cells)
+// Helper function to iterate partial indexes at a given resolution (limit to first N base cells).
 func iterateAllIndexesAtResPartialForGridDistance(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), maxBaseCells int32) {
 	t.Helper()
 
@@ -91,7 +91,7 @@ func iterateAllIndexesAtResPartialForGridDistance(t *testing.T, res int32, testF
 	}
 }
 
-// Identity distance assertions (ported from gridDistance_identity_assertions)
+// Identity distance assertions (ported from gridDistance_identity_assertions).
 func gridDistance_identity_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -105,7 +105,7 @@ func gridDistance_identity_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Grid disk distance assertions (ported from gridDistance_gridDisk_assertions)
+// Grid disk distance assertions (ported from gridDistance_gridDisk_assertions).
 func gridDistance_gridDisk_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 
@@ -146,7 +146,7 @@ func gridDistance_gridDisk_assertions(t *testing.T, h3 H3Index) {
 	}
 }
 
-// Main identity test (ported from gridDistance_identity test)
+// Main identity test (ported from gridDistance_identity test).
 func Test_gridDistance_identity(t *testing.T) {
 	t.Parallel()
 
@@ -155,7 +155,7 @@ func Test_gridDistance_identity(t *testing.T) {
 	iterateAllIndexesAtResForGridDistance(t, 2, gridDistance_identity_assertions)
 }
 
-// Main grid disk test (ported from gridDistance_gridDisk test)
+// Main grid disk test (ported from gridDistance_gridDisk test).
 func Test_gridDistance_gridDisk(t *testing.T) {
 	t.Parallel()
 

@@ -4,7 +4,7 @@ package h3
 // This function may fail to find the distance between two indexes, for
 // example if they are very far apart. It may also fail when finding
 // distances for indexes on opposite sides of a pentagon.
-// Ported from H3 C: localij.c::gridDistance
+// Ported from H3 C: localij.c::gridDistance.
 func gridDistance(origin H3Index, index H3Index, out *int64) H3Error {
 	var originIjk, h3Ijk CoordIJK
 

@@ -5,7 +5,7 @@ package h3
 // The function extracts the direction bits from the edge index, obtains the origin cell,
 // and then uses h3NeighborRotations to find the neighboring cell in that direction.
 //
-// Ported from H3 C: directedEdge.c::getDirectedEdgeDestination
+// Ported from H3 C: directedEdge.c::getDirectedEdgeDestination.
 func getDirectedEdgeDestination(edge H3Index, out *H3Index) H3Error {
 	direction := Direction(getReservedBits(edge))
 	rotations := int32(0)

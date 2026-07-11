@@ -2,7 +2,7 @@ package h3
 
 // _h3ToFaceIjk converts an H3 index to a FaceIJK address.
 // This handles coordinate transformations and overage adjustments.
-// Ported from H3 C: h3Index.c::_h3ToFaceIjk
+// Ported from H3 C: h3Index.c::_h3ToFaceIjk.
 func _h3ToFaceIjk(h H3Index, fijk *FaceIJK) H3Error {
 	baseCell := getBaseCell(h)
 	if baseCell < 0 || baseCell >= NUM_BASE_CELLS {

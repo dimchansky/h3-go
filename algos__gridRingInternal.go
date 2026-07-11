@@ -5,7 +5,7 @@ package h3
 // This function uses _gridDiskDistancesInternal to get all cells up to distance
 // k, then filters those results to include only cells exactly at distance k.
 //
-// Ported from H3 C: algos.c::_gridRingInternal
+// Ported from H3 C: algos.c::_gridRingInternal.
 func _gridRingInternal(origin H3Index, k int32, out []H3Index) H3Error {
 	// Short-circuit on 'identity' ring
 	if k == 0 {

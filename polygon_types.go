@@ -1,6 +1,6 @@
 package h3
 
-// ContainmentMode mirrors C ContainmentMode for polygon flags
+// ContainmentMode mirrors C ContainmentMode for polygon flags.
 type ContainmentMode int
 
 const (
@@ -11,7 +11,7 @@ const (
 	CONTAINMENT_INVALID          ContainmentMode = 4
 )
 
-// Polygon flag helpers
+// Polygon flag helpers.
 const FLAG_CONTAINMENT_MODE_MASK uint32 = 15
 
 func FLAG_GET_CONTAINMENT_MODE(flags uint32) ContainmentMode {

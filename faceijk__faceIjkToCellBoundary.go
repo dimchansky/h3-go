@@ -3,7 +3,7 @@ package h3
 // _faceIjkToCellBoundary finds the boundary vertices for the given face-ijk cell.
 // This function handles edge-crossing vertices for Class III resolutions when
 // hexagon edges cross icosahedron face boundaries requiring interpolation.
-// Ported from H3 C: faceijk.c::_faceIjkToCellBoundary
+// Ported from H3 C: faceijk.c::_faceIjkToCellBoundary.
 func _faceIjkToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary) {
 	adjRes := res
 	centerIJK := *h

@@ -1,4 +1,4 @@
-//go:build cgo
+//go:build cgo && c2go
 
 package h3
 
@@ -241,14 +241,14 @@ func Test_cellsToLinkedMultiPolygon_parity(t *testing.T) {
 	t.Run("error_code_discrepancy", func(t *testing.T) {
 		// Test case for fuzzer-detected invalid cells that cause different error codes
 		invalidSet := []H3Index{0xd60006d60000f100, 0x3c3c403c1300d668}
-		
+
 		// Test Go implementation
 		var goOut LinkedGeoPolygon
 		goErr := cellsToLinkedMultiPolygon(invalidSet, int32(len(invalidSet)), &goOut)
-		
-		// Test C implementation 
+
+		// Test C implementation
 		cErr := cellsToLinkedMultiPolygonCErrorOnly(invalidSet)
-		
+
 		// Both should return error codes, but they may be different
 		if goErr == E_SUCCESS {
 			t.Errorf("Go: Expected error for invalid cells, got success")
@@ -256,14 +256,14 @@ func Test_cellsToLinkedMultiPolygon_parity(t *testing.T) {
 		if cErr == E_SUCCESS {
 			t.Errorf("C: Expected error for invalid cells, got success")
 		}
-		
+
 		// Document the actual behavior difference if they differ
 		if goErr != cErr {
 			t.Logf("Error code difference detected:")
 			t.Logf("  Go implementation returned: %v", goErr)
 			t.Logf("  C implementation returned: %v", cErr)
 			t.Logf("Both indicate failure, but with different specificity")
-			
+
 			// This is a known acceptable difference - Go provides more specific error classification
 			// C returns E_FAILED (generic), Go returns E_CELL_INVALID (specific)
 			if goErr == E_CELL_INVALID && cErr == E_FAILED {

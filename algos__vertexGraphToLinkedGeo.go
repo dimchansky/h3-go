@@ -5,7 +5,7 @@ package h3
 // from the graph (removed via removeVertexNode), connected edges form loops.
 // Each loop becomes a LinkedGeoLoop in the output LinkedGeoPolygon. The function
 // continues until all edges have been consumed from the graph.
-// Ported from H3 C: algos.c::_vertexGraphToLinkedGeo
+// Ported from H3 C: algos.c::_vertexGraphToLinkedGeo.
 func _vertexGraphToLinkedGeo(graph *VertexGraph, out *LinkedGeoPolygon) {
 	// Initialize the output polygon to empty
 	*out = LinkedGeoPolygon{}

@@ -10,20 +10,20 @@ import (
 // However, the C tests use different coordinates for point and line polygons,
 // so we define those separately here to match the C test exactly
 
-// C test-specific fixtures for degenerate polygons
+// C test-specific fixtures for degenerate polygons.
 var (
-	// Point polygon with single vertex at origin - C test expects E_FAILED
+	// Point polygon with single vertex at origin - C test expects E_FAILED.
 	pointVertsC      = []LatLng{{Lat: 0, Lng: 0}}
 	pointGeoLoopC    = GeoLoop(pointVertsC)
 	pointGeoPolygonC = GeoPolygon{GeoLoop: pointGeoLoopC, Holes: nil}
 
-	// Line polygon from origin - C test expects E_FAILED
+	// Line polygon from origin - C test expects E_FAILED.
 	lineVertsC      = []LatLng{{Lat: 0, Lng: 0}, {Lat: 1, Lng: 0}}
 	lineGeoLoopC    = GeoLoop(lineVertsC)
 	lineGeoPolygonC = GeoPolygon{GeoLoop: lineGeoLoopC, Holes: nil}
 )
 
-// Helper function to count non-null indexes (avoiding conflict with existing function)
+// Helper function to count non-null indexes (avoiding conflict with existing function).
 func countNonNullIndexesStandard(indexes []H3Index) int64 {
 	count := int64(0)
 	for _, idx := range indexes {
@@ -34,7 +34,7 @@ func countNonNullIndexesStandard(indexes []H3Index) int64 {
 	return count
 }
 
-// fillIndex_assertions helper function
+// fillIndex_assertions helper function.
 func fillIndex_assertions(h H3Index) {
 	if isTransmeridianCell(h) {
 		// TODO: these do not work correctly
@@ -561,7 +561,7 @@ func TestFillIndex(t *testing.T) {
 	}
 }
 
-// Helper function to get edge hexagons (tests internal function)
+// Helper function to get edge hexagons (tests internal function).
 func TestGetEdgeHexagonsInvalid(t *testing.T) {
 	t.Parallel()
 

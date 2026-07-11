@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Helper function to assert iterator is null (ported from assert_is_null_iterator)
+// Helper function to assert iterator is null (ported from assert_is_null_iterator).
 func assertIsNullIterator(t *testing.T, iter IterCellsChildren, msg string) {
 	t.Helper()
 	if iter.H != H3_NULL {
@@ -19,7 +19,7 @@ func assertIsNullIterator(t *testing.T, iter IterCellsChildren, msg string) {
 	}
 }
 
-// Test number of cells at each resolution (ported from test_number)
+// Test number of cells at each resolution (ported from test_number).
 func testNumber(t *testing.T, res int32) {
 	t.Helper()
 
@@ -40,7 +40,7 @@ func testNumber(t *testing.T, res int32) {
 	}
 }
 
-// Test that all iterated cells are valid (ported from test_valid)
+// Test that all iterated cells are valid (ported from test_valid).
 func testValid(t *testing.T, res int32) {
 	t.Helper()
 
@@ -61,7 +61,7 @@ func testValid(t *testing.T, res int32) {
 	}
 }
 
-// Test that all iterated cells have correct resolution (ported from test_resolution)
+// Test that all iterated cells have correct resolution (ported from test_resolution).
 func testResolution(t *testing.T, res int32) {
 	t.Helper()
 
@@ -84,7 +84,7 @@ func testResolution(t *testing.T, res int32) {
 	}
 }
 
-// Test that cells are iterated in order without duplicates (ported from test_ordered)
+// Test that cells are iterated in order without duplicates (ported from test_ordered).
 func testOrdered(t *testing.T, res int32) {
 	t.Helper()
 

@@ -6,7 +6,7 @@ import (
 
 // bboxHexEstimate returns an estimated number of hexagons that fit
 // within the cartesian-projected bounding box.
-// Ported from H3 C: bbox.c::bboxHexEstimate
+// Ported from H3 C: bbox.c::bboxHexEstimate.
 func bboxHexEstimate(bbox *BBox, res int32, out *int64) H3Error {
 	// Get the area of the pentagon as the maximally-distorted area possible
 	var pentagons = make([]H3Index, NUM_PENTAGONS)

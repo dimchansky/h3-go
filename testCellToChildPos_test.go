@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Helper function to iterate all indexes at a given resolution
+// Helper function to iterate all indexes at a given resolution.
 func iterateAllIndexesAtResForChildPos(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
 	t.Helper()
 
@@ -43,7 +43,7 @@ func iterateAllIndexesAtResForChildPos(t *testing.T, res int32, testFunc func(t 
 	}
 }
 
-// childPos_assertions tests cellToChildPos and childPosToCell for a given H3 index
+// childPos_assertions tests cellToChildPos and childPosToCell for a given H3 index.
 func childPos_assertions(t *testing.T, h3 H3Index) {
 	t.Helper()
 

@@ -4,7 +4,7 @@ package h3
 // The coordinate space used by this function may have deleted regions or warping
 // due to pentagonal distortion. Failure may occur if the coordinates are too far
 // away from the origin or if the index is on the other side of a pentagon.
-// Ported from H3 C: localij.c::localIjkToCell
+// Ported from H3 C: localij.c::localIjkToCell.
 func localIjkToCell(origin H3Index, ijk *CoordIJK, out *H3Index) H3Error {
 	res := getResolution(origin)
 	originBaseCell := getBaseCell(origin)

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Test helper that checks gridDisk output matches gridDiskDistancesSafe output
+// Test helper that checks gridDisk output matches gridDiskDistancesSafe output.
 func gridDisk_equals_gridDiskDistancesSafe_assertions(t *testing.T, h3 H3Index) {
 	for k := int32(0); k < 3; k++ {
 		var kSz int64
@@ -458,8 +458,8 @@ func TestMaxGridDiskSize_numCells(t *testing.T) {
 
 	var sz int64
 	prev := int64(0)
-	var max int64
-	max, err := getNumCells(15)
+	var maxCells int64
+	maxCells, err := getNumCells(15)
 	if err != E_SUCCESS {
 		t.Fatalf("getNumCells failed: %v", err)
 	}
@@ -470,8 +470,8 @@ func TestMaxGridDiskSize_numCells(t *testing.T) {
 		if err != E_SUCCESS {
 			t.Fatalf("maxGridDiskSize failed for k=%d: %v", k, err)
 		}
-		if sz > max {
-			t.Errorf("maxGridDiskSize does not produce estimates above the number of grid cells: k=%d, sz=%d, max=%d", k, sz, max)
+		if sz > maxCells {
+			t.Errorf("maxGridDiskSize does not produce estimates above the number of grid cells: k=%d, sz=%d, max=%d", k, sz, maxCells)
 		}
 		if prev > sz {
 			t.Errorf("maxGridDiskSize is not monotonically increasing: prev=%d, current=%d at k=%d", prev, sz, k)
@@ -483,7 +483,7 @@ func TestMaxGridDiskSize_numCells(t *testing.T) {
 	if err != E_SUCCESS {
 		t.Fatalf("maxGridDiskSize failed for INT32_MAX: %v", err)
 	}
-	if sz != max {
-		t.Errorf("maxGridDiskSize of INT32_MAX should produce valid result: expected %d, got %d", max, sz)
+	if sz != maxCells {
+		t.Errorf("maxGridDiskSize of INT32_MAX should produce valid result: expected %d, got %d", maxCells, sz)
 	}
 }

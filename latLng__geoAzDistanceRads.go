@@ -5,7 +5,7 @@ import (
 )
 
 // _geoAzDistanceRads computes the point p2 at azimuth az and distance from p1.
-// Ported from H3 C: latLng.c::_geoAzDistanceRads
+// Ported from H3 C: latLng.c::_geoAzDistanceRads.
 func _geoAzDistanceRads(p1 *LatLng, az, distance float64, p2 *LatLng) {
 	if distance < EPSILON {
 		*p2 = *p1

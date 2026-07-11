@@ -4,7 +4,7 @@ package h3
 // It builds a graph where each edge of the hexagons is represented as a vertex node.
 // Edges shared between adjacent hexagons are removed, leaving only the boundary edges.
 // The graph is used to generate polygon outlines from sets of hexagons.
-// Ported from H3 C: algos.c::h3SetToVertexGraph
+// Ported from H3 C: algos.c::h3SetToVertexGraph.
 func h3SetToVertexGraph(h3Set []H3Index, numHexes int32, graph *VertexGraph) H3Error {
 	if numHexes < 1 {
 		// We still need to init the graph, or calls to destroyVertexGraph will fail

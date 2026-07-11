@@ -11,13 +11,13 @@ func Test_cellToChildrenSize_hexagon(t *testing.T) {
 	h := H3Index(0x87283080dffffff) // res 7 *hexagon*
 
 	// Test coarser resolution (should return error)
-	sz, err := cellToChildrenSize(h, 3)
+	_, err := cellToChildrenSize(h, 3)
 	if err != E_RES_DOMAIN {
 		t.Errorf("got expected size for coarser res: expected E_RES_DOMAIN, got %v", err)
 	}
 
 	// Test same resolution
-	sz, err = cellToChildrenSize(h, 7)
+	sz, err := cellToChildrenSize(h, 7)
 	if err != E_SUCCESS {
 		t.Fatalf("cellToChildrenSize failed for same res: %v", err)
 	}
@@ -50,13 +50,13 @@ func Test_cellToChildrenSize_pentagon(t *testing.T) {
 	h := H3Index(0x870800000ffffff) // res 7 *pentagon*
 
 	// Test coarser resolution (should return error)
-	sz, err := cellToChildrenSize(h, 3)
+	_, err := cellToChildrenSize(h, 3)
 	if err != E_RES_DOMAIN {
 		t.Errorf("got expected size for coarser res: expected E_RES_DOMAIN, got %v", err)
 	}
 
 	// Test same resolution
-	sz, err = cellToChildrenSize(h, 7)
+	sz, err := cellToChildrenSize(h, 7)
 	if err != E_SUCCESS {
 		t.Fatalf("cellToChildrenSize failed for same res: %v", err)
 	}

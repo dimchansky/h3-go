@@ -10,7 +10,7 @@ import (
 //     longitude apart. These will be interpreted as crossing the antimeridian.
 //   - Does not currently support polygons containing a pole.
 //
-// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(bboxFrom) -> bboxFromLinkedGeoLoop
+// Ported from H3 C: polygonAlgos.h::GENERIC_LOOP_ALGO(bboxFrom) -> bboxFromLinkedGeoLoop.
 func bboxFromLinkedGeoLoop(loop *LinkedGeoLoop, bbox *BBox) {
 	// Early exit if there are no vertices
 	if loop.First == nil {

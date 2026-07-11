@@ -5,7 +5,7 @@ package h3
 // k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0 and all neighboring indexes, and so on.
 // Output is placed in the provided array in order of increasing distance from the origin.
 // The distances in hexagons is placed in the distances array at the same offset.
-// Ported from H3 C: algos.c::gridDiskDistancesUnsafe
+// Ported from H3 C: algos.c::gridDiskDistancesUnsafe.
 func gridDiskDistancesUnsafe(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
 	// Return codes:
 	// 1 Pentagon was encountered

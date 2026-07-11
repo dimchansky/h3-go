@@ -2,7 +2,7 @@ package h3
 
 // childPosToCell returns the child cell at a given position under parent at childRes.
 // Ports H3_EXPORT(childPosToCell).
-// Ported from H3 C: h3Index.c::childPosToCell
+// Ported from H3 C: h3Index.c::childPosToCell.
 func childPosToCell(childPos int64, parent H3Index, childRes int32) (H3Index, H3Error) {
 	if childRes < 0 || childRes > MAX_H3_RES {
 		return 0, E_RES_DOMAIN

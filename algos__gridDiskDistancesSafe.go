@@ -12,7 +12,7 @@ package h3
 // Output is placed in the provided array in no particular order. Elements of
 // the output array may be left zero, as can happen when crossing a pentagon.
 //
-// Ported from H3 C: algos.c::gridDiskDistancesSafe
+// Ported from H3 C: algos.c::gridDiskDistancesSafe.
 func gridDiskDistancesSafe(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
 	var maxIdx int64
 	err := maxGridDiskSize(k, &maxIdx)

@@ -1,4 +1,43 @@
-.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all
+.PHONY: test bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory
+
+# Enforces DR-007 (docs/public-api-architecture.md): the production library is
+# safe Go only. Two independent layers:
+#  1) Build-selection check: for every normal build mode, ask the toolchain
+#     which packages/files it would compile (including tests) and fail if any
+#     package in THIS module imports unsafe.
+#  2) Tag allowlist (platform/GOOS-independent): any file importing unsafe
+#     must carry a build constraint containing c2go.
+check-unsafe:
+	@echo "check-unsafe: layer 1 (build-selection, all normal build modes)..."
+	@for cgo in 0 1; do \
+		for tags in "" "race"; do \
+			out=$$(CGO_ENABLED=$$cgo go list -tags "$$tags" \
+				-f '{{.ImportPath}}: {{join .Imports " "}} {{join .TestImports " "}} {{join .XTestImports " "}}' \
+				./... | grep -w unsafe || true); \
+			if [ -n "$$out" ]; then \
+				echo "FAIL: unsafe reachable with CGO_ENABLED=$$cgo tags='$$tags':"; \
+				echo "$$out"; \
+				exit 1; \
+			fi; \
+		done; \
+	done
+	@echo "check-unsafe: layer 2 (tag allowlist)..."
+	@bad=""; \
+	for f in $$(grep -rl '^[[:space:]]*"unsafe"$$' --include='*.go' . 2>/dev/null | grep -v '^\./testref' | grep -v '^\./\.gocache'); do \
+		if ! head -1 "$$f" | grep -q 'go:build.*c2go'; then \
+			bad="$$bad $$f"; \
+		fi; \
+	done; \
+	if [ -n "$$bad" ]; then \
+		echo "FAIL: unsafe imported outside cgo && c2go tagged files:$$bad"; \
+		exit 1; \
+	fi
+	@echo "check-unsafe: OK"
+
+# Regenerate the C-API inventory (requires testref sources; see make ref).
+api-inventory:
+	@go run ./tools/apiinventory > docs/c-api-inventory.csv
+	@echo "docs/c-api-inventory.csv regenerated"
 
 # Usage: make test [TEST=TestName] [VERBOSE=1] [TIMEOUT=duration] [COVERAGE=1]
 # Examples:

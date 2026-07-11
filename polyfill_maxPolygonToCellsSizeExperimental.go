@@ -9,7 +9,7 @@ import "math"
 // This function provides an upper bound for memory allocation purposes. The actual
 // number of cells may be significantly smaller than this estimate.
 //
-// Ported from H3 C: polyfill.c::maxPolygonToCellsSizeExperimental
+// Ported from H3 C: polyfill.c::maxPolygonToCellsSizeExperimental.
 func maxPolygonToCellsSizeExperimental(polygon *GeoPolygon, res int32, flags uint32) (int64, H3Error) {
 	// Special case: 0-vertex polygon
 	if len(polygon.GeoLoop) == 0 {

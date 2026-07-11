@@ -7,7 +7,7 @@ package h3
 // 2. Origin cell is valid when extracted from the edge
 // 3. Pentagon cells don't have K-axis directed edges (deleted subsequence)
 //
-// Ported from H3 C: directedEdge.c::isValidDirectedEdge
+// Ported from H3 C: directedEdge.c::isValidDirectedEdge.
 func isValidDirectedEdge(edge H3Index) bool {
 	neighborDirection := Direction(getReservedBits(edge))
 	if neighborDirection <= CENTER_DIGIT || neighborDirection >= NUM_DIGITS {

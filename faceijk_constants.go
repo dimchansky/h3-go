@@ -1,6 +1,6 @@
 package h3
 
-// Overage represents overage status for coordinate adjustments
+// Overage represents overage status for coordinate adjustments.
 type Overage int
 
 const (
@@ -9,14 +9,14 @@ const (
 	NEW_FACE   Overage = 2 // Overage on new face interior
 )
 
-// FaceOrientIJK contains information to transform into an adjacent face IJK system
+// FaceOrientIJK contains information to transform into an adjacent face IJK system.
 type FaceOrientIJK struct {
 	Face      int32    // face number
 	Translate CoordIJK // res 0 translation relative to primary face
 	CcwRot60  int32    // number of 60 degree ccw rotations relative to primary face
 }
 
-// Quadrant direction constants for faceNeighbors table
+// Quadrant direction constants for faceNeighbors table.
 const (
 	IJ = 1 // IJ quadrant faceNeighbors table direction
 	KI = 2 // KI quadrant faceNeighbors table direction
@@ -24,7 +24,7 @@ const (
 )
 
 // maxDimByCIIres provides maximum dimension value for each Class II resolution
-// Ported from H3 C: faceijk.c::maxDimByCIIres
+// Ported from H3 C: faceijk.c::maxDimByCIIres.
 var maxDimByCIIres = [17]int32{
 	2,        // res  0
 	-1,       // res  1
@@ -46,7 +46,7 @@ var maxDimByCIIres = [17]int32{
 }
 
 // unitScaleByCIIres provides unit scale for each Class II resolution
-// Ported from H3 C: faceijk.c::unitScaleByCIIres
+// Ported from H3 C: faceijk.c::unitScaleByCIIres.
 var unitScaleByCIIres = [17]int32{
 	1,       // res  0
 	-1,      // res  1
@@ -68,7 +68,7 @@ var unitScaleByCIIres = [17]int32{
 }
 
 // adjacentFaceDir maps from face to face to the directions of the adjacent face
-// Ported from H3 C: faceijk.c::adjacentFaceDir
+// Ported from H3 C: faceijk.c::adjacentFaceDir.
 var adjacentFaceDir = [20][20]int32{
 	{0, KI, -1, -1, IJ, JK, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, // face 0
 	{IJ, 0, KI, -1, -1, -1, JK, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, // face 1

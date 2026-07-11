@@ -19,7 +19,7 @@ package h3
 // 3. Normalizes the result to follow GeoJSON MultiPolygon structure
 // 4. Cleans up intermediate vertex graph memory
 //
-// Ported from H3 C: algos.c::cellsToLinkedMultiPolygon
+// Ported from H3 C: algos.c::cellsToLinkedMultiPolygon.
 func cellsToLinkedMultiPolygon(h3Set []H3Index, numHexes int32, out *LinkedGeoPolygon) H3Error {
 	var graph VertexGraph
 

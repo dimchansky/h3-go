@@ -1,7 +1,7 @@
 package h3
 
 // _faceIjkToH3 converts a FaceIJK address to an H3Index.
-// Ported from H3 C: h3Index.c::_faceIjkToH3
+// Ported from H3 C: h3Index.c::_faceIjkToH3.
 func _faceIjkToH3(fijk *FaceIJK, res int32) H3Index {
 	// initialize the index
 	h := H3Index(H3_INIT)

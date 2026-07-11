@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Helper function to iterate all indexes at a given resolution
+// Helper function to iterate all indexes at a given resolution.
 func iterateAllIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index)) {
 	t.Helper()
 
@@ -43,7 +43,7 @@ func iterateAllIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc fun
 	}
 }
 
-// Helper function to iterate base cell indexes at a specific resolution for directed edge tests
+// Helper function to iterate base cell indexes at a specific resolution for directed edge tests.
 func iterateBaseCellIndexesAtResForDirectedEdge(t *testing.T, res int32, testFunc func(t *testing.T, h3 H3Index), baseCell int32) {
 	t.Helper()
 

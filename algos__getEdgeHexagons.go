@@ -3,7 +3,7 @@ package h3
 // _getEdgeHexagons takes a given geoloop ring and traces it with hexagons,
 // updating the search and found arrays. This is used for determining the
 // initial hexagon set for polygon operations.
-// Ported from H3 C: algos.c::_getEdgeHexagons
+// Ported from H3 C: algos.c::_getEdgeHexagons.
 func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32,
 	numSearchHexes *int64, search []H3Index, found []H3Index) H3Error {
 

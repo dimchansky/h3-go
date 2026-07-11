@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Fixtures
+// Fixtures.
 var sfGeo = LatLng{Lat: 0.659966917655, Lng: -2.1364398519396}
 
 func TestAreNeighborCells(t *testing.T) {

@@ -1,4 +1,3 @@
-// Package angle provides a safe angle type with internal storage in radians.
 package h3
 
 import (

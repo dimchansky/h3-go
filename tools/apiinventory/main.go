@@ -105,6 +105,7 @@ var (
 )
 
 func unwrapName(s string) string {
+	s = strings.TrimRight(s, ".") // tolerate godot-added trailing periods
 	if m := exportWrapRe.FindStringSubmatch(s); m != nil {
 		return m[1]
 	}

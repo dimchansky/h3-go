@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// assertNoDuplicates checks that there are no duplicate cells in the slice
+// assertNoDuplicates checks that there are no duplicate cells in the slice.
 func assertNoDuplicates(t *testing.T, cells []H3Index, testName string) {
 	t.Helper()
 	for i := 0; i < len(cells); i++ {
@@ -23,7 +23,7 @@ func assertNoDuplicates(t *testing.T, cells []H3Index, testName string) {
 	}
 }
 
-// assertSubset checks that set1 is a subset of set2
+// assertSubset checks that set1 is a subset of set2.
 func assertSubset(t *testing.T, set1, set2 []H3Index, testName string) {
 	t.Helper()
 	assertNoDuplicates(t, set1, testName+" (set1)")
@@ -56,7 +56,7 @@ func assertSetsEqual(t *testing.T, set1, set2 []H3Index, testName string) {
 	assertSubset(t, set2, set1, testName)
 }
 
-// checkChildren helper function that mirrors the C version
+// checkChildren helper function that mirrors the C version.
 func checkChildren(t *testing.T, h H3Index, res int32, expectedError H3Error, expected []H3Index, testName string) {
 	t.Helper()
 

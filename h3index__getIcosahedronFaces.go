@@ -11,7 +11,7 @@ package h3
 // H3Index. This is only false positives, though, so it's up to the caller to
 // filter out invalid values.
 //
-// Ported from H3 C: h3Index.c::getIcosahedronFaces
+// Ported from H3 C: h3Index.c::getIcosahedronFaces.
 func getIcosahedronFaces(h H3Index, out []int32) H3Error {
 	res := getResolution(h)
 	isPent := isPentagon(h)

@@ -4,7 +4,7 @@ package h3
 // k-ring 0 is defined as the origin cell, k-ring 1 is defined as k-ring 0 and all neighboring cells, and so on.
 // Output is placed in the provided array in no particular order. Elements of the output array may be left zero,
 // as can happen when crossing a pentagon.
-// Ported from H3 C: algos.c::gridDiskDistances
+// Ported from H3 C: algos.c::gridDiskDistances.
 func gridDiskDistances(origin H3Index, k int32, out []H3Index, distances []int32) H3Error {
 	// Optimistically try the faster gridDiskUnsafe algorithm first
 	failed := gridDiskDistancesUnsafe(origin, k, out, distances)

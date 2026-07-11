@@ -2,7 +2,7 @@ package h3
 
 // isValidCell determines if an H3 index is valid by checking bit patterns
 // and structural constraints.
-// Ported from H3 C: h3Index.c::isValidCell
+// Ported from H3 C: h3Index.c::isValidCell.
 func isValidCell(h H3Index) bool {
 	/*
 	   Look for bit patterns that would disqualify an H3Index from

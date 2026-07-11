@@ -1,7 +1,7 @@
 package h3
 
 // faceNeighbors provides face transition information for coordinate system transformations
-// Ported from H3 C: faceijk.c::faceNeighbors
+// Ported from H3 C: faceijk.c::faceNeighbors.
 var faceNeighbors = [NUM_ICOSA_FACES][4]FaceOrientIJK{
 	{
 		// face 0

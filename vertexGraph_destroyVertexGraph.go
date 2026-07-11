@@ -4,7 +4,7 @@ package h3
 // In the C implementation, this iterates through all nodes and removes them,
 // then frees the buckets array. In Go, we clear all references to help the GC
 // and set the graph to an empty state.
-// Ported from H3 C: vertexGraph.c::destroyVertexGraph
+// Ported from H3 C: vertexGraph.c::destroyVertexGraph.
 func destroyVertexGraph(graph *VertexGraph) {
 	var node *VertexNode
 	for {

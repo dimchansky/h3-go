@@ -4,7 +4,7 @@ import "math"
 
 // _hex2dToGeo converts 2D hexagonal coordinates to geographic coordinates.
 // Mirrors _hex2dToGeo in faceijk.c
-// Ported from H3 C: faceijk.c::_hex2dToGeo
+// Ported from H3 C: faceijk.c::_hex2dToGeo.
 func _hex2dToGeo(v *Vec2d, face int32, res int32, substrate int32, g *LatLng) {
 	// calculate (r, theta) in hex2d
 	r := _v2dMag(v)

@@ -3,7 +3,9 @@ package h3
 // _adjustPentVertOverage adjusts a pentagon vertex FaceIJK address for overage across an
 // icosahedral face. This is a specialized wrapper around _adjustOverageClassII
 // that handles pentagon vertices specifically.
-// Ported from H3 C: faceijk.c::_adjustPentVertOverage
+// Ported from H3 C: faceijk.c::_adjustPentVertOverage.
+//
+//nolint:unparam // return value mirrors H3 C _adjustPentVertOverage
 func _adjustPentVertOverage(fijk *FaceIJK, res int32) Overage {
 	var overage Overage
 

@@ -3,33 +3,33 @@ package h3
 // _ijkNormalizeCouldOverflow returns true if _ijkNormalize with the given input
 // could have a signed integer overflow. Assumes k is set to 0.
 // Mirrors H3's coordijk.c::_ijkNormalizeCouldOverflow behavior.
-// Ported from H3 C: coordijk.c::_ijkNormalizeCouldOverflow
+// Ported from H3 C: coordijk.c::_ijkNormalizeCouldOverflow.
 func _ijkNormalizeCouldOverflow(ijk *CoordIJK) bool {
 	// Check for the possibility of overflow
-	var max, min int32
+	var maxVal, minVal int32
 	if ijk.I > ijk.J {
-		max = ijk.I
-		min = ijk.J
+		maxVal = ijk.I
+		minVal = ijk.J
 	} else {
-		max = ijk.J
-		min = ijk.I
+		maxVal = ijk.J
+		minVal = ijk.I
 	}
 
-	if min < 0 {
-		// Only if the min is less than 0 will the resulting number be larger
-		// than max. If min is positive, then max is also positive, and a
+	if minVal < 0 {
+		// Only if the minVal is less than 0 will the resulting number be larger
+		// than maxVal. If minVal is positive, then maxVal is also positive, and a
 		// positive signed integer minus another positive signed integer will
 		// not overflow.
-		if addInt32sOverflows(max, min) {
-			// max + min would overflow
+		if addInt32sOverflows(maxVal, minVal) {
+			// maxVal + minVal would overflow
 			return true
 		}
-		if subInt32sOverflows(0, min) {
+		if subInt32sOverflows(0, minVal) {
 			// 0 - INT32_MIN would overflow
 			return true
 		}
-		// Also check for max - min overflow (which happens when min is negative)
-		if subInt32sOverflows(max, min) {
+		// Also check for maxVal - minVal overflow (which happens when minVal is negative)
+		if subInt32sOverflows(maxVal, minVal) {
 			return true
 		}
 	}

@@ -1,6 +1,6 @@
 package h3
 
-// H3 index bit layout (from h3Index.h)
+// H3 index bit layout (from h3Index.h).
 const (
 	H3_NUM_BITS         = 64
 	H3_MAX_OFFSET       = 63
@@ -28,10 +28,10 @@ const (
 	H3_DIGIT_MASK          uint64 = 7
 	H3_DIGIT_MASK_NEGATIVE uint64 = ^H3_DIGIT_MASK
 
-	// H3_INIT: mode=cell, res=0, base cell=0, digits all 7
+	// H3_INIT: mode=cell, res=0, base cell=0, digits all 7.
 	H3_INIT uint64 = 35184372088831
 
-	// H3_NULL represents the null H3 index
+	// H3_NULL represents the null H3 index.
 	H3_NULL H3Index = 0
 )
 
@@ -40,7 +40,7 @@ const (
 const (
 	// MHI is a bit mask with alternating 100 pattern for each 3-bit digit position.
 	// Used to efficiently check for invalid digits (7) without looping.
-	// Pattern: 100100100100100100100100100100100100100100100 (binary)
+	// Pattern: 100100100100100100100100100100100100100100100 (binary).
 	H3_DIGIT_CHECK_MHI = 0b100100100100100100100100100100100100100100100
 
 	// MLO is MHI shifted right by 2 bits, used in the digit validation algorithm.
@@ -79,7 +79,7 @@ var isBaseCellPentagonArr = [128]bool{
 // Note: C implementation lives in baseCells.c as _isBaseCellPentagon.
 
 // h3ErrorDescriptions contains error message strings for each H3Error code.
-// Mirrored from H3 C: h3Index.c::H3ErrorDescriptions
+// Mirrored from H3 C: h3Index.c::H3ErrorDescriptions.
 var h3ErrorDescriptions = [16]string{
 	/* E_SUCCESS */ "Success",
 	/* E_FAILED */ "The operation failed but a more specific error is not available",

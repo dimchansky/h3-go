@@ -3,7 +3,7 @@ package h3
 // _adjustOverageClassII adjusts a FaceIJK address for overage to an adjacent face.
 // This handles coordinate transformations when IJK coordinates exceed the face boundary.
 // Returns the overage status: NO_OVERAGE, FACE_EDGE, or NEW_FACE.
-// Ported from H3 C: faceijk.c::_adjustOverageClassII
+// Ported from H3 C: faceijk.c::_adjustOverageClassII.
 func _adjustOverageClassII(fijk *FaceIJK, res int32, pentLeading4 bool, substrate bool) Overage {
 	overage := NO_OVERAGE
 	ijk := &fijk.Coord

@@ -1,7 +1,7 @@
 package h3
 
 // getHexagonAreaAvgM2 gets the average area in square meters of H3 hexagons at a given resolution.
-// Ported from H3 C: latLng.c::getHexagonAreaAvgM2
+// Ported from H3 C: latLng.c::getHexagonAreaAvgM2.
 func getHexagonAreaAvgM2(res int32, out *float64) H3Error {
 	areas := [16]float64{
 		4.357449416078390e+12, 6.097884417941339e+11, 8.680178039899731e+10,

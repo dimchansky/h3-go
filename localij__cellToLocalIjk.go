@@ -9,7 +9,7 @@ package h3
 // Failure may occur if the index is too far away from the origin or if the index
 // is on the other side of a pentagon.
 //
-// Ported from H3 C: localij.c::cellToLocalIjk
+// Ported from H3 C: localij.c::cellToLocalIjk.
 func cellToLocalIjk(origin H3Index, h3 H3Index, out *CoordIJK) H3Error {
 	res := getResolution(origin)
 

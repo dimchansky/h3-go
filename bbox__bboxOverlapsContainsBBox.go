@@ -1,7 +1,7 @@
 package h3
 
 // bboxOverlapsBBox reports whether two bboxes overlap (port of bbox.c)
-// Ported from H3 C: bbox.c::bboxOverlapsBBox
+// Ported from H3 C: bbox.c::bboxOverlapsBBox.
 func bboxOverlapsBBox(a, b *BBox) bool {
 	// Latitude overlap
 	if a.North < b.South || a.South > b.North {
@@ -18,7 +18,7 @@ func bboxOverlapsBBox(a, b *BBox) bool {
 }
 
 // bboxContainsBBox reports whether a contains b (port of bbox.c)
-// Ported from H3 C: bbox.c::bboxContainsBBox
+// Ported from H3 C: bbox.c::bboxContainsBBox.
 func bboxContainsBBox(a, b *BBox) bool {
 	if a.North < b.North || a.South > b.South {
 		return false

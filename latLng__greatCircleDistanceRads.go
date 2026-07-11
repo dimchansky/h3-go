@@ -6,7 +6,7 @@ import (
 
 // greatCircleDistanceRads returns the great circle distance in radians
 // between two spherical coordinates (radians).
-// Ported from H3 C: latLng.c::H3_EXPORT(greatCircleDistanceRads)
+// Ported from H3 C: latLng.c::H3_EXPORT(greatCircleDistanceRads).
 func greatCircleDistanceRads(a, b *LatLng) float64 {
 	dLat := (b.Lat - a.Lat).Mul(0.5)
 	dLng := (b.Lng - a.Lng).Mul(0.5)

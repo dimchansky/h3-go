@@ -2,7 +2,7 @@ package h3
 
 // cellBoundaryInsidePolygon checks if a cell boundary is completely contained by a polygon.
 // Ported from polygon.c::cellBoundaryInsidePolygon
-// Ported from H3 C: polygon.c::cellBoundaryInsidePolygon
+// Ported from H3 C: polygon.c::cellBoundaryInsidePolygon.
 func cellBoundaryInsidePolygon(poly GeoPolygon, bboxes []BBox, boundary *CellBoundary, boundaryBBox *BBox) bool {
 	// First test a single point (first vertex). Fails fast via bboxContains.
 	if !pointInsidePolygon(poly, bboxes, &boundary.Verts[0]) {

@@ -1,7 +1,7 @@
 package h3
 
 // BaseCellData represents information on a single base cell.
-// Mirrors the BaseCellData struct from baseCells.h
+// Mirrors the BaseCellData struct from baseCells.h.
 type BaseCellData struct {
 	HomeFijk     FaceIJK  // "home" face and normalized ijk coordinates on that face
 	IsPentagon   bool     // is this base cell a pentagon?
@@ -10,7 +10,7 @@ type BaseCellData struct {
 
 // baseCellData mirrors the BaseCellData array from baseCells.c
 // Resolution 0 base cell data lookup table
-// Ported from H3 C: baseCells.c::baseCellData
+// Ported from H3 C: baseCells.c::baseCellData.
 var baseCellData = [NUM_BASE_CELLS]BaseCellData{
 	{FaceIJK{1, CoordIJK{1, 0, 0}}, false, [2]int32{0, 0}},   // base cell 0
 	{FaceIJK{2, CoordIJK{1, 1, 0}}, false, [2]int32{0, 0}},   // base cell 1

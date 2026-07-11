@@ -3,7 +3,7 @@ package h3
 // _faceIjkPentToCellBoundary finds the boundary vertices for the given pentagon face-ijk cell.
 // Pentagon cells have 5 vertices and all Class III pentagon edges cross icosahedron edges.
 // Class II pentagons have vertices directly on the edges with no edge intersections.
-// Ported from H3 C: faceijk.c::_faceIjkPentToCellBoundary
+// Ported from H3 C: faceijk.c::_faceIjkPentToCellBoundary.
 func _faceIjkPentToCellBoundary(h *FaceIJK, res int32, start int32, length int32, g *CellBoundary) {
 	adjRes := res
 	centerIJK := *h

@@ -14,7 +14,7 @@ package h3
 // - edges[4]: Direction 5
 // - edges[5]: Direction 6
 //
-// Ported from H3 C: directedEdge.c::originToDirectedEdges
+// Ported from H3 C: directedEdge.c::originToDirectedEdges.
 func originToDirectedEdges(origin H3Index, edges []H3Index) H3Error {
 	// Determine if the origin is a pentagon and special treatment needed.
 	isPent := isPentagon(origin)

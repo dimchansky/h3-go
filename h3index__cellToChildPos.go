@@ -2,7 +2,7 @@ package h3
 
 // cellToChildPos returns the position of child within an ordered list of all
 // children of its parent at parentRes. Ports H3_EXPORT(cellToChildPos).
-// Ported from H3 C: h3Index.c::cellToChildPos
+// Ported from H3 C: h3Index.c::cellToChildPos.
 func cellToChildPos(child H3Index, parentRes int32) (int64, H3Error) {
 	childRes := getResolution(child)
 	// Get parent at res to validate

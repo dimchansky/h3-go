@@ -8,7 +8,7 @@ package h3
 // The function uses a hash table approach with linear probing to store cells and their distances,
 // recursively exploring neighbors up to distance k from the origin.
 //
-// Ported from H3 C: algos.c::_gridDiskDistancesInternal
+// Ported from H3 C: algos.c::_gridDiskDistancesInternal.
 func _gridDiskDistancesInternal(origin H3Index, k int32, out []H3Index, distances []int32, maxIdx int64, curK int32) H3Error {
 	// Put origin in the output array. out is used as a hash set.
 	// Note: In C, this is int64_t off = origin % maxIdx; where origin is uint64_t

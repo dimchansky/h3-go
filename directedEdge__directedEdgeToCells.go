@@ -6,7 +6,7 @@ package h3
 // H3 index by calling getDirectedEdgeOrigin and getDirectedEdgeDestination sequentially.
 // The results are stored in the provided originDestination slice at indices 0 and 1.
 //
-// Ported from H3 C: directedEdge.c::directedEdgeToCells
+// Ported from H3 C: directedEdge.c::directedEdgeToCells.
 func directedEdgeToCells(edge H3Index, originDestination []H3Index) H3Error {
 	// Get the origin cell from the directed edge
 	origin, originResult := getDirectedEdgeOrigin(edge)
