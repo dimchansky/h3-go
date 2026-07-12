@@ -7,6 +7,11 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- Refreshed the complete Apple M1 Max darwin/arm64 comparative benchmark
+  and process-memory artifacts with Go 1.26.5. Generated README excerpts
+  now reflect that clean run; Linux/amd64 measurements remain unchanged.
+  The refresh review records the mixed timing changes without attributing
+  them to an unisolated compiler optimization.
 - API ergonomics review: added generic typed `IsValidIndex`,
   `DirectedEdge.IndexDigit`, `Vertex.IndexDigit`, `Cell.ImmediateParent`,
   `Cell.ImmediateChildren`, zero-allocation

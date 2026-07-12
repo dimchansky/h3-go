@@ -232,23 +232,22 @@ semantically equivalent results, 10 repetitions summarized by `benchstat`
 (medians; full tables with confidence intervals in
 [docs/benchmarks](docs/benchmarks/README.md)).
 
-
 <!-- BEGIN GENERATED: benchdocs README (run `make gen-benchdocs`) -->
 ### Apple M1 Max — darwin-arm64
 
-go version go1.25.4 darwin/arm64; clang — Apple clang version 21.0.0 (clang-2100.1.1.101); github.com/uber/h3-go/v4 v4.4.1; H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module); repository `a64705f`. [Metadata](docs/benchmarks/darwin-arm64/metadata.txt) · [full benchstat table](docs/benchmarks/darwin-arm64/benchstat.txt) · [raw output](docs/benchmarks/darwin-arm64/bench-raw.txt).
+go version go1.26.5 darwin/arm64; clang — Apple clang version 21.0.0 (clang-2100.1.1.101); github.com/uber/h3-go/v4 v4.4.1; H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module); repository `f207783`. [Metadata](docs/benchmarks/darwin-arm64/metadata.txt) · [full benchstat table](docs/benchmarks/darwin-arm64/benchstat.txt) · [raw output](docs/benchmarks/darwin-arm64/bench-raw.txt).
 
 | Operation | this library | warm `Append*` | uber/h3-go v4.4.1 |
 |---|---:|---:|---:|
-| `Cell.Resolution` | 0.642 ns · 0 B · 0 allocs | — | 32.5 ns · 0 B · 0 allocs |
-| `Cell.Parent` (res 9→7) | 4.67 ns · 0 B · 0 allocs | — | 47.8 ns · 8 B · 1 allocs |
-| `LatLngToCell` (res 9) | 646 ns · 0 B · 0 allocs | — | 562 ns · 24 B · 2 allocs |
-| `Cell.Boundary` (res 9) | 1.112 µs · 0 B · 0 allocs | — | 1.057 µs · 272 B · 2 allocs |
-| `GridDisk` (k=5) | 1.844 µs · 768 B · 1 allocs | 1.723 µs · 0 B · 0 allocs | 1.649 µs · 768 B · 1 allocs |
-| `CompactCells` (1,253 cells) | 28.78 µs · 31.95 KiB · 5 allocs | 27.75 µs · 21.95 KiB · 4 allocs | 11.92 µs · 10 KiB · 1 allocs |
-| `PolygonToCells` (SF, res 9) | 906 µs · 144 KiB · 3 allocs | 888.3 µs · 96.04 KiB · 2 allocs | 701 µs · 48.04 KiB · 3 allocs |
-| `CellsToMultiPolygon` (331 cells) | 708.3 µs · 57.17 KiB · 1187 allocs | — | 395.7 µs · 2.094 KiB · 4 allocs |
-| service workload (256 points) | 196.4 µs · 16 KiB · 256 allocs | 190.9 µs · 0 B · 0 allocs | 258 µs · 36 KiB · 2560 allocs |
+| `Cell.Resolution` | 0.656 ns · 0 B · 0 allocs | — | 25.1 ns · 0 B · 0 allocs |
+| `Cell.Parent` (res 9→7) | 4.85 ns · 0 B · 0 allocs | — | 38.3 ns · 8 B · 1 allocs |
+| `LatLngToCell` (res 9) | 659 ns · 0 B · 0 allocs | — | 573 ns · 24 B · 2 allocs |
+| `Cell.Boundary` (res 9) | 1.136 µs · 0 B · 0 allocs | — | 1.106 µs · 272 B · 2 allocs |
+| `GridDisk` (k=5) | 1.709 µs · 768 B · 1 allocs | 1.621 µs · 0 B · 0 allocs | 1.568 µs · 768 B · 1 allocs |
+| `CompactCells` (1,253 cells) | 25.37 µs · 31.95 KiB · 5 allocs | 24.82 µs · 21.95 KiB · 4 allocs | 11.88 µs · 10 KiB · 1 allocs |
+| `PolygonToCells` (SF, res 9) | 895.2 µs · 144 KiB · 3 allocs | 880.9 µs · 96.04 KiB · 2 allocs | 701.9 µs · 48.04 KiB · 3 allocs |
+| `CellsToMultiPolygon` (331 cells) | 702.9 µs · 57.17 KiB · 1187 allocs | — | 395.4 µs · 2.094 KiB · 4 allocs |
+| service workload (256 points) | 191 µs · 16 KiB · 256 allocs | 188.5 µs · 0 B · 0 allocs | 229.1 µs · 36 KiB · 2560 allocs |
 
 ### GitHub Actions AMD EPYC 7763 — linux-amd64
 
@@ -268,7 +267,6 @@ go version go1.26.5 linux/amd64; gcc — gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13
 
 **Measured fact:** several results reverse between environments: `LatLngToCell`, `Cell.Boundary`, and `PolygonToCells` favor the binding on the M1 Max but pure Go on the Linux runner; `CompactCells` and `CellsToMultiPolygon` favor the binding in both. **Plausible explanation, not isolated by these measurements:** cgo-call cost, compiler code generation, and CPU microarchitecture all contribute. The artifacts do not identify a single cause, and absolute timings must never be compared across the two machines.
 <!-- END GENERATED: benchdocs README -->
-
 
 Caveats that matter: numbers are machine- and compiler-specific; Go's
 `B/op` cannot see the binding's C-heap allocations (that is what the

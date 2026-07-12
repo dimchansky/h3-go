@@ -17,7 +17,7 @@ directories, only within one:
 
 | Directory | Environment |
 |---|---|
-| [darwin-arm64](darwin-arm64/metadata.txt) | Apple M1 Max laptop (dedicated, mains power, minimal load) |
+| [darwin-arm64](darwin-arm64/metadata.txt) | Apple M1 Max laptop (AC power; normal desktop services active, with no concurrent repository work) |
 | [linux-amd64](linux-amd64/metadata.txt) | GitHub Actions `ubuntu-latest` shared runner (see noise caveats) — the committed artifact of a [benchmarks workflow](../../.github/workflows/benchmarks.yml) run |
 
 Each contains:
@@ -131,7 +131,9 @@ Refresh procedure and cross-checks are step 4 of the
 [maintainer checklist](../comparison-uber-h3-go.md#keeping-this-comparison-honest).
 Commit the regenerated directory wholesale (metadata + raw + summaries
 must stay from the same run); then re-verify any README numbers against
-the new `benchstat.txt`.
+the new `benchstat.txt`. The [Go 1.26.5 refresh review](darwin-arm64-go1.26.5-review.md)
+records the local cross-version comparison without retaining a second
+headline artifact set.
 
 ## Selected results
 
@@ -140,23 +142,22 @@ See the per-environment `benchstat.txt` for the full tables; the
 representative subset with commentary, including the pairings where the
 binding is faster.
 
-
 <!-- BEGIN GENERATED: benchdocs details (run `make gen-benchdocs`) -->
 ### Apple M1 Max (`darwin-arm64`)
 
-Run `2026-07-12T16:26:44Z` at repository `a64705f`; go version go1.25.4 darwin/arm64; clang — Apple clang version 21.0.0 (clang-2100.1.1.101); `-count=10 -benchtime=1s -benchmem`.
+Run `2026-07-12T19:55:04Z` at repository `f207783`; go version go1.26.5 darwin/arm64; clang — Apple clang version 21.0.0 (clang-2100.1.1.101); `-count=10 -benchtime=1s -benchmem`.
 
 | Selected operation | pure sec/op | uber sec/op | uber vs pure |
 |---|---:|---:|---:|
-| `Cell.Resolution` | 0.642 ns | 32.5 ns | +4963.04% |
-| `Cell.Parent` (res 9→7) | 4.67 ns | 47.8 ns | +924.52% |
-| `LatLngToCell` (res 9) | 646 ns | 562 ns | -13.07% |
-| `Cell.Boundary` (res 9) | 1.112 µs | 1.057 µs | -4.95% |
-| `GridDisk` (k=5) | 1.844 µs | 1.649 µs | -10.55% |
-| `CompactCells` (1,253 cells) | 28.78 µs | 11.92 µs | -58.60% |
-| `PolygonToCells` (SF, res 9) | 906 µs | 701 µs | -22.63% |
-| `CellsToMultiPolygon` (331 cells) | 708.3 µs | 395.7 µs | -44.13% |
-| service workload (256 points) | 196.4 µs | 258 µs | +31.41% |
+| `Cell.Resolution` | 0.656 ns | 25.1 ns | +3718.56% |
+| `Cell.Parent` (res 9→7) | 4.85 ns | 38.3 ns | +690.04% |
+| `LatLngToCell` (res 9) | 659 ns | 573 ns | -13.03% |
+| `Cell.Boundary` (res 9) | 1.136 µs | 1.106 µs | -2.64% |
+| `GridDisk` (k=5) | 1.709 µs | 1.568 µs | -8.28% |
+| `CompactCells` (1,253 cells) | 25.37 µs | 11.88 µs | -53.17% |
+| `PolygonToCells` (SF, res 9) | 895.2 µs | 701.9 µs | -21.59% |
+| `CellsToMultiPolygon` (331 cells) | 702.9 µs | 395.4 µs | -43.75% |
+| service workload (256 points) | 191 µs | 229.1 µs | +19.96% |
 
 ### GitHub Actions AMD EPYC 7763 (`linux-amd64`)
 
@@ -176,7 +177,6 @@ Run `2026-07-12T17:19:29Z` at repository `0c1de86`; go version go1.26.5 linux/am
 
 These tables are generated from the committed `benchstat.csv` files. Positive “uber vs pure” values mean the binding took longer; negative values mean it was faster. See the full tables for confidence intervals and p-values.
 <!-- END GENERATED: benchdocs details -->
-
 
 A worked example of why `memory.tsv` exists:
 `CellsToMultiPolygon` shows the binding at 4 Go allocs / ~2 KiB per call

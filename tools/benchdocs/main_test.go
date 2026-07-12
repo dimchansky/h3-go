@@ -40,6 +40,12 @@ func TestLoadResultRejectsDrift(t *testing.T) {
 			metadataNew: "linux/amd64",
 			want:        "metadata go_version disagrees",
 		},
+		{
+			name:        "expanded metadata missing",
+			metadataOld: "memory_bytes:",
+			metadataNew: "memory_bytes_removed:",
+			want:        "missing memory_bytes",
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

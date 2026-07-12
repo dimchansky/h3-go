@@ -104,7 +104,7 @@ func run(repo string, write bool) error {
 			return fmt.Errorf("%s: %w", target.path, err)
 		}
 		if write {
-			updated := strings.Replace(string(data), current, "\n"+target.generated+"\n", 1)
+			updated := strings.Replace(string(data), current, target.generated, 1)
 			if err := os.WriteFile(target.path, []byte(updated), 0o644); err != nil {
 				return err
 			}
@@ -137,6 +137,15 @@ func loadResult(path, dir string) (result, error) {
 	for _, key := range []string{"date_utc", "repo_commit", "go_version", "uber_h3_go", "pure_go_h3_target", "cpu", "cc", "bench_flags", "environment"} {
 		if r.meta[key] == "" {
 			return r, fmt.Errorf("%s/metadata.txt: missing %s", dir, key)
+		}
+	}
+	// The refreshed local artifact uses the expanded metadata format. Keep the
+	// older Linux artifact byte-for-byte stable until its next justified rerun.
+	if dir == "darwin-arm64" {
+		for _, key := range []string{"memory_bytes", "cgo_cppflags", "cgo_cxxflags", "cgo_ldflags", "gogccflags"} {
+			if _, ok := r.meta[key]; !ok {
+				return r, fmt.Errorf("%s/metadata.txt: missing %s", dir, key)
+			}
 		}
 	}
 
