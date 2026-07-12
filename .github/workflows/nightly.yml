@@ -39,6 +39,8 @@ jobs:
           GOTRACEBACK: system
       - name: C-API completeness gate
         run: make check-api
+      - name: Test and CLI inventory gates
+        run: make check-test-inventory check-cli-inventory
 
   fuzz-smoke:
     runs-on: ubuntu-latest
@@ -62,3 +64,25 @@ jobs:
           go-version: 'stable'
       - name: Differential tests vs official cgo binding
         run: make test-uberdiff
+
+  cli-differential:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Fetch upstream H3 sources
+        run: make -C testref h3-source
+      - name: Differential tests vs upstream h3 executable
+        run: make test-cli-diff
+
+  cli-cross-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Build supported CLI targets
+        run: make build-cli-cross

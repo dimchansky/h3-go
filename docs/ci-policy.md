@@ -21,10 +21,10 @@ into the per-change tier.
 | Tier | Jobs | Runs when | Typical duration |
 |---|---|---|---|
 | Classifier | `changes` | every push/PR | ~10 s |
-| Fast (required) | `fast` (fmt, no-unsafe gate, lint, smrcptr, pure-Go tests on 1.24 + stable), `api-gates` | every push/PR **with code changes** | ~2–3 min to signal |
+| Fast (required) | `fast` (fmt, no-unsafe gate, lint, smrcptr, pure-Go library + CLI tests and binary build on 1.24 + stable), `api-gates` (API, test, and CLI inventory gates) | every push/PR **with code changes** | ~2–3 min to signal |
 | Core correctness | `parity` (227-file cgo suite vs original C) | every push/PR with code changes, in parallel with `fast` | ~5–6 min |
 | Merge gate | `race` | PRs into the default branch (code changes only) | ~9 min |
-| Confidence sweep | nightly.yml: `race`, `parity` + `check-api`, `fuzz-smoke` (3×60 s), `uberdiff` | nightly 03:17 UTC, `workflow_dispatch`, and every `v*` tag (release gate) | ~15 min wall |
+| Confidence sweep | nightly.yml: `race`, `parity` + gates, `fuzz-smoke`, library and CLI C differential suites, CLI cross-builds | nightly 03:17 UTC, `workflow_dispatch`, and every `v*` tag (release gate) | ~15 min wall |
 
 Notes:
 

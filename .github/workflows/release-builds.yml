@@ -1,0 +1,52 @@
+name: Release builds
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-builds-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Build reproducible archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME:-devel}"
+          mkdir -p dist stage
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
+            os=${target%/*}
+            arch=${target#*/}
+            name="h3-${version}-${os}-${arch}"
+            suffix=""
+            if [ "$os" = windows ]; then suffix=.exe; fi
+            mkdir "stage/$name"
+            CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
+              -ldflags="-s -w -buildid= -X github.com/dimchansky/h3-go/internal/cli.buildVersion=$version" \
+              -o "stage/$name/h3$suffix" ./cmd/h3
+            cp LICENSE NOTICE "stage/$name/"
+            if [ "$os" = windows ]; then
+              (cd stage && zip -qr "../dist/$name.zip" "$name")
+            else
+              tar -C stage -czf "dist/$name.tar.gz" "$name"
+            fi
+          done
+          (cd dist && sha256sum h3-* > SHA256SUMS)
+      - name: Upload release-ready artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: h3-${{ github.ref_name }}
+          path: dist/
+          if-no-files-found: error
