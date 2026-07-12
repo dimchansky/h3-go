@@ -52,6 +52,10 @@ make check-api               # C-API completeness gate
 make api-inventory           # regenerate docs/c-api-inventory.csv
 make check-test-inventory    # case-level upstream test completeness gate
 make test-upstream-fixtures  # 526,546 golden conversion/boundary records
+make test-cli               # all 170 upstream CLI scenarios
+make test-cli-process       # actual binary, pipes, stderr, exit status
+make check-cli-inventory    # CLI semantic/source/fixture drift gate
+make test-cli-diff          # build and compare with upstream C h3_bin
 ```
 
 Differential testing against the official cgo binding:
@@ -85,6 +89,10 @@ the short version:
    input-driven executables, CLI registrations, fuzzers, benchmarks,
    filters, support sources, fixtures, and build definitions; see
    [docs/ported-c-tests.md](docs/ported-c-tests.md).
+   Run `make check-cli-inventory H3VER=<ver>` for every upgrade; changes to
+   CMake target naming, parser sources, `h3.c`, CLI tests, or fixtures require
+   reviewed updates to the inventories in `docs/cli-*.csv`, followed by
+   `make test-cli-diff H3VER=<ver>`.
 6. Add the public wrapper with its `H3 C API:` line, tests (including an
    allocation assertion if it returns collections), and regenerate the
    inventory + API surface.

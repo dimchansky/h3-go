@@ -925,7 +925,13 @@ Goal: when H3 `4.4.x`/`4.5.x` releases, produce a reviewable, function-scoped up
    public API additions/removals, (b) implementation changes to existing
    public functions, (c) internal helper changes, (d) constants/tables/
    structs/macros, (e) upstream test changes, (f) the corresponding Go
-   parity and public API tests.
+   parity and public API tests. Separately run
+   `make check-cli-inventory H3VER=<new>`: the binary target, parser and
+   command sources, semantic command/flag rows, all CLI scenarios, and every
+   referenced fixture must have a reviewed disposition. Finish with
+   `make test-cli-diff H3VER=<new>` against the new C executable. CLI review
+   is a seventh required dimension and cannot be inferred from public API
+   parity alone.
 6. **Preserve intentional Go deviations**: they are enumerable — `Angle` fields,
    `int32` mapping, fixed-array `CellBoundary`, dst-slice out-params, iterator structs.
    Each is documented at its declaration and listed in this file; a `docs/DEVIATIONS.md`

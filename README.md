@@ -44,6 +44,16 @@ go get github.com/dimchansky/h3-go
 Requires Go ≥ 1.24 (the two most recent Go releases are tested in CI).
 Nothing else: no C toolchain, no environment setup.
 
+Install the upstream-compatible **`h3`** command-line utility separately:
+
+```sh
+go install github.com/dimchansky/h3-go/cmd/h3@latest
+h3 latLngToCell -r 9 --lat 37.7759 --lng -122.4180
+```
+
+It implements all 63 H3 C v4.4.0 commands, including JSON/WKT/newline output
+and stdin/file batch workflows. See the [CLI compatibility contract](docs/cli-compatibility.md).
+
 ## Usage
 
 ```go
@@ -178,6 +188,9 @@ compare on your workload.
   attribution). Public operations carry `H3 C API: <name>` doc lines.
 - **Parity harness** — `*_cgo.go` + `h3lib_*_c2go.c` behind
   `//go:build cgo && c2go`; excluded from every normal build.
+- **`cmd/h3` + `internal/cli`** — dependency-free, pure-Go implementation of
+  the upstream `h3` executable, with an injectable runner and 170 adapted
+  upstream scenarios.
 - `tools/apiinventory` — generates [docs/c-api-inventory.csv](docs/c-api-inventory.csv)
   (the full C↔Go function mapping) and enforces completeness.
 
@@ -207,6 +220,8 @@ make -C testref h3-source   # download upstream H3 sources
 make test-c2go              # run the 227-file parity suite vs original C
 make check-api              # every C public function ported & represented
 make test-uberdiff          # differential vs the official cgo binding
+make test-cli-diff          # all CLI scenarios vs the upstream C executable
+make check-cli-inventory    # command/flag/test/fixture/source drift gate
 ```
 
 ## License and attribution

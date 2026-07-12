@@ -7,6 +7,14 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- Added a pure-Go `h3` executable compatible with all 63 commands and all 170
+  registered CLI scenarios from H3 C v4.4.0, including file/stdin workflows,
+  JSON/WKT/newline formats, upstream exit codes, process tests, and opt-in
+  differential tests against `h3_bin`.
+- Added semantic CLI, scenario, fixture, and defining-source inventories plus
+  a strict upstream drift gate; CI now builds/tests the CLI and nightly/tag
+  validation performs C differential and cross-platform builds.
+
 - **4.4.0 sync completion**: the v0.2.0 sync ported the implementation delta
   but missed the upstream *test* delta. Now closed: ported the new
   `testConstructCell.c` and `testIndexDigits.c` suites and the 4.4.0
