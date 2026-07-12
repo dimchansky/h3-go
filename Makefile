@@ -1,4 +1,4 @@
-.PHONY: test test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory
+.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -50,6 +50,34 @@ check-api:
 # build definitions must have reviewed dispositions. Requires testref sources.
 check-test-inventory:
 	@go run ./tools/testinventory -h3ver $(H3VER) -verify
+
+build-cli:
+	@CGO_ENABLED=0 go build ./cmd/h3
+
+test-cli:
+	@CGO_ENABLED=0 go test ./internal/cli
+
+test-cli-process:
+	@CGO_ENABLED=0 go test ./internal/cli -run '^TestBinaryProcessContract$$'
+
+# Builds the pristine upstream C CLI under /tmp and differentially executes all
+# 170 registered scenarios. Requires cmake and a C toolchain.
+test-cli-diff:
+	@cmake -E remove_directory /tmp/h3-cli-src-$(H3VER)
+	@cmake -E remove_directory /tmp/h3-cli-$(H3VER)
+	@cmake -E copy_directory testref/h3-$(H3VER) /tmp/h3-cli-src-$(H3VER)
+	@cmake -E rm -f /tmp/h3-cli-src-$(H3VER)/src/h3lib/include/h3api.h
+	@cmake -S /tmp/h3-cli-src-$(H3VER) -B /tmp/h3-cli-$(H3VER) -DBUILD_FILTERS=ON -DBUILD_TESTING=OFF -DENABLE_FORMAT=OFF
+	@cmake --build /tmp/h3-cli-$(H3VER) --target h3_bin
+	@H3_CLI_C_BINARY=/tmp/h3-cli-$(H3VER)/bin/h3 go test ./internal/cli -run '^TestDifferentialWithCCLI$$' -count=1
+
+build-cli-cross:
+	@for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do \
+		os=$${target%/*}; arch=$${target#*/}; suffix=""; \
+		if [ "$$os" = windows ]; then suffix=.exe; fi; \
+		echo "building h3 $$target"; \
+		CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -o /tmp/h3-$$os-$$arch$$suffix ./cmd/h3 || exit 1; \
+	done
 
 # Pure-Go ports of the three large input-driven upstream executables.
 test-upstream-fixtures:

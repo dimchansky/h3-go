@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+# Locally built h3 CLI (make build-cli)
+/h3
+
 # Test binary, build with `go test -c`
 *.test
 
