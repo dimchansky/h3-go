@@ -25,7 +25,7 @@ into the per-change tier.
 | Fast (required) | `fast` (fmt, no-unsafe gate, lint, smrcptr, pure-Go library + CLI tests and binary build on 1.24 + stable), `api-gates` (API, test, and CLI inventory gates) | every push/PR **with code changes** | ~2–3 min to signal |
 | Core correctness | `parity` (227-file cgo suite vs original C) | every push/PR with code changes, in parallel with `fast` | ~5–6 min |
 | Merge gate | `race` | PRs into the default branch (code changes only) | ~9 min |
-| Confidence sweep | nightly.yml: `race`, `parity` + gates, `fuzz-smoke`, library and CLI C differential suites, CLI cross-builds | nightly 03:17 UTC, `workflow_dispatch`, and every `v*` tag (release gate) | ~15 min wall |
+| Confidence sweep | nightly.yml: `race`, `parity` + gates + the full upstream fixture suites (526,546 golden records), `fuzz-smoke`, library and CLI C differential suites, CLI cross-builds | nightly 03:17 UTC, `workflow_dispatch`, and every `v*` tag (release gate) | ~15 min wall |
 
 Notes:
 
@@ -46,7 +46,18 @@ Notes:
 - **Every code change**: `fast` + `api-gates` + `parity` green.
 - **Before merging a PR**: the above plus `race`.
 - **Before a release (tag)**: the nightly battery runs on the tag push —
-  race, parity + completeness, fuzz smoke, and the uber/h3-go differential
-  suite. Also consult the pre-v1.0.0 checklist in docs/FUTURE_WORK.md.
+  race, parity + completeness, the upstream fixture suites, fuzz smoke, and
+  the uber/h3-go differential suite. The fixture suites are deliberately part
+  of the release gate: they replay every golden conversion/boundary record
+  for seconds of compute, so there is no reason to release without them.
+  Also consult the pre-v1.0.0 checklist in docs/FUTURE_WORK.md.
+
+Why the fixture suites are nightly rather than per-push: the records are
+exercised through the same `LatLngToCell`/`Cell.LatLng`/`Cell.Boundary`
+paths that the per-change parity suite already compares against the original
+C objects, so a regression that only fixtures would catch is unlikely; and
+running them requires the downloaded reference tree, which the fast path
+deliberately avoids. They live as a step of the nightly `parity` job to
+reuse the tree that job already fetches.
 - **Scheduled**: the same battery nightly, catching upstream-source drift
   (parity re-downloads H3 sources) and fuzz regressions.

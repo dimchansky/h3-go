@@ -171,7 +171,8 @@ substitutes for another:
    assertions (`testing.AllocsPerRun`), and seven fuzz targets covering
    parsing, round-trips, and all upstream fuzzer input domains.
 4. **Large fixture suites**: the three input-driven upstream programs replayed
-   over 526,546 golden coordinate/boundary records (opt-in, needs `testref/`).
+   over 526,546 golden coordinate/boundary records (needs `testref/`; runs
+   nightly and on every release tag in CI).
 5. **CLI compatibility tests**: all 170 upstream CLI scenarios in-process,
    process-level pipe/exit-status tests, and opt-in differential execution
    against the compiled upstream `h3` binary.

@@ -41,6 +41,11 @@ jobs:
         run: make check-api
       - name: Test and CLI inventory gates
         run: make check-test-inventory check-cli-inventory
+      # Reuses the tree fetched above; failures name the fixture file
+      # (subtest) and record number. Skips silently only when the fixture
+      # root is not set, which the make target always sets.
+      - name: Upstream fixture suites (526,546 golden records, pure Go)
+        run: make test-upstream-fixtures
 
   fuzz-smoke:
     runs-on: ubuntu-latest

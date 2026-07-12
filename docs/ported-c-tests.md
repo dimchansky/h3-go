@@ -59,6 +59,12 @@ make -C testref h3-source
 make test-upstream-fixtures H3VER=4.4.0
 ```
 
+CI runs the full fixture suites in the Nightly workflow (as a step of the
+`parity` job, reusing its downloaded tree) — nightly, on manual dispatch,
+and on every `v*` tag as part of the release gate; see
+[ci-policy.md](ci-policy.md). Without `H3_UPSTREAM_FIXTURE_ROOT` these tests
+skip, which is why `make test` and the per-push CI path do not execute them.
+
 Exhaustive traversal, local-IJ, directed-edge, vertex, hierarchy, and metric
 helpers fail on enumeration/setup errors. They must never silently skip a
 base cell or child range, because that would make a passing test compatible
