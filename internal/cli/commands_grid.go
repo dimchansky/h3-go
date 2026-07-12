@@ -1,5 +1,9 @@
 package cli
 
+// Grid traversal commands (gridDisk ... localIjToCell) and hierarchy
+// commands (cellToParent ... uncompactCells) — two registry groups that
+// share the cell/resolution input helpers below.
+
 import (
 	"io"
 	"os"
@@ -36,6 +40,8 @@ func runGridDisk(env environment, p parsedArgs) error {
 	return writeCells(env.out, cells, formatValue(p))
 }
 
+// runGridDiskDistances groups the disk by distance ring, as upstream does:
+// json nests one array per k, newline separates rings with a blank line.
 func runGridDiskDistances(env environment, p parsedArgs) error {
 	k, err := p.integer("-k")
 	if err != nil {
@@ -110,6 +116,7 @@ func runGridDistance(env environment, p parsedArgs) error {
 	if err != nil {
 		return err
 	}
+	// Hex, not decimal: upstream prints the distance with PRIx64.
 	writef(env.out, "%x\n", distance)
 	return nil
 }
@@ -164,6 +171,8 @@ func hierarchyCommands() []command {
 	}
 }
 
+// hierarchyInput decodes the -c cell / -r resolution pair shared by most
+// hierarchy commands; a malformed resolution is the returned error.
 func hierarchyInput(p parsedArgs) (h3.Cell, int, error) {
 	res, err := p.integer("-r")
 	return h3.Cell(rawHex(p.get("-c"))), res, err
@@ -247,6 +256,11 @@ func runChildPosToCell(env environment, p parsedArgs) error {
 	return writeCell(env.out, out, formatValue(p))
 }
 
+// readCellCommandInput reads a cell set for compactCells/uncompactCells
+// from -i (file, or stdin via "--") or inline -c. Unlike readSource, giving
+// both options is not an error here — -i wins — matching the upstream
+// implementations of these two commands. Any read failure reports the
+// upstream "does not exist" wording; that is the only diagnostic C emits.
 func readCellCommandInput(env environment, p parsedArgs) ([]h3.Cell, error) {
 	if !p.has("-i") && !p.has("-c") {
 		return nil, failDirect(env.errOut, "You must provide either a file to read from or a set of cells")

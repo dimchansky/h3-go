@@ -1,5 +1,9 @@
 package cli
 
+// Region commands (polygonToCells ... cellsToMultiPolygon) with their
+// multipolygon renderers, and directed-edge commands (areNeighborCells ...
+// directedEdgeToBoundary).
+
 import (
 	"io"
 
@@ -77,6 +81,10 @@ func runCellsToMultiPolygon(env environment, p parsedArgs) error {
 	}
 	return nil
 }
+
+// The multipolygon renderers print at %.6f — upstream uses plain %f here,
+// not the %.10f it uses for boundaries and points. Loop order is outer
+// boundary first, then holes, as produced by CellsToMultiPolygon.
 
 func writeMultiPolygonJSON(w io.Writer, polygons []h3.GeoPolygon) {
 	writeText(w, "[")

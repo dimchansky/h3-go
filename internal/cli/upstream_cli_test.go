@@ -1,5 +1,11 @@
 package cli
 
+// In-process compatibility tests: every upstream CLI scenario from
+// testdata/upstream-cli-cases.csv (extracted from tests/cli/*.txt in the
+// upstream tree; drift-gated by tools/cliinventory) runs through Run against
+// buffers. The shell-line helpers here (prepareInvocation, shellFields) are
+// shared with the process-level and differential tests in process_test.go.
+
 import (
 	"bytes"
 	"encoding/csv"

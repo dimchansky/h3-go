@@ -1,11 +1,22 @@
 package cli
 
+// This file reimplements the upstream applib argument parser
+// (src/apps/applib/lib/args.c) rather than using the flag package, because
+// the C contract differs from Go conventions in observable ways:
+// case-insensitive option matching, multiple aliases per option, and
+// help/parse errors that do not fail the process (Run turns them into exit
+// code 0).
+
 import (
 	"io"
 	"strconv"
 	"strings"
 )
 
+// optionSpec describes one option of a command: its aliases (e.g. "-r" and
+// "--resolution"), whether it consumes a following value, whether it is
+// required, and its help line. names[0] is the canonical key runners use
+// with parsedArgs regardless of which alias the user typed.
 type optionSpec struct {
 	names     []string
 	value     bool
@@ -14,11 +25,16 @@ type optionSpec struct {
 	help      string
 }
 
+// parsedArgs holds parsed option values keyed by each option's canonical
+// name (optionSpec.names[0]). found records presence separately so that
+// value-less options and empty values are distinguishable.
 type parsedArgs struct {
 	values map[string]string
 	found  map[string]bool
 }
 
+// opt builds a value-carrying option spec from space-separated aliases,
+// e.g. opt("-c --cell", true). The first alias is the canonical key.
 func opt(names string, required bool) optionSpec {
 	return optionSpec{names: strings.Fields(names), value: true, required: required}
 }
@@ -39,6 +55,13 @@ func (p parsedArgs) float(name string) (float64, error) {
 	return strconv.ParseFloat(p.get(name), 64)
 }
 
+// parseOptions parses a command's argument vector against its option specs.
+// The boolean result tells Run whether to execute the command; false covers
+// both help requests (printed to out) and parse errors (help printed to
+// errOut with the error prepended) — the two cases upstream treats as
+// "handled, exit 0". Matching is case-insensitive, every option implicitly
+// gains -h/--help, repeated options and missing values or required options
+// are errors, exactly as in upstream args.c.
 func parseOptions(program, description string, argv []string, specs []optionSpec, out, errOut io.Writer) (parsedArgs, bool) {
 	help := optionSpec{names: []string{"-h", "--help"}, help: "Show this help message."}
 	specs = append([]optionSpec{help}, specs...)

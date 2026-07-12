@@ -1,5 +1,11 @@
 package cli
 
+// Vertex commands (cellToVertex ... isValidVertex) and the miscellaneous
+// group: unit conversions, area/length metrics, global enumerations,
+// great-circle distances, and describeH3Error. The metric*Command and
+// greatCircleCommand factories fold the many single-value commands that
+// differ only in the wrapped library call.
+
 import h3 "github.com/dimchansky/h3-go"
 
 func vertexCommands() []command {
@@ -96,6 +102,10 @@ func miscCommands() []command {
 	return commands
 }
 
+// metricResolutionCommand builds a command that maps -r through fn and
+// prints the value at upstream's %.10f precision. Upstream reuses each
+// command's name as its help description for this group, hence
+// description: name.
 func metricResolutionCommand(name string, spec optionSpec, fn func(int) (float64, error)) command {
 	return command{name: name, description: name, options: []optionSpec{spec}, run: func(env environment, p parsedArgs) error {
 		res, err := p.integer("-r")
@@ -184,6 +194,10 @@ func runGetPentagons(env environment, p parsedArgs) error {
 	return writeCells(env.out, cells, formatValue(p))
 }
 
+// greatCircleCommand builds the three greatCircleDistance* commands. Their
+// input is deliberately parsed with the polygon machinery — upstream does
+// the same, treating "[[lat, lng], [lat, lng]]" as a two-vertex loop and
+// rejecting anything that does not reduce to exactly one two-point loop.
 func greatCircleCommand(name string, fn func(h3.LatLng, h3.LatLng) float64) command {
 	return command{name: name, description: name, options: []optionSpec{opt("-i --file", false), opt("-c --coordinates", false)}, run: func(env environment, p parsedArgs) error {
 		data, err := readSource(env, p, "-i", "-c")

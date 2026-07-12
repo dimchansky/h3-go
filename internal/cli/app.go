@@ -1,4 +1,3 @@
-// Package cli implements the upstream-compatible h3 command-line utility.
 package cli
 
 import (
@@ -11,12 +10,19 @@ import (
 	h3 "github.com/dimchansky/h3-go"
 )
 
+// environment bundles the streams for one invocation. Runners never touch
+// os.Std* directly, so tests can substitute buffers and a fake stdin.
 type environment struct {
 	in     io.Reader
 	out    io.Writer
 	errOut io.Writer
 }
 
+// trackedWriter latches the first write error and suppresses all further
+// writes. This is the CLI's only output-failure handling: there is no
+// SIGPIPE machinery; Run inspects the latched error after a command
+// succeeds and turns it into exit code 1 (e.g. stdout closed mid-stream by
+// a downstream `head`).
 type trackedWriter struct {
 	w   io.Writer
 	err error
@@ -31,10 +37,17 @@ func (w *trackedWriter) Write(p []byte) (int, error) {
 	return n, err
 }
 
+// The write helpers discard errors on purpose: every writer that reaches a
+// runner is a *trackedWriter, which already latches the first failure.
 func writeText(w io.Writer, args ...any)             { _, _ = fmt.Fprint(w, args...) }
 func writef(w io.Writer, format string, args ...any) { _, _ = fmt.Fprintf(w, format, args...) }
 func writeln(w io.Writer, args ...any)               { _, _ = fmt.Fprintln(w, args...) }
 
+// command describes one subcommand: its upstream-matching name, the
+// description shown in help listings, the option specs handed to
+// parseOptions, and the runner invoked with the parsed arguments. A runner
+// returns nil on success, an h3 sentinel error to exit with that H3 code,
+// or a *commandError when it has already written its own diagnostic.
 type command struct {
 	name        string
 	description string
@@ -42,9 +55,21 @@ type command struct {
 	run         func(environment, parsedArgs) error
 }
 
+// buildVersion is stamped by release builds via
+// -ldflags "-X github.com/dimchansky/h3-go/internal/cli.buildVersion=<tag>"
+// (.github/workflows/release-builds.yml); versionText falls back to module
+// build info for go-install'ed binaries.
 var buildVersion = "devel"
 
-// Run executes the upstream-compatible h3 command and returns its process exit code.
+// Run executes the upstream-compatible h3 command and returns its process
+// exit code. It is stateless: arguments and streams are injected, nothing
+// global is mutated, so tests invoke it repeatedly in-process.
+//
+// The exit-code policy mirrors the C CLI (docs/cli-compatibility.md):
+// 0 on success, the numeric H3 error code (1–19) on operation failure, 1
+// for no/unknown command or an output-write failure — and, deliberately, 0
+// for help output and for recognized-command parser errors, because
+// upstream's argument parser reports those without failing the process.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	out := &trackedWriter{w: stdout}
 	errOut := &trackedWriter{w: stderr}
@@ -71,15 +96,19 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		if !strings.EqualFold(args[0], cmd.name) {
 			continue
 		}
+		// !execute covers both --help and parser errors; each already
+		// printed its output and both exit 0 per the upstream contract.
 		parsed, execute := parseOptions("h3 "+cmd.name, cmd.description, args[1:], cmd.options, out, errOut)
 		if !execute {
 			return 0
 		}
 		err := cmd.run(environment{in: stdin, out: out, errOut: errOut}, parsed)
 		if err == nil && out.err != nil {
-			return 1
+			return 1 // command succeeded but stdout failed (e.g. broken pipe)
 		}
 		code := errorCode(err)
+		// commandError means the runner already wrote a C-matching
+		// diagnostic; anything else gets the generic upstream error line.
 		var quiet *commandError
 		if code != 0 && !errors.As(err, &quiet) {
 			writef(errOut, "Error %d: %s\n", code, errorDescription(code))
@@ -90,6 +119,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	return 1
 }
 
+// versionText resolves the build metadata shown by --version: the
+// ldflags-injected buildVersion when present, otherwise the module version
+// recorded by `go install`, otherwise "devel".
 func versionText() string {
 	if buildVersion != "devel" {
 		return buildVersion
@@ -100,10 +132,16 @@ func versionText() string {
 	return buildVersion
 }
 
+// commandError carries an explicit exit code for failures whose diagnostic
+// the runner has already written (via failDirect). Run recognizes it and
+// suppresses the generic "Error N: ..." stderr line that H3 sentinel errors
+// would otherwise produce.
 type commandError struct{ code int }
 
 func (e *commandError) Error() string { return fmt.Sprintf("command exited with status %d", e.code) }
 
+// failDirect writes an exact upstream diagnostic (wording matters — the
+// scenario suite matches it) and returns the quiet exit-1 error.
 func failDirect(w io.Writer, message string) error {
 	writeText(w, message)
 	return &commandError{code: 1}
@@ -119,6 +157,9 @@ func printGeneralHelp(w io.Writer, commands []command) {
 	}
 }
 
+// codeErrors is index-aligned with the H3 C error codes: position N holds
+// the sentinel for code N (position 0 is success). The CLI exits with the
+// numeric code, so the order must match h3api.h exactly — do not reorder.
 var codeErrors = []error{
 	nil, h3.ErrFailed, h3.ErrDomain, h3.ErrLatLngDomain, h3.ErrResolutionDomain,
 	h3.ErrCellInvalid, h3.ErrDirectedEdgeInvalid, h3.ErrUndirectedEdgeInvalid,
@@ -128,6 +169,8 @@ var codeErrors = []error{
 	h3.ErrDigitDomain, h3.ErrDeletedDigit,
 }
 
+// errorCode maps a runner error to the process exit code: an explicit
+// commandError code, the matching H3 error code, or 1 for anything else.
 func errorCode(err error) int {
 	if err == nil {
 		return 0
@@ -144,6 +187,9 @@ func errorCode(err error) int {
 	return 1
 }
 
+// errorDescription returns the upstream describeH3Error text for a code.
+// The Go sentinels carry an "h3: " prefix that C output does not have, so
+// it is stripped here.
 func errorDescription(code int) string {
 	if code <= 0 || code >= len(codeErrors) {
 		return "Invalid error code"

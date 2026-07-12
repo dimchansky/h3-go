@@ -1,5 +1,10 @@
 package cli
 
+// This file holds the input decoding and output rendering shared by several
+// commands. Rendering matches upstream printf calls digit for digit — the
+// scenario suite and the C differential tests compare output textually, so
+// precision and separators here are contract, not style.
+
 import (
 	"encoding/json"
 	"io"
@@ -10,11 +15,18 @@ import (
 	h3 "github.com/dimchansky/h3-go"
 )
 
+// rawHex parses a hex index argument permissively: parse errors yield 0,
+// which then fails IsValid/domain checks downstream. This mirrors the C
+// CLI's unchecked sscanf("%" PRIx64) — rejecting bad hex here would change
+// which error (and exit code) the user sees.
 func rawHex(s string) uint64 {
 	v, _ := strconv.ParseUint(strings.TrimPrefix(s, "0x"), 16, 64)
 	return v
 }
 
+// formatValue returns the normalized -f/--format value; upstream's default
+// everywhere is json. Runners reject values their upstream counterpart does
+// not accept.
 func formatValue(p parsedArgs) string {
 	if !p.has("-f") || p.get("-f") == "" {
 		return "json"
@@ -22,6 +34,9 @@ func formatValue(p parsedArgs) string {
 	return strings.ToLower(p.get("-f"))
 }
 
+// readSource fetches command input from exactly one of two mutually
+// exclusive options: a file option (where the value "--" selects stdin) or
+// a direct-value option. The diagnostics are exact upstream wording.
 func readSource(env environment, p parsedArgs, fileKey, directKey string) ([]byte, error) {
 	if p.has(fileKey) == p.has(directKey) {
 		return nil, failDirect(env.errOut, "You must provide exactly one input source")
@@ -45,9 +60,15 @@ func readSource(env environment, p parsedArgs, fileKey, directKey string) ([]byt
 	return data, nil
 }
 
+// parseCells extracts 15-hex-digit cell tokens from free-form text, exactly
+// reproducing readCellsFromFile in the upstream CLI — including its
+// 1500-byte streaming window. The C reader scans a fixed buffer, stops 15
+// bytes short of the end (a token that would straddle the boundary is
+// re-scanned after the next refill), and can silently skip malformed or
+// boundary-straddling sequences. That quirk is observable — upstream's
+// multipolygon fixture 5 depends on it — so this is a bug-for-bug port, not
+// a place to "fix" the scanner.
 func parseCells(data []byte) []h3.Cell {
-	// Match readCellsFromFile in the upstream CLI, including its 1500-byte
-	// streaming buffer. The chunk behavior is observable in upstream fixture 5.
 	const bufferSize = 1500
 	const bufferSizeLessCell = bufferSize - 15
 	buffer := make([]byte, bufferSize)
@@ -91,6 +112,9 @@ func isHex(c byte) bool {
 	return c >= '0' && c <= '9' || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F'
 }
 
+// parsePolygon decodes the upstream CLI's polygon JSON: arrays of
+// [lat, lng] pairs (latitude first, unlike GeoJSON), at any nesting depth.
+// The first loop found is the outer boundary; the rest are holes.
 func parsePolygon(data []byte) (h3.GeoPolygon, error) {
 	var value any
 	if err := json.Unmarshal(data, &value); err != nil {
@@ -104,6 +128,10 @@ func parsePolygon(data []byte) (h3.GeoPolygon, error) {
 	return loopsToPolygon(loops)
 }
 
+// collectCoordinateLoops walks arbitrarily nested JSON arrays and collects
+// every array whose elements are all [number, number] pairs. Accepting any
+// nesting depth matches upstream, which tolerates [[...]], [[[...]]], and
+// GeoJSON-like [[[[...]]]] wrappers alike.
 func collectCoordinateLoops(value any, loops *[][][]float64) {
 	array, ok := value.([]any)
 	if !ok {
@@ -162,6 +190,9 @@ func loopsToPolygon(loops [][][]float64) (h3.GeoPolygon, error) {
 	return polygon, nil
 }
 
+// writeBool renders a boolean result: json prints true/false, numeric
+// prints 1/0 (only the commands whose upstream counterpart offers numeric
+// pass it through).
 func writeBool(w io.Writer, value bool, format string) error {
 	switch format {
 	case "json":
@@ -190,6 +221,8 @@ func writeCell(w io.Writer, cell h3.Cell, format string) error {
 	return nil
 }
 
+// writeCells renders a cell list: json as [ "hex", ... ] with upstream's
+// exact spacing, newline as one cell per line.
 func writeCells(w io.Writer, cells []h3.Cell, format string) error {
 	switch format {
 	case "json":
@@ -219,6 +252,10 @@ func cellsFromVertices(vertices []h3.Vertex) []h3.Cell {
 	return out
 }
 
+// writeBoundary renders a cell or edge boundary. Coordinates print at
+// upstream's %.10f precision; json/newline emit lat,lng order while WKT
+// emits lng lat. For cells the WKT ring is explicitly closed by repeating
+// the first vertex (POLYGON), for edges it stays open (LINESTRING).
 func writeBoundary(w io.Writer, boundary h3.CellBoundary, format string, edge bool) error {
 	verts := boundary.Verts()
 	switch format {

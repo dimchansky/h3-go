@@ -1,5 +1,12 @@
 package cli
 
+// Process-level tests: TestBinaryProcessContract builds the real cmd/h3
+// binary and checks what only a process can show (pipes, stderr routing,
+// exit statuses). TestDifferentialWithCCLI additionally replays every
+// registered scenario against the compiled upstream C executable; it is
+// opt-in via the H3_CLI_C_BINARY env var (`make test-cli-diff` builds the C
+// binary and sets it).
+
 import (
 	"bytes"
 	"encoding/json"

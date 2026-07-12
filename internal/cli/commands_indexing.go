@@ -1,5 +1,7 @@
 package cli
 
+// Indexing and inspection commands (cellToLatLng ... getIcosahedronFaces).
+
 import (
 	"strconv"
 	"strings"
@@ -117,6 +119,9 @@ func runGetIndexDigit(env environment, p parsedArgs) error {
 	return nil
 }
 
+// runConstructCell mirrors upstream's argument semantics: -d is a
+// comma-separated list of single digits 0–6; the resolution defaults to the
+// number of digits and, when -r is given explicitly, must equal it.
 func runConstructCell(env environment, p parsedArgs) error {
 	var digits []int
 	if p.has("-d") {
