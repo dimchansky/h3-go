@@ -24,6 +24,12 @@
 // The tool refuses to apply if any target name collides with an existing
 // top-level identifier or another target; known collisions are resolved in
 // the special-case table below and documented in the architecture document.
+//
+// HISTORICAL: the sweep was executed during the public-API build-out and is
+// not part of any Makefile target, workflow, or maintenance process. The
+// tool is retained only as the reviewable record of that migration
+// (referenced by docs/DEVIATIONS.md item 11); you should not need to run
+// -apply again.
 package main
 
 import (
@@ -130,6 +136,11 @@ type decl struct {
 
 func main() {
 	apply := flag.Bool("apply", false, "apply the renames (default: dry run)")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "unexport is the HISTORICAL one-time unexport sweep of the ported C layer; kept as a migration record.")
+		fmt.Fprintln(os.Stderr, "usage: go run ./tools/unexport [-apply]   # dry run by default")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	files, err := filepath.Glob("*.go")

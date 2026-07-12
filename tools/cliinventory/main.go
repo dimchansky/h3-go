@@ -1,6 +1,34 @@
-// Command cliinventory discovers and verifies the H3 v4.4.0 command-line contract.
-// It extracts the registered subcommand set from h3.c and every balanced
-// add_h3_cli_test(...) registration from tests/cli/*.txt.
+// Command cliinventory discovers the upstream H3 command-line contract and
+// verifies the committed CLI registries against it. From the pristine
+// upstream tree (-upstream, populated by `make -C testref h3-source`) it
+// extracts the registered subcommand set from src/apps/filters/h3.c, every
+// balanced add_h3_cli_test(...) registration in tests/cli/*.txt, the input
+// fixtures they reference, and the sources that define the contract — each
+// fingerprinted with SHA-256.
+//
+// Verification (the CI mode, `make check-cli-inventory`):
+//
+//	go run ./tools/cliinventory -upstream testref/h3-4.4.0 -verify
+//
+// checks the four committed registries — docs/cli-contract.csv,
+// docs/cli-test-inventory.csv, docs/cli-fixture-inventory.csv,
+// docs/cli-source-inventory.csv — and exits 1 on any drift: added/removed
+// commands or scenarios, changed fixtures, or changed defining sources
+// (hash mismatch).
+//
+// Registry maintenance modes, used during an upstream sync and then
+// reviewed in the diff:
+//
+//   - -emit-cases / -emit-fixtures / -emit-sources print the discovered
+//     CSVs to stdout (to seed or refresh the corresponding registry);
+//   - -update-ecosystem-inventory rewrites docs/upstream-test-inventory.csv
+//     in place, marking discovered CLI cases as covered by
+//     TestUpstreamCLICompatibility;
+//   - -update-contract-metadata rewrites docs/cli-contract.csv in place,
+//     attaching source/input/exit-status/test metadata to each command row.
+//
+// Without -verify the default run prints the same drift report but always
+// exits 0 (informational).
 package main
 
 import (
@@ -36,6 +64,11 @@ func main() {
 	updateEcosystem := flag.Bool("update-ecosystem-inventory", false, "mark discovered CLI cases full in docs/upstream-test-inventory.csv")
 	updateContractMetadata := flag.Bool("update-contract-metadata", false, "add source/input/exit/test metadata to the semantic contract")
 	verify := flag.Bool("verify", false, "fail on command/case/source drift")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "cliinventory checks the committed CLI registries (docs/cli-*.csv) against the upstream H3 tree.")
+		fmt.Fprintln(os.Stderr, "usage: go run ./tools/cliinventory [flags]   # see the package comment for the emit/update modes")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	commands, sourceDigest, err := scanCommands(*upstream)

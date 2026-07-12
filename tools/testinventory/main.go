@@ -333,6 +333,11 @@ func main() {
 	registryPath := flag.String("registry", "docs/upstream-test-inventory.csv", "registry CSV path (relative to -repo)")
 	verify := flag.Bool("verify", false, "exit 1 on unreviewed/stale/missing/invalid entries")
 	initMode := flag.Bool("init", false, "print skeleton CSV rows for unreviewed upstream cases")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "testinventory checks that every upstream test-ecosystem entry has a reviewed disposition in docs/upstream-test-inventory.csv.")
+		fmt.Fprintln(os.Stderr, "usage: go run ./tools/testinventory [flags]")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	root := *upstreamRoot

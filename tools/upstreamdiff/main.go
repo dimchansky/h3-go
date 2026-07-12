@@ -312,6 +312,11 @@ func main() {
 	repo := flag.String("repo", ".", "repository root containing the Go port")
 	portedTests := flag.String("ported-tests", "docs/upstream-test-inventory.csv", "reviewed upstream test inventory")
 	strict := flag.Bool("strict", false, "exit 1 if any changed lib symbol lacks a Go mapping")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "upstreamdiff diffs two upstream H3 trees at the symbol level and maps changes to the Go port (Markdown to stdout).")
+		fmt.Fprintln(os.Stderr, "usage: go run ./tools/upstreamdiff -from <oldtree> -to <newtree> [flags]")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 	if *from == "" || *to == "" {
 		fmt.Fprintln(os.Stderr, "usage: upstreamdiff -from <oldtree> -to <newtree>")

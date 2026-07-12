@@ -255,6 +255,11 @@ func main() {
 	h3ver := flag.String("h3ver", "4.4.0", "upstream H3 version vendored under testref/")
 	header := flag.String("header", "", "explicit path to h3api.h.in (overrides -h3ver)")
 	verify := flag.Bool("verify", false, "verify completeness: every C public function must be ported AND either referenced by an 'H3 C API:' doc line or listed in the omissions table; exit 1 otherwise")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "apiinventory maps the H3 C public API to the Go port (CSV to stdout) and verifies completeness with -verify.")
+		fmt.Fprintln(os.Stderr, "usage: go run ./tools/apiinventory [flags] > docs/c-api-inventory.csv")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	headerPath := *header
