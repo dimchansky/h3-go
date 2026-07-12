@@ -33,6 +33,16 @@ OUTDIR="${OUTDIR:-../../docs/benchmarks/${GOOS}-${GOARCH}}"
 # Pinned so summaries are reproducible; bump deliberately.
 BENCHSTAT="golang.org/x/perf/cmd/benchstat@v0.0.0-20260709024250-82a0b07e230d"
 
+# Capture provenance before opening any tracked artifact for writing. Shell
+# redirection truncates its target before command substitutions execute, so
+# checking inside the metadata block would report the benchmark's own output
+# as a dirty worktree whenever OUTDIR is already committed.
+REPO_COMMIT="$(git -C ../.. rev-parse HEAD)"
+REPO_DIRTY=""
+if ! git -C ../.. diff --quiet HEAD -- 2>/dev/null; then
+    REPO_DIRTY=" (dirty)"
+fi
+
 mkdir -p "$OUTDIR"
 
 cpu_model() {
@@ -51,7 +61,7 @@ go mod download github.com/uber/h3-go/v4 >/dev/null 2>&1 || true
 
 {
     echo "date_utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-    echo "repo_commit: $(git -C ../.. rev-parse HEAD)$(git -C ../.. diff --quiet HEAD 2>/dev/null || echo ' (dirty)')"
+    echo "repo_commit: ${REPO_COMMIT}${REPO_DIRTY}"
     echo "go_version: $(go version)"
     echo "uber_h3_go: $(go list -m github.com/uber/h3-go/v4)"
     echo "dimchansky_h3_go: $(go list -m github.com/dimchansky/h3-go) (replaced by ../.., i.e. repo_commit above)"
