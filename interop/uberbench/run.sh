@@ -45,6 +45,10 @@ cpu_model() {
 
 CC_BIN="$(go env CC)"
 
+# The vendored-version probe below reads the binding out of the module
+# cache; make sure it is there (fresh CI runners start with an empty cache).
+go mod download github.com/uber/h3-go/v4 >/dev/null 2>&1 || true
+
 {
     echo "date_utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     echo "repo_commit: $(git -C ../.. rev-parse HEAD)$(git -C ../.. diff --quiet HEAD 2>/dev/null || echo ' (dirty)')"

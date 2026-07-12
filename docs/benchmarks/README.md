@@ -18,7 +18,7 @@ directories, only within one:
 | Directory | Environment |
 |---|---|
 | [darwin-arm64](darwin-arm64/metadata.txt) | Apple M1 Max laptop (dedicated, mains power, minimal load) |
-| `linux-amd64` | GitHub Actions `ubuntu-latest` shared runner (see noise caveats) — populated from the [benchmarks workflow](../../.github/workflows/benchmarks.yml) artifact |
+| [linux-amd64](linux-amd64/metadata.txt) | GitHub Actions `ubuntu-latest` shared runner (see noise caveats) — the committed artifact of a [benchmarks workflow](../../.github/workflows/benchmarks.yml) run |
 
 Each contains:
 
@@ -150,6 +150,19 @@ binding is faster. The one-paragraph darwin-arm64 story (2026-07-12 run):
 > indistinguishable from `pure` everywhere (p ≥ 0.05), confirming the
 > convenience API and `Append*`-with-nil are the same path; `pure-warm`
 > rows allocate zero.
+
+The linux-amd64 story (2026-07-12 run, GitHub `ubuntu-latest`, AMD EPYC
+7763, gcc 13) differs — evidence that these ratios are machine- and
+compiler-specific, not universal:
+
+> The cgo crossing is substantially more expensive there, so the pure-Go
+> side wins more pairings and by more: `LatLngToCell` −31% (the binding is
+> +45% slower), the 10k-point batch +45%, the service workload +75%, and
+> even `PolygonToCells` flips to pure-Go being faster (res 9: binding
+> +12%). The binding still wins `compactCells` (−37%) and
+> `cellsToMultiPolygon` (−28%), and small deltas (`GridDisk` k=20 −6%,
+> `CellToString` −11%) sit inside shared-runner noise territory — treat
+> them accordingly.
 
 A worked example of why `memory.tsv` exists:
 `CellsToMultiPolygon` shows the binding at 4 Go allocs / ~2 KiB per call

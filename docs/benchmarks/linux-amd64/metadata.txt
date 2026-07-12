@@ -1,0 +1,19 @@
+date_utc: 2026-07-12T17:19:29Z
+repo_commit: 0c1de86c1345dda79b4b9759e2b5276d280d3d08
+go_version: go version go1.26.5 linux/amd64
+uber_h3_go: github.com/uber/h3-go/v4 v4.4.1
+dimchansky_h3_go: github.com/dimchansky/h3-go v0.0.0 => ../.. (replaced by ../.., i.e. repo_commit above)
+vendored_h3_c_in_binding: unknown
+pure_go_h3_target: H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module)
+os: Linux runnervm5mmn9 6.17.0-1018-azure #18~24.04.1-Ubuntu SMP Thu May 28 16:39:11 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+cpu: AMD EPYC 7763 64-Core Processor
+ncpu_online: 2
+gomaxprocs: default (= ncpu_online; benchmarks are single-goroutine)
+cgo_enabled: 1 (required by the binding; the pure-Go library itself needs none)
+cc: gcc — gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+cgo_cflags: -O2 -g
+goflags: 
+bench_flags: -count=10 -benchtime=1s -benchmem
+memprobe_iters: 3
+benchstat: golang.org/x/perf/cmd/benchstat@v0.0.0-20260709024250-82a0b07e230d
+environment: GitHub Actions ubuntu-latest shared runner (noisy-neighbor variance applies)
