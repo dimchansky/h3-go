@@ -53,6 +53,14 @@ cpu_model() {
     esac
 }
 
+memory_bytes() {
+    case "$GOOS" in
+        darwin) sysctl -n hw.memsize ;;
+        linux) awk '/^MemTotal:/ { printf "%.0f\n", $2 * 1024; exit }' /proc/meminfo ;;
+        *) echo unknown ;;
+    esac
+}
+
 CC_BIN="$(go env CC)"
 
 # The vendored-version probe below reads the binding out of the module
@@ -69,11 +77,16 @@ go mod download github.com/uber/h3-go/v4 >/dev/null 2>&1 || true
     echo "pure_go_h3_target: H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module)"
     echo "os: $(uname -a)"
     echo "cpu: $(cpu_model)"
+    echo "memory_bytes: $(memory_bytes)"
     echo "ncpu_online: $(getconf _NPROCESSORS_ONLN)"
     echo "gomaxprocs: default (= ncpu_online; benchmarks are single-goroutine)"
     echo "cgo_enabled: 1 (required by the binding; the pure-Go library itself needs none)"
     echo "cc: $CC_BIN — $("$CC_BIN" --version 2>/dev/null | head -1)"
     echo "cgo_cflags: $(go env CGO_CFLAGS)"
+    echo "cgo_cppflags: $(go env CGO_CPPFLAGS)"
+    echo "cgo_cxxflags: $(go env CGO_CXXFLAGS)"
+    echo "cgo_ldflags: $(go env CGO_LDFLAGS)"
+    echo "gogccflags: $(go env GOGCCFLAGS)"
     echo "goflags: $(go env GOFLAGS)"
     echo "bench_flags: -count=$COUNT -benchtime=$BENCHTIME -benchmem"
     echo "memprobe_iters: $MEMITERS"
