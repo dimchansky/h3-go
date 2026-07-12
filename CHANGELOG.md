@@ -7,6 +7,17 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- Documentation overhaul: rewritten README (repository map, CLI section,
+  per-audience documentation paths), new indexes `docs/README.md` and
+  `tools/README.md`, READMEs for `cmd/h3` and `interop/uberdiff`, package
+  documentation and compatibility-invariant comments throughout
+  `internal/cli`, and `-h` usage summaries for all tools. Corrected stale
+  statements (test-inventory dispositions, DEVIATIONS parity target,
+  architecture-document status, two broken README anchors).
+- New `tools/docscheck` Markdown link/anchor checker with `make check-docs`;
+  CI now runs it on every push/PR — including docs-only changes, which
+  previously ran no checks at all.
+
 - Added a pure-Go `h3` executable compatible with all 63 commands and all 170
   registered CLI scenarios from H3 C v4.4.0, including file/stdin workflows,
   JSON/WKT/newline formats, upstream exit codes, process tests, and opt-in

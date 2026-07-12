@@ -38,6 +38,7 @@ make test                    # pure-Go tests (CGO_ENABLED=0) — needs only Go
 go test -race ./...          # race detector
 make lint                    # gofmt -s, go vet, golangci-lint, smrcptr
 make check-unsafe            # no-unsafe gate
+make check-docs              # Markdown link/anchor gate
 make bench                   # benchmarks with allocation stats
 ```
 
@@ -68,7 +69,9 @@ make test-uberdiff           # separate module in interop/uberdiff
 
 The full workflow is
 [docs/public-api-architecture.md §10](docs/public-api-architecture.md#10-upstream-synchronization-workflow);
-the short version:
+every tool referenced below is documented in [tools/README.md](tools/README.md),
+and [docs/README.md](docs/README.md) indexes the registries they maintain.
+The short version:
 
 1. Fetch the new version: `make -C testref H3_VERSION=<ver> h3-source`.
 2. Run the **symbol-level diff** — this step is mandatory, an API check alone

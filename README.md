@@ -9,7 +9,16 @@
 A **pure-Go** implementation of [Uber's H3](https://h3geo.org), the hexagonal
 hierarchical geospatial indexing system — behaviorally equivalent to
 **H3 C v4.4.0**, with no cgo, no external dependencies, and no `unsafe`
-(both guarantees are enforced in CI).
+(both guarantees are enforced in CI). It ships two things:
+
+- the **`h3` library** — a typed, allocation-aware Go API covering all 78
+  public functions of H3 C v4.4.0;
+- the **`h3` command-line utility** — a drop-in, pure-Go replacement for the
+  upstream C `h3` executable (all 63 commands).
+
+This is a reimplementation, not a cgo binding: the C library is ported to Go
+function by function, and every ported function is traceable to — and
+parity-tested against — its C original.
 
 ## Why this library
 
@@ -29,7 +38,7 @@ the C dependency without giving up C-level correctness:
 - **Correct by construction.** The implementation is a function-by-function
   port of the C sources, and a 227-file parity suite compiles the *original*
   upstream C and compares Go vs C behavior in-process (see
-  [Testing](#testing-and-c-parity)). A separate differential suite
+  [Correctness](#correctness-and-testing)). A separate differential suite
   cross-checks against the official cgo binding.
 - **Allocation-aware by design.** Every collection API has a zero-allocation
   `Append*` form and, where it fits, a streaming `iter.Seq` form — measured
@@ -44,17 +53,7 @@ go get github.com/dimchansky/h3-go
 Requires Go ≥ 1.24 (the two most recent Go releases are tested in CI).
 Nothing else: no C toolchain, no environment setup.
 
-Install the upstream-compatible **`h3`** command-line utility separately:
-
-```sh
-go install github.com/dimchansky/h3-go/cmd/h3@latest
-h3 latLngToCell -r 9 --lat 37.7759 --lng -122.4180
-```
-
-It implements all 63 H3 C v4.4.0 commands, including JSON/WKT/newline output
-and stdin/file batch workflows. See the [CLI compatibility contract](docs/cli-compatibility.md).
-
-## Usage
+## Library quick start
 
 ```go
 import h3 "github.com/dimchansky/h3-go"
@@ -126,27 +125,68 @@ More runnable examples are in
 [example_test.go](example_test.go) and on
 [pkg.go.dev](https://pkg.go.dev/github.com/dimchansky/h3-go).
 
-## Testing and C parity
+## The `h3` command-line utility
 
-Correctness is enforced in layers, all running in CI:
+A pure-Go, dependency-free replacement for the upstream C `h3` executable —
+same commands, same flags, same output formats, same exit codes:
+
+```sh
+go install github.com/dimchansky/h3-go/cmd/h3@latest
+```
+
+```sh
+h3 latLngToCell -r 9 --lat 37.7759 --lng -122.4180
+# "8928308280fffff"
+
+h3 cellToBoundary -c 8928308280fffff -f wkt
+# POLYGON((-122.4171997184 37.7751977829, -122.4161283578 37.7768804484, ...))
+
+# stdin and file batch workflows, exactly where upstream supports them:
+printf '[[37.775, -122.418], [40.689, -74.044]]' | h3 greatCircleDistanceKm -i --
+# 4126.3699216676
+h3 compactCells -i cells.txt -f newline
+```
+
+All 63 H3 C v4.4.0 commands are implemented and locked by the 170 upstream
+CLI test scenarios plus differential runs against the compiled C binary.
+See [cmd/h3](cmd/h3) for the CLI README and
+[docs/cli-compatibility.md](docs/cli-compatibility.md) for the exact
+compatibility contract. Every `v*` tag builds reproducible archives for six
+OS/architecture targets
+([release-builds workflow](.github/workflows/release-builds.yml)).
+
+## Correctness and testing
+
+Correctness is enforced in layers; each answers a different question and none
+substitutes for another:
 
 1. **cgo parity suite** (opt-in, `//go:build cgo && c2go`): 227 test files
    compile the pristine upstream C sources (downloaded to `testref/`, never
    vendored) and compare every ported function against the original C
    implementation in-process — exact values, exact error codes.
-2. **Ported upstream tests**: the H3 project's own `testXxx.c` suites,
-   translated to Go (tracked in [docs/ported-c-tests.md](docs/ported-c-tests.md)).
+2. **Ported upstream tests**: the H3 project's own test suites, translated to
+   Go and tracked case-by-case in a reviewed inventory
+   ([docs/ported-c-tests.md](docs/ported-c-tests.md)).
 3. **Public API tests** with known vectors, pentagon edge cases, allocation
-   assertions (`testing.AllocsPerRun`), and three fuzz targets.
-4. **Differential tests** against the official uber/h3-go cgo binding
-   (`interop/uberdiff`, separate module).
-5. **Structural gates**: `make check-unsafe` (no `unsafe` reachable from any
+   assertions (`testing.AllocsPerRun`), and seven fuzz targets covering
+   parsing, round-trips, and all upstream fuzzer input domains.
+4. **Large fixture suites**: the three input-driven upstream programs replayed
+   over 526,546 golden coordinate/boundary records (opt-in, needs `testref/`).
+5. **CLI compatibility tests**: all 170 upstream CLI scenarios in-process,
+   process-level pipe/exit-status tests, and opt-in differential execution
+   against the compiled upstream `h3` binary.
+6. **Differential tests** against the official uber/h3-go cgo binding
+   ([interop/uberdiff](interop/uberdiff), separate module).
+7. **Structural gates**: `make check-unsafe` (no `unsafe` reachable from any
    normal build), `make check-api` (every C public function ported and
-   publicly represented), and a golden API-surface lock
-   ([docs/api-surface.txt](docs/api-surface.txt)).
+   publicly represented), a golden API-surface lock
+   ([docs/api-surface.txt](docs/api-surface.txt)), and drift gates over the
+   test/CLI inventories.
 
 The pure-Go test suite (`make test`) needs nothing but Go. Only the parity
-suite requires a C toolchain and network access, and it is strictly opt-in.
+and differential suites require a C toolchain and network access, and they
+are strictly opt-in. [docs/ci-policy.md](docs/ci-policy.md) explains which
+layer runs when in CI.
 
 ## Performance
 
@@ -171,7 +211,8 @@ compare on your workload.
 
 - **Maturity**: v0.x. The API is complete and exercised, but pre-1.0 —
   breaking changes remain possible between minor versions and are documented
-  in the [CHANGELOG](CHANGELOG.md).
+  in the [CHANGELOG](CHANGELOG.md). The remaining pre-v1.0.0 checklist lives
+  in [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md).
 - **Upstream compatibility**: behaviorally equivalent to **H3 C v4.4.0**
   (`VersionMajor/Minor/Patch` report the target release). Upstream releases
   are adopted through a documented, tooling-assisted
@@ -180,30 +221,40 @@ compare on your workload.
 - **Go support**: the version in [go.mod](go.mod) up to the latest stable
   release (CI tests both ends).
 
-## Project layout
+## Repository map
 
-- **Root package `h3`** — public API files (`indexing.go`, `traversal.go`, …)
-  over a one-file-per-C-function ported implementation
-  (`<cfile>_<function>.go`, each with a `// Ported from H3 C: <file>::<name>`
-  attribution). Public operations carry `H3 C API: <name>` doc lines.
-- **Parity harness** — `*_cgo.go` + `h3lib_*_c2go.c` behind
-  `//go:build cgo && c2go`; excluded from every normal build.
-- **`cmd/h3` + `internal/cli`** — dependency-free, pure-Go implementation of
-  the upstream `h3` executable, with an injectable runner and 170 adapted
-  upstream scenarios.
-- `tools/apiinventory` — generates [docs/c-api-inventory.csv](docs/c-api-inventory.csv)
-  (the full C↔Go function mapping) and enforces completeness.
+| Path | What it is |
+|---|---|
+| `*.go` (root) | The `h3` library — public API files (`cell.go`, `traversal.go`, …) layered over a one-file-per-C-function port (each with a `// Ported from H3 C: <file>::<name>` attribution) |
+| `*_cgo.go`, `h3lib_*_c2go.c` | Opt-in C parity harness behind `//go:build cgo && c2go`; excluded from every normal build |
+| [`cmd/h3`](cmd/h3) | The `h3` executable — a minimal `main` that delegates to `internal/cli` |
+| [`internal/cli`](internal/cli) | CLI implementation: upstream-compatible parser, command registry, output encoders, exit-code mapping; consumes only the public `h3` API |
+| [`interop/uberdiff`](interop/uberdiff) | Separate Go module that differentially tests this library against the official uber/h3-go cgo binding (nightly CI) |
+| [`testref`](testref) | Scaffolding that downloads pristine upstream H3 C sources for the parity suite and gates — never vendored |
+| [`tools`](tools) | Maintenance commands: API/test/CLI inventories, upstream symbol diff, docs link check ([tools/README.md](tools/README.md)) |
+| [`docs`](docs) | Design records, compatibility contracts, and generated inventories ([docs/README.md](docs/README.md)) |
+| [`.github/workflows`](.github/workflows) | Tiered CI: fast checks + C parity on every code change, heavy suites nightly and on tags ([docs/ci-policy.md](docs/ci-policy.md)) |
 
-Deeper documentation:
+## Documentation
 
-- [docs/public-api-architecture.md](docs/public-api-architecture.md) — design,
-  decision records, measurements, upstream-sync workflow.
-- [docs/DEVIATIONS.md](docs/DEVIATIONS.md) — intentional differences from C.
-- [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md) — backlog: deferred features,
-  profiling-gated ideas, rejected designs, pre-v1.0.0 checklist.
-- [CONTRIBUTING.md](CONTRIBUTING.md) — development workflow and porting rules.
-- [docs/ci-policy.md](docs/ci-policy.md) — what CI runs when, and why the
-  expensive suites are tiered.
+Pick your path:
+
+- **Library user** → [quick start](#library-quick-start) →
+  [pkg.go.dev reference](https://pkg.go.dev/github.com/dimchansky/h3-go) →
+  [intentional deviations from C](docs/DEVIATIONS.md).
+- **CLI user** → [`h3` utility](#the-h3-command-line-utility) →
+  [cmd/h3 README](cmd/h3/README.md) →
+  [compatibility contract](docs/cli-compatibility.md).
+- **Contributor** → [CONTRIBUTING.md](CONTRIBUTING.md) →
+  [architecture & decision records](docs/public-api-architecture.md) →
+  [CI policy](docs/ci-policy.md).
+- **Upstream-sync maintainer** → [CONTRIBUTING.md](CONTRIBUTING.md) →
+  [upstream test equivalence](docs/ported-c-tests.md) →
+  [maintenance tools](tools/README.md) →
+  [example sync record](docs/sync/4.3.0-to-4.4.0.md).
+
+The full annotated index of every document and generated inventory is
+[docs/README.md](docs/README.md).
 
 ## Development
 
@@ -212,6 +263,7 @@ make test              # pure-Go tests (CGO_ENABLED=0)
 go test -race ./...    # race detector
 make lint              # gofmt + go vet + golangci-lint + smrcptr
 make check-unsafe      # gate: no unsafe reachable from any normal build
+make check-docs        # Markdown link/anchor checker
 make bench             # benchmarks with allocation stats
 go test -fuzz FuzzParseCell -fuzztime 30s .   # fuzzing
 
@@ -223,6 +275,9 @@ make test-uberdiff          # differential vs the official cgo binding
 make test-cli-diff          # all CLI scenarios vs the upstream C executable
 make check-cli-inventory    # command/flag/test/fixture/source drift gate
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the ground rules (they are
+CI-enforced) and the upstream porting workflow.
 
 ## License and attribution
 

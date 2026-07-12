@@ -50,4 +50,9 @@
 // All 78 public functions of H3 C v4.4.0 are covered. Intentional behavior
 // differences (Go-idiomatic hole pruning, validated parsing, ...) are
 // documented in docs/DEVIATIONS.md.
+//
+// The repository also provides a pure-Go, upstream-compatible h3
+// command-line utility built on this package:
+//
+//	go install github.com/dimchansky/h3-go/cmd/h3@latest
 package h3

@@ -1,5 +1,8 @@
 # `h3` command-line compatibility
 
+This is the authoritative compatibility contract for the pure-Go `h3`
+executable; the user-facing quick start is [cmd/h3/README.md](../cmd/h3/README.md).
+
 The authoritative H3 C v4.4.0 build definition creates target `h3_bin` and
 sets `OUTPUT_NAME h3`. This repository therefore installs the compatible Go
 executable as **`h3`**.
