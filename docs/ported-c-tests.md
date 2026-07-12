@@ -21,22 +21,25 @@ contains 771 reviewed entries:
 - 2 authoritative CMake definitions and the optional generated country
   benchmark pipeline.
 
-Current dispositions are 545 `full`, 1 `partial`, 225 `na`, and zero
-`missing` or `deferred`. `full` means the upstream scenario and assertions
-were compared with the named Go test, not merely that its implementation has
-a cgo parity test.
+Current dispositions are 716 `full`, 1 `partial`, 54 `na`, and zero
+`missing` or `deferred` (re-countable at any time with
+`make check-test-inventory`, which prints the totals). `full` means the
+upstream scenario and assertions were compared with the named Go test, not
+merely that its implementation has a cgo parity test.
 
 The one partial entry is `testCellsToLinkedMultiPolygon.c::specificLeak`:
 the failure/no-crash regression is ported, while its Valgrind leak-detection
 facet is not applicable to garbage-collected Go.
 
-The principal `na` group is the 170 CLI cases. The module deliberately ships
-a library, not a Go clone of upstream `h3_bin`; argument parsing, file/stdin
-routing, JSON/WKT rendering, and process exit behavior therefore are not a
-public contract here. Core H3 operations exercised by those commands are
-tested through the typed public API. Legacy stream filters, C assertion and
-allocator hooks, random fixture generators, and performance-only benchmark
-loops have similarly explicit row-level reasons in the CSV.
+The 170 upstream CLI cases are `full`: the repository ships an
+upstream-compatible `h3` executable (`cmd/h3`, implemented in
+`internal/cli`), and every registered scenario runs against it in-process
+(`TestUpstreamCLICompatibility`), with process-level and opt-in C
+differential layers on top — see [cli-compatibility.md](cli-compatibility.md)
+for that contract. The remaining `na` rows are legacy stream filters, C
+assertion and allocator hooks, random fixture generators, and
+performance-only benchmark loops; each has an explicit row-level reason in
+the CSV.
 
 ## Input-driven and exhaustive suites
 

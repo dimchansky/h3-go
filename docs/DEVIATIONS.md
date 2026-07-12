@@ -2,8 +2,10 @@
 
 This is the checklist consulted during upstream synchronization
 (docs/public-api-architecture.md §10): each item below is a *deliberate*
-difference between this library and H3 C v4.3.0. Anything not listed here is
-expected to match C behavior exactly and is enforced by the cgo parity suite.
+difference between this library and H3 C v4.4.0 (the current parity target).
+Anything not listed here is expected to match C behavior exactly and is
+enforced by the cgo parity suite. The `h3` command-line utility has its own
+compatibility policy, documented in [cli-compatibility.md](cli-compatibility.md).
 
 ## Representation
 

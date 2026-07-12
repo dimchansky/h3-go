@@ -6,13 +6,17 @@ Phase-7 upstream sync rehearsal that moved the parity target to H3 C v4.4.0.
 The document is kept as the authoritative design record: measurements, decision
 records, and the living upstream-sync workflow (§10).
 Scope at time of writing: repository `github.com/dimchansky/h3-go` at commit
-`52d76be`, upstream reference H3 C **v4.3.0** (`testref/h3-4.3.0`).
+`52d76be`, upstream reference H3 C **v4.3.0** (`testref/h3-4.3.0`). Counts and
+version numbers in the body reflect that snapshot; for the current state
+(parity target H3 C v4.4.0, 78/78 public functions, the `h3` CLI under
+`cmd/h3`) see the [README](../README.md), [CHANGELOG](../CHANGELOG.md), and
+[docs/sync/4.3.0-to-4.4.0.md](sync/4.3.0-to-4.4.0.md).
 
 This document proposes how to layer an idiomatic, strongly typed, allocation-aware public Go
 API on top of the existing mechanically ported C implementation, without losing
 function-level traceability to upstream H3 C. Every load-bearing claim below was verified
 against the actual repository; the experiments backing the design are reproduced in
-[Appendix A](#appendix-a-experimental-evidence).
+[Appendix A](#appendix-a--experimental-evidence).
 
 ---
 
@@ -55,7 +59,7 @@ The recommended architecture:
    `go test -race ./...`, any GOOS/GOARCH) imports `unsafe`; no public API requires or
    exposes an unsafe abstraction. `unsafe` exists only inside the opt-in cgo parity
    harness behind `cgo && c2go` tags, and a two-layer CI gate (§9.2) keeps it that way.
-   Full audit in [Appendix B](#appendix-b-unsafe-audit).
+   Full audit in [Appendix B](#appendix-b--unsafe-audit).
 
 One urgent unrelated finding: **CI is red** (last three runs failed): the `make fmt` gate
 fails on 8 unformatted files at HEAD, and behind it `go test -race ./...` enables cgo,
