@@ -377,10 +377,15 @@ hidden `sync.Pool`.
   index; the public method exists only on `Cell`. Adding
   `DirectedEdge.IndexDigit`/`Vertex.IndexDigit` is trivial if a use case
   shows up.
-- **uberdiff extensions**: add benchmark comparisons (pure Go vs cgo
-  binding) to quantify the no-cgo advantage per operation, and absorb Uber's
-  unreleased pure-Go port (`x/h3go`, present in uber/h3-go master) into the
-  same differential harness — cgo-free — once it ships.
+- **uberdiff extensions**: the benchmark-comparison half is **done** —
+  [interop/uberbench](../interop/uberbench/README.md) benchmarks every
+  operation category against the binding with equivalence gating, plus
+  process-level memory probes; results under
+  [docs/benchmarks/](benchmarks/README.md), matrix and docs under
+  [docs/comparison-uber-h3-go.md](comparison-uber-h3-go.md). Remaining:
+  absorb Uber's unreleased pure-Go port (`x/h3go`, present in uber/h3-go
+  master, still untagged as of 2026-07) into the same differential and
+  benchmark harnesses — cgo-free — once it ships.
 - **Error-code accessor (§12-Q7)**: `func Code(err error) (int, bool)`
   returning the numeric H3 code for cross-language stability. Additive;
   implement on first request.

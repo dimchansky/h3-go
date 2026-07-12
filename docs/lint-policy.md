@@ -17,9 +17,12 @@ apply, and when to revisit them. Configuration lives in
    renaming `fillIndex_assertions` would make every future sync harder for
    zero behavioral gain.
 2. **Idiomatic Go** — the public API files (`cell.go`, `traversal.go`, …),
-   `internal/cli`, `cmd/h3`, `tools/`, `interop/uberdiff`, and newly written
-   tests. No style exemptions: everything below the "ported tier" carve-out
-   applies with full strictness.
+   `internal/cli`, `cmd/h3`, `tools/`, `interop/uberdiff`,
+   `interop/uberbench`, and newly written tests. No style exemptions:
+   everything below the "ported tier" carve-out applies with full
+   strictness. (One deliberate deviation: `interop/uberbench` benchmarks
+   keep the classic `b.N`/sink loop pattern uniformly instead of
+   `b.Loop()` — the rationale is in its `bench_test.go` header.)
 
 Correctness-tier findings (staticcheck, govet, `unused`, `ineffassign`,
 depguard, and the non-style gocritic/revive checks) apply to **both** tiers.

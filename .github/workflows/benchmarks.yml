@@ -1,0 +1,51 @@
+# Comparative benchmarks vs the official uber/h3-go cgo binding
+# (interop/uberbench). Manual dispatch plus a monthly schedule — never a
+# per-push gate: shared runners are too noisy for benchmark pass/fail
+# thresholds (docs/benchmarks/README.md documents the noise caveats).
+# Artifacts carry the raw output, benchstat summaries, the process-level
+# memory matrix, and the environment metadata; maintainers download and
+# commit them to docs/benchmarks/linux-amd64/ when refreshing published
+# results.
+name: benchmarks
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: benchmark repetitions (benchstat samples)
+        default: "10"
+      benchtime:
+        description: go test -benchtime per measurement
+        default: "1s"
+  schedule:
+    - cron: "41 2 3 * *" # monthly: keeps drift vs the binding visible
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benchmarks-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bench-linux-amd64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Run comparative benchmark suite
+        env:
+          COUNT: ${{ github.event.inputs.count || '10' }}
+          BENCHTIME: ${{ github.event.inputs.benchtime || '1s' }}
+          ENVLABEL: "GitHub Actions ubuntu-latest shared runner (noisy-neighbor variance applies)"
+        run: make bench-uber
+      - name: Show summary
+        run: cat docs/benchmarks/linux-amd64/benchstat.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uberbench-linux-amd64-${{ github.sha }}
+          path: docs/benchmarks/linux-amd64/
+          if-no-files-found: error

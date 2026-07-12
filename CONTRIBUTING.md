@@ -61,11 +61,18 @@ make check-cli-inventory    # CLI semantic/source/fixture drift gate
 make test-cli-diff          # build and compare with upstream C h3_bin
 ```
 
-Differential testing against the official cgo binding:
+Differential testing and benchmarking against the official cgo binding:
 
 ```sh
 make test-uberdiff           # separate module in interop/uberdiff
+make test-uberbench          # benchmark-pairing equivalence (interop/uberbench)
+make bench-uber              # full comparative benchmark + memory suite
+make gen-ubercompare         # regenerate the comparison-matrix tables
+make check-ubercompare       # matrix drift gate (runs in CI's docs job)
 ```
+
+The comparison matrix, migration guide, and benchmark artifacts are
+documented in [docs/README.md](docs/README.md#comparison-with-the-official-cgo-binding).
 
 ## Porting a C function (upstream syncs)
 

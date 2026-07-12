@@ -69,6 +69,8 @@ jobs:
           go-version: 'stable'
       - name: Differential tests vs official cgo binding
         run: make test-uberdiff
+      - name: Benchmark-pairing equivalence tests vs official cgo binding
+        run: make test-uberbench
 
   cli-differential:
     runs-on: ubuntu-latest

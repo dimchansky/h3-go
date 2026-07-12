@@ -21,11 +21,12 @@ into the per-change tier.
 | Tier | Jobs | Runs when | Typical duration |
 |---|---|---|---|
 | Classifier | `changes` | every push/PR | ~10 s |
-| Docs | `docs` (Markdown link/anchor gate, `make check-docs`) | every push/PR, including docs-only changes | ~30 s |
+| Docs | `docs` (Markdown link/anchor gate, `make check-docs`; uber/h3-go comparison-matrix drift gate, `make check-ubercompare`) | every push/PR, including docs-only changes | ~30 s |
 | Fast (required) | `fast` (fmt, no-unsafe gate, lint, smrcptr, pure-Go library + CLI tests and binary build on 1.24 + stable), `api-gates` (API, test, and CLI inventory gates) | every push/PR **with code changes** | ~2–3 min to signal |
 | Core correctness | `parity` (227-file cgo suite vs original C) | every push/PR with code changes, in parallel with `fast` | ~5–6 min |
 | Merge gate | `race` | PRs into the default branch (code changes only) | ~9 min |
-| Confidence sweep | nightly.yml: `race`, `parity` + gates + the full upstream fixture suites (526,546 golden records), `fuzz-smoke`, library and CLI C differential suites, CLI cross-builds | nightly 03:17 UTC, `workflow_dispatch`, and every `v*` tag (release gate) | ~15 min wall |
+| Confidence sweep | nightly.yml: `race`, `parity` + gates + the full upstream fixture suites (526,546 golden records), `fuzz-smoke`, library and CLI C differential suites (uberdiff + uberbench equivalence), CLI cross-builds | nightly 03:17 UTC, `workflow_dispatch`, and every `v*` tag (release gate) | ~15 min wall |
+| Benchmarks (informational) | benchmarks.yml: full comparative suite vs the uber/h3-go binding + process-level memory matrix, artifacts uploaded per run | `workflow_dispatch` and monthly schedule — **never a per-push gate** | ~25–35 min |
 
 Notes:
 
@@ -61,3 +62,12 @@ deliberately avoids. They live as a step of the nightly `parity` job to
 reuse the tree that job already fetches.
 - **Scheduled**: the same battery nightly, catching upstream-source drift
   (parity re-downloads H3 sources) and fuzz regressions.
+
+Why benchmarks are not a CI gate: shared runners have noisy-neighbor
+variance well above the deltas that matter, so a pass/fail threshold would
+either block unrelated PRs on noise or be too loose to catch real
+regressions. The [benchmarks workflow](../.github/workflows/benchmarks.yml)
+is manual + monthly, publishes artifacts (raw output, benchstat summaries,
+memory matrix, environment metadata), and maintainers promote results into
+[docs/benchmarks/](benchmarks/README.md) deliberately — methodology and
+noise caveats there.
