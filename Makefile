@@ -1,4 +1,4 @@
-.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory
+.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -59,6 +59,9 @@ test-cli:
 
 test-cli-process:
 	@CGO_ENABLED=0 go test ./internal/cli -run '^TestBinaryProcessContract$$'
+
+check-cli-inventory:
+	@go run ./tools/cliinventory -upstream testref/h3-$(H3VER) -verify
 
 # Builds the pristine upstream C CLI under /tmp and differentially executes all
 # 170 registered scenarios. Requires cmake and a C toolchain.

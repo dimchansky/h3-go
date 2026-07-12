@@ -273,26 +273,34 @@ func loadRegistry(path string) ([]registryRow, error) {
 // ---------------------------------------------------------------------------
 
 // goTestDecls returns the set of Test/Fuzz/Benchmark/Example function names
-// declared in *_test.go files at the repo root (the single h3 package).
+// declared in *_test.go files in repository Go packages.
 func goTestDecls(repoRoot string) (map[string]bool, error) {
 	declRe := regexp.MustCompile(`(?m)^func ((?:Test|Fuzz|Benchmark|Example)\w*)\s*\(`)
-	entries, err := os.ReadDir(repoRoot)
-	if err != nil {
-		return nil, err
-	}
 	decls := map[string]bool{}
-	for _, e := range entries {
-		n := e.Name()
-		if e.IsDir() || !strings.HasSuffix(n, "_test.go") {
-			continue
+	err := filepath.WalkDir(repoRoot, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
 		}
-		data, err := os.ReadFile(filepath.Join(repoRoot, n))
+		if entry.IsDir() {
+			if path != repoRoot && (entry.Name() == ".git" || entry.Name() == "testref") {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(entry.Name(), "_test.go") {
+			return nil
+		}
+		data, err := os.ReadFile(path)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		for _, m := range declRe.FindAllStringSubmatch(string(data), -1) {
 			decls[m[1]] = true
 		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return decls, nil
 }
