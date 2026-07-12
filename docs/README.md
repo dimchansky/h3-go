@@ -2,7 +2,8 @@
 
 Everything in this directory, what it is for, and how the generated files
 stay current. The project front door is the [root README](../README.md);
-contributor ground rules are in [CONTRIBUTING.md](../CONTRIBUTING.md).
+contributor ground rules are in [CONTRIBUTING.md](../CONTRIBUTING.md), with
+a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 
 ## Design and policy
 

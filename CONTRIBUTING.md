@@ -14,10 +14,12 @@ page first will save you review round-trips.
    decision record (see DR-007 in
    [docs/public-api-architecture.md](docs/public-api-architecture.md)).
 2. **Ported code stays traceable to C.** Files named
-   `<cfile>_<function>.go` mirror one C function each and keep C names,
-   C-shaped bodies, and a `// Ported from H3 C: <file>::<name>` attribution.
-   Do not restructure them for style — several linters are configured off
-   for exactly this reason (see `.golangci.yml` comments).
+   `<cfile>_<function>.go` mirror one C function each (a double underscore —
+   `<cfile>__<name>.go` — marks a C `_`-prefixed static helper) and keep C
+   names, C-shaped bodies, and a `// Ported from H3 C: <file>::<name>`
+   attribution. Do not restructure them for style — style-tier lint checks
+   are excluded for exactly these files, and only these; the rationale and
+   scope are documented in [docs/lint-policy.md](docs/lint-policy.md).
    C `int` maps to Go `int32`, C `int64_t` to `int64` (overflow parity).
 3. **Public wrappers carry an `H3 C API: <name>` doc line** naming their C
    counterpart. `make check-api` fails if a C public function is neither
@@ -103,7 +105,9 @@ The short version:
 ## Pull requests
 
 - Keep commits focused; describe *what* changed and *why* (see `git log`
-  for the house style — prefixes like `api:`, `c2go:`, `docs:`, `ci:`).
+  for the house style — prefixes by area: `api:`, `c2go:`, `cli:`, `tests:`,
+  `tools:`, `docs:`, `ci:`). Keep messages free of tool-attribution noise
+  (no `Co-Authored-By:` bot trailers or AI-assistant references).
 - Run `make fmt lint test check-unsafe` before pushing; run the parity suite
   if you touched ported code or the harness. CI is tiered
   ([docs/ci-policy.md](docs/ci-policy.md)): docs-only changes skip Go jobs,

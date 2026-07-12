@@ -7,6 +7,20 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- CI: the Nightly workflow (schedule, manual dispatch, and `v*` release
+  tags) now replays the full upstream fixture suites — 526,546 golden
+  conversion/boundary records — as a step of the `parity` job, reusing its
+  downloaded reference tree.
+- Maintainer guidance is now tracked: a one-page `AGENTS.md` quick reference
+  (with `CLAUDE.md` as a pointer to it) replaces the previously gitignored
+  local agent files; the durable rules they carried live in
+  `CONTRIBUTING.md` (`__` static-helper naming, commit-trailer policy).
+- Lint policy documented in `docs/lint-policy.md`: the style-tier
+  gocritic/revive exclusions are now path-scoped to mechanically ported
+  files instead of disabled globally (new idiomatic code gets the full rule
+  set), and two stale global exclusions (staticcheck SA1019, govet
+  fieldalignment-in-tests) were removed after verifying nothing fires.
+
 - Documentation overhaul: rewritten README (repository map, CLI section,
   per-audience documentation paths), new indexes `docs/README.md` and
   `tools/README.md`, READMEs for `cmd/h3` and `interop/uberdiff`, package

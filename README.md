@@ -248,7 +248,9 @@ Pick your path:
   [compatibility contract](docs/cli-compatibility.md).
 - **Contributor** → [CONTRIBUTING.md](CONTRIBUTING.md) →
   [architecture & decision records](docs/public-api-architecture.md) →
-  [CI policy](docs/ci-policy.md).
+  [CI policy](docs/ci-policy.md) → [lint policy](docs/lint-policy.md).
+  Coding agents and new maintainers: start with the
+  [quick reference](AGENTS.md).
 - **Upstream-sync maintainer** → [CONTRIBUTING.md](CONTRIBUTING.md) →
   [upstream test equivalence](docs/ported-c-tests.md) →
   [maintenance tools](tools/README.md) →
