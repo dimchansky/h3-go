@@ -232,46 +232,48 @@ semantically equivalent results, 10 repetitions summarized by `benchstat`
 (medians; full tables with confidence intervals in
 [docs/benchmarks](docs/benchmarks/README.md)).
 
-In these pinned workloads on **Apple M1 Max (darwin/arm64), Go 1.25.4,
-Apple clang 21** — ratios shift with hardware and C compiler; measure your
-own workload — a representative excerpt from
-[the full results](docs/benchmarks/darwin-arm64/benchstat.txt):
 
-| Operation (res-9 inputs) | this library | + warm `Append*` buffer | uber/h3-go v4.4.1 |
-|---|---|---|---|
-| `Cell.Resolution` | **0.6 ns**, 0 allocs | | 32.5 ns, 0 allocs |
-| `Cell.Parent` | **4.7 ns**, 0 allocs | | 47.8 ns, 1 alloc |
-| `LatLngToCell` | 646 ns, 0 allocs | | **562 ns**, 2 allocs |
-| `Cell.Boundary` | 1.11 µs, 0 allocs | | **1.06 µs**, 2 allocs |
-| `GridDisk` k=5 | 1.84 µs, 1 alloc | 1.72 µs, **0 allocs** | **1.65 µs**, 1 alloc |
-| `CompactCells` (1253 cells) | 28.8 µs | 27.8 µs | **11.9 µs** |
-| `PolygonToCells` (SF, res 9) | 906 µs | 888 µs, 2 allocs | **701 µs**, 3 allocs |
-| `CellsToMultiPolygon` (331 cells) | 708 µs | | **396 µs** |
-| Service workload (index → disk → parent, 256 pts) | **196 µs**, 256 allocs | 191 µs, **0 allocs** | 258 µs, 2560 allocs |
+<!-- BEGIN GENERATED: benchdocs README (run `make gen-benchdocs`) -->
+### Apple M1 Max — darwin-arm64
 
-The pattern behind the numbers, on this machine:
+go version go1.25.4 darwin/arm64; clang — Apple clang version 21.0.0 (clang-2100.1.1.101); github.com/uber/h3-go/v4 v4.4.1; H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module); repository `a64705f`. [Metadata](docs/benchmarks/darwin-arm64/metadata.txt) · [full benchstat table](docs/benchmarks/darwin-arm64/benchstat.txt) · [raw output](docs/benchmarks/darwin-arm64/bench-raw.txt).
 
-- **The cgo boundary costs the binding ~30–45 ns and 1–2 Go allocations
-  per call.** Cheap operations are dominated by it (bit accessors like
-  `Resolution` are ~50× faster here); mixed service-style call sequences
-  land ~24% faster here even though several individual kernels are slower.
-- **The optimized C core out-runs Go codegen on arithmetic-heavy
-  kernels** — the binding is honestly faster for `compactCells` (−59%),
-  `cellsToMultiPolygon` (−44%), polyfill (−23%), `gridPath` (−32%), and
-  other compute-bound calls above. If your workload is dominated by huge
-  polyfills or compaction, the binding may well be faster end to end.
-- **Only this library has zero-allocation forms**: warm `Append*` rows
-  allocate nothing (asserted by `testing.AllocsPerRun` in CI), and the
-  process-level [memory matrix](docs/benchmarks/darwin-arm64/memory.tsv)
-  shows the steady-state difference (e.g. 3.7 k vs 6.0 M mallocs across a
-  3-million-conversion loop). Peak RSS is broadly comparable between the
-  two.
+| Operation | this library | warm `Append*` | uber/h3-go v4.4.1 |
+|---|---:|---:|---:|
+| `Cell.Resolution` | 0.642 ns · 0 B · 0 allocs | — | 32.5 ns · 0 B · 0 allocs |
+| `Cell.Parent` (res 9→7) | 4.67 ns · 0 B · 0 allocs | — | 47.8 ns · 8 B · 1 allocs |
+| `LatLngToCell` (res 9) | 646 ns · 0 B · 0 allocs | — | 562 ns · 24 B · 2 allocs |
+| `Cell.Boundary` (res 9) | 1.112 µs · 0 B · 0 allocs | — | 1.057 µs · 272 B · 2 allocs |
+| `GridDisk` (k=5) | 1.844 µs · 768 B · 1 allocs | 1.723 µs · 0 B · 0 allocs | 1.649 µs · 768 B · 1 allocs |
+| `CompactCells` (1,253 cells) | 28.78 µs · 31.95 KiB · 5 allocs | 27.75 µs · 21.95 KiB · 4 allocs | 11.92 µs · 10 KiB · 1 allocs |
+| `PolygonToCells` (SF, res 9) | 906 µs · 144 KiB · 3 allocs | 888.3 µs · 96.04 KiB · 2 allocs | 701 µs · 48.04 KiB · 3 allocs |
+| `CellsToMultiPolygon` (331 cells) | 708.3 µs · 57.17 KiB · 1187 allocs | — | 395.7 µs · 2.094 KiB · 4 allocs |
+| service workload (256 points) | 196.4 µs · 16 KiB · 256 allocs | 190.9 µs · 0 B · 0 allocs | 258 µs · 36 KiB · 2560 allocs |
 
-Caveats that matter: numbers are machine- and compiler-specific (the
-binding's speed depends on how its vendored C was compiled — here
-`clang -O2`); Go's `B/op` cannot see the binding's C-heap allocations
-(that is what the process-level matrix is for); and Linux/amd64 results
-come from a shared CI runner with wider noise
+### GitHub Actions AMD EPYC 7763 — linux-amd64
+
+go version go1.26.5 linux/amd64; gcc — gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; github.com/uber/h3-go/v4 v4.4.1; H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module); repository `0c1de86`. This is a shared GitHub Actions runner, so small deltas are noisier. [Metadata](docs/benchmarks/linux-amd64/metadata.txt) · [full benchstat table](docs/benchmarks/linux-amd64/benchstat.txt) · [raw output](docs/benchmarks/linux-amd64/bench-raw.txt).
+
+| Operation | this library | warm `Append*` | uber/h3-go v4.4.1 |
+|---|---:|---:|---:|
+| `Cell.Resolution` | 0.784 ns · 0 B · 0 allocs | — | 33.1 ns · 0 B · 0 allocs |
+| `Cell.Parent` (res 9→7) | 6.28 ns · 0 B · 0 allocs | — | 58.9 ns · 8 B · 1 allocs |
+| `LatLngToCell` (res 9) | 887 ns · 0 B · 0 allocs | — | 1.305 µs · 24 B · 2 allocs |
+| `Cell.Boundary` (res 9) | 1.498 µs · 0 B · 0 allocs | — | 1.806 µs · 272 B · 2 allocs |
+| `GridDisk` (k=5) | 2.42 µs · 768 B · 1 allocs | 2.259 µs · 0 B · 0 allocs | 2.335 µs · 768 B · 1 allocs |
+| `CompactCells` (1,253 cells) | 36.37 µs · 31.95 KiB · 5 allocs | 35.2 µs · 21.95 KiB · 4 allocs | 23.56 µs · 10 KiB · 1 allocs |
+| `PolygonToCells` (SF, res 9) | 1.295 ms · 144 KiB · 3 allocs | 1.29 ms · 96.05 KiB · 2 allocs | 1.565 ms · 48.04 KiB · 3 allocs |
+| `CellsToMultiPolygon` (331 cells) | 964.3 µs · 57.17 KiB · 1187 allocs | — | 745.9 µs · 2.094 KiB · 4 allocs |
+| service workload (256 points) | 269.1 µs · 16 KiB · 256 allocs | 254.7 µs · 0 B · 0 allocs | 486.9 µs · 36 KiB · 2560 allocs |
+
+**Measured fact:** several results reverse between environments: `LatLngToCell`, `Cell.Boundary`, and `PolygonToCells` favor the binding on the M1 Max but pure Go on the Linux runner; `CompactCells` and `CellsToMultiPolygon` favor the binding in both. **Plausible explanation, not isolated by these measurements:** cgo-call cost, compiler code generation, and CPU microarchitecture all contribute. The artifacts do not identify a single cause, and absolute timings must never be compared across the two machines.
+<!-- END GENERATED: benchdocs README -->
+
+
+Caveats that matter: numbers are machine- and compiler-specific; Go's
+`B/op` cannot see the binding's C-heap allocations (that is what the
+process-level memory matrices are for); and Linux/amd64 results come from
+a shared CI runner with wider noise
 ([methodology and caveats](docs/benchmarks/README.md)). Reproduce with
 `make bench-uber`, or `make bench` for the library-only benchmarks.
 

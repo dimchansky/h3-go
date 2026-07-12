@@ -1,4 +1,4 @@
-.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff test-uberbench bench-uber upstream-diff check-test-inventory check-docs
+.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff test-uberbench bench-uber upstream-diff check-test-inventory check-docs gen-benchdocs check-benchdocs
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -38,6 +38,15 @@ check-unsafe:
 # (tools/docscheck). Runs in CI on every push/PR, including docs-only changes.
 check-docs:
 	@go run ./tools/docscheck
+	@go run ./tools/benchdocs -verify
+
+# Regenerate/verify selected README benchmark excerpts from the committed
+# benchstat CSV and metadata artifacts (offline).
+gen-benchdocs:
+	@go run ./tools/benchdocs -write
+
+check-benchdocs:
+	@go run ./tools/benchdocs -verify
 
 # Regenerate the generated tables in docs/comparison-uber-h3-go.md from
 # docs/comparison-uber-h3-go.csv (offline; uses committed inventories).

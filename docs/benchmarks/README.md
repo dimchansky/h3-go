@@ -138,31 +138,45 @@ the new `benchstat.txt`.
 See the per-environment `benchstat.txt` for the full tables; the
 [README's Performance section](../../README.md#performance) curates a
 representative subset with commentary, including the pairings where the
-binding is faster. The one-paragraph darwin-arm64 story (2026-07-12 run):
+binding is faster.
 
-> The cgo boundary costs the binding roughly 30–45 ns and 1–2 Go
-> allocations per crossing, so cheap calls are lopsidedly faster in pure
-> Go (`Resolution` ~50×, `Parent` ~10×, `IsValidCell` ~9×) and the mixed
-> service workload runs ~24% faster. The binding's C core is honestly
-> faster on compute-bound kernels (`compactCells` −59%,
-> `cellsToMultiPolygon` −44%, polyfill −23%, `gridPath` −32%,
-> `latLngToCell` −13%). The `pure-cold` column is statistically
-> indistinguishable from `pure` everywhere (p ≥ 0.05), confirming the
-> convenience API and `Append*`-with-nil are the same path; `pure-warm`
-> rows allocate zero.
 
-The linux-amd64 story (2026-07-12 run, GitHub `ubuntu-latest`, AMD EPYC
-7763, gcc 13) differs — evidence that these ratios are machine- and
-compiler-specific, not universal:
+<!-- BEGIN GENERATED: benchdocs details (run `make gen-benchdocs`) -->
+### Apple M1 Max (`darwin-arm64`)
 
-> The cgo crossing is substantially more expensive there, so the pure-Go
-> side wins more pairings and by more: `LatLngToCell` −31% (the binding is
-> +45% slower), the 10k-point batch +45%, the service workload +75%, and
-> even `PolygonToCells` flips to pure-Go being faster (res 9: binding
-> +12%). The binding still wins `compactCells` (−37%) and
-> `cellsToMultiPolygon` (−28%), and small deltas (`GridDisk` k=20 −6%,
-> `CellToString` −11%) sit inside shared-runner noise territory — treat
-> them accordingly.
+Run `2026-07-12T16:26:44Z` at repository `a64705f`; go version go1.25.4 darwin/arm64; clang — Apple clang version 21.0.0 (clang-2100.1.1.101); `-count=10 -benchtime=1s -benchmem`.
+
+| Selected operation | pure sec/op | uber sec/op | uber vs pure |
+|---|---:|---:|---:|
+| `Cell.Resolution` | 0.642 ns | 32.5 ns | +4963.04% |
+| `Cell.Parent` (res 9→7) | 4.67 ns | 47.8 ns | +924.52% |
+| `LatLngToCell` (res 9) | 646 ns | 562 ns | -13.07% |
+| `Cell.Boundary` (res 9) | 1.112 µs | 1.057 µs | -4.95% |
+| `GridDisk` (k=5) | 1.844 µs | 1.649 µs | -10.55% |
+| `CompactCells` (1,253 cells) | 28.78 µs | 11.92 µs | -58.60% |
+| `PolygonToCells` (SF, res 9) | 906 µs | 701 µs | -22.63% |
+| `CellsToMultiPolygon` (331 cells) | 708.3 µs | 395.7 µs | -44.13% |
+| service workload (256 points) | 196.4 µs | 258 µs | +31.41% |
+
+### GitHub Actions AMD EPYC 7763 (`linux-amd64`)
+
+Run `2026-07-12T17:19:29Z` at repository `0c1de86`; go version go1.26.5 linux/amd64; gcc — gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-count=10 -benchtime=1s -benchmem`.
+
+| Selected operation | pure sec/op | uber sec/op | uber vs pure |
+|---|---:|---:|---:|
+| `Cell.Resolution` | 0.784 ns | 33.1 ns | +4124.62% |
+| `Cell.Parent` (res 9→7) | 6.28 ns | 58.9 ns | +838.44% |
+| `LatLngToCell` (res 9) | 887 ns | 1.305 µs | +47.13% |
+| `Cell.Boundary` (res 9) | 1.498 µs | 1.806 µs | +20.60% |
+| `GridDisk` (k=5) | 2.42 µs | 2.335 µs | -3.51% |
+| `CompactCells` (1,253 cells) | 36.37 µs | 23.56 µs | -35.22% |
+| `PolygonToCells` (SF, res 9) | 1.295 ms | 1.565 ms | +20.83% |
+| `CellsToMultiPolygon` (331 cells) | 964.3 µs | 745.9 µs | -22.64% |
+| service workload (256 points) | 269.1 µs | 486.9 µs | +80.96% |
+
+These tables are generated from the committed `benchstat.csv` files. Positive “uber vs pure” values mean the binding took longer; negative values mean it was faster. See the full tables for confidence intervals and p-values.
+<!-- END GENERATED: benchdocs details -->
+
 
 A worked example of why `memory.tsv` exists:
 `CellsToMultiPolygon` shows the binding at 4 Go allocs / ~2 KiB per call
