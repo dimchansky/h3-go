@@ -3,7 +3,9 @@
 //
 // This module is intentionally separate from the root module so the library
 // keeps zero dependencies; running these tests requires cgo and network
-// access (make test-uberdiff).
+// access (make test-uberdiff). See README.md in this directory for what
+// this suite does and does not prove, and how it relates to the direct C
+// parity suite in the root module.
 package uberdiff
 
 import (
@@ -201,9 +203,9 @@ func TestMetricsParity(t *testing.T) {
 		}
 		// This module pins exact index equality but only near-equality for
 		// areas: the binding wraps a different upstream patch release
-		// (v4.2.x vs our 4.3.0 parity target), and floating-point area
+		// (v4.2.x vs our v4.4.0 parity target), and floating-point area
 		// computation differs at ~1e-10 relative near pentagons across
-		// those releases. Exact 4.3.0 equality is enforced by the cgo
+		// those releases. Exact v4.4.0 equality is enforced by the cgo
 		// parity suite in the root module.
 		if math.Abs(gotA-wantA)/wantA > 1e-9 {
 			t.Fatalf("AreaKm2(%v): %v != %v", c, gotA, wantA)
