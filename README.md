@@ -22,27 +22,58 @@ parity-tested against — its C original.
 
 ## Why this library
 
-The official Go option, [uber/h3-go](https://github.com/uber/h3-go), is a cgo
-binding around the C library. That is a solid choice, but cgo brings real
-costs: a C toolchain everywhere you build, harder cross-compilation, cgo call
-overhead, and C memory outside the Go runtime's view. This project removes
-the C dependency without giving up C-level correctness:
+The official Go option, [uber/h3-go](https://github.com/uber/h3-go), is a
+cgo binding around the C library — a solid, mature choice. If you are using
+it (or choosing between the two), the practical differences are these; each
+one is backed by the
+[full comparison](docs/comparison-uber-h3-go.md) and by
+[measured, equivalence-gated benchmarks](docs/benchmarks/README.md) rather
+than assumption:
 
-- **Pure, safe Go.** `CGO_ENABLED=0` builds work everywhere Go runs;
-  cross-compiling is `GOOS=... go build`. Production code contains no
-  `unsafe` — a hard invariant checked by a CI gate (`make check-unsafe`)
-  across every build mode.
-- **Complete.** All **78/78** public functions of H3 C v4.4.0 are covered —
-  indexing, hierarchy, traversal, directed edges, vertexes, regions/polyfill,
-  compaction, and measurement — not just the subset wrapped by bindings.
-- **Correct by construction.** The implementation is a function-by-function
-  port of the C sources, and a 227-file parity suite compiles the *original*
-  upstream C and compares Go vs C behavior in-process (see
-  [Correctness](#correctness-and-testing)). A separate differential suite
-  cross-checks against the official cgo binding.
-- **Allocation-aware by design.** Every collection API has a zero-allocation
-  `Append*` form and, where it fits, a streaming `iter.Seq` form — measured
-  by allocation assertions that run in CI, not just benchmarks.
+- **No cgo, anywhere.** `CGO_ENABLED=0` builds work everywhere Go runs:
+  cross-compiling is `GOOS=... go build`, static binaries and scratch
+  containers just work, CI needs no C toolchain. Production code also
+  contains no `unsafe` — a hard invariant checked by a CI gate
+  (`make check-unsafe`) across every build mode.
+- **Same behavior, verified.** All **78/78** public functions of H3 C
+  v4.4.0, ported function by function. A 227-file parity suite compiles the
+  *original* upstream C and compares Go vs C behavior in-process (see
+  [Correctness](#correctness-and-testing)); differential and equivalence
+  suites cross-check against uber/h3-go itself on identical inputs
+  ([interop/uberdiff](interop/uberdiff), [interop/uberbench](interop/uberbench)).
+- **Allocation control the binding cannot offer.** Every collection API has
+  a zero-allocation `Append*` form (reuse your buffer) and, where it fits, a
+  streaming `iter.Seq` form; sizing helpers are exported. The binding's APIs
+  allocate per call and accept no caller buffers — by design of cgo
+  wrapping, not by oversight. All memory here is Go memory, visible to the
+  profiler and the GC; the binding also allocates on the C heap, which Go
+  tooling cannot see (quantified in the
+  [memory results](docs/benchmarks/README.md#memory-what-bop-can-and-cannot-see)).
+- **A typed API that catches mistakes at compile time.** Coordinates are
+  `Angle`-typed (degree/radian mix-ups don't compile), parsing validates
+  indexes instead of silently returning 0, error values are `errors.Is`
+  sentinels mirroring the C error codes.
+
+And the trade-offs, equally explicit:
+
+- **This is v0.x**; the API is complete and heavily exercised, but pre-1.0
+  breaking changes remain possible ([status](#status-and-versioning)). The
+  binding's v4 line has years of production maturity.
+- **The binding tracks new H3 releases sooner** (it vendors C sources; it is
+  on H3 4.5.0 today, this library on 4.4.0 — see the
+  [version notes](docs/comparison-uber-h3-go.md#versions-compared)).
+- **Pure Go is not automatically faster.** Removing the cgo boundary wins
+  many workloads; the binding's optimized C core wins others — the
+  [Performance](#performance) section shows both honestly.
+- **Migration is a real (if mostly mechanical) change**: different
+  coordinate construction, a few reshaped results. The
+  [migration guide](docs/migration-from-uber-h3-go.md) maps every API and
+  keeps its example verified by a test.
+
+If you need exact lockstep with the newest C release or maximum ecosystem
+maturity, the official binding remains a good choice. If you want H3
+behavior with Go's build story, memory model, and type system, that is what
+this library is for.
 
 ## Install
 
@@ -177,7 +208,9 @@ substitutes for another:
    process-level pipe/exit-status tests, and opt-in differential execution
    against the compiled upstream `h3` binary.
 6. **Differential tests** against the official uber/h3-go cgo binding
-   ([interop/uberdiff](interop/uberdiff), separate module).
+   ([interop/uberdiff](interop/uberdiff), separate module), plus the
+   benchmark suite's own equivalence gates over every benchmarked operation
+   pairing ([interop/uberbench](interop/uberbench)).
 7. **Structural gates**: `make check-unsafe` (no `unsafe` reachable from any
    normal build), `make check-api` (every C public function ported and
    publicly represented), a golden API-surface lock
@@ -191,22 +224,56 @@ layer runs when in CI.
 
 ## Performance
 
-Indicative numbers from `make bench` (Apple M-series, darwin/arm64, Go 1.25;
-measure on your own hardware):
+Measured against the official cgo binding **uber/h3-go v4.4.1** (vendoring
+H3 C v4.4.1 ≙ this library's v4.4.0 target) by the equivalence-gated
+benchmark suite in [interop/uberbench](interop/uberbench): identical
+deterministic inputs, both implementations first proven to return
+semantically equivalent results, 10 repetitions summarized by `benchstat`
+(medians; full tables with confidence intervals in
+[docs/benchmarks](docs/benchmarks/README.md)).
 
-| Operation | Time | Allocations |
-|---|---|---|
-| `LatLngToCell` (res 9) | ~570 ns | 0 |
-| `Cell.LatLng` | ~350 ns | 0 |
-| `Cell.Boundary` | ~1.0 µs | 0 |
-| `AppendGridDisk` (k=2, warm buffer) | ~270 ns | 0 |
-| `ParseCell` | ~29 ns | 0 |
-| `AppendPolygonToCells` (1253 cells) | ~0.94 ms | 3 (algorithm-internal, as in C) |
+In these pinned workloads on **Apple M1 Max (darwin/arm64), Go 1.25.4,
+Apple clang 21** — ratios shift with hardware and C compiler; measure your
+own workload — a representative excerpt from
+[the full results](docs/benchmarks/darwin-arm64/benchstat.txt):
 
-There is no cgo call overhead anywhere, and the hot paths are
-zero-allocation by design (asserted in tests). No claims are made against
-other libraries' throughput; run `make test-uberdiff` and `make bench` to
-compare on your workload.
+| Operation (res-9 inputs) | this library | + warm `Append*` buffer | uber/h3-go v4.4.1 |
+|---|---|---|---|
+| `Cell.Resolution` | **0.6 ns**, 0 allocs | | 32.5 ns, 0 allocs |
+| `Cell.Parent` | **4.7 ns**, 0 allocs | | 47.8 ns, 1 alloc |
+| `LatLngToCell` | 646 ns, 0 allocs | | **562 ns**, 2 allocs |
+| `Cell.Boundary` | 1.11 µs, 0 allocs | | **1.06 µs**, 2 allocs |
+| `GridDisk` k=5 | 1.84 µs, 1 alloc | 1.72 µs, **0 allocs** | **1.65 µs**, 1 alloc |
+| `CompactCells` (1253 cells) | 28.8 µs | 27.8 µs | **11.9 µs** |
+| `PolygonToCells` (SF, res 9) | 906 µs | 888 µs, 2 allocs | **701 µs**, 3 allocs |
+| `CellsToMultiPolygon` (331 cells) | 708 µs | | **396 µs** |
+| Service workload (index → disk → parent, 256 pts) | **196 µs**, 256 allocs | 191 µs, **0 allocs** | 258 µs, 2560 allocs |
+
+The pattern behind the numbers, on this machine:
+
+- **The cgo boundary costs the binding ~30–45 ns and 1–2 Go allocations
+  per call.** Cheap operations are dominated by it (bit accessors like
+  `Resolution` are ~50× faster here); mixed service-style call sequences
+  land ~24% faster here even though several individual kernels are slower.
+- **The optimized C core out-runs Go codegen on arithmetic-heavy
+  kernels** — the binding is honestly faster for `compactCells` (−59%),
+  `cellsToMultiPolygon` (−44%), polyfill (−23%), `gridPath` (−32%), and
+  other compute-bound calls above. If your workload is dominated by huge
+  polyfills or compaction, the binding may well be faster end to end.
+- **Only this library has zero-allocation forms**: warm `Append*` rows
+  allocate nothing (asserted by `testing.AllocsPerRun` in CI), and the
+  process-level [memory matrix](docs/benchmarks/darwin-arm64/memory.tsv)
+  shows the steady-state difference (e.g. 3.7 k vs 6.0 M mallocs across a
+  3-million-conversion loop). Peak RSS is broadly comparable between the
+  two.
+
+Caveats that matter: numbers are machine- and compiler-specific (the
+binding's speed depends on how its vendored C was compiled — here
+`clang -O2`); Go's `B/op` cannot see the binding's C-heap allocations
+(that is what the process-level matrix is for); and Linux/amd64 results
+come from a shared CI runner with wider noise
+([methodology and caveats](docs/benchmarks/README.md)). Reproduce with
+`make bench-uber`, or `make bench` for the library-only benchmarks.
 
 ## Status and versioning
 
@@ -231,6 +298,7 @@ compare on your workload.
 | [`cmd/h3`](cmd/h3) | The `h3` executable — a minimal `main` that delegates to `internal/cli` |
 | [`internal/cli`](internal/cli) | CLI implementation: upstream-compatible parser, command registry, output encoders, exit-code mapping; consumes only the public `h3` API |
 | [`interop/uberdiff`](interop/uberdiff) | Separate Go module that differentially tests this library against the official uber/h3-go cgo binding (nightly CI) |
+| [`interop/uberbench`](interop/uberbench) | Separate Go module benchmarking this library against uber/h3-go — equivalence-gated benchmarks plus process-level memory probes; results in [docs/benchmarks](docs/benchmarks/README.md) |
 | [`testref`](testref) | Scaffolding that downloads pristine upstream H3 C sources for the parity suite and gates — never vendored |
 | [`tools`](tools) | Maintenance commands: API/test/CLI inventories, upstream symbol diff, docs link check ([tools/README.md](tools/README.md)) |
 | [`docs`](docs) | Design records, compatibility contracts, and generated inventories ([docs/README.md](docs/README.md)) |

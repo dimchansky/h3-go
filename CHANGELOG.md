@@ -7,6 +7,19 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- Evidence-based comparison with the official cgo binding uber/h3-go:
+  a function-by-function coverage matrix (`docs/comparison-uber-h3-go.md`,
+  generated from a curated CSV by the new `tools/ubercompare`, drift-gated
+  in CI), a migration guide (`docs/migration-from-uber-h3-go.md`, with its
+  before/after example kept executable by a test), and a new comparative
+  benchmark module `interop/uberbench` — equivalence-gated benchmarks
+  across scalar/geometry/collection/batch workloads plus a process-level
+  memory probe (`cmd/memprobe`), with committed per-environment artifacts
+  under `docs/benchmarks/` and a manual/monthly `benchmarks` workflow.
+  The README's "Why this library" and "Performance" sections now cite
+  these measured results. The uberdiff differential module was re-pinned
+  from uber/h3-go v4.2.2 to v4.4.1 (vendoring H3 C v4.4.1, behaviorally
+  identical to this library's v4.4.0 target).
 - CI: the Nightly workflow (schedule, manual dispatch, and `v*` release
   tags) now replays the full upstream fixture suites — 526,546 golden
   conversion/boundary records — as a step of the `parity` job, reusing its
