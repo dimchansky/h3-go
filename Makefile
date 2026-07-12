@@ -1,4 +1,4 @@
-.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory check-docs
+.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff test-uberbench bench-uber upstream-diff check-test-inventory check-docs
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -322,3 +322,14 @@ coverage-all:
 # requires cgo + network). Not run by default CI.
 test-uberdiff:
 	cd interop/uberdiff && go test ./...
+
+# Equivalence tests of the comparative benchmark module (separate module;
+# requires cgo + network). Gates the benchmarks below.
+test-uberbench:
+	cd interop/uberbench && go test ./...
+
+# Full comparative benchmark + memory suite vs the official cgo binding.
+# Writes artifacts to docs/benchmarks/<goos>-<goarch>/ (see
+# interop/uberbench/README.md; tune with COUNT/BENCHTIME/MEMITERS/OUTDIR).
+bench-uber:
+	cd interop/uberbench && ./run.sh
