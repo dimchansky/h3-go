@@ -64,6 +64,16 @@ func (e DirectedEdge) IsValid() bool { return isValidDirectedEdge(h3Index(e)) }
 // H3 C API: getResolution.
 func (e DirectedEdge) Resolution() int { return int(getResolution(h3Index(e))) }
 
+// IndexDigit returns the indexing digit of the edge's origin cell at the
+// given resolution (1..MaxResolution; resolution 0 is the base cell number,
+// not a digit). res may exceed the edge's actual resolution, in which case
+// the stored digit (7 for valid edges) is returned.
+//
+// H3 C API: getIndexDigit.
+func (e DirectedEdge) IndexDigit(res int) (int, error) {
+	return indexDigit(e, res)
+}
+
 // Origin returns the origin cell of the directed edge.
 //
 // H3 C API: getDirectedEdgeOrigin.

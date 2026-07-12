@@ -45,6 +45,103 @@ func BenchmarkAppendChildren(b *testing.B) {
 	}
 }
 
+func BenchmarkImmediateHierarchy(b *testing.B) {
+	cell := Cell(0x8928308280fffff)
+	b.Run("ParentComposed", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = cell.Parent(cell.Resolution() - 1)
+		}
+	})
+	b.Run("ImmediateParent", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = cell.ImmediateParent()
+		}
+	})
+	b.Run("ChildrenComposed", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = cell.Children(cell.Resolution() + 1)
+		}
+	})
+	b.Run("ImmediateChildren", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = cell.ImmediateChildren()
+		}
+	})
+	b.Run("AppendImmediateChildrenWarm", func(b *testing.B) {
+		buf := make([]Cell, 0, 7)
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = cell.AppendImmediateChildren(buf[:0])
+		}
+	})
+}
+
+func BenchmarkTypedIsValidIndex(b *testing.B) {
+	cell := Cell(0x8928308280fffff)
+	b.Run("ExplicitUint64", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_ = IsValidIndex(uint64(cell))
+		}
+	})
+	b.Run("Typed", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_ = IsValidIndex(cell)
+		}
+	})
+}
+
+func BenchmarkIndexDigitModes(b *testing.B) {
+	cell := Cell(0x8928308280fffff)
+	edges, _ := cell.DirectedEdges()
+	vertexes, _ := cell.Vertexes()
+	b.Run("Cell", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = cell.IndexDigit(9)
+		}
+	})
+	b.Run("DirectedEdge", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = edges[0].IndexDigit(9)
+		}
+	})
+	b.Run("Vertex", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = vertexes[0].IndexDigit(9)
+		}
+	})
+}
+
+func BenchmarkGridDiskDistancesGrouped(b *testing.B) {
+	cell := Cell(0x8928308280fffff)
+	const k = 5
+	b.Run("Grouped", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			_, _ = cell.GridDiskDistancesGrouped(k)
+		}
+	})
+	b.Run("ManualAppendPerRing", func(b *testing.B) {
+		b.ReportAllocs()
+		for b.Loop() {
+			cells, distances, _ := cell.GridDiskDistances(k)
+			rings := make([][]Cell, k+1)
+			for i, result := range cells {
+				rings[distances[i]] = append(rings[distances[i]], result)
+			}
+			_ = rings
+		}
+	})
+}
+
 func BenchmarkCellString(b *testing.B) {
 	c := Cell(0x8928308280fffff)
 	b.ReportAllocs()

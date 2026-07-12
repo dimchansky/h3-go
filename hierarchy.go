@@ -16,6 +16,14 @@ func (c Cell) Parent(res int) (Cell, error) {
 	return p, nil
 }
 
+// ImmediateParent returns the cell's parent one resolution coarser. A
+// resolution-0 cell has no parent and returns ErrResolutionDomain.
+//
+// H3 C API: cellToParent.
+func (c Cell) ImmediateParent() (Cell, error) {
+	return c.Parent(c.Resolution() - 1)
+}
+
 // CenterChild returns the center descendant of the cell at the given finer
 // resolution.
 //
@@ -51,6 +59,43 @@ func (c Cell) NumChildren(res int) (int64, error) {
 //
 // H3 C API: cellToChildren.
 func (c Cell) Children(res int) ([]Cell, error) { return c.AppendChildren(nil, res) }
+
+// ImmediateChildren returns the cell's children one resolution finer, in
+// canonical child order: 7 for a hexagon and 6 for a pentagon. A
+// resolution-MaxResolution cell has no children and returns
+// ErrResolutionDomain.
+//
+// H3 C API: cellToChildren.
+func (c Cell) ImmediateChildren() ([]Cell, error) {
+	return c.AppendImmediateChildren(nil)
+}
+
+// AppendImmediateChildren appends the cell's children one resolution finer
+// to dst and returns the extended slice, in canonical child order. Pass
+// dst[:0] (or nil) to reuse capacity; a capacity of 7 is always sufficient
+// and makes the call allocation-free.
+//
+// H3 C API: cellToChildren.
+func (c Cell) AppendImmediateChildren(dst []Cell) ([]Cell, error) {
+	if err := checkRes(c.Resolution() + 1); err != nil {
+		return dst, err
+	}
+	n := 7
+	if isPentagon(c) {
+		n = 6
+	}
+	start := len(dst)
+	dst = slices.Grow(dst, n)[:start+n]
+	i := start
+	for digit := int32(0); digit <= 6; digit++ {
+		if n == 6 && digit == int32(kAxesDigit) {
+			continue
+		}
+		dst[i] = makeDirectChild(c, digit)
+		i++
+	}
+	return dst, nil
+}
 
 // AppendChildren appends all descendants of the cell at the given finer
 // resolution to dst and returns the extended slice, in canonical child order.

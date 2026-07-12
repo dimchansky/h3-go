@@ -7,6 +7,7 @@ const DegPerRad
 const MaxCellBoundaryVerts
 const MaxResolution
 const NumBaseCells
+const NumIcosahedronFaces
 const NumPentagons
 const NumRes0Cells
 const Pi
@@ -79,6 +80,7 @@ method (Cell) AppendGridDiskUnsafe
 method (Cell) AppendGridPath
 method (Cell) AppendGridRing
 method (Cell) AppendGridRingUnsafe
+method (Cell) AppendImmediateChildren
 method (Cell) AreaKm2
 method (Cell) AreaM2
 method (Cell) AreaRads2
@@ -93,6 +95,7 @@ method (Cell) DirectedEdgeTo
 method (Cell) DirectedEdges
 method (Cell) GridDisk
 method (Cell) GridDiskDistances
+method (Cell) GridDiskDistancesGrouped
 method (Cell) GridDiskDistancesSafe
 method (Cell) GridDiskDistancesUnsafe
 method (Cell) GridDiskUnsafe
@@ -102,6 +105,8 @@ method (Cell) GridPathLen
 method (Cell) GridRing
 method (Cell) GridRingUnsafe
 method (Cell) IcosahedronFaces
+method (Cell) ImmediateChildren
+method (Cell) ImmediateParent
 method (Cell) IndexDigit
 method (Cell) IsNeighbor
 method (Cell) IsPentagon
@@ -118,6 +123,7 @@ method (Cell) Vertexes
 method (DirectedEdge) Boundary
 method (DirectedEdge) Cells
 method (DirectedEdge) Destination
+method (DirectedEdge) IndexDigit
 method (DirectedEdge) IsValid
 method (DirectedEdge) LengthKm
 method (DirectedEdge) LengthM
@@ -127,6 +133,7 @@ method (DirectedEdge) Origin
 method (DirectedEdge) Resolution
 method (DirectedEdge) String
 method (LatLng) Cell
+method (Vertex) IndexDigit
 method (Vertex) IsValid
 method (Vertex) LatLng
 method (Vertex) MarshalText
@@ -140,6 +147,7 @@ type CoordIJ
 type DirectedEdge
 type GeoLoop
 type GeoPolygon
+type Index
 type LatLng
 type Vertex
 var ErrBaseCellDomain

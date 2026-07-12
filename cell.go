@@ -29,6 +29,10 @@ const (
 	// H3 C API: pentagonCount.
 	NumPentagons = numPentagons
 
+	// NumIcosahedronFaces is the number of faces in the icosahedron underlying
+	// the H3 grid. Face numbers run from 0 to NumIcosahedronFaces-1.
+	NumIcosahedronFaces = numIcosaFaces
+
 	// MaxCellBoundaryVerts is the maximum number of vertices a cell boundary
 	// can have (pentagon cells crossing icosahedron edges produce up to 10).
 	// H3 C API: MAX_CELL_BNDRY_VERTS.

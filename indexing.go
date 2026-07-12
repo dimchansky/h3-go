@@ -101,6 +101,28 @@ func (c Cell) IcosahedronFaces() ([]int, error) {
 	return faces, nil
 }
 
+// Index constrains the public H3 index types and raw integer indexes accepted
+// by IsValidIndex. int is included so untyped integer-literal calls accepted
+// by the former uint64-only API remain source-compatible. It is a compile-time
+// constraint, not a value type; use Cell, DirectedEdge, or Vertex for
+// mode-specific values and validation.
+type Index interface {
+	Cell | DirectedEdge | Vertex | uint64 | int
+}
+
+// indexDigit returns the indexing digit of an H3 index at the given
+// resolution.
+func indexDigit[T index](idx T, res int) (int, error) {
+	if err := checkRes(res); err != nil {
+		return 0, err
+	}
+	var d int32
+	if errC := getIndexDigit(h3Index(idx), int32(res), &d); errC != eSuccess {
+		return 0, toErr(errC)
+	}
+	return int(d), nil
+}
+
 // IndexDigit returns the indexing digit of the cell at the given resolution
 // (1..MaxResolution; resolution 0 is the base cell number, not a digit). res
 // may exceed the cell's actual resolution, in which case the stored digit
@@ -108,14 +130,7 @@ func (c Cell) IcosahedronFaces() ([]int, error) {
 //
 // H3 C API: getIndexDigit (added in H3 4.4.0).
 func (c Cell) IndexDigit(res int) (int, error) {
-	if err := checkRes(res); err != nil {
-		return 0, err
-	}
-	var d int32
-	if errC := getIndexDigit(c, int32(res), &d); errC != eSuccess {
-		return 0, toErr(errC)
-	}
-	return int(d), nil
+	return indexDigit(c, res)
 }
 
 // ConstructCell creates a cell from its components: a resolution, a base
@@ -146,11 +161,13 @@ func ConstructCell(res, baseCellNumber int, digits []int) (Cell, error) {
 	return out, nil
 }
 
-// IsValidIndex reports whether the raw 64-bit index is valid for any H3 mode
-// (cell, directed edge, or vertex).
+// IsValidIndex reports whether index is structurally valid for any H3 mode
+// (cell, directed edge, or vertex). It does not require a typed value to match
+// its Go type's mode; use Cell.IsValid, DirectedEdge.IsValid, or Vertex.IsValid
+// for mode-specific validation.
 //
 // H3 C API: isValidIndex (added in H3 4.4.0).
-func IsValidIndex(raw uint64) bool { return isValidIndex(h3Index(raw)) }
+func IsValidIndex[T Index](index T) bool { return isValidIndex(h3Index(index)) }
 
 // Pentagons returns the 12 pentagonal cells at the given resolution.
 //

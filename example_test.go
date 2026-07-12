@@ -72,6 +72,31 @@ func ExampleCell_ChildrenSeq() {
 	// Output: 49 children
 }
 
+func ExampleCell_ImmediateChildren() {
+	parent, _ := h3.ParseCell("8928308280fffff")
+	children, err := parent.ImmediateChildren()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(len(children), "immediate children")
+	// Output: 7 immediate children
+}
+
+func ExampleCell_GridDiskDistancesGrouped() {
+	cell, _ := h3.ParseCell("8928308280fffff")
+	rings, err := cell.GridDiskDistancesGrouped(2)
+	if err != nil {
+		panic(err)
+	}
+	for distance, ring := range rings {
+		fmt.Printf("distance %d: %d cells\n", distance, len(ring))
+	}
+	// Output:
+	// distance 0: 1 cells
+	// distance 1: 6 cells
+	// distance 2: 12 cells
+}
+
 func ExamplePolygonToCells() {
 	polygon := h3.GeoPolygon{GeoLoop: h3.GeoLoop{
 		h3.LatLngDegs(37.813, -122.408),

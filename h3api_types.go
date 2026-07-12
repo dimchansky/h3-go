@@ -42,7 +42,9 @@ type GeoPolygon struct {
 }
 
 // CoordIJ represents IJ coordinates from h3api.h (axial coordinates).
-// Uses int32 to match H3 C implementation exactly (including overflow behavior).
+// I and J use int32 because H3 C defines the full local-IJ domain with C int;
+// this preserves its range and overflow behavior consistently on every Go
+// platform and avoids silent narrowing at the implementation boundary.
 type CoordIJ struct {
 	I int32 // i component
 	J int32 // j component

@@ -128,6 +128,70 @@ func (c Cell) GridDiskDistances(k int) ([]Cell, []int32, error) {
 	return c.AppendGridDiskDistances(nil, nil, k)
 }
 
+// GridDiskDistancesGrouped returns cells within grid distance k of c grouped
+// by distance: result[d] contains exactly the cells at distance d. Empty
+// rings are retained, H3_NULL holes near pentagons are omitted, and no order
+// within a ring is guaranteed. All rings share one backing cell array and
+// have their capacity limited to their length, so appending to one ring
+// cannot overwrite another.
+//
+// The flat GridDiskDistances and AppendGridDiskDistances forms remain the
+// allocation-efficient choices when grouped slices are unnecessary.
+//
+// H3 C API: gridDiskDistances.
+func (c Cell) GridDiskDistancesGrouped(k int) ([][]Cell, error) {
+	cells, distances, err := c.GridDiskDistances(k)
+	if err != nil {
+		return nil, err
+	}
+
+	const stackRings = 64
+	var countBuf, nextBuf [stackRings]int
+	var counts, next []int
+	if k < stackRings {
+		counts = countBuf[:k+1]
+		next = nextBuf[:k+1]
+	} else {
+		counts = make([]int, k+1)
+		next = make([]int, k+1)
+	}
+	for _, distance := range distances {
+		counts[int(distance)]++
+	}
+	for d := 1; d <= k; d++ {
+		next[d] = next[d-1] + counts[d-1]
+	}
+
+	// In-place counting sort of the parallel cell/distance slices. This keeps
+	// the flat result's cell allocation as the backing store for every ring.
+	start := 0
+	for d := 0; d <= k; d++ {
+		end := start + counts[d]
+		for next[d] < end {
+			i := next[d]
+			actual := int(distances[i])
+			if actual == d {
+				next[d]++
+				continue
+			}
+			j := next[actual]
+			cells[i], cells[j] = cells[j], cells[i]
+			distances[i], distances[j] = distances[j], distances[i]
+			next[actual]++
+		}
+		start = end
+	}
+
+	rings := make([][]Cell, k+1)
+	start = 0
+	for d := range rings {
+		end := start + counts[d]
+		rings[d] = cells[start:end:end]
+		start = end
+	}
+	return rings, nil
+}
+
 // AppendGridDiskDistances appends the cells within grid distance k of c to
 // dst and their distances to dstDist, returning both extended slices. When
 // both capacities suffice the call does not allocate.
