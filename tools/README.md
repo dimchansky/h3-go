@@ -12,6 +12,7 @@ full details (`go doc ./tools/<name>`) and accepts `-h`.
 | [cliinventory](cliinventory) | Discover the upstream CLI contract; verify the committed CLI registries against it | `make check-cli-inventory` | CI (`api-gates`, nightly), upstream syncs |
 | [upstreamdiff](upstreamdiff) | Symbol-level diff of two upstream H3 trees, mapped to the Go port | `make upstream-diff FROM=4.3.0 TO=4.4.0` | Upstream syncs (manual, mandatory) |
 | [docscheck](docscheck) | Verify relative Markdown links and #anchors | `make check-docs` | CI (`docs` job) |
+| [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
 | [unexport](unexport) | **Historical** one-time migration sweep (Phase 2 unexport) | `go run ./tools/unexport` (dry run) | Nothing — kept as a migration record |
 
 All of them exit non-zero on failure and, except for the explicitly marked
@@ -93,6 +94,29 @@ links must resolve to existing files/directories, and `#fragment` links into
 Markdown files must match a GitHub-generated heading anchor. Fenced code
 blocks and inline code are ignored. Run with `make check-docs`; CI runs it
 on every push/PR, including docs-only changes.
+
+## ubercompare
+
+Maintains the comparison matrix against the official cgo binding. The
+curated data lives in
+[docs/comparison-uber-h3-go.csv](../docs/comparison-uber-h3-go.csv) (one
+row per public C function); the tool renders it into the generated tables
+of [docs/comparison-uber-h3-go.md](../docs/comparison-uber-h3-go.md) and
+cross-checks it — entirely offline — against the committed inventories.
+
+- **Default mode** prints the generated Markdown tables to stdout.
+- **`-write`** rewrites the marked generated section of the comparison doc
+  (`make gen-ubercompare`) — an explicitly file-modifying mode.
+- **`-verify`** exits 1 on drift (`make check-ubercompare`, run by the CI
+  `docs` job): every matrix row must be a public C function from
+  [docs/c-api-inventory.csv](../docs/c-api-inventory.csv) and vice versa;
+  every `this_api` symbol must exist in
+  [docs/api-surface.txt](../docs/api-surface.txt); statuses must come from
+  the fixed vocabulary; the doc tables must match the CSV.
+- Flags: `-repo`, `-write`, `-verify`.
+- The binding's side of the matrix needs the uber/h3-go dependency and is
+  verified by `TestMappingSymbolsExist` in
+  [interop/uberbench](../interop/uberbench/README.md) instead.
 
 ## unexport (historical)
 

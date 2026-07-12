@@ -39,6 +39,16 @@ check-unsafe:
 check-docs:
 	@go run ./tools/docscheck
 
+# Regenerate the generated tables in docs/comparison-uber-h3-go.md from
+# docs/comparison-uber-h3-go.csv (offline; uses committed inventories).
+gen-ubercompare:
+	@go run ./tools/ubercompare -write
+
+# Drift gate: comparison matrix vs C-API inventory vs locked API surface vs
+# the generated doc tables (offline; runs in CI).
+check-ubercompare:
+	@go run ./tools/ubercompare -verify
+
 # Regenerate the C-API inventory (requires testref sources; see make -C testref h3-source).
 api-inventory:
 	@go run ./tools/apiinventory -h3ver $(H3VER) > docs/c-api-inventory.csv

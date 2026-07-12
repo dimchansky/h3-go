@@ -1,0 +1,79 @@
+c_function,category,this_api,uber_api,uber_status,semantics,allocation,migration
+latLngToCell,indexing,LatLngToCell; LatLng.Cell,LatLngToCell; LatLng.Cell,available,LatLng fields are typed Angle here vs float64 degrees there; construct with LatLngDegs,none vs Go-side struct conversion per call,mechanical
+cellToLatLng,indexing,Cell.LatLng,CellToLatLng; Cell.LatLng,available,read coordinates via .Lat.Deg()/.Lng.Deg() here vs raw float64 degrees there,none in either,mechanical
+cellToBoundary,indexing,Cell.Boundary,CellToBoundary; Cell.Boundary,different-shape,CellBoundary is a fixed-size value with Len/At/Verts here vs a []LatLng slice there,0 allocs here vs 1 slice alloc there,adaptation
+getResolution,inspection,Cell.Resolution; DirectedEdge.Resolution; Vertex.Resolution,Cell.Resolution; DirectedEdge.Resolution; Vertex.Resolution,available,identical (no error; works on any bits),none,mechanical
+getBaseCellNumber,inspection,Cell.BaseCellNumber,BaseCellNumber; Cell.BaseCellNumber,available,identical,none,mechanical
+getIndexDigit,inspection,Cell.IndexDigit,Cell.IndexDigit; DirectedEdge.IndexDigit; Vertex.IndexDigit,available,binding also exposes it on edges/vertexes,none,mechanical
+stringToH3,inspection,ParseCell; ParseDirectedEdge; ParseVertex; Cell.UnmarshalText,CellFromString; DirectedEdgeFromString; VertexFromString; IndexFromString; Cell.UnmarshalText,different-shape,"parsing validates and returns errors here; the binding's *FromString swallow syntax errors and return index 0 (only UnmarshalText validates), so correct binding callers add IsValid",none in either,adaptation
+h3ToString,inspection,Cell.String; DirectedEdge.String; Vertex.String; Cell.MarshalText,CellToString; IndexToString; Cell.String; Cell.MarshalText,available,same canonical lowercase-hex text in both,1 string alloc in either,mechanical
+isValidCell,inspection,Cell.IsValid,Cell.IsValid,available,identical,none,mechanical
+isValidIndex,inspection,IsValidIndex,IsValidIndex,different-shape,takes a raw uint64 here vs a generic constrained by Cell/DirectedEdge/Vertex there,none,mechanical
+isResClassIII,inspection,Cell.IsResClassIII,Cell.IsResClassIII,available,identical,none,mechanical
+isPentagon,inspection,Cell.IsPentagon,Cell.IsPentagon,available,identical,none,mechanical
+maxFaceCount,inspection,— (sizes IcosahedronFaces internally),— (sizes IcosahedronFaces internally),absorbed,not needed under Go slices,n/a,n/a
+getIcosahedronFaces,inspection,Cell.IcosahedronFaces,Cell.IcosahedronFaces,available,identical ([]int; -1 slots pruned in both),1 slice alloc in either,mechanical
+constructCell,inspection,ConstructCell,—,missing,no binding equivalent (H3 4.4.0 addition),none here,n/a
+describeH3Error,misc,— (sentinel error messages),— (sentinel error messages),absorbed,"both map H3 error codes to package-level Err* values matched with errors.Is; messages carry the C text; note the binding's ErrRsolutionMismatch spelling vs ErrResolutionMismatch here",n/a,mechanical
+degsToRads,misc,Deg; Angle.Rad,DegsToRads (constant),different-shape,typed Angle constructors here vs multiply-by-constant there,none,mechanical
+radsToDegs,misc,Rad; Angle.Deg,RadsToDegs (constant),different-shape,typed Angle accessors here vs multiply-by-constant there,none,mechanical
+getNumCells,misc,NumCells,NumCells,different-shape,(int64 with error) here vs plain int there (binding panics on out-of-range res),none,adaptation
+res0CellCount,misc,NumRes0Cells,— (len of Res0Cells),absorbed,a compile-time constant here,n/a,mechanical
+getRes0Cells,misc,Res0Cells,Res0Cells,available,cannot fail: no error return here vs ([]Cell. error) there,1 slice alloc in either,mechanical
+pentagonCount,misc,NumPentagons,NumPentagons,available,constants in both,none,mechanical
+getPentagons,misc,Pentagons,Pentagons,available,identical,1 slice alloc in either,mechanical
+maxGridDiskSize,traversal,MaxGridDiskSize,— (internal sizing),absorbed,exposed here for Append* buffer pre-sizing,n/a,n/a
+gridDisk,traversal,Cell.GridDisk; Cell.AppendGridDisk,GridDisk; Cell.GridDisk,available,unordered and null-pruned in both,convenience allocates in both; Append form is 0-alloc with a warm buffer here,mechanical
+gridDiskUnsafe,traversal,Cell.GridDiskUnsafe; Cell.AppendGridDiskUnsafe,—,missing,single-origin unsafe (ring-ordered fast path; ErrPentagon on distortion) not exposed by the binding — its GridDisksUnsafe covers only the batch form,Append form is 0-alloc here,n/a
+gridDiskDistances,traversal,Cell.GridDiskDistances; Cell.AppendGridDiskDistances,GridDiskDistances; Cell.GridDiskDistances,different-shape,"flat ([]Cell, []int32) here vs distance-indexed [][]Cell rings there; binding keeps H3_NULL slots inside rings on pentagon-affected disks, this library prunes them",2 allocs vs k+2 allocs; Append form 0-alloc here,adaptation
+gridDiskDistancesSafe,traversal,Cell.GridDiskDistancesSafe,GridDiskDistancesSafe; Cell.GridDiskDistancesSafe,different-shape,same shape difference as gridDiskDistances,allocating in both,adaptation
+gridDiskDistancesUnsafe,traversal,Cell.GridDiskDistancesUnsafe,GridDiskDistancesUnsafe; Cell.GridDiskDistancesUnsafe,different-shape,same shape difference; ErrPentagon semantics identical,allocating in both,adaptation
+gridDisksUnsafe,traversal,GridDisksUnsafe,GridDisksUnsafe,different-shape,one flat fixed-stride buffer (exact C layout; unpruned) here vs pruned per-origin [][]Cell there,1 alloc here vs origins+1 allocs there,adaptation
+maxGridRingSize,traversal,MaxGridRingSize,— (internal sizing),absorbed,exposed here for Append* buffer pre-sizing,n/a,n/a
+gridRing,traversal,Cell.GridRing; Cell.AppendGridRing,GridRing; Cell.GridRing,available,unordered and null-pruned in both,Append form 0-alloc here,mechanical
+gridRingUnsafe,traversal,Cell.GridRingUnsafe; Cell.AppendGridRingUnsafe,GridRingUnsafe; Cell.GridRingUnsafe,available,identical (CCW ring order; ErrPentagon),Append form 0-alloc here,mechanical
+gridDistance,traversal,Cell.GridDistance,GridDistance; Cell.GridDistance,available,identical,none,mechanical
+gridPathCellsSize,traversal,Cell.GridPathLen,— (internal sizing),absorbed,exposed here for Append* buffer pre-sizing,n/a,n/a
+gridPathCells,traversal,Cell.GridPath; Cell.AppendGridPath,GridPath; Cell.GridPath,available,identical (inclusive; same path),Append form 0-alloc here,mechanical
+cellToLocalIj,traversal,CellToLocalIJ,CellToLocalIJ,available,CoordIJ fields are int32 here (C overflow parity) vs int there,none,mechanical
+localIjToCell,traversal,LocalIJToCell,LocalIJToCell,available,same CoordIJ note,none,mechanical
+cellToParent,hierarchy,Cell.Parent,Cell.Parent; Cell.ImmediateParent,available,no ImmediateParent sugar here: use c.Parent(c.Resolution()-1),none,mechanical
+cellToChildrenSize,hierarchy,Cell.NumChildren,— (internal sizing),absorbed,exposed here for pre-sizing and planning,n/a,n/a
+cellToChildren,hierarchy,Cell.Children; Cell.AppendChildren; Cell.ChildrenSeq,Cell.Children; Cell.ImmediateChildren,available,canonical order in both; iterator form streams without materializing here,Append form 0-alloc and Seq form allocation-free here vs slice per call there,mechanical
+cellToCenterChild,hierarchy,Cell.CenterChild,Cell.CenterChild,available,identical,none,mechanical
+cellToChildPos,hierarchy,Cell.ChildPos,CellToChildPos; Cell.ChildPos,available,int64 position here vs int there,none,mechanical
+childPosToCell,hierarchy,Cell.ChildAtPos,ChildPosToCell; Cell.ChildPosToCell,available,named ChildAtPos here; position is int64 here vs int there,none,mechanical
+compactCells,hierarchy,CompactCells; AppendCompactCells,CompactCells,available,identical (input must be unique same-res cells),Append form reuses the result buffer here (algorithm scratch still allocates),mechanical
+uncompactCellsSize,hierarchy,UncompactCellsSize,— (internal sizing),absorbed,exposed here for Append* buffer pre-sizing,n/a,n/a
+uncompactCells,hierarchy,UncompactCells; AppendUncompactCells,UncompactCells,available,identical,Append form 0-alloc here,mechanical
+areNeighborCells,edges,Cell.IsNeighbor,Cell.IsNeighbor,available,identical,none,mechanical
+cellsToDirectedEdge,edges,Cell.DirectedEdgeTo,Cell.DirectedEdge,available,named DirectedEdgeTo here,none,mechanical
+isValidDirectedEdge,edges,DirectedEdge.IsValid,DirectedEdge.IsValid,available,identical,none,mechanical
+getDirectedEdgeOrigin,edges,DirectedEdge.Origin,DirectedEdge.Origin,available,identical,none,mechanical
+getDirectedEdgeDestination,edges,DirectedEdge.Destination,DirectedEdge.Destination,available,identical,none,mechanical
+directedEdgeToCells,edges,DirectedEdge.Cells,DirectedEdge.Cells,different-shape,"two return values (origin, destination) here vs a 2-element []Cell there",none here vs 1 slice alloc there,mechanical
+originToDirectedEdges,edges,Cell.DirectedEdges,Cell.DirectedEdges,available,pentagon's deleted slot pruned in both (5 edges),1 slice alloc in either,mechanical
+directedEdgeToBoundary,edges,DirectedEdge.Boundary,DirectedEdge.Boundary,different-shape,CellBoundary value here vs []LatLng there (same cellToBoundary note),0 allocs here vs 1 there,adaptation
+cellToVertex,vertexes,Cell.Vertex,Cell.Vertex; CellToVertex,available,identical,none,mechanical
+cellToVertexes,vertexes,Cell.Vertexes,Cell.Vertexes; CellToVertexes,available,pentagon slot pruned in both (5 vertexes),1 slice alloc in either,mechanical
+vertexToLatLng,vertexes,Vertex.LatLng,Vertex.LatLng; VertexToLatLng,available,typed Angle coordinates here vs degrees there,none,mechanical
+isValidVertex,vertexes,Vertex.IsValid,Vertex.IsValid; IsValidVertex,available,identical,none,mechanical
+maxPolygonToCellsSize,regions,MaxPolygonToCellsSize,— (internal sizing),absorbed,exposed here for Append* buffer pre-sizing,n/a,n/a
+polygonToCells,regions,PolygonToCells; AppendPolygonToCells,PolygonToCells; GeoPolygon.Cells,available,center-containment in both; GeoPolygon vertices typed Angle here vs degrees there,"Append form reuses result buffer here (3 algorithm-internal allocs remain, as in C); binding also mallocs the polygon on the C heap per call",mechanical
+maxPolygonToCellsSizeExperimental,regions,MaxPolygonToCellsSizeExperimental,— (internal sizing),absorbed,exposed here for Append* buffer pre-sizing,n/a,n/a
+polygonToCellsExperimental,regions,PolygonToCellsExperimental; AppendPolygonToCellsExperimental; PolygonToCellsExperimentalSeq,PolygonToCellsExperimental,available,binding adds an optional variadic result cap; the Seq form here streams cells without materializing,Append and Seq forms here vs slice + C-heap polygon there,mechanical
+cellsToLinkedMultiPolygon,regions,CellsToMultiPolygon,CellsToMultiPolygon,available,same []GeoPolygon shape and loop order; vertices typed Angle here vs degrees there,Go-native structures here vs C linked list walked and freed there,mechanical
+destroyLinkedMultiPolygon,regions,— (garbage collected),— (garbage collected),absorbed,meaningless under GC in both,n/a,n/a
+cellAreaRads2,measurement,Cell.AreaRads2,CellAreaRads2,available,method here vs function there,none,mechanical
+cellAreaKm2,measurement,Cell.AreaKm2,CellAreaKm2,available,method here vs function there,none,mechanical
+cellAreaM2,measurement,Cell.AreaM2,CellAreaM2,available,method here vs function there,none,mechanical
+edgeLengthRads,measurement,DirectedEdge.LengthRads,EdgeLengthRads,available,method here vs function there,none,mechanical
+edgeLengthKm,measurement,DirectedEdge.LengthKm,EdgeLengthKm,available,method here vs function there,none,mechanical
+edgeLengthM,measurement,DirectedEdge.LengthM,EdgeLengthM,available,method here vs function there,none,mechanical
+getHexagonAreaAvgKm2,measurement,HexagonAreaAvgKm2,HexagonAreaAvgKm2,available,identical,none,mechanical
+getHexagonAreaAvgM2,measurement,HexagonAreaAvgM2,HexagonAreaAvgM2,available,identical,none,mechanical
+getHexagonEdgeLengthAvgKm,measurement,HexagonEdgeLengthAvgKm,HexagonEdgeLengthAvgKm,available,identical,none,mechanical
+getHexagonEdgeLengthAvgM,measurement,HexagonEdgeLengthAvgM,HexagonEdgeLengthAvgM,available,identical,none,mechanical
+greatCircleDistanceRads,measurement,GreatCircleDistanceRads,GreatCircleDistanceRads,available,no error in either; LatLng construction differs as above,none,mechanical
+greatCircleDistanceKm,measurement,GreatCircleDistanceKm,GreatCircleDistanceKm,available,no error in either,none,mechanical
+greatCircleDistanceM,measurement,GreatCircleDistanceM,GreatCircleDistanceM,available,no error in either,none,mechanical

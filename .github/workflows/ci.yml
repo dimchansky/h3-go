@@ -64,6 +64,8 @@ jobs:
           go-version: 'stable'
       - name: Markdown link/anchor check
         run: make check-docs
+      - name: uber/h3-go comparison matrix drift gate
+        run: make check-ubercompare
 
   # Fast required checks: formatting, lint, no-unsafe gate, pure-Go tests
   # (includes examples, allocation assertions, fuzz seed corpora).

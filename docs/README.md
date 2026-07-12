@@ -15,6 +15,14 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 | [ci-policy.md](ci-policy.md) | Which CI tier runs when and why the expensive suites are not on every push. |
 | [lint-policy.md](lint-policy.md) | Why style-tier lint checks are excluded for mechanically ported files (and only those), the `//nolint` inventory, and when to revisit each exclusion. |
 
+## Comparison with the official cgo binding
+
+| Document | Contents |
+|---|---|
+| [comparison-uber-h3-go.md](comparison-uber-h3-go.md) | Evidence-based comparison with uber/h3-go: pinned versions, function-by-function coverage matrix (generated), behavioral differences, trade-offs in both directions, and the maintainer checklist for keeping it current. |
+| [migration-from-uber-h3-go.md](migration-from-uber-h3-go.md) | Practical migration guide: type/call-site mappings, unit and error-handling changes, before/after example (kept executable by `interop/uberbench/migration_test.go`). |
+| [benchmarks/README.md](benchmarks/README.md) | Benchmark methodology, memory-accounting caveats, and the committed per-environment result artifacts (raw output, benchstat summaries, process-level memory matrix, environment metadata). |
+
 ## CLI
 
 | Document | Contents |
@@ -40,6 +48,8 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 | [cli-test-inventory.csv](cli-test-inventory.csv) | All 170 upstream CLI scenarios with expected outputs and source hashes. | `go run ./tools/cliinventory -emit-cases` / `make check-cli-inventory` |
 | [cli-fixture-inventory.csv](cli-fixture-inventory.csv) | Upstream CLI input fixtures with hashes. | `go run ./tools/cliinventory -emit-fixtures` / `make check-cli-inventory` |
 | [cli-source-inventory.csv](cli-source-inventory.csv) | Upstream sources that define the CLI contract, with hashes. | `go run ./tools/cliinventory -emit-sources` / `make check-cli-inventory` |
+| [comparison-uber-h3-go.csv](comparison-uber-h3-go.csv) | Curated per-C-function comparison matrix vs uber/h3-go (source of the generated tables in comparison-uber-h3-go.md). | edit by hand, then `make gen-ubercompare` / `make check-ubercompare` |
+| [benchmarks/](benchmarks/README.md) | Committed benchmark artifacts per environment (raw, benchstat, memory, metadata). | `make bench-uber` / benchmarks workflow |
 
 The tools behind these files are documented in
 [tools/README.md](../tools/README.md).
