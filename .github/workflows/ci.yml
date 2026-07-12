@@ -1,5 +1,5 @@
 # Tiered CI. Policy: docs/ci-policy.md.
-#  - Docs-only changes run nothing but the classifier (~10s).
+#  - Docs-only changes run only the classifier and the docs link check.
 #  - Code changes get fast feedback (< ~3 min) from fmt/lint/tests/gates,
 #    with the parity suite in parallel.
 #  - The race detector runs as a merge gate (PRs), nightly, on tags, and on
@@ -52,6 +52,18 @@ jobs:
             echo "docs-only change; skipping Go jobs"
             echo "code=false" >> "$GITHUB_OUTPUT"
           fi
+
+  # Documentation checks run on every push/PR — including docs-only changes,
+  # which skip all Go jobs but can still break links.
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Markdown link/anchor check
+        run: make check-docs
 
   # Fast required checks: formatting, lint, no-unsafe gate, pure-Go tests
   # (includes examples, allocation assertions, fuzz seed corpora).

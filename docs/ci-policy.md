@@ -21,6 +21,7 @@ into the per-change tier.
 | Tier | Jobs | Runs when | Typical duration |
 |---|---|---|---|
 | Classifier | `changes` | every push/PR | ~10 s |
+| Docs | `docs` (Markdown link/anchor gate, `make check-docs`) | every push/PR, including docs-only changes | ~30 s |
 | Fast (required) | `fast` (fmt, no-unsafe gate, lint, smrcptr, pure-Go library + CLI tests and binary build on 1.24 + stable), `api-gates` (API, test, and CLI inventory gates) | every push/PR **with code changes** | ~2–3 min to signal |
 | Core correctness | `parity` (227-file cgo suite vs original C) | every push/PR with code changes, in parallel with `fast` | ~5–6 min |
 | Merge gate | `race` | PRs into the default branch (code changes only) | ~9 min |
@@ -29,10 +30,11 @@ into the per-change tier.
 Notes:
 
 - **Docs-only changes** (`*.md`, `LICENSE`, `NOTICE`, `.gitignore`) skip all
-  Go jobs. Everything else — including workflow files, the Makefile, and the
-  generated gate inputs `docs/api-surface.txt` / `docs/c-api-inventory.csv`
-  — counts as code. The classifier **fails open**: if it cannot determine
-  the base commit (force push, first push), it runs everything.
+  Go jobs; only the classifier and the docs link check run. Everything else
+  — including workflow files, the Makefile, and the generated gate inputs
+  `docs/api-surface.txt` / `docs/c-api-inventory.csv` — counts as code. The
+  classifier **fails open**: if it cannot determine the base commit (force
+  push, first push), it runs everything.
 - **Concurrency cancellation**: a newer commit on the same branch/PR cancels
   in-flight runs of the older one.
 - **Direct pushes to master** don't run race; nightly covers them within a

@@ -1,4 +1,4 @@
-.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory
+.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff upstream-diff check-test-inventory check-docs
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -33,6 +33,11 @@ check-unsafe:
 		exit 1; \
 	fi
 	@echo "check-unsafe: OK"
+
+# Documentation gate: every relative Markdown link and #anchor must resolve
+# (tools/docscheck). Runs in CI on every push/PR, including docs-only changes.
+check-docs:
+	@go run ./tools/docscheck
 
 # Regenerate the C-API inventory (requires testref sources; see make -C testref h3-source).
 api-inventory:
