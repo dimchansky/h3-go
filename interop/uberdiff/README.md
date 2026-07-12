@@ -15,7 +15,7 @@ test dependency — would break that, so the differential tests live in their
 own module with a `replace` directive pointing at the parent:
 
 ```
-require github.com/uber/h3-go/v4 v4.2.2
+require github.com/uber/h3-go/v4 v4.4.1
 replace github.com/dimchansky/h3-go => ../..
 ```
 
@@ -38,10 +38,12 @@ near-polar and near-antimeridian points) drive both implementations through:
 | `TestMetricsParity` | `CellAreaKm2` — relative tolerance |
 
 Index-valued results must match **exactly**. Coordinates allow `1e-10`
-degrees absolute and areas `1e-9` relative, because the binding wraps a
-different upstream *patch* release (v4.2.x) than this library's parity
-target (v4.4.0), and floating-point area computation drifts at ~1e-10 near
-pentagons across those releases.
+degrees absolute and areas `1e-9` relative: even at the same upstream
+release (the pinned binding vendors H3 C v4.4.1, which differs from this
+library's v4.4.0 parity target only by a version-metadata fix), the C
+compiler may contract floating-point multiply-adds differently than the Go
+compiler, and area computation amplifies the last-ulp differences to
+~1e-10–1e-9 relative near pentagons.
 
 ## What it proves — and what it does not
 
@@ -69,8 +71,10 @@ external dependency; see [docs/ci-policy.md](../../docs/ci-policy.md).
 1. Bump the version in [go.mod](go.mod) (`go get github.com/uber/h3-go/v4@<ver>`
    in this directory, then `go mod tidy`).
 2. Run `make test-uberdiff`. If a numeric comparison starts failing, check
-   which upstream H3 C release the new binding wraps; tolerances above are
-   chosen for the current patch-release skew and may tighten (or need a
-   comment update) when the binding catches up to v4.4.0.
+   which upstream H3 C release the new binding vendors (its `H3_VERSION`
+   file) against this library's parity target; behavioral skew between
+   releases needs a tolerance rationale here, not a silent bump.
+   Keep the version in step with [interop/uberbench](../uberbench/README.md),
+   which benchmarks against the same binding.
 3. There are no fixtures or generated files here — inputs are generated at
    run time from a fixed seed.
