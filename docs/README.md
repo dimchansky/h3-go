@@ -21,6 +21,7 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 |---|---|
 | [comparison-uber-h3-go.md](comparison-uber-h3-go.md) | Evidence-based comparison with uber/h3-go: pinned versions, function-by-function coverage matrix (generated), behavioral differences, trade-offs in both directions, and the maintainer checklist for keeping it current. |
 | [migration-from-uber-h3-go.md](migration-from-uber-h3-go.md) | Practical migration guide: type/call-site mappings, unit and error-handling changes, before/after example (kept executable by `interop/uberbench/migration_test.go`). |
+| [public-api-ergonomics-review.md](public-api-ergonomics-review.md) | Pre-v1 review of every migration/API-shape difference: implement, keep, defer, or reject decisions with compatibility and allocation impact. |
 | [benchmarks/README.md](benchmarks/README.md) | Benchmark methodology, memory-accounting caveats, and the committed per-environment result artifacts (raw output, benchstat summaries, process-level memory matrix, environment metadata). |
 
 ## CLI
@@ -49,7 +50,7 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 | [cli-fixture-inventory.csv](cli-fixture-inventory.csv) | Upstream CLI input fixtures with hashes. | `go run ./tools/cliinventory -emit-fixtures` / `make check-cli-inventory` |
 | [cli-source-inventory.csv](cli-source-inventory.csv) | Upstream sources that define the CLI contract, with hashes. | `go run ./tools/cliinventory -emit-sources` / `make check-cli-inventory` |
 | [comparison-uber-h3-go.csv](comparison-uber-h3-go.csv) | Curated per-C-function comparison matrix vs uber/h3-go (source of the generated tables in comparison-uber-h3-go.md). | edit by hand, then `make gen-ubercompare` / `make check-ubercompare` |
-| [benchmarks/](benchmarks/README.md) | Committed benchmark artifacts per environment (raw, benchstat, memory, metadata). | `make bench-uber` / benchmarks workflow |
+| [benchmarks/](benchmarks/README.md) | Committed benchmark artifacts per environment (raw, benchstat, memory, metadata); selected README excerpts are generated from them. | `make bench-uber`; `make gen-benchdocs` / `make check-benchdocs` |
 
 The tools behind these files are documented in
 [tools/README.md](../tools/README.md).

@@ -251,6 +251,10 @@ func TestEquivalenceGridDiskDistances(t *testing.T) {
 			d := pdist[i]
 			prings[d] = append(prings[d], cell)
 		}
+		grouped, err := c.GridDiskDistancesGrouped(k)
+		if err != nil {
+			t.Fatalf("pure GridDiskDistancesGrouped(%v, %d): %v", c, k, err)
+		}
 		if len(urings) != k+1 {
 			t.Fatalf("uber GridDiskDistances(%v, %d): %d rings, want %d", c, k, len(urings), k+1)
 		}
@@ -259,6 +263,46 @@ func TestEquivalenceGridDiskDistances(t *testing.T) {
 			if !slices.Equal(sortedU64s(prings[d]), sortedI64s(uring)) {
 				t.Fatalf("GridDiskDistances(%v, %d) ring %d: pure %d cells != uber %d cells",
 					c, k, d, len(prings[d]), len(uring))
+			}
+			if !slices.Equal(sortedU64s(grouped[d]), sortedI64s(uring)) {
+				t.Fatalf("GridDiskDistancesGrouped(%v, %d) ring %d: pure %d cells != uber %d cells",
+					c, k, d, len(grouped[d]), len(uring))
+			}
+		}
+	}
+}
+
+func TestEquivalenceErgonomicHierarchyAndDigits(t *testing.T) {
+	for _, c := range append(slices.Clone(cellsPure9[:64]), pentagons9...) {
+		u := uber.Cell(uint64(c))
+		pp, perr := c.ImmediateParent()
+		up, uerr := u.ImmediateParent()
+		if perr != nil || uerr != nil || uint64(pp) != uint64(up) {
+			t.Fatalf("ImmediateParent(%v): pure %v/%v, uber %v/%v", c, pp, perr, up, uerr)
+		}
+		pc, perr := c.ImmediateChildren()
+		uc, uerr := u.ImmediateChildren()
+		if perr != nil || uerr != nil || !slices.Equal(sortedU64s(pc), sortedI64s(uc)) {
+			t.Fatalf("ImmediateChildren(%v): pure %d/%v, uber %d/%v", c, len(pc), perr, len(uc), uerr)
+		}
+		edges, err := c.DirectedEdges()
+		if err != nil {
+			t.Fatal(err)
+		}
+		vertexes, err := c.Vertexes()
+		if err != nil {
+			t.Fatal(err)
+		}
+		for res := 1; res <= pure.MaxResolution; res++ {
+			pd, _ := edges[0].IndexDigit(res)
+			ud, _ := uber.DirectedEdge(int64(edges[0])).IndexDigit(res)
+			if pd != ud {
+				t.Fatalf("edge IndexDigit(%d): pure %d, uber %d", res, pd, ud)
+			}
+			pd, _ = vertexes[0].IndexDigit(res)
+			ud, _ = uber.Vertex(int64(vertexes[0])).IndexDigit(res)
+			if pd != ud {
+				t.Fatalf("vertex IndexDigit(%d): pure %d, uber %d", res, pd, ud)
 			}
 		}
 	}

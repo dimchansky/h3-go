@@ -145,105 +145,16 @@ add `MarshalJSON` to core geometry types.
 
 ---
 
-## 2. Grouped convenience variant of GridDiskDistances
+## 2. Grouped convenience variant of GridDiskDistances — resolved
 
-### User problem and use cases
-
-"Give me the neighbors bucketed by ring" is a common traversal pattern
-(BFS-style expansion, ring-weighted scoring, rendering rings in distinct
-styles). Today users get the efficient flat form:
-
-```go
-cells, dists, err := origin.GridDiskDistances(k) // []Cell, []int32, parallel
-```
-
-and must group by hand. uber/h3-go returns `[][]Cell` directly, so migrating
-users will look for it.
-
-### Why it was deliberately excluded (§12-Q8)
-
-The flat parallel-slice form **is** the zero-copy representation: cells fill
-the caller's buffer directly and distances are the algorithm's own `int32`s
-(re-typing to `int` or grouping would force a copy per element). A grouped
-result inherently allocates k+2 slices (or one backing array plus k+2
-headers); shipping only the grouped form — as uber does — would have baked
-that cost into the primary API. Flat-first keeps the efficient path primary;
-grouping is pure convenience layerable on top at any time.
-
-### Design questions and trade-offs
-
-1. **Shape**: `[][]Cell` (index = distance, uber-compatible mental model) vs
-   `iter.Seq2[int, []Cell]`. The slice form is simpler; the Seq form saves
-   nothing meaningful because the whole disk must be materialized anyway.
-2. **Backing storage**: k+1 independent slices, or one flat allocation
-   partitioned into sub-slices? The partitioned form is 2 allocations total
-   (backing array + headers array) and cache-friendly; sub-slices share the
-   backing array, which must be documented (mutating one ring's slice can
-   never touch another ring — partitions don't overlap — but appends to a
-   ring slice could, so headers should be returned with len == cap per ring).
-3. **Ordering within a ring**: the safe algorithm has no order; sorting per
-   ring would add cost and promise more than C does. Document "no order
-   within a ring".
-4. Do Safe/Unsafe variants need grouped forms too, or only the default?
-   Start with only the default; the Unsafe form is already ring-ordered
-   (ring-walk), making grouping nearly free for those who need it.
-
-### Possible API shape
-
-```go
-// GridDiskDistancesGrouped returns the cells within grid distance k of c,
-// grouped by distance: result[d] holds the cells at exactly distance d.
-// Cells within a ring are in no particular order. All rings share one
-// backing array; each ring slice has len == cap.
-func (c Cell) GridDiskDistancesGrouped(k int) ([][]Cell, error) {
-    cells, dists, err := c.GridDiskDistances(k) // existing zero-copy core
-    if err != nil {
-        return nil, err
-    }
-    counts := make([]int, k+1)
-    for _, d := range dists {
-        counts[d]++
-    }
-    groups := make([][]Cell, k+1)
-    // partition one backing array by counting sort — 2 allocations total
-    ...
-    return groups, nil
-}
-```
-
-Implementation is a counting sort over the flat result: O(n), 2–3
-allocations, all of them the requested output. No changes to internal ported
-code.
-
-### Allocation / concurrency / safety
-
-Allocates exactly the result (backing array + headers + counts scratch);
-callers wanting reuse keep using the flat `Append*` form. Stateless, no
-ownership subtleties beyond the documented shared backing array.
-
-### Evidence needed
-
-None technical — this is demand-driven sugar. Implement when a user asks or
-when migration friction from uber/h3-go shows up. It is deliberately cheap
-to add later precisely because the flat form already exists.
-
-### Tests and benchmarks
-
-- Histogram equivalence with the flat form (`counts[d] == len(groups[d])`).
-- Pentagon origins (rings shorter than 6d — the pruning path).
-- `len == cap` per ring (append safety).
-- Benchmark vs hand-grouping to confirm the counting-sort partition is not
-  slower than the naive `append` loop.
-
-### Compatibility
-
-Purely additive; backward-compatible.
-
-### Recommended direction
-
-Add `GridDiskDistancesGrouped` (name aligned with the existing family) as a
-thin layer over `GridDiskDistances`, single backing array, when demand
-appears. Do not add grouped Safe/Unsafe variants until asked.
+Implemented as `Cell.GridDiskDistancesGrouped` after the uber/h3-go
+migration guide demonstrated repeated reshaping friction. The flat
+`GridDiskDistances`/`AppendGridDiskDistances` APIs remain the efficient core;
+the grouped form partitions their cell backing array in place, returns
+len-limited ring slices, prunes pentagon null holes, and uses three
+allocations for common radii. Grouped Safe/Unsafe variants remain deferred
+until a distinct use case appears. The full decision and measurements are in
+[public-api-ergonomics-review.md](public-api-ergonomics-review.md#5-grouped-griddiskdistances--implement).
 
 ---
 
@@ -373,10 +284,6 @@ hidden `sync.Pool`.
   no-unsafe gate, api-gates job, parity job) is verified locally
   command-for-command but has never executed on GitHub runners. Commits and
   tags (`v0.1.0`, `v0.2.0`) exist locally only.
-- **`IndexDigit` for edges/vertexes.** C 4.4.0's `getIndexDigit` accepts any
-  index; the public method exists only on `Cell`. Adding
-  `DirectedEdge.IndexDigit`/`Vertex.IndexDigit` is trivial if a use case
-  shows up.
 - **uberdiff extensions**: the benchmark-comparison half is **done** —
   [interop/uberbench](../interop/uberbench/README.md) benchmarks every
   operation category against the binding with equivalence gating, plus
@@ -419,8 +326,9 @@ and [DEVIATIONS.md](./DEVIATIONS.md):
   `h3Index = Cell` alias; DR-007 requires a new reviewed decision record,
   benchmarks, and proof no safe design suffices before any production
   `unsafe`.
-- Public umbrella `Index` type (DR-002) — forces conversions everywhere;
-  `IsValidIndex(uint64)` covers the mode-generic need.
+- Public umbrella `Index` value type (DR-002) — forces conversions
+  everywhere. The exported `Index` *constraint* used by generic
+  `IsValidIndex` is compile-time-only and does not create that problem.
 - Degrees-based `float64` `LatLng` (DR-003/§12-Q4) — would force O(n)
   convert-copies on every polygon/boundary crossing the API boundary.
 - Dual package-function + method forms for every operation (§12-Q10) — one

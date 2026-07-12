@@ -517,8 +517,11 @@ without it:
   bits and return typed values (unlike C `stringToH3` and uber's `IndexFromString`, which
   accept anything and defer validation to the caller — a documented wart we do not copy).
 - *Generic helpers*: an unexported constraint `type index interface { Cell | DirectedEdge | Vertex }`
-  supports shared parse/format/marshal implementations (§6). If demand appears, a public
-  `IsValidIndex[T index]` can be added later without breaking anything.
+  supports shared parse/format/marshal implementations (§6). The later
+  ergonomics review found a concrete public use: `IsValidIndex[T Index]`
+  accepts typed indexes without conversions while retaining raw inputs. The
+  exported union is a compile-time constraint, not the umbrella value type
+  rejected by DR-002.
 
 Validation policy: constructors/parsers validate; pure bit accessors (`Resolution`,
 `BaseCellNumber`, `IsValid`, `String`) never error; algorithmic operations return the C
@@ -735,7 +738,7 @@ harm. Assessment against actual code:
 | Parse/format/marshal for `Cell`/`DirectedEdge`/`Vertex` | **Use generics (unexported)** | `func parseIndex[T ~uint64](s string, mode int) (T, error)` + shared `appendHex[T ~uint64]`. Removes 3× duplication of fiddly hex/validation code; instantiates to identical machine code for one gcshape (`uint64`); inlines like any small function; zero allocation change. Public generic surface: none initially. |
 | Pentagon-hole pruning of `[6]h3Index` into `[]DirectedEdge` / `[]Vertex` | **Borderline — allow one tiny helper** | `pruneConvert[T ~uint64](raw []h3Index) []T`. Two call sites; fine either as generic or duplicated; the generic keeps the pruning policy in one place. |
 | Ported algorithm layer (e.g. making `gridDisk` generic over `~uint64`) | **Reject** | Would change 117 files' signatures for zero benefit (alias already gives type identity), hurt line-level C traceability, and risk gcshape/inlining regressions in hot recursion (`_gridDiskDistancesInternal`). |
-| uber-style public `Index` constraint (`interface{ Cell \| DirectedEdge \| Vertex }`) | **Defer** | No operation in the proposed surface needs it; add later compatibly if a `IsValidIndex[T]`-style need materializes. |
+| uber-style public `Index` constraint (`interface{ Cell \| DirectedEdge \| Vertex }`) | **Adopted later** | Generic `IsValidIndex` supplied the concrete need; raw `uint64` and legacy integer literals remain accepted for compatibility. This does not introduce an umbrella value type. |
 
 ---
 
@@ -1080,9 +1083,9 @@ later if requested — additive, no redesign.
 
 **Q8 ⚠ — `GridDiskDistances` distance type: `[]int32` vs `[]int`.** The algorithm is
 `int32` by the port's C-overflow rule; exposing `[]int` would force a widen-copy per call
-even on the warm path. Recommendation: `[]int32` (documented rationale); revisit only if
-it proves abrasive. (uber sidesteps with `[][]Cell` buckets — that allocates k+1 slices
-and loses the flat shape; can be added later as `GridDiskDistancesGrouped` if wanted.)
+even on the warm path. Recommendation: `[]int32` (documented rationale). A later
+ergonomics review retained this flat primary form and added
+`GridDiskDistancesGrouped` as optional allocation-bearing convenience.
 
 **Q9 — "Complete C parity would make a poor Go API." True in places** — resolved by the
 documented omissions list (§2.2): out-param style, `destroy*`, `describeH3Error`,

@@ -34,7 +34,7 @@ With the alias, most call sites keep reading `h3.…`.
 | `Cell int64` | `Cell uint64` | Values are bit-identical (valid indexes never set the high bit). Convert explicitly where you stored raw ints: `h3.Cell(uint64(v))`. |
 | `DirectedEdge int64` | `DirectedEdge uint64` | Same. |
 | `Vertex int64` | `Vertex uint64` | Same. |
-| `Index` (generic constraint) | none | `IsValidIndex(raw uint64)` takes the raw value instead. |
+| `Index` (generic constraint) | `Index` | This library's constraint additionally accepts raw `uint64` and legacy integer-literal calls. |
 | `LatLng{Lat, Lng float64}` (degrees) | `LatLng{Lat, Lng Angle}` (typed; radians inside) | **The one change you must not skip** — see below. |
 | `CellBoundary []LatLng` | `CellBoundary` (opaque value; `Len()`, `At(i)`, `Verts()`) | Replace indexing/`len`/`range` with the accessors. |
 | `GeoLoop []LatLng` | `GeoLoop []LatLng` | Same shape; vertices are typed. |
@@ -44,7 +44,7 @@ With the alias, most call sites keep reading `h3.…`.
 | `MaxCellBndryVerts` | `MaxCellBoundaryVerts` | Rename. |
 | `DegsToRads` / `RadsToDegs` constants | `Deg(x)` / `Rad(x)` constructors, `.Deg()` / `.Rad()` accessors | Multiplications become typed conversions. |
 | `InvalidH3Index = 0` | zero values (`Cell(0)` is invalid) | Compare against `0` or use `IsValid`. |
-| `NumIcosaFaces` | none exported | Use literal 20 if you need it (faces are `0..19`). |
+| `NumIcosaFaces` | `NumIcosahedronFaces` | Rename; face numbers remain `0..19`. |
 
 ## Coordinates: degrees become `Angle`
 
@@ -84,8 +84,8 @@ every operation.
 | `CellFromString(s)` (+ manual `IsValid`) | `ParseCell(s)` | returns `(Cell, error)`; delete the manual validity check |
 | `IndexFromString(s)` | `ParseCell` / `ParseDirectedEdge` / `ParseVertex` | pick the typed parser; raw `strconv.ParseUint(s, 16, 64)` if you truly want unvalidated bits |
 | `CellToString(c)` / `IndexToString(u)` | `c.String()` | same text |
-| `c.ImmediateParent()` | `c.Parent(c.Resolution() - 1)` | inline the resolution arithmetic |
-| `c.ImmediateChildren()` | `c.Children(c.Resolution() + 1)` | or stream with `c.ChildrenSeq(res)` |
+| `c.ImmediateParent()` | `c.ImmediateParent()` | same |
+| `c.ImmediateChildren()` | `c.ImmediateChildren()` | same; `AppendImmediateChildren` reuses a capacity-7 buffer |
 | `ChildPosToCell(pos, c, res)` / `c.ChildPosToCell(pos, res)` | `c.ChildAtPos(int64(pos), res)` | rename; position is `int64` |
 | `CellToChildPos(c, res)` / `c.ChildPos(res)` | `c.ChildPos(res)` | result is `int64` |
 | `NumCells(res)` (`int`, panics on bad res) | `NumCells(res)` (`(int64, error)`) | handle the error; result is `int64` |
@@ -96,25 +96,22 @@ every operation.
 | `CellAreaKm2(c)` (`Rads2`/`M2`) | `c.AreaKm2()` (`AreaRads2`/`AreaM2`) | method form |
 | `BaseCellNumber(c)` | `c.BaseCellNumber()` | method form |
 | `GridDisk(c, k)` | `c.GridDisk(k)` | method form (free function removed) |
-| `GridDiskDistances(c, k)` (`[][]Cell` rings) | `c.GridDiskDistances(k)` (`([]Cell, []int32)`) | see reshaping snippet below |
+| `GridDiskDistances(c, k)` (`[][]Cell` rings) | `c.GridDiskDistancesGrouped(k)` (`[][]Cell`) | method form; null holes are pruned here |
 | `GridDisksUnsafe(origins, k)` (`[][]Cell`) | `GridDisksUnsafe(origins, k)` (`[]Cell`, flat stride `MaxGridDiskSize(k)`) | slice per origin; unpruned zeros preserved (C layout) |
 | `GridDistance(a, b)` / `GridPath(a, b)` | `a.GridDistance(b)` / `a.GridPath(b)` | method form |
 | `PolygonToCellsExperimental(p, res, mode, cap)` | `PolygonToCellsExperimental(p, res, mode)` | no variadic cap; pre-size via `MaxPolygonToCellsSizeExperimental` + `Append…`, or stream with `PolygonToCellsExperimentalSeq` |
-| `IsValidIndex[T](idx)` | `IsValidIndex(uint64(idx))` | raw-value form |
-| `v.IndexDigit(res)` / `e.IndexDigit(res)` | `Cell`-only: `c.IndexDigit(res)` | for edges/vertexes, no direct equivalent (rarely needed) |
+| `IsValidIndex[T](idx)` | `IsValidIndex(idx)` | same typed call; raw `uint64` is also accepted |
+| `v.IndexDigit(res)` / `e.IndexDigit(res)` | same | same |
 
-Reshaping `GridDiskDistances` rings, if your code consumed `[][]Cell`:
+Use the grouped convenience when existing code consumes `[][]Cell`:
 
 ```go
-cells, dists, err := c.GridDiskDistances(k)
-// ...
-rings := make([][]h3.Cell, k+1)
-for i, cell := range cells {
-    rings[dists[i]] = append(rings[dists[i]], cell)
-}
+rings, err := c.GridDiskDistancesGrouped(k)
 ```
 
-(Or better: most ring-shaped consumers really want `c.GridRing(d)`.)
+The original flat `GridDiskDistances` plus its zero-allocation `Append` form
+remain available for allocation-sensitive code. Most single-ring consumers
+want `c.GridRing(d)` directly.
 
 ## Error handling
 

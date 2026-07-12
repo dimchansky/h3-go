@@ -7,6 +7,20 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- API ergonomics review: added generic typed `IsValidIndex`,
+  `DirectedEdge.IndexDigit`, `Vertex.IndexDigit`, `Cell.ImmediateParent`,
+  `Cell.ImmediateChildren`, zero-allocation
+  `Cell.AppendImmediateChildren`, `Cell.GridDiskDistancesGrouped`, and
+  `NumIcosahedronFaces`. The efficient flat/`Append*` traversal APIs and
+  `CoordIJ`'s explicit `int32` C-parity representation remain unchanged.
+  New public tests, allocation assertions, equivalence checks against
+  uber/h3-go, runnable examples, and focused benchmarks cover the additions.
+- Performance documentation now presents separate Apple M1 Max darwin/arm64
+  and shared-runner linux/amd64 excerpts, including platform reversals and
+  Go-heap allocation metrics. `tools/benchdocs` generates and verifies those
+  excerpts from committed `benchstat.csv` and metadata artifacts, preventing
+  stale narrative/run/metadata drift without network access.
+
 - Evidence-based comparison with the official cgo binding uber/h3-go:
   a function-by-function coverage matrix (`docs/comparison-uber-h3-go.md`,
   generated from a curated CSV by the new `tools/ubercompare`, drift-gated

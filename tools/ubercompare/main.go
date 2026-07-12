@@ -63,6 +63,20 @@ var (
 		"measurement": "Measurement",
 		"misc":        "Constants, conversions, and error description",
 	}
+
+	// Additive ergonomics that do not each correspond to their own public C
+	// function row still belong to the comparison contract. Keep them locked
+	// here so the migration/comparison docs cannot claim them after removal.
+	ergonomicSurface = []string{
+		"Index",
+		"NumIcosahedronFaces",
+		"Cell.ImmediateParent",
+		"Cell.ImmediateChildren",
+		"Cell.AppendImmediateChildren",
+		"Cell.GridDiskDistancesGrouped",
+		"DirectedEdge.IndexDigit",
+		"Vertex.IndexDigit",
+	}
 )
 
 type row struct {
@@ -106,6 +120,11 @@ func run(repo string, write, verify bool) error {
 		seen[r.CFunc] = true
 		if !public[r.CFunc] {
 			problems = append(problems, fmt.Sprintf("matrix row %q is not a public C function in %s", r.CFunc, inventoryCSV))
+		}
+	}
+	for _, sym := range ergonomicSurface {
+		if !symbolInSurface(surface, sym) {
+			problems = append(problems, fmt.Sprintf("ergonomic comparison symbol %q not found in %s", sym, surfaceFile))
 		}
 	}
 	for f := range public {

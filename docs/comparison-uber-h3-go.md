@@ -75,13 +75,15 @@ differences are at the edges and in API shape:
   constants, memory destructors), and 2 with no equivalent:
   single-origin `gridDiskUnsafe` and `constructCell`.
 - **Beyond the C API**, each library adds its own conveniences:
-  - *uber/h3-go only*: `ImmediateParent`/`ImmediateChildren` sugar,
-    `IndexFromString`/`IndexToString` on raw `uint64`, a generic `Index`
-    constraint, an optional result cap on `PolygonToCellsExperimental`
-    (v4.5.0 adds `DirectedEdge.Reverse`).
+  - *uber/h3-go only*: `IndexFromString`/`IndexToString` on raw `uint64`,
+    an optional result cap on `PolygonToCellsExperimental` (v4.5.0 adds
+    `DirectedEdge.Reverse`). Both libraries now provide a generic `Index`
+    constraint and immediate parent/children conveniences.
   - *this library only*: a zero-allocation `Append*` form for every
-    collection API, streaming iterators (`Cell.ChildrenSeq`, `CellsAtRes`,
-    `PolygonToCellsExperimentalSeq`), exported sizing functions
+    collection API (including `AppendImmediateChildren`), grouped
+    distance rings backed by one cell array, streaming iterators
+    (`Cell.ChildrenSeq`, `CellsAtRes`, `PolygonToCellsExperimentalSeq`),
+    exported sizing functions
     (`MaxGridDiskSize`, `MaxGridRingSize`, `MaxPolygonToCellsSize`,
     `MaxPolygonToCellsSizeExperimental`, `UncompactCellsSize`,
     `Cell.NumChildren`, `Cell.GridPathLen`), the typed `Angle` coordinate
@@ -123,11 +125,11 @@ absent API.
 |---|---|---|---|---|---|---|
 | `getResolution` | `Cell.Resolution`; `DirectedEdge.Resolution`; `Vertex.Resolution` | `Cell.Resolution`; `DirectedEdge.Resolution`; `Vertex.Resolution` | available | identical (no error; works on any bits) | none | mechanical |
 | `getBaseCellNumber` | `Cell.BaseCellNumber` | `BaseCellNumber`; `Cell.BaseCellNumber` | available | identical | none | mechanical |
-| `getIndexDigit` | `Cell.IndexDigit` | `Cell.IndexDigit`; `DirectedEdge.IndexDigit`; `Vertex.IndexDigit` | available | binding also exposes it on edges/vertexes | none | mechanical |
+| `getIndexDigit` | `Cell.IndexDigit`; `DirectedEdge.IndexDigit`; `Vertex.IndexDigit` | `Cell.IndexDigit`; `DirectedEdge.IndexDigit`; `Vertex.IndexDigit` | available | methods exist on all three typed index modes in both | none | mechanical |
 | `stringToH3` | `ParseCell`; `ParseDirectedEdge`; `ParseVertex`; `Cell.UnmarshalText` | `CellFromString`; `DirectedEdgeFromString`; `VertexFromString`; `IndexFromString`; `Cell.UnmarshalText` | different-shape | parsing validates and returns errors here; the binding's *FromString swallow syntax errors and return index 0 (only UnmarshalText validates), so correct binding callers add IsValid | none in either | adaptation |
 | `h3ToString` | `Cell.String`; `DirectedEdge.String`; `Vertex.String`; `Cell.MarshalText` | `CellToString`; `IndexToString`; `Cell.String`; `Cell.MarshalText` | available | same canonical lowercase-hex text in both | 1 string alloc in either | mechanical |
 | `isValidCell` | `Cell.IsValid` | `Cell.IsValid` | available | identical | none | mechanical |
-| `isValidIndex` | `IsValidIndex` | `IsValidIndex` | different-shape | takes a raw uint64 here vs a generic constrained by Cell/DirectedEdge/Vertex there | none | mechanical |
+| `isValidIndex` | `IsValidIndex` | `IsValidIndex` | available | generic any-mode structural validation in both; this library additionally accepts raw uint64 and legacy integer-literal calls | none | mechanical |
 | `isResClassIII` | `Cell.IsResClassIII` | `Cell.IsResClassIII` | available | identical | none | mechanical |
 | `isPentagon` | `Cell.IsPentagon` | `Cell.IsPentagon` | available | identical | none | mechanical |
 | `maxFaceCount` | — (sizes IcosahedronFaces internally) | — (sizes IcosahedronFaces internally) | absorbed | not needed under Go slices | n/a | n/a |
@@ -141,7 +143,7 @@ absent API.
 | `maxGridDiskSize` | `MaxGridDiskSize` | — (internal sizing) | absorbed | exposed here for Append* buffer pre-sizing | n/a | n/a |
 | `gridDisk` | `Cell.GridDisk`; `Cell.AppendGridDisk` | `GridDisk`; `Cell.GridDisk` | available | unordered and null-pruned in both | convenience allocates in both; Append form is 0-alloc with a warm buffer here | mechanical |
 | `gridDiskUnsafe` | `Cell.GridDiskUnsafe`; `Cell.AppendGridDiskUnsafe` | — | missing | single-origin unsafe (ring-ordered fast path; ErrPentagon on distortion) not exposed by the binding — its GridDisksUnsafe covers only the batch form | Append form is 0-alloc here | n/a |
-| `gridDiskDistances` | `Cell.GridDiskDistances`; `Cell.AppendGridDiskDistances` | `GridDiskDistances`; `Cell.GridDiskDistances` | different-shape | flat ([]Cell, []int32) here vs distance-indexed [][]Cell rings there; binding keeps H3_NULL slots inside rings on pentagon-affected disks, this library prunes them | 2 allocs vs k+2 allocs; Append form 0-alloc here | adaptation |
+| `gridDiskDistances` | `Cell.GridDiskDistances`; `Cell.AppendGridDiskDistances`; `Cell.GridDiskDistancesGrouped` | `GridDiskDistances`; `Cell.GridDiskDistances` | different-shape | flat ([]Cell, []int32) remains primary here; GridDiskDistancesGrouped provides distance-indexed [][]Cell rings; binding keeps H3_NULL slots inside pentagon-affected rings while this library prunes them | flat form 2 allocs and Append 0-alloc; Grouped is 3 allocs for common k vs k+2 binding allocs | mechanical |
 | `gridDiskDistancesSafe` | `Cell.GridDiskDistancesSafe` | `GridDiskDistancesSafe`; `Cell.GridDiskDistancesSafe` | different-shape | same shape difference as gridDiskDistances | allocating in both | adaptation |
 | `gridDiskDistancesUnsafe` | `Cell.GridDiskDistancesUnsafe` | `GridDiskDistancesUnsafe`; `Cell.GridDiskDistancesUnsafe` | different-shape | same shape difference; ErrPentagon semantics identical | allocating in both | adaptation |
 | `gridDisksUnsafe` | `GridDisksUnsafe` | `GridDisksUnsafe` | different-shape | one flat fixed-stride buffer (exact C layout; unpruned) here vs pruned per-origin [][]Cell there | 1 alloc here vs origins+1 allocs there | adaptation |
@@ -158,9 +160,9 @@ absent API.
 
 | H3 C function | This library | uber/h3-go v4 | Status | Semantics | Allocation | Migration |
 |---|---|---|---|---|---|---|
-| `cellToParent` | `Cell.Parent` | `Cell.Parent`; `Cell.ImmediateParent` | available | no ImmediateParent sugar here: use c.Parent(c.Resolution()-1) | none | mechanical |
+| `cellToParent` | `Cell.Parent`; `Cell.ImmediateParent` | `Cell.Parent`; `Cell.ImmediateParent` | available | ImmediateParent has identical boundary and error semantics in both | none | mechanical |
 | `cellToChildrenSize` | `Cell.NumChildren` | — (internal sizing) | absorbed | exposed here for pre-sizing and planning | n/a | n/a |
-| `cellToChildren` | `Cell.Children`; `Cell.AppendChildren`; `Cell.ChildrenSeq` | `Cell.Children`; `Cell.ImmediateChildren` | available | canonical order in both; iterator form streams without materializing here | Append form 0-alloc and Seq form allocation-free here vs slice per call there | mechanical |
+| `cellToChildren` | `Cell.Children`; `Cell.AppendChildren`; `Cell.ChildrenSeq`; `Cell.ImmediateChildren`; `Cell.AppendImmediateChildren` | `Cell.Children`; `Cell.ImmediateChildren` | available | canonical order in both; this library additionally provides zero-allocation Append and Seq forms | Append forms 0-alloc and Seq allocation-free here vs slice per call there | mechanical |
 | `cellToCenterChild` | `Cell.CenterChild` | `Cell.CenterChild` | available | identical | none | mechanical |
 | `cellToChildPos` | `Cell.ChildPos` | `CellToChildPos`; `Cell.ChildPos` | available | int64 position here vs int there | none | mechanical |
 | `childPosToCell` | `Cell.ChildAtPos` | `ChildPosToCell`; `Cell.ChildPosToCell` | available | named ChildAtPos here; position is int64 here vs int there | none | mechanical |
