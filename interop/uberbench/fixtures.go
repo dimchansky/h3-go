@@ -116,13 +116,10 @@ var (
 		return out
 	}()
 
-	cellsPure5  = mustCellsPure(5)
-	cellsPure9  = mustCellsPure(benchRes)
-	cellsPure15 = mustCellsPure(15)
+	cellsPure5 = mustCellsPure(5)
+	cellsPure9 = mustCellsPure(benchRes)
 
-	cellsUber5  = toUberCells(cellsPure5)
-	cellsUber9  = toUberCells(cellsPure9)
-	cellsUber15 = toUberCells(cellsPure15)
+	cellsUber9 = toUberCells(cellsPure9)
 
 	// cellStrings are the canonical string forms of cellsPure9, for the
 	// parse benchmarks.
@@ -283,14 +280,6 @@ func toUberCells(in []pure.Cell) []uber.Cell {
 	out := make([]uber.Cell, len(in))
 	for i, c := range in {
 		out[i] = uber.Cell(uint64(c))
-	}
-	return out
-}
-
-func toPureCells(in []uber.Cell) []pure.Cell {
-	out := make([]pure.Cell, len(in))
-	for i, c := range in {
-		out[i] = pure.Cell(uint64(c))
 	}
 	return out
 }

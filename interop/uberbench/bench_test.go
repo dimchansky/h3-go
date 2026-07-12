@@ -34,6 +34,11 @@ import (
 // libraries return differently shaped results, the benchmark comments say
 // so. Inputs cycle deterministic datasets from fixtures.go; the cycling
 // index arithmetic is identical for both implementations.
+//
+// The loops deliberately use the classic b.N + package-level sink pattern
+// rather than b.Loop(): the benchmarks cycle datasets by loop index, and
+// keeping one uniform pattern across every pairing matters more here than
+// b.Loop's convenience. Do not modernize half of them.
 
 var (
 	sinkCell   pure.Cell
@@ -49,7 +54,6 @@ var (
 	sinkVerts  []pure.Vertex
 	sinkUVerts []uber.Vertex
 	sinkInt    int
-	sinkI64    int64
 	sinkF64    float64
 	sinkBool   bool
 	sinkStr    string
