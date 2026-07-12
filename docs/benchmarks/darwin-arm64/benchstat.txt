@@ -1,0 +1,123 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/dimchansky/h3-go/interop/uberbench
+cpu: Apple M1 Max
+                                  │     pure     │                   uber                   │               pure-cold               │               pure-warm               │
+                                  │    sec/op    │     sec/op      vs base                  │    sec/op     vs base                 │   sec/op     vs base                  │
+LatLngToCell/res=9-10                646.3n ± 3%     561.9n ±  1%    -13.07% (p=0.000 n=10)
+CellToLatLng/res=9-10                361.4n ± 1%     318.4n ±  0%    -11.91% (p=0.000 n=10)
+CellToBoundary/res=9-10              1.112µ ± 3%     1.057µ ±  0%     -4.95% (p=0.000 n=10)
+CellToParent/res=9to7-10             4.669n ± 1%    47.835n ±  0%   +924.52% (p=0.000 n=10)
+GridDistance-10                      321.2n ± 4%     205.1n ±  0%    -36.17% (p=0.000 n=10)
+IsNeighbor-10                        66.69n ± 1%    102.20n ±  0%    +53.25% (p=0.000 n=10)
+CellArea/unit=km2-10                 2.293µ ± 0%     1.742µ ±  0%    -24.01% (p=0.000 n=10)
+ParseCell-10                         42.80n ± 1%     78.86n ±  1%    +84.29% (p=0.000 n=10)
+CellToString-10                      23.80n ± 5%     23.01n ±  2%     -3.30% (p=0.015 n=10)
+IsValidCell-10                       3.879n ± 4%    34.135n ±  1%   +779.99% (p=0.000 n=10)
+Resolution-10                       0.6424n ± 3%   32.5250n ±  2%  +4963.04% (p=0.000 n=10)
+DirectedEdges-10                     31.97n ± 3%     61.62n ±  3%    +92.71% (p=0.000 n=10)
+DirectedEdgeBoundary-10              838.3n ± 2%     712.3n ±  2%    -15.03% (p=0.000 n=10)
+Vertexes-10                          2.843µ ± 3%     1.633µ ±  1%    -42.57% (p=0.000 n=10)
+VertexLatLng-10                      460.4n ± 3%     373.6n ±  2%    -18.83% (p=0.000 n=10)
+Children/depth=1-10                  56.12n ± 2%    132.30n ±  2%   +135.77% (p=0.000 n=10)    56.51n ± 2%       ~ (p=0.756 n=10)     36.02n ± 3%  -35.81% (p=0.000 n=10)
+Children/depth=3-10                  2.153µ ± 2%     2.030µ ±  1%     -5.73% (p=0.000 n=10)    2.166µ ± 5%       ~ (p=0.209 n=10)     1.848µ ± 2%  -14.21% (p=0.000 n=10)
+Children/depth=5-10                 101.52µ ± 2%     89.94µ ±  1%    -11.40% (p=0.000 n=10)   101.19µ ± 1%       ~ (p=0.089 n=10)     90.24µ ± 2%  -11.11% (p=0.000 n=10)
+GridDisk/k=1-10                      152.2n ± 1%     167.8n ±  3%    +10.18% (p=0.000 n=10)    153.6n ± 4%       ~ (p=0.470 n=10)     126.8n ± 1%  -16.72% (p=0.000 n=10)
+GridDisk/k=5-10                      1.844µ ± 2%     1.649µ ±  3%    -10.55% (p=0.000 n=10)    1.841µ ± 3%       ~ (p=0.837 n=10)     1.723µ ± 3%   -6.54% (p=0.000 n=10)
+GridDisk/k=20-10                     23.40µ ± 2%     20.38µ ±  2%    -12.89% (p=0.000 n=10)    23.47µ ± 1%       ~ (p=0.988 n=10)     22.50µ ± 2%   -3.87% (p=0.002 n=10)
+GridDiskDistances/k=5-10             1.961µ ± 1%     2.080µ ±  2%     +6.04% (p=0.000 n=10)                                           1.757µ ± 2%  -10.40% (p=0.000 n=10)
+GridRing/k=5-10                      644.6n ± 2%     639.0n ±  1%     -0.88% (p=0.003 n=10)                                           595.0n ± 2%   -7.69% (p=0.000 n=10)
+GridPath-10                          8.714µ ± 2%     5.949µ ±  2%    -31.73% (p=0.000 n=10)                                           8.654µ ± 2%   -0.69% (p=0.020 n=10)
+GridDisksUnsafe/origins=64/k=2-10    20.56µ ± 1%     19.97µ ±  2%     -2.87% (p=0.001 n=10)
+Compact/set=sf9-10                   28.78µ ± 1%     11.92µ ± 17%    -58.60% (p=0.000 n=10)                                           27.75µ ± 3%   -3.57% (p=0.000 n=10)
+Uncompact/res=4to9-10                95.17µ ± 4%     94.30µ ±  3%          ~ (p=0.436 n=10)                                           87.74µ ± 0%   -7.81% (p=0.000 n=10)
+PolygonToCells/poly=sf/res=7-10      74.10µ ± 2%     57.78µ ±  1%    -22.02% (p=0.000 n=10)                                           73.61µ ± 0%   -0.67% (p=0.001 n=10)
+PolygonToCells/poly=sf/res=9-10      906.0µ ± 4%     701.0µ ±  2%    -22.63% (p=0.000 n=10)                                           888.3µ ± 2%   -1.95% (p=0.007 n=10)
+PolygonToCells/poly=sf/res=11-10     32.27m ± 1%     24.64m ±  3%    -23.63% (p=0.000 n=10)                                           31.58m ± 1%   -2.15% (p=0.000 n=10)
+CellsToMultiPolygon/n=331-10         708.3µ ± 2%     395.7µ ±  1%    -44.13% (p=0.000 n=10)
+BatchLatLngToCell/n=10000-10         6.488m ± 1%     5.614m ±  0%    -13.48% (p=0.000 n=10)
+ServiceWorkload/pts=256-10           196.4µ ± 3%     258.0µ ±  2%    +31.41% (p=0.000 n=10)                                           190.9µ ± 1%   -2.79% (p=0.000 n=10)
+geomean                              2.265µ          2.730µ          +20.53%                   2.085µ       +0.33%                ¹   14.47µ        -8.88%                ¹
+¹ benchmark set differs from baseline; geomeans may not be comparable
+
+                                  │       pure       │                   uber                    │                pure-cold                │                  pure-warm                  │
+                                  │       B/op       │      B/op       vs base                   │      B/op       vs base                 │     B/op      vs base                       │
+LatLngToCell/res=9-10                    0.00 ± 0%         24.00 ± 0%         ? (p=0.000 n=10)
+CellToLatLng/res=9-10                    0.00 ± 0%         16.00 ± 0%         ? (p=0.000 n=10)
+CellToBoundary/res=9-10                   0.0 ± 0%         272.0 ± 0%         ? (p=0.000 n=10)
+CellToParent/res=9to7-10                0.000 ± 0%         8.000 ± 0%         ? (p=0.000 n=10)
+GridDistance-10                         0.000 ± 0%         8.000 ± 0%         ? (p=0.000 n=10)
+IsNeighbor-10                           0.000 ± 0%         4.000 ± 0%         ? (p=0.000 n=10)
+CellArea/unit=km2-10                    0.000 ± 0%         8.000 ± 0%         ? (p=0.000 n=10)
+ParseCell-10                            0.000 ± 0%         0.000 ± 0%         ~ (p=1.000 n=10) ¹
+CellToString-10                         16.00 ± 0%         16.00 ± 0%         ~ (p=1.000 n=10) ¹
+IsValidCell-10                          0.000 ± 0%         0.000 ± 0%         ~ (p=1.000 n=10) ¹
+Resolution-10                           0.000 ± 0%         0.000 ± 0%         ~ (p=1.000 n=10) ¹
+DirectedEdges-10                        48.00 ± 0%         48.00 ± 0%         ~ (p=1.000 n=10) ¹
+DirectedEdgeBoundary-10                   0.0 ± 0%         208.0 ± 0%         ? (p=0.000 n=10)
+Vertexes-10                             48.00 ± 0%         48.00 ± 0%         ~ (p=1.000 n=10) ¹
+VertexLatLng-10                          0.00 ± 0%         16.00 ± 0%         ? (p=0.000 n=10)
+Children/depth=1-10                     64.00 ± 0%         72.00 ± 0%   +12.50% (p=0.000 n=10)         64.00 ± 0%       ~ (p=1.000 n=10) ¹      0.00 ± 0%  -100.00% (p=0.000 n=10)
+Children/depth=3-10                   3.000Ki ± 0%       3.008Ki ± 0%    +0.26% (p=0.000 n=10)       3.000Ki ± 0%       ~ (p=1.000 n=10) ¹   0.000Ki ± 0%  -100.00% (p=0.000 n=10)
+Children/depth=5-10                 139265.00 ± 0%     139272.00 ± 0%    +0.01% (p=0.000 n=10)     139265.00 ± 0%       ~ (p=1.000 n=10)       10.00 ± 0%   -99.99% (p=0.000 n=10)
+GridDisk/k=1-10                         64.00 ± 0%         64.00 ± 0%         ~ (p=1.000 n=10) ¹       64.00 ± 0%       ~ (p=1.000 n=10) ¹      0.00 ± 0%  -100.00% (p=0.000 n=10)
+GridDisk/k=5-10                         768.0 ± 0%         768.0 ± 0%         ~ (p=1.000 n=10) ¹       768.0 ± 0%       ~ (p=1.000 n=10) ¹       0.0 ± 0%  -100.00% (p=0.000 n=10)
+GridDisk/k=20-10                      10.00Ki ± 0%       10.00Ki ± 0%         ~ (p=1.000 n=10) ¹     10.00Ki ± 0%       ~ (p=1.000 n=10) ¹    0.00Ki ± 0%  -100.00% (p=0.000 n=10)
+GridDiskDistances/k=5-10              1.125Ki ± 0%       1.977Ki ± 0%   +75.69% (p=0.000 n=10)                                               0.000Ki ± 0%  -100.00% (p=0.000 n=10)
+GridRing/k=5-10                         240.0 ± 0%         240.0 ± 0%         ~ (p=1.000 n=10) ¹                                                 0.0 ± 0%  -100.00% (p=0.000 n=10)
+GridPath-10                             183.0 ± 0%         191.0 ± 0%    +4.37% (p=0.000 n=10)                                                   0.0 ± 0%  -100.00% (p=0.000 n=10)
+GridDisksUnsafe/origins=64/k=2-10     9.500Ki ± 0%      11.250Ki ± 0%   +18.42% (p=0.000 n=10)
+Compact/set=sf9-10                    31.95Ki ± 0%       10.00Ki ± 0%   -68.70% (p=0.000 n=10)                                               21.95Ki ± 0%   -31.30% (p=0.000 n=10)
+Uncompact/res=4to9-10               139265.00 ± 0%     139272.00 ± 0%    +0.01% (p=0.000 n=10)                                                 10.00 ± 0%   -99.99% (p=0.000 n=10)
+PolygonToCells/poly=sf/res=7-10       3.000Ki ± 0%       1.039Ki ± 0%   -65.36% (p=0.000 n=10)                                               2.000Ki ± 0%   -33.33% (p=0.000 n=10)
+PolygonToCells/poly=sf/res=9-10      144.00Ki ± 0%       48.04Ki ± 0%   -66.64% (p=0.000 n=10)                                               96.04Ki ± 0%   -33.31% (p=0.000 n=10)
+PolygonToCells/poly=sf/res=11-10      6.305Mi ± 0%       2.102Mi ± 0%   -66.67% (p=0.000 n=10)                                               4.260Mi ± 0%   -32.43% (p=0.000 n=10)
+CellsToMultiPolygon/n=331-10         57.172Ki ± 0%       2.094Ki ± 0%   -96.34% (p=0.000 n=10)
+BatchLatLngToCell/n=10000-10            0.0Ki ± 0%       234.4Ki ± 0%         ? (p=0.000 n=10)
+ServiceWorkload/pts=256-10            16.00Ki ± 0%       36.00Ki ± 0%  +125.00% (p=0.000 n=10)                                                0.00Ki ± 0%  -100.00% (p=0.000 n=10)
+geomean                                            ²                   ?                       ²     1.512Ki       +0.00%                ³                 ?                       ³ ² ⁴
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+³ benchmark set differs from baseline; geomeans may not be comparable
+⁴ ratios must be >0 to compute geomean
+
+                                  │      pure       │                  uber                  │              pure-cold              │                 pure-warm                 │
+                                  │    allocs/op    │  allocs/op   vs base                   │ allocs/op   vs base                 │ allocs/op   vs base                       │
+LatLngToCell/res=9-10                  0.000 ± 0%      2.000 ± 0%         ? (p=0.000 n=10)
+CellToLatLng/res=9-10                  0.000 ± 0%      1.000 ± 0%         ? (p=0.000 n=10)
+CellToBoundary/res=9-10                0.000 ± 0%      2.000 ± 0%         ? (p=0.000 n=10)
+CellToParent/res=9to7-10               0.000 ± 0%      1.000 ± 0%         ? (p=0.000 n=10)
+GridDistance-10                        0.000 ± 0%      1.000 ± 0%         ? (p=0.000 n=10)
+IsNeighbor-10                          0.000 ± 0%      1.000 ± 0%         ? (p=0.000 n=10)
+CellArea/unit=km2-10                   0.000 ± 0%      1.000 ± 0%         ? (p=0.000 n=10)
+ParseCell-10                           0.000 ± 0%      0.000 ± 0%         ~ (p=1.000 n=10) ¹
+CellToString-10                        1.000 ± 0%      1.000 ± 0%         ~ (p=1.000 n=10) ¹
+IsValidCell-10                         0.000 ± 0%      0.000 ± 0%         ~ (p=1.000 n=10) ¹
+Resolution-10                          0.000 ± 0%      0.000 ± 0%         ~ (p=1.000 n=10) ¹
+DirectedEdges-10                       1.000 ± 0%      1.000 ± 0%         ~ (p=1.000 n=10) ¹
+DirectedEdgeBoundary-10                0.000 ± 0%      2.000 ± 0%         ? (p=0.000 n=10)
+Vertexes-10                            1.000 ± 0%      1.000 ± 0%         ~ (p=1.000 n=10) ¹
+VertexLatLng-10                        0.000 ± 0%      1.000 ± 0%         ? (p=0.000 n=10)
+Children/depth=1-10                    1.000 ± 0%      2.000 ± 0%  +100.00% (p=0.000 n=10)     1.000 ± 0%       ~ (p=1.000 n=10) ¹   0.000 ± 0%  -100.00% (p=0.000 n=10)
+Children/depth=3-10                    1.000 ± 0%      2.000 ± 0%  +100.00% (p=0.000 n=10)     1.000 ± 0%       ~ (p=1.000 n=10) ¹   0.000 ± 0%  -100.00% (p=0.000 n=10)
+Children/depth=5-10                    1.000 ± 0%      2.000 ± 0%  +100.00% (p=0.000 n=10)     1.000 ± 0%       ~ (p=1.000 n=10) ¹   0.000 ± 0%  -100.00% (p=0.000 n=10)
+GridDisk/k=1-10                        1.000 ± 0%      1.000 ± 0%         ~ (p=1.000 n=10) ¹   1.000 ± 0%       ~ (p=1.000 n=10) ¹   0.000 ± 0%  -100.00% (p=0.000 n=10)
+GridDisk/k=5-10                        1.000 ± 0%      1.000 ± 0%         ~ (p=1.000 n=10) ¹   1.000 ± 0%       ~ (p=1.000 n=10) ¹   0.000 ± 0%  -100.00% (p=0.000 n=10)
+GridDisk/k=20-10                       1.000 ± 0%      1.000 ± 0%         ~ (p=1.000 n=10) ¹   1.000 ± 0%       ~ (p=1.000 n=10) ¹   0.000 ± 0%  -100.00% (p=0.000 n=10)
+GridDiskDistances/k=5-10               2.000 ± 0%      9.000 ± 0%  +350.00% (p=0.000 n=10)                                           0.000 ± 0%  -100.00% (p=0.000 n=10)
+GridRing/k=5-10                        1.000 ± 0%      1.000 ± 0%         ~ (p=1.000 n=10) ¹                                         0.000 ± 0%  -100.00% (p=0.000 n=10)
+GridPath-10                            1.000 ± 0%      2.000 ± 0%  +100.00% (p=0.000 n=10)                                           0.000 ± 0%  -100.00% (p=0.000 n=10)
+GridDisksUnsafe/origins=64/k=2-10      1.000 ± 0%      2.000 ± 0%  +100.00% (p=0.000 n=10)
+Compact/set=sf9-10                     5.000 ± 0%      1.000 ± 0%   -80.00% (p=0.000 n=10)                                           4.000 ± 0%   -20.00% (p=0.000 n=10)
+Uncompact/res=4to9-10                  1.000 ± 0%      2.000 ± 0%  +100.00% (p=0.000 n=10)                                           0.000 ± 0%  -100.00% (p=0.000 n=10)
+PolygonToCells/poly=sf/res=7-10        3.000 ± 0%      3.000 ± 0%         ~ (p=1.000 n=10) ¹                                         2.000 ± 0%   -33.33% (p=0.000 n=10)
+PolygonToCells/poly=sf/res=9-10        3.000 ± 0%      3.000 ± 0%         ~ (p=1.000 n=10) ¹                                         2.000 ± 0%   -33.33% (p=0.000 n=10)
+PolygonToCells/poly=sf/res=11-10       3.000 ± 0%      3.000 ± 0%         ~ (p=1.000 n=10) ¹                                         2.000 ± 0%   -33.33% (p=0.000 n=10)
+CellsToMultiPolygon/n=331-10        1187.000 ± 0%      4.000 ± 0%   -99.66% (p=0.000 n=10)
+BatchLatLngToCell/n=10000-10           0.00k ± 0%     20.00k ± 0%         ? (p=0.000 n=10)
+ServiceWorkload/pts=256-10             256.0 ± 0%     2560.0 ± 0%  +900.00% (p=0.000 n=10)                                             0.0 ± 0%  -100.00% (p=0.000 n=10)
+geomean                                           ²                ?                       ²   1.000       +0.00%                ³               ?                       ³ ² ⁴
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+³ benchmark set differs from baseline; geomeans may not be comparable
+⁴ ratios must be >0 to compute geomean

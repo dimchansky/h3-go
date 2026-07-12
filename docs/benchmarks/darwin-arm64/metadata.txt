@@ -1,0 +1,19 @@
+date_utc: 2026-07-12T16:26:44Z
+repo_commit: a64705f5457630172bd09df6e865be9374e07a92
+go_version: go version go1.25.4 darwin/arm64
+uber_h3_go: github.com/uber/h3-go/v4 v4.4.1
+dimchansky_h3_go: github.com/dimchansky/h3-go v0.0.0 => ../.. (replaced by ../.., i.e. repo_commit above)
+vendored_h3_c_in_binding: v4.4.1
+pure_go_h3_target: H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module)
+os: Darwin Dmitrijs-MacBook-Pro-2.local 25.5.0 Darwin Kernel Version 25.5.0: Tue Jun  9 22:18:58 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6000 arm64
+cpu: Apple M1 Max
+ncpu_online: 10
+gomaxprocs: default (= ncpu_online; benchmarks are single-goroutine)
+cgo_enabled: 1 (required by the binding; the pure-Go library itself needs none)
+cc: clang — Apple clang version 21.0.0 (clang-2100.1.1.101)
+cgo_cflags: -O2 -g
+goflags: 
+bench_flags: -count=10 -benchtime=1s -benchmem
+memprobe_iters: 3
+benchstat: golang.org/x/perf/cmd/benchstat@v0.0.0-20260709024250-82a0b07e230d
+environment: dedicated developer machine, mains power, minimal background load
