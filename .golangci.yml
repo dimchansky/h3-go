@@ -1,3 +1,8 @@
+# Lint policy: docs/lint-policy.md. The repository has two code tiers —
+# mechanically ported C-shaped files (kept diffable against upstream H3 C)
+# and idiomatic Go (public API files, internal/cli, tools, new tests).
+# Style-tier findings are excluded ONLY for the ported tier, by path, in
+# linters.exclusions.rules below; everything else lints strictly.
 version: "2"
 
 run:
@@ -35,44 +40,53 @@ linters:
     nolintlint:
       require-explanation: true
       require-specific: true
-    gocritic:
-      # The ported layer intentionally mirrors H3 C statement-for-statement
-      # (docs/public-api-architecture.md §7); these style rewrites would
-      # reduce line-level traceability to the C source.
-      disabled-checks:
-        - assignOp
-        - ifElseChain
     revive:
-      # Explicit rule set. Omitted on purpose, because the ported layer keeps
-      # C names and C-shaped bodies (docs/public-api-architecture.md §7):
-      # var-naming, var-declaration, indent-error-flow, increment-decrement,
-      # unreachable-code, superfluous-else, empty-block.
+      # Full rule set, style rules included. The style rules are NOT
+      # disabled globally: they apply to all idiomatic code and are excluded
+      # only for the mechanically ported tier via exclusions.rules below.
       rules:
         - name: exported
         - name: blank-imports
         - name: context-as-argument
         - name: context-keys-type
         - name: dot-imports
+        - name: empty-block
         - name: error-naming
         - name: error-return
         - name: error-strings
         - name: errorf
+        - name: increment-decrement
+        - name: indent-error-flow
         - name: package-comments
         - name: range
         - name: receiver-naming
         - name: redefines-builtin-id
+        - name: superfluous-else
         - name: time-naming
         - name: unexported-return
+        - name: unreachable-code
+        - name: var-declaration
+        - name: var-naming
   exclusions:
-    # v1: issues.exclude-use-default: false
     presets: []
-    # v1: issues.exclude-rules
     rules:
-      - path: '.*_test\.go$'
-        linters: [govet]
-        text: "fieldalignment"
-      - linters: [staticcheck]
-        text: "SA1019"
+      # Mechanically ported C-shaped files mirror upstream H3 C statement
+      # for statement (CONTRIBUTING.md ground rule 2). Style-only rewrites —
+      # `x = x + 1` → `x++`, if/else → switch, dropping else branches,
+      # Go-style renames, zero-value declaration trimming — would destroy
+      # the line-level diffability that upstream syncs rely on, so the
+      # style-tier checks below are excluded for exactly those files:
+      # `<cfile>_<name>.go` ported implementation/test files and
+      # `test<Upstream>_test.go` ported upstream test suites. Correctness
+      # checks (staticcheck, govet, unused, the remaining gocritic and
+      # revive rules) still apply to them. Revisit an entry only if a file
+      # stops being a mechanical port; see docs/lint-policy.md.
+      - path: '^(algos|baseCells|bbox|coordijk|directedEdge|faceijk|h3api|h3[Ii]ndex|iterators|latLng|linkedGeo|localij|mathExtensions|polyfill|polygon|utility|vec2d|vec3d|vertex[Gg]raph|vertex)_[A-Za-z0-9_]+\.go$|^test[A-Z][A-Za-z0-9_]*_test\.go$'
+        linters: [gocritic]
+        text: '^(assignOp|ifElseChain):'
+      - path: '^(algos|baseCells|bbox|coordijk|directedEdge|faceijk|h3api|h3[Ii]ndex|iterators|latLng|linkedGeo|localij|mathExtensions|polyfill|polygon|utility|vec2d|vec3d|vertex[Gg]raph|vertex)_[A-Za-z0-9_]+\.go$|^test[A-Z][A-Za-z0-9_]*_test\.go$'
+        linters: [revive]
+        text: '^(var-naming|var-declaration|indent-error-flow|increment-decrement|unreachable-code|superfluous-else|empty-block):'
 
 issues:
   max-issues-per-linter: 0

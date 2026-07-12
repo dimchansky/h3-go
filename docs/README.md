@@ -12,6 +12,7 @@ contributor ground rules are in [CONTRIBUTING.md](../CONTRIBUTING.md).
 | [DEVIATIONS.md](DEVIATIONS.md) | Every *intentional* behavioral difference from H3 C. Anything not listed must match C exactly (enforced by the parity suite). Consulted on every upstream sync. |
 | [FUTURE_WORK.md](FUTURE_WORK.md) | Deliberately deferred features with full context (GeoJSON, workspaces, …), profiling-gated ideas, rejected designs, and the pre-v1.0.0 checklist. |
 | [ci-policy.md](ci-policy.md) | Which CI tier runs when and why the expensive suites are not on every push. |
+| [lint-policy.md](lint-policy.md) | Why style-tier lint checks are excluded for mechanically ported files (and only those), the `//nolint` inventory, and when to revisit each exclusion. |
 
 ## CLI
 
