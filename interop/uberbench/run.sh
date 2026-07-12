@@ -61,6 +61,15 @@ memory_bytes() {
     esac
 }
 
+go_env_value() {
+    value="$(go env "$1")"
+    if [ -n "$value" ]; then
+        printf '%s' "$value"
+    else
+        printf '<empty>'
+    fi
+}
+
 CC_BIN="$(go env CC)"
 
 # The vendored-version probe below reads the binding out of the module
@@ -82,12 +91,12 @@ go mod download github.com/uber/h3-go/v4 >/dev/null 2>&1 || true
     echo "gomaxprocs: default (= ncpu_online; benchmarks are single-goroutine)"
     echo "cgo_enabled: 1 (required by the binding; the pure-Go library itself needs none)"
     echo "cc: $CC_BIN — $("$CC_BIN" --version 2>/dev/null | head -1)"
-    echo "cgo_cflags: $(go env CGO_CFLAGS)"
-    echo "cgo_cppflags: $(go env CGO_CPPFLAGS)"
-    echo "cgo_cxxflags: $(go env CGO_CXXFLAGS)"
-    echo "cgo_ldflags: $(go env CGO_LDFLAGS)"
-    echo "gogccflags: $(go env GOGCCFLAGS)"
-    echo "goflags: $(go env GOFLAGS)"
+    echo "cgo_cflags: $(go_env_value CGO_CFLAGS)"
+    echo "cgo_cppflags: $(go_env_value CGO_CPPFLAGS)"
+    echo "cgo_cxxflags: $(go_env_value CGO_CXXFLAGS)"
+    echo "cgo_ldflags: $(go_env_value CGO_LDFLAGS)"
+    echo "gogccflags: $(go_env_value GOGCCFLAGS | sed 's|-ffile-prefix-map=[^ ]*=/tmp/go-build|-ffile-prefix-map=<go-build-temp>=/tmp/go-build|')"
+    echo "goflags: $(go_env_value GOFLAGS)"
     echo "bench_flags: -count=$COUNT -benchtime=$BENCHTIME -benchmem"
     echo "memprobe_iters: $MEMITERS"
     echo "benchstat: $BENCHSTAT"
