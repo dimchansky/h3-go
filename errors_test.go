@@ -86,13 +86,10 @@ func TestSentinelsDistinct(t *testing.T) {
 }
 
 func TestToErrDoesNotAllocate(t *testing.T) {
-	allocs := testing.AllocsPerRun(100, func() {
+	assertMaxAllocsPerRun(t, "toErr", 100, 0, func() {
 		_ = toErr(ePentagon)
 		_ = toErr(eSuccess)
 	})
-	if allocs != 0 {
-		t.Errorf("toErr allocates %v times per run, want 0", allocs)
-	}
 }
 
 // TestAliasTypeIdentity pins the architectural keystone: h3Index is an alias

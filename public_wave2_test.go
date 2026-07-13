@@ -360,9 +360,7 @@ func TestVertexes(t *testing.T) {
 func TestWave2Allocations(t *testing.T) {
 	assertAllocs := func(name string, want float64, f func()) {
 		t.Helper()
-		if got := testing.AllocsPerRun(200, f); got > want {
-			t.Errorf("%s allocates %v/run, want <= %v", name, got, want)
-		}
+		assertMaxAllocsPerRun(t, name, 200, want, f)
 	}
 
 	// AppendGridDisk warm path: 1 internal distance-scratch alloc remains

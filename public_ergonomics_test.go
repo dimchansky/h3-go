@@ -189,29 +189,23 @@ func TestGridDiskDistancesGrouped(t *testing.T) {
 
 func TestErgonomicAPIAllocations(t *testing.T) {
 	childrenBuf := make([]Cell, 0, 7)
-	if got := testing.AllocsPerRun(200, func() {
+	assertMaxAllocsPerRun(t, "AppendImmediateChildren warm", 200, 0, func() {
 		children, err := sfCellRes9.AppendImmediateChildren(childrenBuf[:0])
 		if err != nil || len(children) != 7 {
 			t.Fatalf("AppendImmediateChildren = %d, %v", len(children), err)
 		}
-	}); got != 0 {
-		t.Errorf("AppendImmediateChildren warm allocs = %g, want 0", got)
-	}
-	if got := testing.AllocsPerRun(200, func() {
+	})
+	assertMaxAllocsPerRun(t, "typed IsValidIndex", 200, 0, func() {
 		if !IsValidIndex(sfCellRes9) {
 			t.Fatal("valid cell rejected")
 		}
-	}); got != 0 {
-		t.Errorf("typed IsValidIndex allocs = %g, want 0", got)
-	}
-	if got := testing.AllocsPerRun(100, func() {
+	})
+	assertMaxAllocsPerRun(t, "GridDiskDistancesGrouped", 100, 3, func() {
 		rings, err := sfCellRes9.GridDiskDistancesGrouped(2)
 		if err != nil || len(rings) != 3 {
 			t.Fatalf("GridDiskDistancesGrouped = %d, %v", len(rings), err)
 		}
-	}); got > 3 {
-		t.Errorf("GridDiskDistancesGrouped allocs = %g, want at most 3", got)
-	}
+	})
 }
 
 func TestNumIcosahedronFaces(t *testing.T) {

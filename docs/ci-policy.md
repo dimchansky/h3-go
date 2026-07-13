@@ -16,6 +16,13 @@ not worth ~9 minutes on every push. If a concurrency-bearing feature (e.g.
 polyfill workspaces) ever lands, revisit this assessment and move race back
 into the per-change tier.
 
+Exact allocation budgets are enforced by the ordinary optimized test builds
+on both the oldest supported Go version and stable. Race instrumentation
+changes escape and allocation profiles, so allocation assertions use a
+build-tagged helper: non-race builds measure with `testing.AllocsPerRun`,
+while race builds execute each measured closure once for behavioral and race
+coverage without applying the production allocation threshold.
+
 ## Tiers
 
 | Tier | Jobs | Runs when | Typical duration |

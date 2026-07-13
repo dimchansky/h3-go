@@ -400,9 +400,7 @@ func TestWave1Allocations(t *testing.T) {
 
 	assertAllocs := func(name string, want float64, f func()) {
 		t.Helper()
-		if got := testing.AllocsPerRun(200, f); got > want {
-			t.Errorf("%s allocates %v/run, want <= %v", name, got, want)
-		}
+		assertMaxAllocsPerRun(t, name, 200, want, f)
 	}
 
 	assertAllocs("LatLngToCell", 0, func() { _, _ = LatLngToCell(ll, 9) })

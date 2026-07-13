@@ -176,7 +176,7 @@ func TestChildrenSeqAndCellsAtRes(t *testing.T) {
 
 func TestIterAllocations(t *testing.T) {
 	parent, _ := sfCellRes9.Parent(5)
-	allocs := testing.AllocsPerRun(50, func() {
+	assertMaxAllocsPerRun(t, "ChildrenSeq iteration", 50, 0, func() {
 		n := 0
 		for range parent.ChildrenSeq(8) {
 			n++
@@ -185,9 +185,6 @@ func TestIterAllocations(t *testing.T) {
 			t.Fatal(n)
 		}
 	})
-	if allocs != 0 {
-		t.Errorf("ChildrenSeq iteration allocates %v/run, want 0", allocs)
-	}
 }
 
 func TestCompactUncompactRoundTrip(t *testing.T) {
@@ -376,9 +373,7 @@ func TestMetrics(t *testing.T) {
 func TestWave3Allocations(t *testing.T) {
 	assertAllocs := func(name string, want float64, f func()) {
 		t.Helper()
-		if got := testing.AllocsPerRun(100, f); got > want {
-			t.Errorf("%s allocates %v/run, want <= %v", name, got, want)
-		}
+		assertMaxAllocsPerRun(t, name, 100, want, f)
 	}
 
 	assertAllocs("Cell.AreaKm2", 0, func() { _, _ = sfCellRes9.AreaKm2() })
