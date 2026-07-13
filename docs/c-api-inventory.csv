@@ -40,7 +40,7 @@ getRes0Cells,H3Error getRes0Cells(H3Index *out),baseCells__getRes0Cells.go,getRe
 pentagonCount,int pentagonCount(void),h3index__pentagonCount.go,pentagonCount,func pentagonCount() int32,true,attr: h3Index.c
 getPentagons,"H3Error getPentagons(int res, H3Index *out)",h3index__getPentagons.go,getPentagons,"func getPentagons(res int32, out []h3Index) h3Error",true,attr: h3Index.c
 getResolution,int getResolution(H3Index h),h3index__getters.go,getResolution,func getResolution(h h3Index) int32,true,attr: h3Index.c
-getBaseCellNumber,int getBaseCellNumber(H3Index h),h3Index_getBaseCellNumber.go,getBaseCellNumber,func getBaseCellNumber(h h3Index) int32,true,attr: h3Index.c
+getBaseCellNumber,int getBaseCellNumber(H3Index h),h3index_getBaseCellNumber.go,getBaseCellNumber,func getBaseCellNumber(h h3Index) int32,true,attr: h3Index.c
 getIndexDigit,"H3Error getIndexDigit(H3Index h, int res, int *out)",h3index_getIndexDigit.go,getIndexDigit,"func getIndexDigit(h h3Index, res int32, out *int32) h3Error",true,attr: h3Index.c
 constructCell,"H3Error constructCell(int res, int baseCellNumber, const int *digits, H3Index *out)",h3index_constructCell.go,constructCell,"func constructCell(res int32, baseCellNumber int32, digits []int32, out *h3Index) h3Error",true,attr: h3Index.c
 stringToH3,"H3Error stringToH3(const char *str, H3Index *out)",h3index__stringToH3.go,stringToH3,"func stringToH3(s string) (h3Index, h3Error)",true,attr: h3Index.c

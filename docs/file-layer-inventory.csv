@@ -226,8 +226,6 @@ faceijk_neighbors.go,ported-impl,h3,"-",1,0,0
 faceijk_types.go,ported-impl,h3,"-",0,0,0
 format.go,public-api,h3,"-",0,6,3
 fuzz_test.go,public-api-test,h3,"-",0,0,-
-h3Index_getBaseCellNumber.go,ported-impl,h3,"-",1,0,0
-h3Index_getBaseCellNumber_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 h3api_constants.go,ported-impl,h3,"-",2,0,0
 h3api_types.go,ported-public-types,h3,"-",0,0,5
 h3index__bits_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -327,6 +325,8 @@ h3index_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 h3index_constants.go,ported-impl,h3,"-",0,0,0
 h3index_constructCell.go,ported-impl,h3,"-",1,0,0
 h3index_constructCell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index_getBaseCellNumber.go,ported-impl,h3,"-",1,0,0
+h3index_getBaseCellNumber_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 h3index_getIndexDigit.go,ported-impl,h3,"-",1,0,0
 h3index_getIndexDigit_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 h3index_isValidIndex.go,ported-impl,h3,"-",1,0,0
