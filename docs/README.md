@@ -45,7 +45,7 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 |---|---|---|
 | [api-surface.txt](api-surface.txt) | Golden lock of the exported Go API surface. | `UPDATE_API_SURFACE=1 go test -run TestAPISurface .` / `make test` |
 | [c-api-inventory.csv](c-api-inventory.csv) | Full C-function ↔ Go-declaration mapping. | `make api-inventory` / `make check-api` |
-| [file-layer-inventory.csv](file-layer-inventory.csv) | Per-file architectural-layer map of the flat root package (public API vs ported layer vs parity harness). | `go run ./tools/layoutinventory > docs/file-layer-inventory.csv` / `go run ./tools/layoutinventory -verify` |
+| [file-layer-inventory.csv](file-layer-inventory.csv) | Per-file architectural-layer map of the flat root package (public API vs ported layer vs parity harness). | `make layout-inventory` / `make check-layout` |
 | [upstream-test-inventory.csv](upstream-test-inventory.csv) | Case-level registry of every upstream test-ecosystem entry with reviewed dispositions. | reviewed by hand / `make check-test-inventory` |
 | [cli-contract.csv](cli-contract.csv) | Semantic command/flag/format contract of the CLI. | reviewed by hand / `make check-cli-inventory` |
 | [cli-test-inventory.csv](cli-test-inventory.csv) | All 170 upstream CLI scenarios with expected outputs and source hashes. | `go run ./tools/cliinventory -emit-cases` / `make check-cli-inventory` |

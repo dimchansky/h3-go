@@ -87,6 +87,8 @@ jobs:
         run: make fmt
       - name: No-unsafe gate (DR-007)
         run: make check-unsafe
+      - name: File-layer gate (DR-008)
+        run: make check-layout
       - name: golangci-lint
         if: matrix.go-version == 'stable'
         uses: golangci/golangci-lint-action@v7
@@ -136,10 +138,11 @@ jobs:
         run: make check-api
       - name: Upstream test and CLI inventory gates
         run: make check-test-inventory check-cli-inventory
-      - name: Inventory is up to date
+      - name: Inventories are up to date
         run: |
           make api-inventory
-          git diff --exit-code docs/c-api-inventory.csv
+          make layout-inventory
+          git diff --exit-code docs/c-api-inventory.csv docs/file-layer-inventory.csv
 
   # Full parity suite against the original C implementation. This is the
   # port's core correctness check, so it runs for every code change (in

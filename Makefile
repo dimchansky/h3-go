@@ -1,4 +1,4 @@
-.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff test-uberbench bench-uber upstream-diff check-test-inventory check-docs gen-benchdocs check-benchdocs
+.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff test-uberbench bench-uber upstream-diff check-test-inventory check-docs gen-benchdocs check-benchdocs layout-inventory check-layout
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -57,6 +57,17 @@ gen-ubercompare:
 # the generated doc tables (offline; runs in CI).
 check-ubercompare:
 	@go run ./tools/ubercompare -verify
+
+# Regenerate the per-file architectural-layer inventory of the flat root
+# package (DR-008, docs/repository-layout-review.md). Offline.
+layout-inventory:
+	@go run ./tools/layoutinventory > docs/file-layer-inventory.csv
+	@echo "docs/file-layer-inventory.csv regenerated"
+
+# Layer gate: every root source file must match exactly one layer rule
+# (public API / ported / parity harness). Offline; runs in CI (fast job).
+check-layout:
+	@go run ./tools/layoutinventory -verify > /dev/null
 
 # Regenerate the C-API inventory (requires testref sources; see make -C testref h3-source).
 api-inventory:

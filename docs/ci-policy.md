@@ -29,7 +29,7 @@ coverage without applying the production allocation threshold.
 |---|---|---|---|
 | Classifier | `changes` | every push/PR | ~10 s |
 | Docs | `docs` (Markdown link/anchor gate, `make check-docs`; uber/h3-go comparison-matrix drift gate, `make check-ubercompare`) | every push/PR, including docs-only changes | ~30 s |
-| Fast (required) | `fast` (fmt, no-unsafe gate, lint, smrcptr, pure-Go library + CLI tests and binary build on 1.24 + stable), `api-gates` (API, test, and CLI inventory gates) | every push/PR **with code changes** | ~2–3 min to signal |
+| Fast (required) | `fast` (fmt, no-unsafe gate, file-layer gate `make check-layout` (DR-008), lint, smrcptr, pure-Go library + CLI tests and binary build on 1.24 + stable), `api-gates` (API, test, and CLI inventory gates + inventory-freshness diffs) | every push/PR **with code changes** | ~2–3 min to signal |
 | Core correctness | `parity` (227-file cgo suite vs original C) | every push/PR with code changes, in parallel with `fast` | ~5–6 min |
 | Merge gate | `race` | PRs into the default branch (code changes only) | ~9 min |
 | Confidence sweep | nightly.yml: `race`, `parity` + gates + the full upstream fixture suites (526,546 golden records), `fuzz-smoke`, library and CLI C differential suites (uberdiff + uberbench equivalence), CLI cross-builds | nightly 03:17 UTC, `workflow_dispatch`, and every `v*` tag (release gate) | ~15 min wall |
@@ -40,7 +40,8 @@ Notes:
 - **Docs-only changes** (`*.md`, `LICENSE`, `NOTICE`, `.gitignore`) skip all
   Go jobs; only the classifier and the docs link check run. Everything else
   — including workflow files, the Makefile, and the generated gate inputs
-  `docs/api-surface.txt` / `docs/c-api-inventory.csv` — counts as code. The
+  `docs/api-surface.txt` / `docs/c-api-inventory.csv` /
+  `docs/file-layer-inventory.csv` — counts as code. The
   classifier **fails open**: if it cannot determine the base commit (force
   push, first push), it runs everything.
 - **Concurrency cancellation**: a newer commit on the same branch/PR cancels
