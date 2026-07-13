@@ -597,7 +597,7 @@ vec3d__square.go,ported-impl,h3,"-",1,0,0
 vec3d__square_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 vec3d_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 vec3d_types.go,ported-impl,h3,"-",0,0,0
-vertex.go,public-api,h3,"-",0,6,1
+vertex.go,public-api,h3,"-",0,7,1
 vertexGraph__hashVertex.go,ported-impl,h3,"-",1,0,0
 vertexGraph__hashVertex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 vertexGraph__initVertexGraph.go,ported-impl,h3,"-",1,0,0
