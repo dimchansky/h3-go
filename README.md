@@ -279,10 +279,26 @@ the suite.
 
 ## Repository map
 
+The root directory is the `h3` library: one flat Go package deliberately
+holding the public API layer, the mechanically ported C layer, and the
+opt-in parity harness (why a package split is impossible without breaking
+the zero-copy/method architecture: DR-001/DR-008 in
+[docs/repository-layout-review.md](docs/repository-layout-review.md)).
+Every root file is classified in the generated
+[docs/file-layer-inventory.csv](docs/file-layer-inventory.csv)
+(`make layout-inventory`; gated by `make check-layout`):
+
+| Root file layer | Count | How to recognize it |
+|---|---|---|
+| Public API | 16 | Topical names without underscores (`cell.go`, `traversal.go`, …); wrappers carry `H3 C API:` doc lines |
+| Public types in ported files | 2 | `h3api_types.go` (geometry types + the zero-copy `h3Index = Cell` alias), `polygon_types.go` (`ContainmentMode`) |
+| Ported C implementation | 273 | `<cfile>_<name>.go` (`__` marks a C static helper), C-shaped bodies, `// Ported from H3 C: <file>::<name>` attributions |
+| Parity harness | 264 | `*_cgo.go`, `h3lib_*.c`, `*_parity_test.go` — all behind `//go:build cgo && c2go`, excluded from every normal build |
+| Ported & upstream tests | 69 | `test<Upstream>_test.go`, `upstream_*_test.go`, and `<cfile>`-prefixed `*_test.go` (white-box) |
+| Public API tests | 14 | `public_*_test.go`, `apisurface_test.go`, `allocation_assert_*_test.go`, `fuzz_test.go`, `example_test.go`, … |
+
 | Path | What it is |
 |---|---|
-| `*.go` (root) | The `h3` library — public API files (`cell.go`, `traversal.go`, …) layered over a one-file-per-C-function port (each with a `// Ported from H3 C: <file>::<name>` attribution) |
-| `*_cgo.go`, `h3lib_*_c2go.c` | Opt-in C parity harness behind `//go:build cgo && c2go`; excluded from every normal build |
 | [`cmd/h3`](cmd/h3) | The `h3` executable — a minimal `main` that delegates to `internal/cli` |
 | [`internal/cli`](internal/cli) | CLI implementation: upstream-compatible parser, command registry, output encoders, exit-code mapping; consumes only the public `h3` API |
 | [`interop/uberdiff`](interop/uberdiff) | Separate Go module that differentially tests this library against the official uber/h3-go cgo binding (nightly CI) |

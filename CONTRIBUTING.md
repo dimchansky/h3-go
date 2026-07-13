@@ -32,6 +32,19 @@ page first will save you review round-trips.
    [docs/DEVIATIONS.md](docs/DEVIATIONS.md).** If your change makes Go
    behavior differ from C on purpose, document it there; if it isn't listed
    there, parity with C is a requirement.
+6. **Every root file belongs to exactly one architectural layer.** The
+   flat root package deliberately mixes the public API and the ported layer
+   (a package split is impossible without breaking the zero-copy alias and
+   method architecture — DR-008 in
+   [docs/repository-layout-review.md](docs/repository-layout-review.md)),
+   so layer identity is enforced by naming: public API files use topical
+   underscore-free names (`cell.go`, `traversal.go`); ported files use
+   `<cfile>_<name>.go`; the parity harness uses `*_cgo.go` / `h3lib_*.c` /
+   `*_parity_test.go`; test files follow the layer of what they exercise.
+   `make check-layout` fails on any file that matches no rule, and the CI
+   `api-gates` job fails if the generated per-file map
+   ([docs/file-layer-inventory.csv](docs/file-layer-inventory.csv),
+   `make layout-inventory`) is stale.
 
 ## Development workflow
 
@@ -40,6 +53,7 @@ make test                    # pure-Go tests (CGO_ENABLED=0) — needs only Go
 go test -race ./...          # race detector
 make lint                    # gofmt -s, go vet, golangci-lint, smrcptr
 make check-unsafe            # no-unsafe gate
+make check-layout            # file-layer gate (+ make layout-inventory to regenerate)
 make check-docs              # Markdown link/anchor gate
 make bench                   # benchmarks with allocation stats
 ```

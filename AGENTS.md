@@ -36,6 +36,12 @@ Details and enforcement in [CONTRIBUTING.md](CONTRIBUTING.md):
 - **The exported API surface is locked** (golden file; regenerate
   deliberately). Public wrappers carry `H3 C API:` doc lines; collection
   APIs keep their zero-allocation `Append*` guarantees.
+- **The root package stays flat — do not propose an `internal/` split.**
+  Which layer every root file belongs to, why the single package is the
+  only legal layout, and the naming rules `make check-layout` enforces are
+  in [docs/repository-layout-review.md](docs/repository-layout-review.md)
+  (DR-008) and the generated
+  [docs/file-layer-inventory.csv](docs/file-layer-inventory.csv).
 - **`testref/` is download-only** — upstream C sources are fetched
   (`make -C testref h3-source`), never vendored. Generated inventories
   under `docs/*.csv` are maintained by the tools, not edited by hand.
@@ -43,7 +49,7 @@ Details and enforcement in [CONTRIBUTING.md](CONTRIBUTING.md):
 ## Before you push
 
 ```sh
-make fmt lint test check-unsafe check-docs
+make fmt lint test check-unsafe check-layout check-docs
 ```
 
 plus `make test-c2go` (needs `make -C testref h3-source` once) whenever you
