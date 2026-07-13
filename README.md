@@ -35,19 +35,26 @@ than assumption:
   containers just work, CI needs no C toolchain. Production code also
   contains no `unsafe` — a hard invariant checked by a CI gate
   (`make check-unsafe`) across every build mode.
-- **Same behavior, verified.** All **78/78** public functions of H3 C
-  v4.4.0, ported function by function. A 227-file parity suite compiles the
+- **Same behavior, verified.** A 227-file parity suite compiles the
   *original* upstream C and compares Go vs C behavior in-process (see
   [Correctness](#correctness-and-testing)); differential and equivalence
   suites cross-check against uber/h3-go itself on identical inputs
   ([interop/uberdiff](interop/uberdiff), [interop/uberbench](interop/uberbench)).
-- **Allocation control the binding cannot offer.** Every collection API has
-  a zero-allocation `Append*` form (reuse your buffer) and, where it fits, a
-  streaming `iter.Seq` form; sizing helpers are exported. The binding's APIs
-  allocate per call and accept no caller buffers — by design of cgo
-  wrapping, not by oversight. All memory here is Go memory, visible to the
-  profiler and the GC; the binding also allocates on the C heap, which Go
-  tooling cannot see (quantified in the
+- **More H3 4.4 functionality exposed to Go.** This library covers all
+  **78/78** public H3 C v4.4.0 functions. At that common H3 version, the
+  binding has no equivalent for `ConstructCell` or the single-origin
+  `Cell.GridDiskUnsafe`. Beyond the C API, this library adds streaming
+  iterators (`Cell.ChildrenSeq`, `CellsAtRes`,
+  `PolygonToCellsExperimentalSeq`), caller-owned `Append*` forms, exported
+  sizing helpers, grouped distance rings, and the pure-Go `h3` CLI. See the
+  [versioned capability comparison](docs/comparison-uber-h3-go.md#coverage-summary).
+- **Allocation control the binding cannot offer.** The main variable-size
+  hierarchy, traversal, compaction, and polyfill paths have
+  caller-owned-buffer alternatives. Several reach zero allocations once
+  warm; algorithms that need scratch space still allocate internally.
+  The binding accepts no caller buffers. All memory here is Go memory,
+  visible to the profiler and the GC; the binding also allocates on the C
+  heap, which Go tooling cannot see (quantified in the
   [memory results](docs/benchmarks/README.md#memory-what-bop-can-and-cannot-see)).
 - **A typed API that catches mistakes at compile time.** Coordinates are
   `Angle`-typed (degree/radian mix-ups don't compile), parsing validates
@@ -67,8 +74,9 @@ And the trade-offs, equally explicit:
   [Performance](#performance) section shows both honestly.
 - **Migration is a real (if mostly mechanical) change**: different
   coordinate construction, a few reshaped results. The
-  [migration guide](docs/migration-from-uber-h3-go.md) maps every API and
-  keeps its example verified by a test.
+  [migration and upgrade guide](docs/migration-from-uber-h3-go.md) maps every
+  API, highlights the additional capabilities available after switching,
+  and keeps its example verified by a test.
 
 If you need exact lockstep with the newest C release or maximum ecosystem
 maturity, the official binding remains a good choice. If you want H3

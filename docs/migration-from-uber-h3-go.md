@@ -1,4 +1,4 @@
-# Migrating from uber/h3-go/v4
+# Migrating from uber/h3-go/v4 — and what you gain
 
 A practical guide for moving existing code from the official cgo binding
 [`github.com/uber/h3-go/v4`](https://github.com/uber/h3-go) (pinned
@@ -17,6 +17,30 @@ classifies all 78 H3 operations as `mechanical`/`adaptation`; this guide
 covers the patterns. The realistic example at the bottom is kept
 compiling and semantically verified against the binding by
 [interop/uberbench/migration_test.go](../interop/uberbench/migration_test.go).
+
+## What you gain after the migration
+
+This is more than an import-path replacement. At the common **H3 4.4**
+feature level, this library exposes the complete C API and adds Go-native
+ways to avoid materializing or reallocating large results:
+
+| Capability | What becomes available here |
+|---|---|
+| Complete H3 4.4 surface | All 78 public C functions, including `ConstructCell` and the single-origin `Cell.GridDiskUnsafe`; uber/h3-go v4.4.1 has no equivalent for those two operations. |
+| Streaming | `Cell.ChildrenSeq`, `CellsAtRes`, and `PolygonToCellsExperimentalSeq` return `iter.Seq` values and do not materialize the complete result. The binding has no iterator API. |
+| Caller-owned buffers | The main variable-size hierarchy, traversal, compaction, and polyfill operations have `Append*` forms; a sufficiently sized warm buffer makes the result path allocation-free where the algorithm itself needs no scratch space. |
+| Planning and result shapes | Exported `Max*Size`, `UncompactCellsSize`, `Cell.NumChildren`, and `Cell.GridPathLen` helpers support pre-sizing; `GridDiskDistancesGrouped` offers binding-style rings while the flat form remains available. |
+| Stronger Go contracts | Typed `Angle` values prevent degree/radian mix-ups; typed parsers validate the index mode and return sentinel errors instead of silently producing zero. |
+| Go-native operations | `CGO_ENABLED=0`, ordinary cross-compilation and profiling, no hidden C heap, plus an upstream-compatible pure-Go `h3` CLI. |
+
+The scope matters: “complete” refers to the shared H3 4.4 C API, not to a
+strict superset of every binding-specific convenience. The binding retains
+raw `IndexFromString`/`IndexToString` helpers and an optional experimental
+polyfill result cap; current uber/h3-go v4.5.0 also tracks newer H3 C
+functionality, including `DirectedEdge.Reverse`, which this library will gain
+with its H3 4.5 sync. See the
+[versioned coverage summary](comparison-uber-h3-go.md#coverage-summary) for
+both sides of that trade-off.
 
 ## Import path
 
@@ -146,7 +170,7 @@ re-check if you handled it specially: the binding's `GridDiskDistances*`
 rings can contain zero slots near pentagons; the flat form here prunes
 them (the `dists` slice tells you the ring).
 
-## Optional upgrades after migrating
+## Putting the allocation-sensitive upgrades to work
 
 Not required, but the reason many users switch:
 
@@ -162,10 +186,11 @@ for child := range cell.ChildrenSeq(12) {   // stream, never materialize
 }
 ```
 
-Every collection API has an `Append*` form (pre-size with the exported
+The main variable-size hierarchy, traversal, compaction, and polyfill APIs
+have `Append*` forms (pre-size with the exported
 `Max*Size`/`NumChildren`/`GridPathLen` helpers); three iterators stream
-without materializing. The binding has no equivalent forms — its calls
-allocate per invocation.
+without materializing. The binding has no equivalent caller-buffer or
+iterator forms.
 
 ## A realistic before/after
 

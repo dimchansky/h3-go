@@ -20,7 +20,7 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 | Document | Contents |
 |---|---|
 | [comparison-uber-h3-go.md](comparison-uber-h3-go.md) | Evidence-based comparison with uber/h3-go: pinned versions, function-by-function coverage matrix (generated), behavioral differences, trade-offs in both directions, and the maintainer checklist for keeping it current. |
-| [migration-from-uber-h3-go.md](migration-from-uber-h3-go.md) | Practical migration guide: type/call-site mappings, unit and error-handling changes, before/after example (kept executable by `interop/uberbench/migration_test.go`). |
+| [migration-from-uber-h3-go.md](migration-from-uber-h3-go.md) | Practical migration and upgrade guide: additional capabilities, type/call-site mappings, unit and error-handling changes, and a verified before/after example. |
 | [public-api-ergonomics-review.md](public-api-ergonomics-review.md) | Pre-v1 review of every migration/API-shape difference: implement, keep, defer, or reject decisions with compatibility and allocation impact. |
 | [benchmarks/README.md](benchmarks/README.md) | Benchmark methodology, memory-accounting caveats, and the committed per-environment result artifacts (raw output, benchstat summaries, process-level memory matrix, environment metadata). |
 

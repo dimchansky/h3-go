@@ -62,26 +62,29 @@ commit, module versions, date) are recorded per result set in
 
 ## Coverage summary
 
-Both libraries cover the H3 C v4.4.0 public API almost completely; the
-differences are at the edges and in API shape:
+At the common H3 C v4.4 level, this library exposes the complete public
+surface; the binding covers nearly all of it. The remaining differences are
+at the edges and in API shape:
 
 - **This library**: all 78 public C functions are covered — 75 by exported
   API, 3 absorbed where Go makes them meaningless (`describeH3Error` →
   sentinel error values, `destroyLinkedMultiPolygon` → garbage collection,
   `maxFaceCount` → internal sizing). Enforced by `make check-api` against
   the upstream headers.
-- **uber/h3-go v4.4.1**: 53 functions directly available, 10 available
-  under a different Go shape, 13 absorbed (sizing helpers, unit-conversion
-  constants, memory destructors), and 2 with no equivalent:
-  single-origin `gridDiskUnsafe` and `constructCell`.
+- **uber/h3-go v4.4.1**: two public C operations have no equivalent:
+  single-origin `gridDiskUnsafe` and `constructCell`. All other rows are
+  directly available, available under a different Go shape, or intentionally
+  absorbed by Go semantics; the generated status totals below are derived
+  from the function-by-function matrix.
 - **Beyond the C API**, each library adds its own conveniences:
   - *uber/h3-go only*: `IndexFromString`/`IndexToString` on raw `uint64`,
     an optional result cap on `PolygonToCellsExperimental` (v4.5.0 adds
     `DirectedEdge.Reverse`). Both libraries now provide a generic `Index`
     constraint and immediate parent/children conveniences.
-  - *this library only*: a zero-allocation `Append*` form for every
-    collection API (including `AppendImmediateChildren`), grouped
-    distance rings backed by one cell array, streaming iterators
+  - *this library only*: caller-buffer `Append*` forms across the main
+    variable-size hierarchy, traversal, compaction, and polyfill APIs
+    (including `AppendImmediateChildren`), grouped distance rings backed by
+    one cell array, streaming iterators
     (`Cell.ChildrenSeq`, `CellsAtRes`, `PolygonToCellsExperimentalSeq`),
     exported sizing functions
     (`MaxGridDiskSize`, `MaxGridRingSize`, `MaxPolygonToCellsSize`,
@@ -110,6 +113,10 @@ unnecessary — sizing helpers, memory destructors, unit converters),
 the call site), `adaptation` (surrounding code must change shape),
 `n/a` (nothing to migrate). A long dash (—) marks an intentionally
 absent API.
+
+**Status totals for uber/h3-go v4.4.1:** 54 `available`, 11
+`different-shape`, 11 `absorbed`, 2 `missing` — 78 public H3 C
+functions accounted for.
 
 ### Indexing
 

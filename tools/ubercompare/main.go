@@ -306,8 +306,10 @@ func symbolInSurface(surface map[string]bool, sym string) bool {
 
 func render(rows []row) string {
 	byCat := map[string][]row{}
+	statusCounts := map[string]int{}
 	for _, r := range rows {
 		byCat[r.Category] = append(byCat[r.Category], r)
+		statusCounts[r.UberStatus]++
 	}
 	var b strings.Builder
 	fmt.Fprintf(&b, "%s\n\n", beginMarker)
@@ -319,6 +321,9 @@ func render(rows []row) string {
 	fmt.Fprintf(&b, "the call site), `adaptation` (surrounding code must change shape),\n")
 	fmt.Fprintf(&b, "`n/a` (nothing to migrate). A long dash (—) marks an intentionally\n")
 	fmt.Fprintf(&b, "absent API.\n")
+	fmt.Fprintf(&b, "\n**Status totals for uber/h3-go v4.4.1:** %d `available`, %d\n", statusCounts["available"], statusCounts["different-shape"])
+	fmt.Fprintf(&b, "`different-shape`, %d `absorbed`, %d `missing` — %d public H3 C\n", statusCounts["absorbed"], statusCounts["missing"], len(rows))
+	fmt.Fprintf(&b, "functions accounted for.\n")
 	for _, cat := range categoryOrder {
 		rs := byCat[cat]
 		if len(rs) == 0 {
