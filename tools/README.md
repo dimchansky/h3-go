@@ -14,6 +14,7 @@ full details (`go doc ./tools/<name>`) and accepts `-h`.
 | [docscheck](docscheck) | Verify relative Markdown links and #anchors | `make check-docs` | CI (`docs` job) |
 | [benchdocs](benchdocs) | Generate and verify the README scorecard and complete benchmark comparison from committed artifacts | `make gen-benchdocs` / `make check-benchdocs` | CI (`docs` job), benchmark refreshes |
 | [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
+| [layoutinventory](layoutinventory) | Classify every root source file into its architectural layer; verify none is unclassifiable | `go run ./tools/layoutinventory > docs/file-layer-inventory.csv` | Layout discoverability ([docs/repository-layout-review.md](../docs/repository-layout-review.md)) |
 | [unexport](unexport) | **Historical** one-time migration sweep (Phase 2 unexport) | `go run ./tools/unexport` (dry run) | Nothing — kept as a migration record |
 
 All of them exit non-zero on failure and, except for the explicitly marked
@@ -118,6 +119,26 @@ cross-checks it — entirely offline — against the committed inventories.
 - The binding's side of the matrix needs the uber/h3-go dependency and is
   verified by `TestMappingSymbolsExist` in
   [interop/uberbench](../interop/uberbench/README.md) instead.
+
+## layoutinventory
+
+Classifies all root source files (`*.go`, `h3lib_*.c`) into the nine
+architectural layers of the flat `h3` package — public API, ported
+implementation, ported public types, the three parity-harness kinds, and
+the three test kinds — using file evidence only (package clause, build
+tags, attribution comments, exported declarations, filename shape). The
+layer taxonomy and its rationale live in
+[docs/repository-layout-review.md](../docs/repository-layout-review.md)
+(DR-008).
+
+- **Default mode** writes the CSV published as
+  [docs/file-layer-inventory.csv](../docs/file-layer-inventory.csv) to
+  stdout (columns:
+  `file,layer,package,build_tags,attributions,h3_c_api_refs,exported_decls`)
+  and a per-layer summary to stderr.
+- **`-verify`** exits 1 if any root source file matches no layer rule —
+  the guard that keeps the classification from rotting as files are added.
+- Flags: `-repo`, `-verify`. Runs without `testref/`.
 
 ## unexport (historical)
 

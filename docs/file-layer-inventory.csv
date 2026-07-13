@@ -1,0 +1,639 @@
+file,layer,package,build_tags,attributions,h3_c_api_refs,exported_decls
+algos__directionForNeighbor.go,ported-impl,h3,"-",1,0,0
+algos__directionForNeighbor_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__getEdgeHexagons.go,ported-impl,h3,"-",1,0,0
+algos__getEdgeHexagons_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridDisk.go,ported-impl,h3,"-",1,0,0
+algos__gridDiskDistances.go,ported-impl,h3,"-",1,0,0
+algos__gridDiskDistancesInternal.go,ported-impl,h3,"-",1,0,0
+algos__gridDiskDistancesInternal_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridDiskDistancesSafe.go,ported-impl,h3,"-",1,0,0
+algos__gridDiskDistancesSafe_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridDiskDistancesUnsafe.go,ported-impl,h3,"-",1,0,0
+algos__gridDiskDistancesUnsafe_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridDiskDistances_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridDisk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridRingInternal.go,ported-impl,h3,"-",1,0,0
+algos__gridRingInternal_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridRingInternal_test.go,ported-internal-test,h3,"-",0,0,-
+algos__gridRingUnsafe.go,ported-impl,h3,"-",1,0,0
+algos__gridRingUnsafe_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__gridRingUnsafe_test.go,ported-internal-test,h3,"-",0,0,-
+algos__h3NeighborRotations.go,ported-impl,h3,"-",1,0,0
+algos__h3NeighborRotations_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__h3NeighborRotations_test.go,ported-internal-test,h3,"-",0,0,-
+algos__maxGridDiskSize.go,ported-impl,h3,"-",1,0,0
+algos__maxGridDiskSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__vertexGraphToLinkedGeo.go,ported-impl,h3,"-",1,0,0
+algos__vertexGraphToLinkedGeo_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_cellsToLinkedMultiPolygon.go,ported-impl,h3,"-",1,0,0
+algos_cellsToLinkedMultiPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_cellsToLinkedMultiPolygon_test.go,ported-internal-test,h3,"-",0,0,-
+algos_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+algos_constants.go,ported-impl,h3,"-",5,0,0
+algos_gridDiskUnsafe.go,ported-impl,h3,"-",1,0,0
+algos_gridDiskUnsafe_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_gridDisksUnsafe.go,ported-impl,h3,"-",1,0,0
+algos_gridDisksUnsafe_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_gridDisksUnsafe_test.go,ported-internal-test,h3,"-",0,0,-
+algos_gridRing.go,ported-impl,h3,"-",1,0,0
+algos_gridRing_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_gridRing_test.go,ported-internal-test,h3,"-",0,0,-
+algos_h3SetToVertexGraph.go,ported-impl,h3,"-",1,0,0
+algos_h3SetToVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_h3SetToVertexGraph_test.go,ported-internal-test,h3,"-",0,0,-
+algos_maxGridRingSize.go,ported-impl,h3,"-",1,0,0
+algos_maxGridRingSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_maxPolygonToCellsSize.go,ported-impl,h3,"-",1,0,0
+algos_maxPolygonToCellsSize_degenerate_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_maxPolygonToCellsSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_polygonToCells.go,ported-impl,h3,"-",1,0,0
+algos_polygonToCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+allocation_assert_norace_test.go,public-api-test,h3,"!race",0,0,-
+allocation_assert_race_test.go,public-api-test,h3,"race",0,0,-
+angle.go,public-api,h3,"-",0,0,8
+angle_test.go,public-api-test,h3,"-",0,0,-
+apisurface_test.go,public-api-test,h3,"-",0,0,-
+baseCells__baseCellIsCwOffset.go,ported-impl,h3,"-",1,0,0
+baseCells__baseCellIsCwOffset_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__baseCellToCCWrot60.go,ported-impl,h3,"-",1,0,0
+baseCells__baseCellToCCWrot60_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__baseCellToFaceIjk.go,ported-impl,h3,"-",1,0,0
+baseCells__baseCellToFaceIjk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__data.go,ported-impl,h3,"-",1,0,0
+baseCells__faceIjkBaseCells.go,ported-impl,h3,"-",1,0,0
+baseCells__faceIjkToBaseCell.go,ported-impl,h3,"-",1,0,0
+baseCells__faceIjkToBaseCellCCWrot60.go,ported-impl,h3,"-",1,0,0
+baseCells__faceIjkToBaseCellCCWrot60_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__faceIjkToBaseCell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__getBaseCellDirection.go,ported-impl,h3,"-",1,0,0
+baseCells__getBaseCellDirection_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__getBaseCellNeighbor.go,ported-impl,h3,"-",1,0,0
+baseCells__getBaseCellNeighbor_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__getRes0Cells.go,ported-impl,h3,"-",1,0,0
+baseCells__getRes0Cells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__isBaseCellPentagon.go,ported-impl,h3,"-",1,0,0
+baseCells__isBaseCellPentagon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__isBaseCellPolarPentagon.go,ported-impl,h3,"-",1,0,0
+baseCells__isBaseCellPolarPentagon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells__neighborRotations.go,ported-impl,h3,"-",1,0,0
+baseCells__neighbors.go,ported-impl,h3,"-",1,0,0
+baseCells__res0CellCount.go,ported-impl,h3,"-",1,0,0
+baseCells__res0CellCount_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+baseCells_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+baseCells_testBaseCellsInternal_test.go,ported-internal-test,h3,"-",0,0,-
+baseCells_testBaseCells_test.go,ported-internal-test,h3,"-",0,0,-
+bbox__bboxCenter.go,ported-impl,h3,"-",1,0,0
+bbox__bboxContains.go,ported-impl,h3,"-",1,0,0
+bbox__bboxEquals.go,ported-impl,h3,"-",1,0,0
+bbox__bboxIsTransmeridian.go,ported-impl,h3,"-",1,0,0
+bbox__bboxNormalization.go,ported-impl,h3,"-",1,0,0
+bbox__bboxOverlapsContainsBBox.go,ported-impl,h3,"-",2,0,0
+bbox__bboxWidthHeightRads.go,ported-impl,h3,"-",2,0,0
+bbox__hexRadiusKm.go,ported-impl,h3,"-",1,0,0
+bbox__hexRadiusKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+bbox__overlaps_contains_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+bbox__parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+bbox__scaleBBox.go,ported-impl,h3,"-",1,0,0
+bbox__scaleBBox_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+bbox_bboxHexEstimate.go,ported-impl,h3,"-",1,0,0
+bbox_bboxHexEstimate_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+bbox_bboxToCellBoundary.go,ported-impl,h3,"-",1,0,0
+bbox_bboxToCellBoundary_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+bbox_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+bbox_lineHexEstimate.go,ported-impl,h3,"-",1,0,0
+bbox_lineHexEstimate_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+bbox_testBBoxInternal_test.go,ported-internal-test,h3,"-",0,0,-
+bbox_types.go,ported-impl,h3,"-",0,0,0
+bench_public_test.go,public-api-test,h3,"-",0,0,-
+boundary.go,public-api,h3,"-",0,0,0
+cell.go,public-api,h3,"-",0,6,10
+constants.go,public-api,h3,"-",0,0,0
+coordijk__cubeToIjk.go,ported-impl,h3,"-",1,0,0
+coordijk__cubeToIjk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__downAp3.go,ported-impl,h3,"-",1,0,0
+coordijk__downAp3_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__downAp3r.go,ported-impl,h3,"-",1,0,0
+coordijk__downAp3r_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__downAp7.go,ported-impl,h3,"-",1,0,0
+coordijk__downAp7_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__downAp7r.go,ported-impl,h3,"-",1,0,0
+coordijk__downAp7r_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__hex2dToCoordIJK.go,ported-impl,h3,"-",1,0,0
+coordijk__hex2dToCoordIJK_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijToIjk.go,ported-impl,h3,"-",1,0,0
+coordijk__ijToIjk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijToIjk_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__ijkAdd.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkAdd_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkDistance.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkDistance_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkDistance_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__ijkMatches.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkMatches_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkNormalize.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkNormalizeCouldOverflow.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkNormalizeCouldOverflow_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkNormalize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkRotate60ccw.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkRotate60ccw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkRotate60cw.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkRotate60cw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkScale.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkScale_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkSub.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkSub_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkToCube.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkToCube_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkToCube_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__ijkToHex2d.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkToHex2d_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkToIj.go,ported-impl,h3,"-",1,0,0
+coordijk__ijkToIj_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__ijkToIj_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__neighbor.go,ported-impl,h3,"-",1,0,0
+coordijk__neighbor_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__neighbor_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__rotate60ccw.go,ported-impl,h3,"-",1,0,0
+coordijk__rotate60ccw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__rotate60cw.go,ported-impl,h3,"-",1,0,0
+coordijk__rotate60cw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__setIJK.go,ported-impl,h3,"-",1,0,0
+coordijk__setIJK_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__unitIjkToDigit.go,ported-impl,h3,"-",1,0,0
+coordijk__unitIjkToDigit_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__unitIjkToDigit_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__upAp7.go,ported-impl,h3,"-",1,0,0
+coordijk__upAp7Checked.go,ported-impl,h3,"-",1,0,0
+coordijk__upAp7Checked_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__upAp7Checked_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__upAp7_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__upAp7r.go,ported-impl,h3,"-",1,0,0
+coordijk__upAp7rChecked.go,ported-impl,h3,"-",1,0,0
+coordijk__upAp7rChecked_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk__upAp7rChecked_test.go,ported-internal-test,h3,"-",0,0,-
+coordijk__upAp7r_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+coordijk_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+coordijk_constants.go,ported-impl,h3,"-",0,0,0
+coordijk_types.go,ported-impl,h3,"-",0,0,0
+directedEdge__directedEdgeToCells.go,ported-impl,h3,"-",1,0,0
+directedEdge__directedEdgeToCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge__getDirectedEdgeDestination.go,ported-impl,h3,"-",1,0,0
+directedEdge__getDirectedEdgeDestination_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge__getDirectedEdgeOrigin.go,ported-impl,h3,"-",1,0,0
+directedEdge__getDirectedEdgeOrigin_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge__isValidDirectedEdge.go,ported-impl,h3,"-",1,0,0
+directedEdge__isValidDirectedEdge_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge__originToDirectedEdges.go,ported-impl,h3,"-",1,0,0
+directedEdge__originToDirectedEdges_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge_areNeighborCells.go,ported-impl,h3,"-",1,0,0
+directedEdge_areNeighborCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge_cellsToDirectedEdge.go,ported-impl,h3,"-",1,0,0
+directedEdge_cellsToDirectedEdge_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+directedEdge_directedEdgeToBoundary.go,ported-impl,h3,"-",1,0,0
+directedEdge_directedEdgeToBoundary_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+doc.go,public-api,h3,"-",0,1,0
+edge.go,public-api,h3,"-",0,10,1
+errors.go,public-api,h3,"-",0,0,19
+errors_test.go,public-api-test,h3,"-",0,0,-
+example_test.go,public-api-test,h3_test,"-",0,0,-
+faceijk__adjustOverageClassII.go,ported-impl,h3,"-",1,0,0
+faceijk__adjustOverageClassII_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__adjustOverageClassII_test.go,ported-internal-test,h3,"cgo && c2go",0,0,-
+faceijk__adjustPentVertOverage.go,ported-impl,h3,"-",1,0,0
+faceijk__adjustPentVertOverage_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__faceIjkPentToCellBoundary.go,ported-impl,h3,"-",1,0,0
+faceijk__faceIjkPentToCellBoundary_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__faceIjkPentToVerts.go,ported-impl,h3,"-",1,0,0
+faceijk__faceIjkPentToVerts_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__faceIjkToCellBoundary.go,ported-impl,h3,"-",1,0,0
+faceijk__faceIjkToCellBoundary_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__faceIjkToGeo.go,ported-impl,h3,"-",1,0,0
+faceijk__faceIjkToGeo_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__faceIjkToVerts.go,ported-impl,h3,"-",1,0,0
+faceijk__faceIjkToVerts_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__geoToClosestFace.go,ported-impl,h3,"-",1,0,0
+faceijk__geoToClosestFace_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__geoToFaceIjk.go,ported-impl,h3,"-",1,0,0
+faceijk__geoToHex2d.go,ported-impl,h3,"-",1,0,0
+faceijk__geoToHex2d_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__hex2dToGeo.go,ported-impl,h3,"-",1,0,0
+faceijk__hex2dToGeo_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+faceijk_constants.go,ported-impl,h3,"-",3,0,0
+faceijk_neighbors.go,ported-impl,h3,"-",1,0,0
+faceijk_types.go,ported-impl,h3,"-",0,0,0
+format.go,public-api,h3,"-",0,6,3
+fuzz_test.go,public-api-test,h3,"-",0,0,-
+h3Index_getBaseCellNumber.go,ported-impl,h3,"-",1,0,0
+h3Index_getBaseCellNumber_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3api_constants.go,ported-impl,h3,"-",2,0,0
+h3api_types.go,ported-public-types,h3,"-",0,0,5
+h3index__bits_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToBoundary.go,ported-impl,h3,"-",1,0,0
+h3index__cellToBoundary_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToCenterChild.go,ported-impl,h3,"-",1,0,0
+h3index__cellToCenterChild_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToChildPos.go,ported-impl,h3,"-",1,0,0
+h3index__cellToChildPos_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToChildren.go,ported-impl,h3,"-",1,0,0
+h3index__cellToChildrenSize.go,ported-impl,h3,"-",1,0,0
+h3index__cellToChildrenSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToChildren_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToLatLng.go,ported-impl,h3,"-",1,0,0
+h3index__cellToLatLng_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToParent.go,ported-impl,h3,"-",1,0,0
+h3index__cellToParent_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__cellToParent_test.go,ported-internal-test,h3,"-",0,0,-
+h3index__childPosToCell.go,ported-impl,h3,"-",1,0,0
+h3index__childPosToCell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__compactCells.go,ported-impl,h3,"-",1,0,0
+h3index__compactCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__compactCells_test.go,ported-internal-test,h3,"-",0,0,-
+h3index__describeH3Error.go,ported-impl,h3,"-",1,0,0
+h3index__describeH3Error_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__describeH3Error_test.go,ported-internal-test,h3,"-",0,0,-
+h3index__faceIjkToH3.go,ported-impl,h3,"-",1,0,0
+h3index__faceIjkToH3_pentagon_rotation_test.go,ported-internal-test,h3,"cgo && c2go",0,0,-
+h3index__faceIjkToH3_test.go,ported-internal-test,h3,"-",0,0,-
+h3index__firstOneIndex.go,ported-impl,h3,"-",1,0,0
+h3index__firstOneIndex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__getIcosahedronFaces.go,ported-impl,h3,"-",1,0,0
+h3index__getIcosahedronFaces_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__getIcosahedronFaces_test.go,ported-internal-test,h3,"-",0,0,-
+h3index__getPentagons.go,ported-impl,h3,"-",1,0,0
+h3index__getPentagons_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__getters.go,ported-impl,h3,"-",4,0,0
+h3index__h3Rotate60ccw.go,ported-impl,h3,"-",1,0,0
+h3index__h3Rotate60ccw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__h3Rotate60cw.go,ported-impl,h3,"-",1,0,0
+h3index__h3Rotate60cw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__h3RotatePent60ccw.go,ported-impl,h3,"-",1,0,0
+h3index__h3RotatePent60ccw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__h3RotatePent60cw.go,ported-impl,h3,"-",1,0,0
+h3index__h3RotatePent60cw_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__h3ToFaceIjk.go,ported-impl,h3,"-",1,0,0
+h3index__h3ToFaceIjkWithInitializedFijk.go,ported-impl,h3,"-",1,0,0
+h3index__h3ToFaceIjkWithInitializedFijk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__h3ToFaceIjk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__h3ToString.go,ported-impl,h3,"-",1,0,0
+h3index__hasAll7AfterRes.go,ported-impl,h3,"-",1,0,0
+h3index__hasAll7AfterRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__hasAny7UptoRes.go,ported-impl,h3,"-",1,0,0
+h3index__hasAny7UptoRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__hasChildAtRes.go,ported-impl,h3,"-",1,0,0
+h3index__hasChildAtRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__hasDeletedSubsequence.go,ported-impl,h3,"-",1,0,0
+h3index__hasDeletedSubsequence_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__hasGoodTopBits.go,ported-impl,h3,"-",1,0,0
+h3index__hasGoodTopBits_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__indexDigit.go,ported-impl,h3,"-",2,0,0
+h3index__isPentagon.go,ported-impl,h3,"-",1,0,0
+h3index__isPentagon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__isResClassIII.go,ported-impl,h3,"-",1,0,0
+h3index__isResClassIII_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__isResolutionClassIII.go,ported-impl,h3,"-",1,0,0
+h3index__isResolutionClassIII_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__isValidCell.go,ported-impl,h3,"-",1,0,0
+h3index__isValidCell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__isValidCell_test.go,ported-internal-test,h3,"-",0,0,-
+h3index__latLngToCell.go,ported-impl,h3,"-",1,0,0
+h3index__latLngToCell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__leadingNonZeroDigit.go,ported-impl,h3,"-",1,0,0
+h3index__leadingNonZeroDigit_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__makeDirectChild.go,ported-impl,h3,"-",1,0,0
+h3index__makeDirectChild_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__maxFaceCount.go,ported-impl,h3,"-",1,0,0
+h3index__maxFaceCount_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__mode_highbit.go,ported-impl,h3,"-",4,0,0
+h3index__mode_highbit_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__pentagonCount.go,ported-impl,h3,"-",1,0,0
+h3index__pentagonCount_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__reservedBits.go,ported-impl,h3,"-",2,0,0
+h3index__setH3Index.go,ported-impl,h3,"-",1,0,0
+h3index__setH3Index_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__stringToH3.go,ported-impl,h3,"-",1,0,0
+h3index__testH3Api_test.go,ported-internal-test,h3,"-",0,0,-
+h3index__uncompactCells.go,ported-impl,h3,"-",1,0,0
+h3index__uncompactCellsSize.go,ported-impl,h3,"-",1,0,0
+h3index__uncompactCellsSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__uncompactCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index__validateChildPos.go,ported-impl,h3,"-",1,0,0
+h3index__zeroIndexDigits.go,ported-impl,h3,"-",1,0,0
+h3index__zeroIndexDigits_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+h3index_constants.go,ported-impl,h3,"-",0,0,0
+h3index_constructCell.go,ported-impl,h3,"-",1,0,0
+h3index_constructCell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index_getIndexDigit.go,ported-impl,h3,"-",1,0,0
+h3index_getIndexDigit_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index_isValidIndex.go,ported-impl,h3,"-",1,0,0
+h3index_isValidIndex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+h3index_testPentagonIndexes_test.go,ported-internal-test,h3,"-",0,0,-
+h3lib_algos_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_baseCells_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_bbox_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_coordijk_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_directedEdge_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_faceijk_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_h3Index_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_iterators_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_latLng_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_linkedGeo_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_localij_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_polyfill_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_polygon_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_utility_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_vec2d_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_vec3d_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_vertexGraph_cgo.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_vertex_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+hierarchy.go,public-api,h3,"-",0,10,0
+indexing.go,public-api,h3,"-",0,15,7
+iter.go,public-api,h3,"-",0,3,2
+iterators__incrementResDigit.go,ported-impl,h3,"-",1,0,0
+iterators__incrementResDigit_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+iterators__iterInitParent.go,ported-impl,h3,"-",1,0,0
+iterators__iterInitParent_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+iterators__iterStepChild.go,ported-impl,h3,"-",1,0,0
+iterators__iterStepChild_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+iterators__null_iter.go,ported-impl,h3,"-",1,0,0
+iterators__null_iter_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+iterators_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+iterators_iterInitBaseCellNum.go,ported-impl,h3,"-",1,0,0
+iterators_iterInitBaseCellNum_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+iterators_iterInitRes.go,ported-impl,h3,"-",1,0,0
+iterators_iterInitRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+iterators_iterStepRes.go,ported-impl,h3,"-",1,0,0
+iterators_iterStepRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+iterators_testH3IteratorsInternal_test.go,ported-internal-test,h3,"-",0,0,-
+iterators_types.go,ported-impl,h3,"-",0,0,0
+latLng__cellAreaKm2.go,ported-impl,h3,"-",1,0,0
+latLng__cellAreaKm2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__cellAreaM2.go,ported-impl,h3,"-",1,0,0
+latLng__cellAreaM2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__cellAreaRads2.go,ported-impl,h3,"-",1,0,0
+latLng__cellAreaRads2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__constrainLat.go,ported-impl,h3,"-",1,0,0
+latLng__constrainLat_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__constrainLng.go,ported-impl,h3,"-",1,0,0
+latLng__constrainLng_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__degsToRads.go,ported-impl,h3,"-",1,0,0
+latLng__degsToRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__geoAlmostEqual.go,ported-impl,h3,"-",1,0,0
+latLng__geoAlmostEqualThreshold.go,ported-impl,h3,"-",1,0,0
+latLng__geoAlmostEqualThreshold_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__geoAlmostEqual_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__geoAzDistanceRads.go,ported-impl,h3,"-",1,0,0
+latLng__geoAzDistanceRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__geoAzimuthRads.go,ported-impl,h3,"-",1,0,0
+latLng__geoAzimuthRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__getNumCells.go,ported-impl,h3,"-",1,0,0
+latLng__getNumCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__greatCircleDistanceKm.go,ported-impl,h3,"-",1,0,0
+latLng__greatCircleDistanceKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__greatCircleDistanceM.go,ported-impl,h3,"-",1,0,0
+latLng__greatCircleDistanceM_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__greatCircleDistanceRads.go,ported-impl,h3,"-",1,0,0
+latLng__greatCircleDistanceRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__normalizeLng.go,ported-impl,h3,"-",1,0,0
+latLng__normalizeLng_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__posAngleRads.go,ported-impl,h3,"-",1,0,0
+latLng__posAngleRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__radsToDegs.go,ported-impl,h3,"-",1,0,0
+latLng__radsToDegs_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__setGeoDegs.go,ported-impl,h3,"-",1,0,0
+latLng__setGeoDegs_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__setGeoRads.go,ported-impl,h3,"-",1,0,0
+latLng__setGeoRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__triangleArea.go,ported-impl,h3,"-",1,0,0
+latLng__triangleArea_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__triangleEdgeLengthsToArea.go,ported-impl,h3,"-",1,0,0
+latLng__triangleEdgeLengthsToArea_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+latLng_edgeLengthKm.go,ported-impl,h3,"-",1,0,0
+latLng_edgeLengthKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_edgeLengthM.go,ported-impl,h3,"-",1,0,0
+latLng_edgeLengthM_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_edgeLengthRads.go,ported-impl,h3,"-",1,0,0
+latLng_edgeLengthRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_getHexagonAreaAvgKm2.go,ported-impl,h3,"-",1,0,0
+latLng_getHexagonAreaAvgKm2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_getHexagonAreaAvgM2.go,ported-impl,h3,"-",1,0,0
+latLng_getHexagonAreaAvgM2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_getHexagonEdgeLengthAvgKm.go,ported-impl,h3,"-",1,0,0
+latLng_getHexagonEdgeLengthAvgKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_getHexagonEdgeLengthAvgM.go,ported-impl,h3,"-",1,0,0
+latLng_getHexagonEdgeLengthAvgM_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng_h3CellAreaExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
+latlng.go,public-api,h3,"-",0,1,2
+linkedGeo__addLinkedCoord.go,ported-impl,h3,"-",1,0,0
+linkedGeo__addLinkedCoord_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__addNewLinkedLoop.go,ported-impl,h3,"-",2,0,0
+linkedGeo__addNewLinkedLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__addNewLinkedPolygon.go,ported-impl,h3,"-",1,0,0
+linkedGeo__addNewLinkedPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__bboxFromLinkedGeoLoop.go,ported-impl,h3,"-",1,0,0
+linkedGeo__bboxFromLinkedGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__countContainers.go,ported-impl,h3,"-",1,0,0
+linkedGeo__countContainers_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__countLinkedCoords.go,ported-impl,h3,"-",1,0,0
+linkedGeo__countLinkedCoords_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__countLinkedLoops.go,ported-impl,h3,"-",1,0,0
+linkedGeo__countLinkedLoops_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__countLinkedPolygons.go,ported-impl,h3,"-",1,0,0
+linkedGeo__countLinkedPolygons_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__findDeepestContainer.go,ported-impl,h3,"-",1,0,0
+linkedGeo__findDeepestContainer_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__findPolygonForHole.go,ported-impl,h3,"-",1,0,0
+linkedGeo__findPolygonForHole_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__isClockwiseLinkedGeoLoop.go,ported-impl,h3,"-",2,0,0
+linkedGeo__isClockwiseLinkedGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__normalizeMultiPolygon.go,ported-impl,h3,"-",1,0,0
+linkedGeo__normalizeMultiPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo__pointInsideLinkedGeoLoop.go,ported-impl,h3,"-",1,0,0
+linkedGeo__pointInsideLinkedGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+linkedGeo_destroyLinkedGeoLoop.go,ported-impl,h3,"-",1,0,0
+linkedGeo_destroyLinkedGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+linkedGeo_destroyLinkedMultiPolygon.go,ported-impl,h3,"-",1,0,0
+linkedGeo_destroyLinkedMultiPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+localij__cellToLocalIj.go,ported-impl,h3,"-",1,0,0
+localij__cellToLocalIjInternal_test.go,ported-internal-test,h3,"-",0,0,-
+localij__cellToLocalIj_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+localij__cellToLocalIjk.go,ported-impl,h3,"-",1,0,0
+localij__cellToLocalIjk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+localij__cubeRound.go,ported-impl,h3,"-",1,0,0
+localij__gridDistance.go,ported-impl,h3,"-",1,0,0
+localij__gridDistance_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+localij__gridPathCellsSize.go,ported-impl,h3,"-",1,0,0
+localij__gridPathCellsSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+localij__localIjToCell.go,ported-impl,h3,"-",1,0,0
+localij__localIjToCell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+localij_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+localij_constants.go,ported-impl,h3,"-",5,0,0
+localij_gridDistanceExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
+localij_gridDistance_test.go,ported-internal-test,h3,"-",0,0,-
+localij_gridPathCells.go,ported-impl,h3,"-",1,0,0
+localij_gridPathCellsExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
+localij_gridPathCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+localij_gridPathCells_test.go,ported-internal-test,h3,"-",0,0,-
+localij_localijktocell.go,ported-impl,h3,"-",1,0,0
+localij_localijktocell_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+mathExtensions__ipow.go,ported-impl,h3,"-",1,0,0
+mathExtensions__ipow_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+mathExtensions__overflowChecking.go,ported-impl,h3,"-",2,0,0
+mathExtensions__overflowChecking_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+mathExtensions_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+mathExtensions_internal_test.go,ported-internal-test,h3,"-",0,0,-
+metrics.go,public-api,h3,"-",0,13,7
+polyfill__baseCellNumToCell.go,ported-impl,h3,"-",1,0,0
+polyfill_cellToBBox.go,ported-impl,h3,"-",1,0,0
+polyfill_cellToBBox_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polyfill_cellToBBox_test.go,ported-internal-test,h3,"-",0,0,-
+polyfill_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+polyfill_constants.go,ported-impl,h3,"-",8,0,0
+polyfill_maxPolygonToCellsSizeExperimental.go,ported-impl,h3,"-",1,0,0
+polyfill_maxPolygonToCellsSizeExperimental_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polyfill_polygonToCellsExperimental.go,ported-impl,h3,"-",9,0,0
+polyfill_polygonToCellsExperimental_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polyfill_testPolyfillInternal_test.go,ported-internal-test,h3,"-",0,0,-
+polygon__bboxFromGeoLoop.go,ported-impl,h3,"-",1,0,0
+polygon__bboxFromGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__bboxesFromGeoPolygon.go,ported-impl,h3,"-",1,0,0
+polygon__bboxesFromGeoPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__cellBoundaryCrossesGeoLoop.go,ported-impl,h3,"-",1,0,0
+polygon__cellBoundaryCrossesGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__cellBoundaryCrossesPolygon.go,ported-impl,h3,"-",1,0,0
+polygon__cellBoundaryCrossesPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__cellBoundaryInsidePolygon.go,ported-impl,h3,"-",1,0,0
+polygon__cellBoundaryInsidePolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__isClockwiseGeoLoop.go,ported-impl,h3,"-",2,0,0
+polygon__isClockwiseGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__lineCrossesLine.go,ported-impl,h3,"-",1,0,0
+polygon__parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__pointInsideGeoLoop.go,ported-impl,h3,"-",1,0,0
+polygon__pointInsideGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__pointInsidePolygon.go,ported-impl,h3,"-",1,0,0
+polygon__pointInsidePolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon__validatePolygonFlags.go,ported-impl,h3,"-",1,0,0
+polygon__validatePolygonFlags_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polygon_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+polygon_types.go,ported-public-types,h3,"-",0,1,6
+public_ergonomics_test.go,public-api-test,h3,"-",0,0,-
+public_h3v44_test.go,public-api-test,h3,"-",0,0,-
+public_typed_text_test.go,public-api-test,h3,"-",0,0,-
+public_wave1_test.go,public-api-test,h3,"-",0,0,-
+public_wave2_test.go,public-api-test,h3,"-",0,0,-
+public_wave3_test.go,public-api-test,h3,"-",0,0,-
+region.go,public-api,h3,"-",0,12,12
+testCellToBoundaryEdgeCases_test.go,ported-upstream-test,h3,"-",0,0,-
+testCellToCenterChild_test.go,ported-upstream-test,h3,"-",0,0,-
+testCellToChildPos_test.go,ported-upstream-test,h3,"-",0,0,-
+testCellToChildrenSize_test.go,ported-upstream-test,h3,"-",0,0,-
+testCellToChildren_test.go,ported-upstream-test,h3,"-",0,0,-
+testCellToLocalIjExhaustive_test.go,ported-upstream-test,h3,"-",0,0,-
+testCellToLocalIj_test.go,ported-upstream-test,h3,"-",0,0,-
+testConstructCell_test.go,ported-upstream-test,h3,"-",1,0,-
+testDirectedEdgeExhaustive_test.go,ported-upstream-test,h3,"-",0,0,-
+testDirectedEdge_test.go,ported-upstream-test,h3,"-",0,0,-
+testGridDisk_test.go,ported-upstream-test,h3,"-",0,0,-
+testH3CellArea_test.go,ported-upstream-test,h3,"-",0,0,-
+testH3NeighborRotations_test.go,ported-upstream-test,h3,"-",0,0,-
+testIndexDigits_test.go,ported-upstream-test,h3,"-",1,0,-
+testLatLngInternal_test.go,ported-upstream-test,h3,"-",0,0,-
+testLatLng_test.go,ported-upstream-test,h3,"-",0,0,-
+testLinkedGeoInternal_test.go,ported-upstream-test,h3,"-",0,0,-
+testPolygonInternal_polygonInternal_test.go,ported-upstream-test,h3,"-",0,0,-
+testPolygonToCellsExperimental_test.go,ported-upstream-test,h3,"-",0,0,-
+testPolygonToCellsReportedExperimental_polygonToCellsExperimental_test.go,ported-upstream-test,h3,"-",0,0,-
+testPolygonToCellsReported_polygonToCells_test.go,ported-upstream-test,h3,"-",0,0,-
+testPolygonToCells_polygonToCells_test.go,ported-upstream-test,h3,"-",0,0,-
+testVertex_test.go,ported-upstream-test,h3,"-",0,0,-
+traversal.go,public-api,h3,"-",0,22,5
+upstream_fixture_test.go,ported-upstream-test,h3,"-",0,0,-
+upstream_fuzz_test.go,ported-upstream-test,h3,"-",0,0,-
+utility__iterateAllIndexesAtRes.go,ported-impl,h3,"-",1,0,0
+utility__iterateAllIndexesAtResPartial.go,ported-impl,h3,"-",1,0,0
+utility__iterateAllIndexesAtResPartial_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+utility__iterateAllIndexesAtRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+utility__iterateBaseCellIndexesAtRes.go,ported-impl,h3,"-",1,0,0
+utility__iterateBaseCellIndexesAtRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+utility_bboxPrint.go,ported-impl,h3,"-",1,0,0
+utility_bboxPrintln.go,ported-impl,h3,"-",1,0,0
+utility_cellBoundaryPrint.go,ported-impl,h3,"-",1,0,0
+utility_cellBoundaryPrintln.go,ported-impl,h3,"-",1,0,0
+utility_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+utility_constants.go,ported-impl,h3,"-",1,0,0
+utility_coordIjkPrint.go,ported-impl,h3,"-",1,0,0
+utility_geoPrint.go,ported-impl,h3,"-",1,0,0
+utility_geoPrintNoFmt.go,ported-impl,h3,"-",1,0,0
+utility_geoPrintln.go,ported-impl,h3,"-",1,0,0
+utility_geoPrintlnNoFmt.go,ported-impl,h3,"-",1,0,0
+utility_geoToStringDegs.go,ported-impl,h3,"-",1,0,0
+utility_geoToStringDegsNoFmt.go,ported-impl,h3,"-",1,0,0
+utility_geoToStringRads.go,ported-impl,h3,"-",1,0,0
+utility_h3Print.go,ported-impl,h3,"-",1,0,0
+utility_h3Println.go,ported-impl,h3,"-",1,0,0
+utility_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec2d__v2dAlmostEquals.go,ported-impl,h3,"-",1,0,0
+vec2d__v2dAlmostEquals_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec2d__v2dIntersect.go,ported-impl,h3,"-",1,0,0
+vec2d__v2dIntersect_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec2d__v2dMag.go,ported-impl,h3,"-",1,0,0
+vec2d__v2dMag_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec2d_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+vec2d_testVec2dInternal_test.go,ported-internal-test,h3,"-",0,0,-
+vec2d_types.go,ported-impl,h3,"-",0,0,0
+vec3d__geoToVec3d.go,ported-impl,h3,"-",1,0,0
+vec3d__geoToVec3d_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec3d__geoToVec3d_test.go,ported-internal-test,h3,"-",0,0,-
+vec3d__pointSquareDist.go,ported-impl,h3,"-",1,0,0
+vec3d__pointSquareDist_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec3d__pointSquareDist_test.go,ported-internal-test,h3,"-",0,0,-
+vec3d__square.go,ported-impl,h3,"-",1,0,0
+vec3d__square_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec3d_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+vec3d_types.go,ported-impl,h3,"-",0,0,0
+vertex.go,public-api,h3,"-",0,6,1
+vertexGraph__hashVertex.go,ported-impl,h3,"-",1,0,0
+vertexGraph__hashVertex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph__initVertexGraph.go,ported-impl,h3,"-",1,0,0
+vertexGraph__initVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph__initVertexNode.go,ported-impl,h3,"-",1,0,0
+vertexGraph__initVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_addVertexNode.go,ported-impl,h3,"-",1,0,0
+vertexGraph_addVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+vertexGraph_destroyVertexGraph.go,ported-impl,h3,"-",1,0,0
+vertexGraph_destroyVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_findNodeForEdge.go,ported-impl,h3,"-",1,0,0
+vertexGraph_findNodeForEdge_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_findNodeForVertex.go,ported-impl,h3,"-",1,0,0
+vertexGraph_findNodeForVertex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_firstVertexNode.go,ported-impl,h3,"-",1,0,0
+vertexGraph_firstVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_removeVertexNode.go,ported-impl,h3,"-",1,0,0
+vertexGraph_removeVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_types.go,ported-impl,h3,"-",0,0,0
+vertex__directionForVertexNum.go,ported-impl,h3,"-",1,0,0
+vertex__directionForVertexNum_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertex__vertexInternal_test.go,ported-internal-test,h3,"-",0,0,-
+vertex__vertexNumForDirection.go,ported-impl,h3,"-",1,0,0
+vertex__vertexNumForDirection_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertex__vertexRotations.go,ported-impl,h3,"-",1,0,0
+vertex__vertexRotations_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertex_cellToVertex.go,ported-impl,h3,"-",1,0,0
+vertex_cellToVertex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertex_cellToVertexes.go,ported-impl,h3,"-",1,0,0
+vertex_cellToVertexes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertex_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+vertex_constants.go,ported-impl,h3,"-",10,0,0
+vertex_isValidVertex.go,ported-impl,h3,"-",1,0,0
+vertex_isValidVertex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertex_testVertexExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
+vertex_vertexToLatLng.go,ported-impl,h3,"-",1,0,0
+vertex_vertexToLatLng_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexgraph_testVertexGraphInternal_test.go,ported-internal-test,h3,"-",0,0,-

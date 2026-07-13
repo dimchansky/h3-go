@@ -12,6 +12,7 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 | [public-api-architecture.md](public-api-architecture.md) | The authoritative design record: API architecture, decision records (DR-001…), measurements, and the living upstream-synchronization workflow (§10). Authored against H3 C v4.3.0 and kept as a snapshot; current facts live in the README/CHANGELOG. |
 | [DEVIATIONS.md](DEVIATIONS.md) | Every *intentional* behavioral difference from H3 C. Anything not listed must match C exactly (enforced by the parity suite). Consulted on every upstream sync. |
 | [FUTURE_WORK.md](FUTURE_WORK.md) | Deliberately deferred features with full context (GeoJSON, workspaces, …), profiling-gated ideas, rejected designs, and the pre-v1.0.0 checklist. |
+| [repository-layout-review.md](repository-layout-review.md) | Why the flat single-package layout stays (DR-008, reaffirming DR-001 with probe evidence), every package-split alternative evaluated and rejected, and the phased discoverability plan behind the file-layer inventory. |
 | [ci-policy.md](ci-policy.md) | Which CI tier runs when and why the expensive suites are not on every push. |
 | [lint-policy.md](lint-policy.md) | Why style-tier lint checks are excluded for mechanically ported files (and only those), the `//nolint` inventory, and when to revisit each exclusion. |
 
@@ -44,6 +45,7 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 |---|---|---|
 | [api-surface.txt](api-surface.txt) | Golden lock of the exported Go API surface. | `UPDATE_API_SURFACE=1 go test -run TestAPISurface .` / `make test` |
 | [c-api-inventory.csv](c-api-inventory.csv) | Full C-function ↔ Go-declaration mapping. | `make api-inventory` / `make check-api` |
+| [file-layer-inventory.csv](file-layer-inventory.csv) | Per-file architectural-layer map of the flat root package (public API vs ported layer vs parity harness). | `go run ./tools/layoutinventory > docs/file-layer-inventory.csv` / `go run ./tools/layoutinventory -verify` |
 | [upstream-test-inventory.csv](upstream-test-inventory.csv) | Case-level registry of every upstream test-ecosystem entry with reviewed dispositions. | reviewed by hand / `make check-test-inventory` |
 | [cli-contract.csv](cli-contract.csv) | Semantic command/flag/format contract of the CLI. | reviewed by hand / `make check-cli-inventory` |
 | [cli-test-inventory.csv](cli-test-inventory.csv) | All 170 upstream CLI scenarios with expected outputs and source hashes. | `go run ./tools/cliinventory -emit-cases` / `make check-cli-inventory` |
