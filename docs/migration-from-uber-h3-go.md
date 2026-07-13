@@ -28,7 +28,7 @@ ways to avoid materializing or reallocating large results:
 |---|---|
 | Complete H3 4.4 surface | All 78 public C functions, including `ConstructCell` and the single-origin `Cell.GridDiskUnsafe`; uber/h3-go v4.4.1 has no equivalent for those two operations. |
 | Streaming | `Cell.ChildrenSeq`, `CellsAtRes`, and `PolygonToCellsExperimentalSeq` return `iter.Seq` values and do not materialize the complete result. The binding has no iterator API. |
-| Caller-owned buffers | The main variable-size hierarchy, traversal, compaction, and polyfill operations have `Append*` forms; a sufficiently sized warm buffer makes the result path allocation-free where the algorithm itself needs no scratch space. |
+| Caller-owned buffers | The main variable-size hierarchy, traversal, compaction, and polyfill operations have `Append*` forms, and `Cell.AppendVertexes` covers the fixed-size vertex list; a sufficiently sized warm buffer makes the result path allocation-free where the algorithm itself needs no scratch space. |
 | Planning and result shapes | Exported `Max*Size`, `UncompactCellsSize`, `Cell.NumChildren`, and `Cell.GridPathLen` helpers support pre-sizing; `GridDiskDistancesGrouped` offers binding-style rings while the flat form remains available. |
 | Stronger Go contracts | Typed `Angle` values prevent degree/radian mix-ups; typed parsers validate the index mode and return sentinel errors instead of silently producing zero. |
 | Go-native operations | `CGO_ENABLED=0`, ordinary cross-compilation and profiling, no hidden C heap, plus an upstream-compatible pure-Go `h3` CLI. |
@@ -188,9 +188,10 @@ for child := range cell.ChildrenSeq(12) {   // stream, never materialize
 
 The main variable-size hierarchy, traversal, compaction, and polyfill APIs
 have `Append*` forms (pre-size with the exported
-`Max*Size`/`NumChildren`/`GridPathLen` helpers); three iterators stream
-without materializing. The binding has no equivalent caller-buffer or
-iterator forms.
+`Max*Size`/`NumChildren`/`GridPathLen` helpers), `Cell.AppendVertexes`
+covers the fixed-size vertex list (capacity 6 always suffices), and three
+iterators stream without materializing. The binding has no equivalent
+caller-buffer or iterator forms.
 
 ## A realistic before/after
 

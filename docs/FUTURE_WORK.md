@@ -316,6 +316,16 @@ hidden `sync.Pool`.
 - **Internal tidy**: the ported `h3ToString` returns `(string, uint32)` and
   uses `fmt.Sprintf` — unused by the public path (which formats via
   `strconv`); could be aligned with the C signature during a future sync.
+- **`AppendDirectedEdges` / `AppendIcosahedronFaces`**: `Cell.AppendVertexes`
+  landed in 2026-07 after an allocation study of the `Cell.Vertexes` path
+  (warm-buffer reuse was the only measurable win — 0 allocs/op; exact
+  sizing and staging-copy removal measured as noise). The other two
+  fixed-size collection APIs can adopt the same pattern for family
+  symmetry. Gated on demand: each is a copy of the same ≤6-element
+  template, but each also grows the locked API surface, and the study
+  showed the win is confined to warm-buffer loops (48 B, 1 alloc per call
+  otherwise). Implement on first request or first profile that shows
+  either API in a hot loop.
 
 ### Intentionally rejected designs (do not revisit without new evidence)
 

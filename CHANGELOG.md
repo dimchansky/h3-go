@@ -7,6 +7,16 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- Added zero-allocation `Cell.AppendVertexes(dst []Vertex)`: appends the
+  cell's 6 (hexagon) or 5 (pentagon) topological vertexes to a
+  caller-owned buffer with true append semantics — the prefix is
+  preserved, a capacity of 6 always suffices for an allocation-free warm
+  path, and on error `dst` is returned unchanged. `Cell.Vertexes` now
+  delegates to it with identical results, errors, and allocation profile
+  (one 48 B result slice). Measured on an allocation study of the vertex
+  path: warm reuse is the only observable win (0 allocs/op, −24% on
+  center-child cells, −1.2% on a mixed 20-cell workload); the ported
+  `cellToVertexes` internals are untouched.
 - Repository layout review (DR-008, `docs/repository-layout-review.md`):
   the flat single-package layout is reaffirmed against an `internal/h3`
   split with compile-probe and benchmark evidence. Layer discoverability is

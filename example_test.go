@@ -127,3 +127,20 @@ func ExampleCell_DirectedEdges() {
 	fmt.Println(len(edges), "edges; first leads to a neighbor:", ok)
 	// Output: 6 edges; first leads to a neighbor: true
 }
+
+func ExampleCell_AppendVertexes() {
+	cell, _ := h3.ParseCell("8928308280fffff")
+	// Reuse one buffer across many cells: capacity 6 always suffices, so
+	// the loop is allocation-free once warm.
+	buf := make([]h3.Vertex, 0, 6)
+	cells, _ := cell.GridDisk(1)
+	for _, c := range cells {
+		verts, err := c.AppendVertexes(buf[:0])
+		if err != nil {
+			panic(err)
+		}
+		buf = verts[:0]
+		fmt.Print(len(verts), " ")
+	}
+	// Output: 6 6 6 6 6 6 6
+}

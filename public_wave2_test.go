@@ -357,6 +357,72 @@ func TestVertexes(t *testing.T) {
 	}
 }
 
+func TestAppendVertexes(t *testing.T) {
+	t.Parallel()
+
+	hexVerts, err := sfCellRes9.Vertexes()
+	if err != nil {
+		t.Fatal(err)
+	}
+	pentagons, _ := Pentagons(4)
+	pentagon := pentagons[0]
+	pentVerts, err := pentagon.Vertexes()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(hexVerts) != 6 || len(pentVerts) != 5 {
+		t.Fatalf("Vertexes lengths = %d, %d; want 6, 5", len(hexVerts), len(pentVerts))
+	}
+
+	// nil dst behaves like Vertexes.
+	got, err := sfCellRes9.AppendVertexes(nil)
+	if err != nil || !slices.Equal(got, hexVerts) {
+		t.Errorf("AppendVertexes(nil) = %v, %v; want %v", got, err, hexVerts)
+	}
+
+	// An existing prefix is preserved and extended in order.
+	prefix := []Vertex{1, 2, 3}
+	buf := append(make([]Vertex, 0, 16), prefix...)
+	got, err = pentagon.AppendVertexes(buf)
+	if err != nil || !slices.Equal(got[:3], prefix) || !slices.Equal(got[3:], pentVerts) {
+		t.Errorf("AppendVertexes(prefix) = %v, %v; want prefix + %v", got, err, pentVerts)
+	}
+	if &got[0] != &buf[0] {
+		t.Error("AppendVertexes reallocated despite sufficient capacity")
+	}
+
+	// Insufficient capacity allocates a new backing array, keeping the prefix.
+	tight := append(make([]Vertex, 0, 4), prefix...)
+	got, err = sfCellRes9.AppendVertexes(tight)
+	if err != nil || !slices.Equal(got[:3], prefix) || !slices.Equal(got[3:], hexVerts) {
+		t.Errorf("AppendVertexes(tight) = %v, %v; want prefix + %v", got, err, hexVerts)
+	}
+
+	// Warm reuse: capacity 6 fits both hexagons and pentagons.
+	warm := make([]Vertex, 0, 6)
+	for _, tc := range []struct {
+		cell Cell
+		want []Vertex
+	}{{sfCellRes9, hexVerts}, {pentagon, pentVerts}, {sfCellRes9, hexVerts}} {
+		warm, err = tc.cell.AppendVertexes(warm[:0])
+		if err != nil || !slices.Equal(warm, tc.want) {
+			t.Errorf("AppendVertexes(warm) for %v = %v, %v; want %v", tc.cell, warm, err, tc.want)
+		}
+	}
+
+	// On error dst is returned unchanged (a nil dst stays nil).
+	invalid := Cell(0xffffffffffffffff)
+	if got, err := invalid.AppendVertexes(prefix); !errors.Is(err, ErrFailed) || !slices.Equal(got, prefix) {
+		t.Errorf("invalid AppendVertexes(prefix) = %v, %v; want unchanged dst and ErrFailed", got, err)
+	}
+	if got, err := invalid.AppendVertexes(nil); !errors.Is(err, ErrFailed) || got != nil {
+		t.Errorf("invalid AppendVertexes(nil) = %v, %v; want nil and ErrFailed", got, err)
+	}
+	if got, err := invalid.Vertexes(); !errors.Is(err, ErrFailed) || got != nil {
+		t.Errorf("invalid Vertexes = %v, %v; want nil and ErrFailed", got, err)
+	}
+}
+
 func TestWave2Allocations(t *testing.T) {
 	assertAllocs := func(name string, want float64, f func()) {
 		t.Helper()
@@ -385,6 +451,26 @@ func TestWave2Allocations(t *testing.T) {
 	assertAllocs("AppendGridRingUnsafe warm", 0, func() {
 		out, err := sfCellRes9.AppendGridRingUnsafe(buf, 2)
 		if err != nil || len(out) != 12 {
+			t.Fatal(err, len(out))
+		}
+	})
+
+	// AppendVertexes warm path: strictly zero allocations, hexagons and
+	// pentagons alike (capacity 6 covers both).
+	pentagons, err := Pentagons(9)
+	if err != nil {
+		t.Fatal(err)
+	}
+	vertBuf := make([]Vertex, 0, 6)
+	assertAllocs("AppendVertexes warm hexagon", 0, func() {
+		out, err := sfCellRes9.AppendVertexes(vertBuf[:0])
+		if err != nil || len(out) != 6 {
+			t.Fatal(err, len(out))
+		}
+	})
+	assertAllocs("AppendVertexes warm pentagon", 0, func() {
+		out, err := pentagons[0].AppendVertexes(vertBuf[:0])
+		if err != nil || len(out) != 5 {
 			t.Fatal(err, len(out))
 		}
 	})

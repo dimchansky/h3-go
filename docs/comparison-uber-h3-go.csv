@@ -55,7 +55,7 @@ directedEdgeToCells,edges,DirectedEdge.Cells,DirectedEdge.Cells,different-shape,
 originToDirectedEdges,edges,Cell.DirectedEdges,Cell.DirectedEdges,available,pentagon's deleted slot pruned in both (5 edges),1 slice alloc in either,mechanical
 directedEdgeToBoundary,edges,DirectedEdge.Boundary,DirectedEdge.Boundary,different-shape,CellBoundary value here vs []LatLng there (same cellToBoundary note),0 allocs here vs 1 there,adaptation
 cellToVertex,vertexes,Cell.Vertex,Cell.Vertex; CellToVertex,available,identical,none,mechanical
-cellToVertexes,vertexes,Cell.Vertexes,Cell.Vertexes; CellToVertexes,available,pentagon slot pruned in both (5 vertexes),1 slice alloc in either,mechanical
+cellToVertexes,vertexes,Cell.Vertexes; Cell.AppendVertexes,Cell.Vertexes; CellToVertexes,available,pentagon slot pruned in both (5 vertexes),convenience is 1 slice alloc in either; Append form is 0-alloc with a warm buffer here,mechanical
 vertexToLatLng,vertexes,Vertex.LatLng,Vertex.LatLng; VertexToLatLng,available,typed Angle coordinates here vs degrees there,none,mechanical
 isValidVertex,vertexes,Vertex.IsValid,Vertex.IsValid; IsValidVertex,available,identical,none,mechanical
 maxPolygonToCellsSize,regions,MaxPolygonToCellsSize,— (internal sizing),absorbed,exposed here for Append* buffer pre-sizing,n/a,n/a

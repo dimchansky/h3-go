@@ -195,7 +195,7 @@ functions accounted for.
 | H3 C function | This library | uber/h3-go v4 | Status | Semantics | Allocation | Migration |
 |---|---|---|---|---|---|---|
 | `cellToVertex` | `Cell.Vertex` | `Cell.Vertex`; `CellToVertex` | available | identical | none | mechanical |
-| `cellToVertexes` | `Cell.Vertexes` | `Cell.Vertexes`; `CellToVertexes` | available | pentagon slot pruned in both (5 vertexes) | 1 slice alloc in either | mechanical |
+| `cellToVertexes` | `Cell.Vertexes`; `Cell.AppendVertexes` | `Cell.Vertexes`; `CellToVertexes` | available | pentagon slot pruned in both (5 vertexes) | convenience is 1 slice alloc in either; Append form is 0-alloc with a warm buffer here | mechanical |
 | `vertexToLatLng` | `Vertex.LatLng` | `Vertex.LatLng`; `VertexToLatLng` | available | typed Angle coordinates here vs degrees there | none | mechanical |
 | `isValidVertex` | `Vertex.IsValid` | `Vertex.IsValid`; `IsValidVertex` | available | identical | none | mechanical |
 

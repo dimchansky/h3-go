@@ -81,6 +81,7 @@ method (Cell) AppendGridPath
 method (Cell) AppendGridRing
 method (Cell) AppendGridRingUnsafe
 method (Cell) AppendImmediateChildren
+method (Cell) AppendVertexes
 method (Cell) AreaKm2
 method (Cell) AreaM2
 method (Cell) AreaRads2

@@ -1,5 +1,7 @@
 package h3
 
+import "slices"
+
 // Vertex is an H3 vertex index: a single topological vertex of an H3 cell,
 // shared by three cells. One of the three neighboring cells is arbitrarily
 // designated the vertex's "owner" and determines its canonical index.
@@ -29,18 +31,30 @@ func (c Cell) Vertex(vertexNum int) (Vertex, error) {
 // for pentagons.
 //
 // H3 C API: cellToVertexes.
-func (c Cell) Vertexes() ([]Vertex, error) {
+func (c Cell) Vertexes() ([]Vertex, error) { return c.AppendVertexes(nil) }
+
+// AppendVertexes appends all topological vertexes of the cell to dst and
+// returns the extended slice: 6 vertexes for a hexagon, 5 for a pentagon.
+// Pass dst[:0] (or nil) to reuse dst's capacity; a capacity of 6 is always
+// sufficient and makes the call allocation-free. On error dst is returned
+// unchanged.
+//
+// H3 C API: cellToVertexes.
+func (c Cell) AppendVertexes(dst []Vertex) ([]Vertex, error) {
 	var raw [6]h3Index
 	if errC := cellToVertexes(c, &raw); errC != eSuccess {
-		return nil, toErr(errC)
+		return dst, toErr(errC)
 	}
-	out := make([]Vertex, 0, 6)
-	for _, v := range raw {
-		if v != h3Null { // pentagons leave the last slot empty
-			out = append(out, Vertex(v))
-		}
+	n := numHexVerts
+	if raw[numHexVerts-1] == h3Null { // pentagons leave the last slot empty
+		n = numPentVerts
 	}
-	return out, nil
+	start := len(dst)
+	dst = slices.Grow(dst, n)[:start+n]
+	for i := range n {
+		dst[start+i] = Vertex(raw[i])
+	}
+	return dst, nil
 }
 
 // IsValid reports whether the index is a valid H3 vertex index.
