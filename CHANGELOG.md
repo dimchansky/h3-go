@@ -7,6 +7,16 @@ contain breaking changes (called out explicitly below).
 
 ## [Unreleased]
 
+- Repository layout review (DR-008, `docs/repository-layout-review.md`):
+  the flat single-package layout is reaffirmed against an `internal/h3`
+  split with compile-probe and benchmark evidence. Layer discoverability is
+  now machine-checked — `tools/layoutinventory` classifies every root
+  source file into its architectural layer, the generated
+  `docs/file-layer-inventory.csv` is freshness-gated in CI alongside a new
+  `make check-layout` gate, the README repository map documents the layers
+  and their recognition rules, and the lone filename-casing outlier
+  (`h3Index_getBaseCellNumber.go`) was renamed to the standard `h3index_`
+  prefix. No API or behavior changes.
 - Refreshed the complete Apple M1 Max darwin/arm64 comparative benchmark
   and process-memory artifacts with Go 1.26.5. Generated README excerpts
   now reflect that clean run; Linux/amd64 measurements remain unchanged.

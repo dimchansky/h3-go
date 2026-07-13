@@ -1,9 +1,13 @@
 # Repository layout review: public API layer vs mechanically ported layer
 
-Status: **investigation complete; recommendation recorded as DR-008;
-implementation phases 1–4 pending owner approval** (phase 0 — this document,
-the `tools/layoutinventory` classifier, and `docs/file-layer-inventory.csv` —
-lands together with this file).
+Status: **implemented** — the investigation below was approved and phases
+0–4 were executed in full (phase 0 landed with this document; phase 1 wired
+`make layout-inventory` / `make check-layout` into the CI `fast` and
+`api-gates` jobs; phase 2 added the layer table and recognition rules to
+README/CONTRIBUTING/AGENTS; phase 3 renamed the `h3Index_getBaseCellNumber`
+casing outlier; phase 4 recorded DR-008 in
+[FUTURE_WORK.md](FUTURE_WORK.md)). The document is kept as the decision
+record for DR-008.
 Scope at time of writing: commit `5d189e7`, Go toolchain 1.26.5
 (`go.mod` floor 1.24), parity target H3 C v4.4.0, 638 root source files
 (620 `.go` + 18 `.c`).

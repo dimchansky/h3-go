@@ -305,11 +305,14 @@ hidden `sync.Pool`.
   perf follow-up, no API change, C-fidelity improvement.
 - **Filename convention cleanup (§12-Q12)**: 49 of the original 75 C-public
   functions live in double-underscore files
-  (e.g. `algos__gridDisk.go`), and `h3Index_getBaseCellNumber.go` breaks the
-  lowercase-prefix convention. The apiinventory tool already compensates, so
+  (e.g. `algos__gridDisk.go`). The apiinventory tool already compensates, so
   this is cosmetic churn — only worth doing in a quiet moment, as a pure
   `git mv` commit with no content changes. New ports (e.g. the 4.4.0 trio)
-  already follow the correct convention.
+  already follow the correct convention. *Partially done*: the lone casing
+  outlier (`h3Index_getBaseCellNumber.go` → `h3index_…`) was renamed in the
+  DR-008 phase-3 commit
+  ([repository-layout-review.md](repository-layout-review.md) §8); the mass
+  `__` renames remain deliberately not worth it (ibid. §5-A).
 - **Internal tidy**: the ported `h3ToString` returns `(string, uint32)` and
   uses `fmt.Sprintf` — unused by the public path (which formats via
   `strconv`); could be aligned with the C signature during a future sync.
@@ -321,7 +324,17 @@ Recorded here so they are not re-proposed from scratch; full rationale in
 and [DEVIATIONS.md](./DEVIATIONS.md):
 
 - `internal/` package split for the ported layer (DR-001: breaks the
-  zero-copy alias, methods, and white-box parity tests).
+  zero-copy alias, methods, and white-box parity tests). Re-investigated
+  in depth 2026-07 against a full `internal/h3` proposal and rejected
+  again as **DR-008** with probe evidence (methods cannot attach to
+  aliases of non-local types; `[]Cell` is not convertible to a
+  differently defined index slice — measured 3.7–4.8× boundary tax plus a
+  warm-path allocation; shared-type packages import-cycle; the alias
+  facade hides every method from godoc while relocating, not separating,
+  the mix): see
+  [repository-layout-review.md](repository-layout-review.md). Layer
+  discoverability is handled instead by `make check-layout` and the
+  generated [file-layer-inventory.csv](file-layer-inventory.csv).
 - `unsafe` slice reinterpretation (`castSlice`) — obsoleted by the
   `h3Index = Cell` alias; DR-007 requires a new reviewed decision record,
   benchmarks, and proof no safe design suffices before any production
