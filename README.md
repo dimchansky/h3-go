@@ -224,56 +224,36 @@ layer runs when in CI.
 
 ## Performance
 
-Measured against the official cgo binding **uber/h3-go v4.4.1** (vendoring
-H3 C v4.4.1 ≙ this library's v4.4.0 target) by the equivalence-gated
-benchmark suite in [interop/uberbench](interop/uberbench): identical
-deterministic inputs, both implementations first proven to return
-semantically equivalent results, 10 repetitions summarized by `benchstat`
-(medians; full tables with confidence intervals in
-[docs/benchmarks](docs/benchmarks/README.md)).
+Performance is operation- and platform-specific. This pure-Go implementation
+avoids cgo-call overhead and offers reusable-buffer APIs; the official C core
+is faster for some heavier geometry operations. The comparison against
+**uber/h3-go v4.4.1** covers 33 scenarios with identical deterministic inputs,
+semantic-equivalence gates, 10 repetitions, and `benchstat` summaries.
 
 <!-- BEGIN GENERATED: benchdocs README (run `make gen-benchdocs`) -->
-### Apple M1 Max — darwin-arm64
 
-go version go1.26.5 darwin/arm64; clang — Apple clang version 21.0.0 (clang-2100.1.1.101); github.com/uber/h3-go/v4 v4.4.1; H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module); repository `f207783`. [Metadata](docs/benchmarks/darwin-arm64/metadata.txt) · [full benchstat table](docs/benchmarks/darwin-arm64/benchstat.txt) · [raw output](docs/benchmarks/darwin-arm64/bench-raw.txt).
+The complete report covers **all 33 scenarios**; this scorecard counts the
+statistically faster implementation for each execution-time result.
 
-| Operation | this library | warm `Append*` | uber/h3-go v4.4.1 |
+| Environment | this library faster | uber/h3-go faster | no clear difference |
 |---|---:|---:|---:|
-| `Cell.Resolution` | 0.656 ns · 0 B · 0 allocs | — | 25.1 ns · 0 B · 0 allocs |
-| `Cell.Parent` (res 9→7) | 4.85 ns · 0 B · 0 allocs | — | 38.3 ns · 8 B · 1 allocs |
-| `LatLngToCell` (res 9) | 659 ns · 0 B · 0 allocs | — | 573 ns · 24 B · 2 allocs |
-| `Cell.Boundary` (res 9) | 1.136 µs · 0 B · 0 allocs | — | 1.106 µs · 272 B · 2 allocs |
-| `GridDisk` (k=5) | 1.709 µs · 768 B · 1 allocs | 1.621 µs · 0 B · 0 allocs | 1.568 µs · 768 B · 1 allocs |
-| `CompactCells` (1,253 cells) | 25.37 µs · 31.95 KiB · 5 allocs | 24.82 µs · 21.95 KiB · 4 allocs | 11.88 µs · 10 KiB · 1 allocs |
-| `PolygonToCells` (SF, res 9) | 895.2 µs · 144 KiB · 3 allocs | 880.9 µs · 96.04 KiB · 2 allocs | 701.9 µs · 48.04 KiB · 3 allocs |
-| `CellsToMultiPolygon` (331 cells) | 702.9 µs · 57.17 KiB · 1187 allocs | — | 395.4 µs · 2.094 KiB · 4 allocs |
-| service workload (256 points) | 191 µs · 16 KiB · 256 allocs | 188.5 µs · 0 B · 0 allocs | 229.1 µs · 36 KiB · 2560 allocs |
+| Apple M1 Max · `darwin/arm64` | **12** | **20** | 1 |
+| GitHub Actions AMD EPYC 7763 · `linux/amd64` | **26** | **5** | 2 |
 
-### GitHub Actions AMD EPYC 7763 — linux-amd64
+**[Explore every scenario, timing, allocation, process-memory, and reusable-buffer result →](docs/benchmarks/results.md)**
 
-go version go1.26.5 linux/amd64; gcc — gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; github.com/uber/h3-go/v4 v4.4.1; H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module); repository `0c1de86`. This is a shared GitHub Actions runner, so small deltas are noisier. [Metadata](docs/benchmarks/linux-amd64/metadata.txt) · [full benchstat table](docs/benchmarks/linux-amd64/benchstat.txt) · [raw output](docs/benchmarks/linux-amd64/bench-raw.txt).
-
-| Operation | this library | warm `Append*` | uber/h3-go v4.4.1 |
-|---|---:|---:|---:|
-| `Cell.Resolution` | 0.784 ns · 0 B · 0 allocs | — | 33.1 ns · 0 B · 0 allocs |
-| `Cell.Parent` (res 9→7) | 6.28 ns · 0 B · 0 allocs | — | 58.9 ns · 8 B · 1 allocs |
-| `LatLngToCell` (res 9) | 887 ns · 0 B · 0 allocs | — | 1.305 µs · 24 B · 2 allocs |
-| `Cell.Boundary` (res 9) | 1.498 µs · 0 B · 0 allocs | — | 1.806 µs · 272 B · 2 allocs |
-| `GridDisk` (k=5) | 2.42 µs · 768 B · 1 allocs | 2.259 µs · 0 B · 0 allocs | 2.335 µs · 768 B · 1 allocs |
-| `CompactCells` (1,253 cells) | 36.37 µs · 31.95 KiB · 5 allocs | 35.2 µs · 21.95 KiB · 4 allocs | 23.56 µs · 10 KiB · 1 allocs |
-| `PolygonToCells` (SF, res 9) | 1.295 ms · 144 KiB · 3 allocs | 1.29 ms · 96.05 KiB · 2 allocs | 1.565 ms · 48.04 KiB · 3 allocs |
-| `CellsToMultiPolygon` (331 cells) | 964.3 µs · 57.17 KiB · 1187 allocs | — | 745.9 µs · 2.094 KiB · 4 allocs |
-| service workload (256 points) | 269.1 µs · 16 KiB · 256 allocs | 254.7 µs · 0 B · 0 allocs | 486.9 µs · 36 KiB · 2560 allocs |
-
-**Measured fact:** several results reverse between environments: `LatLngToCell`, `Cell.Boundary`, and `PolygonToCells` favor the binding on the M1 Max but pure Go on the Linux runner; `CompactCells` and `CellsToMultiPolygon` favor the binding in both. **Plausible explanation, not isolated by these measurements:** cgo-call cost, compiler code generation, and CPU microarchitecture all contribute. The artifacts do not identify a single cause, and absolute timings must never be compared across the two machines.
+Several outcomes reverse between the two environments. That is a measured
+platform difference, not evidence that either implementation is universally
+faster; absolute timings must not be compared across machines.
 <!-- END GENERATED: benchdocs README -->
 
-Caveats that matter: numbers are machine- and compiler-specific; Go's
-`B/op` cannot see the binding's C-heap allocations (that is what the
-process-level memory matrices are for); and Linux/amd64 results come from
-a shared CI runner with wider noise
-([methodology and caveats](docs/benchmarks/README.md)). Reproduce with
-`make bench-uber`, or `make bench` for the library-only benchmarks.
+Caveats that matter: Go's `B/op` cannot see the binding's C-heap allocations,
+and Linux/amd64 results come from a shared CI runner with wider noise. The
+[full results](docs/benchmarks/results.md) include every scenario, confidence
+intervals, allocation comparisons, all process-memory workloads,
+reusable-buffer modes, provenance, and interpretation guidance. See the
+[methodology and reproduction guide](docs/benchmarks/README.md) to reproduce
+the suite.
 
 ## Status and versioning
 

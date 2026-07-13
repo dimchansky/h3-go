@@ -12,7 +12,7 @@ full details (`go doc ./tools/<name>`) and accepts `-h`.
 | [cliinventory](cliinventory) | Discover the upstream CLI contract; verify the committed CLI registries against it | `make check-cli-inventory` | CI (`api-gates`, nightly), upstream syncs |
 | [upstreamdiff](upstreamdiff) | Symbol-level diff of two upstream H3 trees, mapped to the Go port | `make upstream-diff FROM=4.3.0 TO=4.4.0` | Upstream syncs (manual, mandatory) |
 | [docscheck](docscheck) | Verify relative Markdown links and #anchors | `make check-docs` | CI (`docs` job) |
-| [benchdocs](benchdocs) | Generate and verify README benchmark excerpts from committed artifacts | `make gen-benchdocs` / `make check-benchdocs` | CI (`docs` job), benchmark refreshes |
+| [benchdocs](benchdocs) | Generate and verify the README scorecard and complete benchmark comparison from committed artifacts | `make gen-benchdocs` / `make check-benchdocs` | CI (`docs` job), benchmark refreshes |
 | [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
 | [unexport](unexport) | **Historical** one-time migration sweep (Phase 2 unexport) | `go run ./tools/unexport` (dry run) | Nothing — kept as a migration record |
 

@@ -13,6 +13,39 @@ func TestLoadResult(t *testing.T) {
 	}
 }
 
+func TestCompleteResultsCoverCatalog(t *testing.T) {
+	var results []result
+	for _, dir := range []string{"darwin-arm64", "linux-amd64"} {
+		r, err := loadResult(filepath.Join("../../docs/benchmarks", dir), dir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		results = append(results, r)
+	}
+
+	doc := renderFullResults(results)
+	for _, scenario := range scenarios {
+		if count := strings.Count(doc, "| "+scenario.label+" |"); count < 4 {
+			t.Errorf("scenario %q appears in only %d generated table rows, want at least 4", scenario.name, count)
+		}
+	}
+	for _, scenario := range memoryScenarios {
+		if count := strings.Count(doc, "| "+scenario.label+" |"); count != 2 {
+			t.Errorf("process-memory scenario %q appears in %d generated table rows, want 2", scenario.name, count)
+		}
+	}
+	for _, want := range []string{
+		"For each point: `LatLngToCell` (res 9), `GridDisk` (k 1), then `Parent` (res 7)",
+		"🟢 +",
+		"🔴 −",
+		"<summary>Run provenance and raw artifacts</summary>",
+	} {
+		if !strings.Contains(doc, want) {
+			t.Errorf("complete results missing %q", want)
+		}
+	}
+}
+
 func TestLoadResultRejectsDrift(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -20,13 +53,15 @@ func TestLoadResultRejectsDrift(t *testing.T) {
 		metadataNew string
 		csvOld      string
 		csvNew      string
+		memoryOld   string
+		memoryNew   string
 		want        string
 	}{
 		{
-			name:   "selected benchmark disappeared",
+			name:   "catalog benchmark disappeared",
 			csvOld: "Resolution-10",
 			csvNew: "ResolutionGone-10",
-			want:   "selected benchmark \"Resolution\" metric sec/op disappeared",
+			want:   "benchmark scenario \"Resolution\" metric sec/op disappeared",
 		},
 		{
 			name:        "CPU metadata mismatch",
@@ -46,6 +81,12 @@ func TestLoadResultRejectsDrift(t *testing.T) {
 			metadataNew: "memory_bytes_removed:",
 			want:        "missing memory_bytes",
 		},
+		{
+			name:      "process-memory scenario disappeared",
+			memoryOld: "polyfill-large",
+			memoryNew: "polyfill-large-renamed",
+			want:      "process-memory scenario \"polyfill-large\" disappeared",
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -55,6 +96,9 @@ func TestLoadResultRejectsDrift(t *testing.T) {
 			}
 			if tc.csvOld != "" {
 				replaceFile(t, filepath.Join(dir, "benchstat.csv"), tc.csvOld, tc.csvNew)
+			}
+			if tc.memoryOld != "" {
+				replaceFile(t, filepath.Join(dir, "memory.tsv"), tc.memoryOld, tc.memoryNew)
 			}
 			_, err := loadResult(dir, "darwin-arm64")
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
@@ -67,7 +111,7 @@ func TestLoadResultRejectsDrift(t *testing.T) {
 func copyArtifact(t *testing.T) string {
 	t.Helper()
 	dir := t.TempDir()
-	for _, name := range []string{"metadata.txt", "benchstat.csv"} {
+	for _, name := range []string{"metadata.txt", "benchstat.csv", "memory.tsv"} {
 		data, err := os.ReadFile(filepath.Join("../../docs/benchmarks/darwin-arm64", name))
 		if err != nil {
 			t.Fatal(err)

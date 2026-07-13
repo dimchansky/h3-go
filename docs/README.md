@@ -50,7 +50,7 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 | [cli-fixture-inventory.csv](cli-fixture-inventory.csv) | Upstream CLI input fixtures with hashes. | `go run ./tools/cliinventory -emit-fixtures` / `make check-cli-inventory` |
 | [cli-source-inventory.csv](cli-source-inventory.csv) | Upstream sources that define the CLI contract, with hashes. | `go run ./tools/cliinventory -emit-sources` / `make check-cli-inventory` |
 | [comparison-uber-h3-go.csv](comparison-uber-h3-go.csv) | Curated per-C-function comparison matrix vs uber/h3-go (source of the generated tables in comparison-uber-h3-go.md). | edit by hand, then `make gen-ubercompare` / `make check-ubercompare` |
-| [benchmarks/](benchmarks/README.md) | Committed benchmark artifacts per environment (raw, benchstat, memory, metadata); selected README excerpts are generated from them. | `make bench-uber`; `make gen-benchdocs` / `make check-benchdocs` |
+| [benchmarks/](benchmarks/README.md) | Committed benchmark artifacts per environment (raw, benchstat, memory, metadata), plus a generated all-scenario comparison and README scorecard. | `make bench-uber`; `make gen-benchdocs` / `make check-benchdocs` |
 
 The tools behind these files are documented in
 [tools/README.md](../tools/README.md).

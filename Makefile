@@ -40,8 +40,8 @@ check-docs:
 	@go run ./tools/docscheck
 	@go run ./tools/benchdocs -verify
 
-# Regenerate/verify selected README benchmark excerpts from the committed
-# benchstat CSV and metadata artifacts (offline).
+# Regenerate/verify the README scorecard and complete benchmark comparison
+# from the committed benchstat CSV and metadata artifacts (offline).
 gen-benchdocs:
 	@go run ./tools/benchdocs -write
 

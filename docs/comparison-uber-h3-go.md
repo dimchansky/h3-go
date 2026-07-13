@@ -340,6 +340,7 @@ benchmark runs:
 4. Re-running benchmarks: `make bench-uber` on each reference machine
    (see [benchmarks/README.md](benchmarks/README.md) for machine notes and
    the CI workflow) — never mix machines in one table, and refresh the
-   README's curated numbers from the new `benchstat` output.
-5. Verify every number quoted in the README appears in (or is directly
-   computable from) a committed artifact under `docs/benchmarks/`.
+   generated complete results and README scorecard from the new `benchstat`
+   output with `make gen-benchdocs`.
+5. Run `make check-benchdocs` to verify every published benchmark number is
+   computed from a committed artifact under `docs/benchmarks/`.

@@ -1,6 +1,7 @@
-// Command benchdocs generates and verifies the selected benchmark excerpts
-// in README.md and docs/benchmarks/README.md from committed benchmark CSV and
-// metadata artifacts. It is intentionally offline and dependency-free.
+// Command benchdocs generates and verifies the benchmark scorecard in
+// README.md and the complete comparison in docs/benchmarks/results.md from
+// committed benchmark CSV and metadata artifacts. It is intentionally
+// offline and dependency-free.
 //
 // Usage:
 //
@@ -12,7 +13,6 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -21,42 +21,39 @@ import (
 )
 
 const (
-	readmePath = "README.md"
-	benchPath  = "docs/benchmarks/README.md"
+	readmePath  = "README.md"
+	resultsPath = "docs/benchmarks/results.md"
 
 	readmeBegin = "<!-- BEGIN GENERATED: benchdocs README (run `make gen-benchdocs`) -->"
 	readmeEnd   = "<!-- END GENERATED: benchdocs README -->"
-	benchBegin  = "<!-- BEGIN GENERATED: benchdocs details (run `make gen-benchdocs`) -->"
-	benchEnd    = "<!-- END GENERATED: benchdocs details -->"
 )
 
+type measurement struct {
+	value        float64
+	ci, delta, p string
+	present      bool
+}
+
 type metric struct {
-	pure, uber, warm float64
-	delta            string
-	hasWarm          bool
+	pure, uber, cold, warm measurement
+}
+
+type memoryMeasurement struct {
+	peakRSSKB, heapAllocKB float64
+	checksum               string
+	present                bool
+}
+
+type memoryResult struct {
+	pure, uber memoryMeasurement
 }
 
 type result struct {
 	dir, goos, goarch, cpu string
 	meta                   map[string]string
 	metrics                map[string]map[string]metric
-}
-
-type selected struct {
-	name, label string
-	warm        bool
-}
-
-var selections = []selected{
-	{"Resolution", "`Cell.Resolution`", false},
-	{"CellToParent/res=9to7", "`Cell.Parent` (res 9→7)", false},
-	{"LatLngToCell/res=9", "`LatLngToCell` (res 9)", false},
-	{"CellToBoundary/res=9", "`Cell.Boundary` (res 9)", false},
-	{"GridDisk/k=5", "`GridDisk` (k=5)", true},
-	{"Compact/set=sf9", "`CompactCells` (1,253 cells)", true},
-	{"PolygonToCells/poly=sf/res=9", "`PolygonToCells` (SF, res 9)", true},
-	{"CellsToMultiPolygon/n=331", "`CellsToMultiPolygon` (331 cells)", false},
-	{"ServiceWorkload/pts=256", "service workload (256 points)", true},
+	memory                 map[string]memoryResult
+	order                  []string
 }
 
 var gomaxSuffix = regexp.MustCompile(`-\d+$`)
@@ -87,43 +84,54 @@ func run(repo string, write bool) error {
 	}
 
 	readme := renderREADME(results)
-	details := renderDetails(results)
-	targets := []struct {
-		path, begin, end, generated string
-	}{
-		{filepath.Join(repo, readmePath), readmeBegin, readmeEnd, readme},
-		{filepath.Join(repo, benchPath), benchBegin, benchEnd, details},
+	readmeFile := filepath.Join(repo, readmePath)
+	data, err := os.ReadFile(readmeFile)
+	if err != nil {
+		return err
 	}
-	for _, target := range targets {
-		data, err := os.ReadFile(target.path)
+	current, err := generatedSection(string(data), readmeBegin, readmeEnd)
+	if err != nil {
+		return fmt.Errorf("%s: %w", readmeFile, err)
+	}
+	if write {
+		updated := strings.Replace(string(data), current, readme, 1)
+		if err := os.WriteFile(readmeFile, []byte(updated), 0o644); err != nil {
+			return err
+		}
+	} else if strings.TrimSpace(current) != strings.TrimSpace(readme) {
+		return fmt.Errorf("%s benchmark scorecard is stale; run `make gen-benchdocs`", readmeFile)
+	}
+
+	fullResults := renderFullResults(results)
+	fullResultsFile := filepath.Join(repo, resultsPath)
+	if write {
+		if err := os.WriteFile(fullResultsFile, []byte(fullResults), 0o644); err != nil {
+			return err
+		}
+	} else {
+		committed, err := os.ReadFile(fullResultsFile)
 		if err != nil {
 			return err
 		}
-		current, err := generatedSection(string(data), target.begin, target.end)
-		if err != nil {
-			return fmt.Errorf("%s: %w", target.path, err)
-		}
-		if write {
-			updated := strings.Replace(string(data), current, target.generated, 1)
-			if err := os.WriteFile(target.path, []byte(updated), 0o644); err != nil {
-				return err
-			}
-			continue
-		}
-		if strings.TrimSpace(current) != strings.TrimSpace(target.generated) {
-			return fmt.Errorf("%s benchmark excerpt is stale; run `make gen-benchdocs`", target.path)
+		if strings.TrimSpace(string(committed)) != strings.TrimSpace(fullResults) {
+			return fmt.Errorf("%s is stale; run `make gen-benchdocs`", fullResultsFile)
 		}
 	}
 	if write {
-		fmt.Println("benchdocs: generated benchmark excerpts updated")
+		fmt.Println("benchdocs: README scorecard and complete results updated")
 	} else {
-		fmt.Println("benchdocs: OK (README excerpts match both committed artifact sets)")
+		fmt.Println("benchdocs: OK (scorecard and complete results match both artifact sets)")
 	}
 	return nil
 }
 
 func loadResult(path, dir string) (result, error) {
-	r := result{dir: dir, meta: map[string]string{}, metrics: map[string]map[string]metric{}}
+	r := result{
+		dir:     dir,
+		meta:    map[string]string{},
+		metrics: map[string]map[string]metric{},
+		memory:  map[string]memoryResult{},
+	}
 	metaData, err := os.ReadFile(filepath.Join(path, "metadata.txt"))
 	if err != nil {
 		return r, err
@@ -134,7 +142,7 @@ func loadResult(path, dir string) (result, error) {
 			r.meta[key] = strings.TrimSpace(value)
 		}
 	}
-	for _, key := range []string{"date_utc", "repo_commit", "go_version", "uber_h3_go", "pure_go_h3_target", "cpu", "cc", "bench_flags", "environment"} {
+	for _, key := range []string{"date_utc", "repo_commit", "go_version", "uber_h3_go", "pure_go_h3_target", "cpu", "cc", "bench_flags", "memprobe_iters", "environment"} {
 		if r.meta[key] == "" {
 			return r, fmt.Errorf("%s/metadata.txt: missing %s", dir, key)
 		}
@@ -180,26 +188,30 @@ func loadResult(path, dir string) (result, error) {
 				return r, fmt.Errorf("%s/benchstat.csv: short %s row %q", dir, metricName, record[0])
 			}
 			name := gomaxSuffix.ReplaceAllString(record[0], "")
-			pure, err := strconv.ParseFloat(record[1], 64)
+			pure, err := parseMeasurement(record, 1, -1)
 			if err != nil {
 				return r, fmt.Errorf("%s %s pure: %w", dir, name, err)
 			}
-			uber, err := strconv.ParseFloat(record[3], 64)
+			uber, err := parseMeasurement(record, 3, 5)
 			if err != nil {
 				return r, fmt.Errorf("%s %s uber: %w", dir, name, err)
 			}
-			m := metric{pure: pure, uber: uber, delta: record[5]}
-			if len(record) > 11 && record[11] != "" {
-				m.warm, err = strconv.ParseFloat(record[11], 64)
-				if err != nil {
-					return r, fmt.Errorf("%s %s warm: %w", dir, name, err)
-				}
-				m.hasWarm = true
+			cold, err := parseMeasurement(record, 7, 9)
+			if err != nil {
+				return r, fmt.Errorf("%s %s pure-cold: %w", dir, name, err)
 			}
+			warm, err := parseMeasurement(record, 11, 13)
+			if err != nil {
+				return r, fmt.Errorf("%s %s pure-warm: %w", dir, name, err)
+			}
+			m := metric{pure: pure, uber: uber, cold: cold, warm: warm}
 			if r.metrics[name] == nil {
 				r.metrics[name] = map[string]metric{}
 			}
 			r.metrics[name][metricName] = m
+			if metricName == "sec/op" {
+				r.order = append(r.order, name)
+			}
 		}
 	}
 
@@ -213,97 +225,120 @@ func loadResult(path, dir string) (result, error) {
 	if strings.TrimSpace(r.meta["cpu"]) != r.cpu {
 		return r, fmt.Errorf("%s: metadata CPU %q disagrees with benchstat CPU %q", dir, r.meta["cpu"], r.cpu)
 	}
-	for _, selected := range selections {
-		metrics := r.metrics[selected.name]
+	if len(r.order) != len(scenarios) {
+		return r, fmt.Errorf("%s: got %d benchmark scenarios, catalog has %d", dir, len(r.order), len(scenarios))
+	}
+	for _, scenario := range scenarios {
+		metrics := r.metrics[scenario.name]
 		for _, name := range []string{"sec/op", "B/op", "allocs/op"} {
 			if _, ok := metrics[name]; !ok {
-				return r, fmt.Errorf("%s: selected benchmark %q metric %s disappeared", dir, selected.name, name)
+				return r, fmt.Errorf("%s: benchmark scenario %q metric %s disappeared", dir, scenario.name, name)
 			}
 		}
+	}
+	for _, name := range r.order {
+		if _, ok := scenarioByName[name]; !ok {
+			return r, fmt.Errorf("%s: undocumented benchmark scenario %q", dir, name)
+		}
+	}
+	if err := loadMemoryResults(path, &r); err != nil {
+		return r, err
 	}
 	return r, nil
 }
 
-func renderREADME(results []result) string {
-	var b strings.Builder
-	b.WriteString(readmeBegin + "\n")
-	for _, r := range results {
-		fmt.Fprintf(&b, "### %s — %s\n\n", platformTitle(r), r.dir)
-		fmt.Fprintf(&b, "%s; %s; %s; %s; repository `%s`. ", r.meta["go_version"], r.meta["cc"], r.meta["uber_h3_go"], r.meta["pure_go_h3_target"], shortCommit(r.meta["repo_commit"]))
-		if r.dir == "linux-amd64" {
-			b.WriteString("This is a shared GitHub Actions runner, so small deltas are noisier. ")
+func loadMemoryResults(path string, r *result) error {
+	f, err := os.Open(filepath.Join(path, "memory.tsv"))
+	if err != nil {
+		return err
+	}
+	defer func() { _ = f.Close() }()
+	reader := csv.NewReader(f)
+	reader.Comma = '\t'
+	records, err := reader.ReadAll()
+	if err != nil {
+		return err
+	}
+	if len(records) == 0 {
+		return fmt.Errorf("%s/memory.tsv: empty", r.dir)
+	}
+	header := make(map[string]int, len(records[0]))
+	for i, field := range records[0] {
+		header[field] = i
+	}
+	for _, field := range []string{"impl", "workload", "peak_rss_kb", "heap_alloc_kb", "checksum"} {
+		if _, ok := header[field]; !ok {
+			return fmt.Errorf("%s/memory.tsv: missing %s", r.dir, field)
 		}
-		fmt.Fprintf(&b, "[Metadata](docs/benchmarks/%s/metadata.txt) · [full benchstat table](docs/benchmarks/%s/benchstat.txt) · [raw output](docs/benchmarks/%s/bench-raw.txt).\n\n", r.dir, r.dir, r.dir)
-		b.WriteString("| Operation | this library | warm `Append*` | uber/h3-go v4.4.1 |\n")
-		b.WriteString("|---|---:|---:|---:|\n")
-		for _, selected := range selections {
-			metrics := r.metrics[selected.name]
-			fmt.Fprintf(&b, "| %s | %s | %s | %s |\n", selected.label, formatCell(metrics, "pure"), formatWarm(metrics, selected.warm), formatCell(metrics, "uber"))
+	}
+	for _, record := range records[1:] {
+		peakRSSKB, err := parseTSVFloat(record, header["peak_rss_kb"])
+		if err != nil {
+			return fmt.Errorf("%s/memory.tsv peak_rss_kb: %w", r.dir, err)
 		}
-		b.WriteString("\n")
-	}
-	b.WriteString("**Measured fact:** several results reverse between environments: `LatLngToCell`, `Cell.Boundary`, and `PolygonToCells` favor the binding on the M1 Max but pure Go on the Linux runner; `CompactCells` and `CellsToMultiPolygon` favor the binding in both. **Plausible explanation, not isolated by these measurements:** cgo-call cost, compiler code generation, and CPU microarchitecture all contribute. The artifacts do not identify a single cause, and absolute timings must never be compared across the two machines.\n")
-	b.WriteString(readmeEnd)
-	return b.String()
-}
-
-func renderDetails(results []result) string {
-	var b strings.Builder
-	b.WriteString(benchBegin + "\n")
-	for _, r := range results {
-		fmt.Fprintf(&b, "### %s (`%s`)\n\n", platformTitle(r), r.dir)
-		fmt.Fprintf(&b, "Run `%s` at repository `%s`; %s; %s; `%s`.\n\n", r.meta["date_utc"], shortCommit(r.meta["repo_commit"]), r.meta["go_version"], r.meta["cc"], r.meta["bench_flags"])
-		b.WriteString("| Selected operation | pure sec/op | uber sec/op | uber vs pure |\n")
-		b.WriteString("|---|---:|---:|---:|\n")
-		for _, selected := range selections {
-			m := r.metrics[selected.name]["sec/op"]
-			fmt.Fprintf(&b, "| %s | %s | %s | %s |\n", selected.label, formatTime(m.pure), formatTime(m.uber), m.delta)
+		heapAllocKB, err := parseTSVFloat(record, header["heap_alloc_kb"])
+		if err != nil {
+			return fmt.Errorf("%s/memory.tsv heap_alloc_kb: %w", r.dir, err)
 		}
-		b.WriteString("\n")
+		workload := record[header["workload"]]
+		m := r.memory[workload]
+		value := memoryMeasurement{
+			peakRSSKB:   peakRSSKB,
+			heapAllocKB: heapAllocKB,
+			checksum:    record[header["checksum"]],
+			present:     true,
+		}
+		switch record[header["impl"]] {
+		case "pure":
+			m.pure = value
+		case "uber":
+			m.uber = value
+		default:
+			return fmt.Errorf("%s/memory.tsv: unknown implementation %q", r.dir, record[header["impl"]])
+		}
+		r.memory[workload] = m
 	}
-	b.WriteString("These tables are generated from the committed `benchstat.csv` files. Positive “uber vs pure” values mean the binding took longer; negative values mean it was faster. See the full tables for confidence intervals and p-values.\n")
-	b.WriteString(benchEnd)
-	return b.String()
+	for _, scenario := range memoryScenarios {
+		m := r.memory[scenario.name]
+		if !m.pure.present || !m.uber.present {
+			return fmt.Errorf("%s: process-memory scenario %q disappeared", r.dir, scenario.name)
+		}
+		if m.pure.checksum != m.uber.checksum {
+			return fmt.Errorf("%s: process-memory scenario %q checksums differ", r.dir, scenario.name)
+		}
+	}
+	if len(r.memory) != len(memoryScenarios) {
+		return fmt.Errorf("%s: got %d process-memory scenarios, catalog has %d", r.dir, len(r.memory), len(memoryScenarios))
+	}
+	return nil
 }
 
-func formatCell(metrics map[string]metric, impl string) string {
-	time, bytes, allocs := metrics["sec/op"], metrics["B/op"], metrics["allocs/op"]
-	if impl == "uber" {
-		return fmt.Sprintf("%s · %s · %s", formatTime(time.uber), formatBytes(bytes.uber), formatAllocs(allocs.uber))
+func parseTSVFloat(record []string, index int) (float64, error) {
+	if index >= len(record) {
+		return 0, fmt.Errorf("short row")
 	}
-	return fmt.Sprintf("%s · %s · %s", formatTime(time.pure), formatBytes(bytes.pure), formatAllocs(allocs.pure))
+	return strconv.ParseFloat(record[index], 64)
 }
 
-func formatWarm(metrics map[string]metric, selected bool) string {
-	if !selected || !metrics["sec/op"].hasWarm {
-		return "—"
+func parseMeasurement(record []string, valueIndex, deltaIndex int) (measurement, error) {
+	if valueIndex >= len(record) || record[valueIndex] == "" {
+		return measurement{}, nil
 	}
-	return fmt.Sprintf("%s · %s · %s", formatTime(metrics["sec/op"].warm), formatBytes(metrics["B/op"].warm), formatAllocs(metrics["allocs/op"].warm))
-}
-
-func formatTime(seconds float64) string {
-	switch {
-	case seconds < 1e-6:
-		return fmt.Sprintf("%.3g ns", seconds*1e9)
-	case seconds < 1e-3:
-		return fmt.Sprintf("%.4g µs", seconds*1e6)
-	default:
-		return fmt.Sprintf("%.4g ms", seconds*1e3)
+	value, err := strconv.ParseFloat(record[valueIndex], 64)
+	if err != nil {
+		return measurement{}, err
 	}
-}
-
-func formatBytes(bytes float64) string {
-	if bytes >= 1024 {
-		return fmt.Sprintf("%.4g KiB", bytes/1024)
+	m := measurement{value: value, present: true}
+	if valueIndex+1 < len(record) {
+		m.ci = record[valueIndex+1]
 	}
-	return fmt.Sprintf("%.4g B", bytes)
-}
-
-func formatAllocs(allocs float64) string {
-	if math.Trunc(allocs) == allocs {
-		return fmt.Sprintf("%.0f allocs", allocs)
+	if deltaIndex >= 0 && deltaIndex < len(record) {
+		m.delta = record[deltaIndex]
+		if deltaIndex+1 < len(record) {
+			m.p = record[deltaIndex+1]
+		}
 	}
-	return fmt.Sprintf("%.3g allocs", allocs)
+	return m, nil
 }
 
 func platformTitle(r result) string {
