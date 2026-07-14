@@ -53,8 +53,11 @@ make fmt lint test check-unsafe check-layout check-docs
 ```
 
 plus `make test-c2go` (needs `make -C testref h3-source` once) whenever you
-touch ported code or the parity harness. Commit style: focused commits with
-area prefixes (`api:`, `c2go:`, `cli:`, `tests:`, `tools:`, `docs:`, `ci:`),
-no tool-attribution trailers. Upstream syncs follow the step-by-step
-workflow in [CONTRIBUTING.md](CONTRIBUTING.md#porting-a-c-function-upstream-syncs);
-CI tiers and what runs when are in [docs/ci-policy.md](docs/ci-policy.md).
+touch ported code or the parity harness, and `make vulncheck` (pinned
+govulncheck over the shipped root module) when preparing a release. Commit
+style: focused commits with area prefixes (`api:`, `c2go:`, `cli:`,
+`tests:`, `tools:`, `docs:`, `ci:`), no tool-attribution trailers. Upstream
+syncs follow the step-by-step workflow in
+[CONTRIBUTING.md](CONTRIBUTING.md#porting-a-c-function-upstream-syncs);
+CI tiers and what runs when are in [docs/ci-policy.md](docs/ci-policy.md);
+releases follow the runbook in [docs/releasing.md](docs/releasing.md).
