@@ -9,6 +9,9 @@ on:
   push:
     tags: [ 'v*' ] # release gate: tags get the full battery
 
+permissions:
+  contents: read
+
 concurrency:
   group: nightly-${{ github.ref }}
   cancel-in-progress: true
@@ -17,8 +20,8 @@ jobs:
   race:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: 'stable'
       - name: Test (race)
@@ -27,8 +30,8 @@ jobs:
   parity:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: 'stable'
       - name: Fetch upstream H3 sources
@@ -47,24 +50,34 @@ jobs:
       - name: Upstream fixture suites (526,546 golden records, pure Go)
         run: make test-upstream-fixtures
 
+  # Six of the seven fuzz targets: the three h3-go-native harnesses plus
+  # three of the four FuzzUpstream* ports of the upstream libFuzzer/AFL
+  # harnesses (otherwise seed-corpus-only under plain `go test`).
+  # FuzzUpstreamPolygonOperations stays seed-corpus-only: its input domain
+  # (raw float64 coordinates, mirroring upstream) contains finite but
+  # pathologically slow (~15 s) inputs that the fuzz engine kills as hung —
+  # tracked in issue #3; return it to the rotation once resolved.
   fuzz-smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: 'stable'
       - name: Fuzz (short smoke on each target)
         run: |
-          for target in FuzzParseCell FuzzLatLngToCell FuzzHierarchyRoundTrip; do
-            CGO_ENABLED=0 go test -fuzz "$target" -fuzztime 60s -run '^$' .
+          set -euo pipefail
+          for target in FuzzParseCell FuzzLatLngToCell FuzzHierarchyRoundTrip \
+                        FuzzUpstreamCellOperations FuzzUpstreamCellSets \
+                        FuzzUpstreamInternalCoordinates; do
+            CGO_ENABLED=0 go test -fuzz "^${target}\$" -fuzztime 60s -run '^$' .
           done
 
   uberdiff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: 'stable'
       - name: Differential tests vs official cgo binding
@@ -75,8 +88,8 @@ jobs:
   cli-differential:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: 'stable'
       - name: Fetch upstream H3 sources
@@ -87,9 +100,40 @@ jobs:
   cli-cross-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version: 'stable'
       - name: Build supported CLI targets
         run: make build-cli-cross
+
+  # Pinned vulnerability scan of the root module (the shipped code); the
+  # test-only nested interop/ modules are intentionally out of scope. Runs
+  # nightly AND on every v* tag, so it is part of the release gate; `make
+  # vulncheck` is the matching local defense in depth.
+  vulncheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: 'stable'
+      - name: govulncheck (pinned)
+        run: make vulncheck
+
+  # Digest-pinned full-history secret scan. On rc/final tag pushes this
+  # run's URL and logs are the durable zero-findings evidence for the exact
+  # immutable released commit (a committed scan record would be
+  # self-referential). The image digest pins gitleaks v8.30.1.
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+      - name: gitleaks (digest-pinned, full history)
+        run: |
+          set -euo pipefail
+          docker run --rm -v "$PWD:/repo" \
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            git --redact /repo

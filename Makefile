@@ -1,4 +1,4 @@
-.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff test-uberbench bench-uber upstream-diff check-test-inventory check-docs gen-benchdocs check-benchdocs layout-inventory check-layout
+.PHONY: test test-cli test-cli-process test-cli-diff build-cli build-cli-cross check-cli-inventory test-upstream-fixtures bench lint test-c2go golangci-lint install-lint install-smrcptr fmt fix-fmt coverage coverage-html coverage-c2go coverage-c2go-html coverage-all check-unsafe api-inventory check-api test-uberdiff test-uberbench bench-uber upstream-diff check-test-inventory check-docs gen-benchdocs check-benchdocs layout-inventory check-layout release-dist vulncheck
 
 # Enforces DR-007 (docs/public-api-architecture.md): the production library is
 # safe Go only. Two independent layers:
@@ -118,6 +118,27 @@ build-cli-cross:
 		CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -o /tmp/h3-$$os-$$arch$$suffix ./cmd/h3 || exit 1; \
 	done
 
+# The single authoritative release-build entry point (tools/releasepack):
+# validates the release invariants (canonical tag at HEAD, clean tree, exact
+# pinned toolchain, empty OUT), cross-builds all six platforms with a
+# normalized environment, packs deterministic archives, and writes
+# SHA256SUMS. The CI build job, the CI verify-reproducible job, and the
+# local release procedure all run exactly this target; their archives must
+# be byte-identical. OUT must be OUTSIDE the repository (e.g. mktemp -d).
+# Usage: make release-dist VERSION=v0.3.0 OUT=/path/to/empty-dir
+release-dist:
+	@test -n "$(VERSION)" || { echo "usage: make release-dist VERSION=vX.Y.Z OUT=<empty dir outside the repo>"; exit 1; }
+	@test -n "$(OUT)" || { echo "usage: make release-dist VERSION=vX.Y.Z OUT=<empty dir outside the repo>"; exit 1; }
+	@go run ./tools/releasepack -version $(VERSION) -out $(OUT)
+
+# Pinned vulnerability scan of the root module (the shipped code). The
+# test-only nested interop/ modules are intentionally excluded: they never
+# reach consumers. The same pinned version runs in the Nightly vulncheck
+# job (including on release tags); this target is local defense in depth.
+GOVULNCHECK_VERSION ?= v1.6.0
+vulncheck:
+	@go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./...
+
 # Pure-Go ports of the three large input-driven upstream executables.
 test-upstream-fixtures:
 	@H3_UPSTREAM_FIXTURE_ROOT=testref/h3-$(H3VER)/tests/inputfiles \
@@ -183,10 +204,12 @@ install-lint:
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | \
 		sh -s -- -b $(GOBIN) $(GOLANGCI_LINT_VERSION)
 
-# Installs smrcptr for consistent receiver type checking
+# Installs smrcptr for consistent receiver type checking (pinned; bump
+# deliberately together with the other release-infrastructure pins).
+SMRCPTR_VERSION ?= v1.4.3
 install-smrcptr:
-	@echo "Installing smrcptr to $(SMRCPTR)"
-	@go install github.com/nikolaydubina/smrcptr@latest
+	@echo "Installing smrcptr $(SMRCPTR_VERSION) to $(SMRCPTR)"
+	@go install github.com/nikolaydubina/smrcptr@$(SMRCPTR_VERSION)
 
 # Runs fmt, vet, golangci-lint, and smrcptr (installs them if missing)
 lint: fmt $(GOLANGCI_LINT) $(SMRCPTR)
