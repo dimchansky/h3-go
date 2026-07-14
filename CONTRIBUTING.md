@@ -81,8 +81,8 @@ Differential testing and benchmarking against the official cgo binding:
 make test-uberdiff           # separate module in interop/uberdiff
 make test-uberbench          # benchmark-pairing equivalence (interop/uberbench)
 make bench-uber              # full comparative benchmark + memory suite
-make gen-ubercompare         # regenerate the comparison-matrix tables
-make check-ubercompare       # matrix drift gate (runs in CI's docs job)
+make gen-ubercompare         # regenerate the comparison-matrix tables + docs/api-map.md
+make check-ubercompare       # matrix/API-map drift gate (runs in CI's docs job)
 ```
 
 The comparison matrix, migration guide, and benchmark artifacts are

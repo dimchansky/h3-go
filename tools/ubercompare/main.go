@@ -1,10 +1,15 @@
-// Command ubercompare maintains the uber/h3-go comparison matrix.
+// Command ubercompare maintains the uber/h3-go comparison matrix and the
+// C→Go API map projected from it.
 //
 // The curated matrix lives in docs/comparison-uber-h3-go.csv: one row per
 // public C function of the pinned H3 release, mapping it to this library's
-// API and to the official cgo binding's API. This tool keeps that matrix
-// consistent with the repository's authoritative inventories — offline, so
-// it can gate CI without network or testref sources:
+// API and to the official cgo binding's API. Two generated documents are
+// rendered from it: the full comparison tables in
+// docs/comparison-uber-h3-go.md and the simplified per-function API map in
+// docs/api-map.md (C function → idiomatic Go API → additive Append*/Seq
+// forms). This tool keeps the matrix consistent with the repository's
+// authoritative inventories — offline, so it can gate CI without network
+// or testref sources:
 //
 //   - every row must correspond to exactly one public C function from
 //     docs/c-api-inventory.csv, and every public C function must have a
@@ -12,8 +17,9 @@
 //   - every Go symbol named in the matrix's this_api column must exist in
 //     docs/api-surface.txt (drift gate for API changes in this library);
 //   - status and migration values must come from the fixed vocabularies;
-//   - the generated tables in docs/comparison-uber-h3-go.md must match
-//     the matrix (drift gate for hand-edited tables).
+//   - the generated tables in docs/comparison-uber-h3-go.md and
+//     docs/api-map.md must match the matrix (drift gate for hand-edited
+//     tables).
 //
 // The binding's side of the matrix cannot be verified offline from the
 // root module (it would need the uber/h3-go dependency); that check lives
@@ -23,7 +29,7 @@
 // Usage:
 //
 //	go run ./tools/ubercompare            # print the generated Markdown tables
-//	go run ./tools/ubercompare -write     # rewrite the generated section of docs/comparison-uber-h3-go.md
+//	go run ./tools/ubercompare -write     # rewrite the generated sections of both documents
 //	go run ./tools/ubercompare -verify    # exit 1 on any inconsistency (CI gate)
 package main
 
@@ -44,6 +50,10 @@ const (
 
 	beginMarker = "<!-- BEGIN GENERATED: ubercompare (edit docs/comparison-uber-h3-go.csv and run `make gen-ubercompare`) -->"
 	endMarker   = "<!-- END GENERATED: ubercompare -->"
+
+	apiMapDoc   = "docs/api-map.md"
+	apiMapBegin = "<!-- BEGIN GENERATED: ubercompare api-map (edit docs/comparison-uber-h3-go.csv and run `make gen-ubercompare`) -->"
+	apiMapEnd   = "<!-- END GENERATED: ubercompare api-map -->"
 )
 
 var (
@@ -85,7 +95,7 @@ type row struct {
 
 func main() {
 	repo := flag.String("repo", ".", "repository root")
-	write := flag.Bool("write", false, "rewrite the generated section of "+targetDoc)
+	write := flag.Bool("write", false, "rewrite the generated sections of "+targetDoc+" and "+apiMapDoc)
 	verify := flag.Bool("verify", false, "verify consistency and exit non-zero on drift")
 	flag.Parse()
 
@@ -163,18 +173,25 @@ func run(repo string, write, verify bool) error {
 		}
 	}
 
-	generated := render(rows)
+	outputs := []struct {
+		path, begin, end, generated string
+	}{
+		{targetDoc, beginMarker, endMarker, render(rows)},
+		{apiMapDoc, apiMapBegin, apiMapEnd, renderAPIMap(rows)},
+	}
 
 	if verify {
-		doc, err := os.ReadFile(repo + "/" + targetDoc)
-		if err != nil {
-			return err
-		}
-		current, err := generatedSection(string(doc))
-		if err != nil {
-			problems = append(problems, err.Error())
-		} else if strings.TrimSpace(current) != strings.TrimSpace(generated) {
-			problems = append(problems, fmt.Sprintf("%s generated section is stale; run `make gen-ubercompare`", targetDoc))
+		for _, out := range outputs {
+			doc, err := os.ReadFile(repo + "/" + out.path)
+			if err != nil {
+				return err
+			}
+			current, err := generatedSection(string(doc), out.path, out.begin, out.end)
+			if err != nil {
+				problems = append(problems, err.Error())
+			} else if strings.TrimSpace(current) != strings.TrimSpace(out.generated) {
+				problems = append(problems, fmt.Sprintf("%s generated section is stale; run `make gen-ubercompare`", out.path))
+			}
 		}
 		if len(problems) > 0 {
 			for _, p := range problems {
@@ -182,7 +199,7 @@ func run(repo string, write, verify bool) error {
 			}
 			return fmt.Errorf("%d problem(s)", len(problems))
 		}
-		fmt.Printf("ubercompare: OK (%d public C functions, matrix and doc in sync)\n", len(rows))
+		fmt.Printf("ubercompare: OK (%d public C functions, matrix and docs in sync)\n", len(rows))
 		return nil
 	}
 
@@ -194,22 +211,27 @@ func run(repo string, write, verify bool) error {
 	}
 
 	if write {
-		doc, err := os.ReadFile(repo + "/" + targetDoc)
-		if err != nil {
-			return err
+		for _, out := range outputs {
+			doc, err := os.ReadFile(repo + "/" + out.path)
+			if err != nil {
+				return err
+			}
+			updated, err := replaceGeneratedSection(string(doc), out.generated, out.path, out.begin, out.end)
+			if err != nil {
+				return err
+			}
+			if err := os.WriteFile(repo+"/"+out.path, []byte(updated), 0o644); err != nil {
+				return err
+			}
+			fmt.Printf("ubercompare: %s updated (%d rows)\n", out.path, len(rows))
 		}
-		updated, err := replaceGeneratedSection(string(doc), generated)
-		if err != nil {
-			return err
-		}
-		if err := os.WriteFile(repo+"/"+targetDoc, []byte(updated), 0o644); err != nil {
-			return err
-		}
-		fmt.Printf("ubercompare: %s updated (%d rows)\n", targetDoc, len(rows))
 		return nil
 	}
 
-	fmt.Print(generated)
+	for _, out := range outputs {
+		fmt.Print(out.generated)
+		fmt.Println()
+	}
 	return nil
 }
 
@@ -341,6 +363,82 @@ func render(rows []row) string {
 	return b.String()
 }
 
+// renderAPIMap renders the simplified per-function C→Go projection for
+// docs/api-map.md: one row per public C function, this library's API only,
+// with the additive Append*/…Seq/…Grouped forms split into their own column.
+func renderAPIMap(rows []row) string {
+	byCat := map[string][]row{}
+	for _, r := range rows {
+		byCat[r.Category] = append(byCat[r.Category], r)
+	}
+	var b strings.Builder
+	fmt.Fprintf(&b, "%s\n\n", apiMapBegin)
+	fmt.Fprintf(&b, "All **%d** public functions of the pinned H3 C release are mapped. A\n", len(rows))
+	fmt.Fprintf(&b, "long dash (—) in the Go API column marks a C function whose job is\n")
+	fmt.Fprintf(&b, "absorbed by Go semantics — sentinel errors carry the message text, the\n")
+	fmt.Fprintf(&b, "garbage collector replaces destructors, and one sizing helper stays\n")
+	fmt.Fprintf(&b, "internal; the annotation says where that behavior lives.\n")
+	for _, cat := range categoryOrder {
+		rs := byCat[cat]
+		if len(rs) == 0 {
+			continue
+		}
+		fmt.Fprintf(&b, "\n### %s\n\n", categoryTitle[cat])
+		fmt.Fprintf(&b, "| H3 C API | Go API | Additional Go forms |\n")
+		fmt.Fprintf(&b, "|---|---|---|\n")
+		for _, r := range rs {
+			primary, additional := apiMapForms(r.ThisAPI)
+			fmt.Fprintf(&b, "| `%s` | %s | %s |\n", r.CFunc, codeifyList(primary), codeifyList(additional))
+		}
+	}
+	fmt.Fprintf(&b, "\n%s\n", apiMapEnd)
+	return b.String()
+}
+
+// apiMapForms splits a this_api cell into the idiomatic entry points and
+// the additive forms this library layers on top of the C surface:
+// caller-owned-buffer Append* functions, streaming *Seq iterators, and
+// grouped-result variants. Absorbed annotations ("— (...)") stay primary.
+func apiMapForms(cell string) (primary, additional []string) {
+	for entry := range strings.SplitSeq(cell, ";") {
+		entry = strings.TrimSpace(entry)
+		if entry == "" {
+			continue
+		}
+		if strings.HasPrefix(entry, "—") {
+			primary = append(primary, entry)
+			continue
+		}
+		name := entry
+		if i := strings.LastIndex(name, "."); i >= 0 {
+			name = name[i+1:]
+		}
+		if strings.HasPrefix(name, "Append") || strings.HasSuffix(name, "Seq") || strings.HasSuffix(name, "Grouped") {
+			additional = append(additional, entry)
+		} else {
+			primary = append(primary, entry)
+		}
+	}
+	return primary, additional
+}
+
+// codeifyList joins entries with commas, wrapping Go symbols in backticks
+// and leaving absorbed annotations readable; an empty list renders as —.
+func codeifyList(entries []string) string {
+	if len(entries) == 0 {
+		return "—"
+	}
+	parts := make([]string, len(entries))
+	for i, p := range entries {
+		if strings.HasPrefix(p, "—") {
+			parts[i] = p
+			continue
+		}
+		parts[i] = "`" + p + "`"
+	}
+	return strings.Join(parts, ", ")
+}
+
 // codeify wraps each API entry in backticks, leaving absorbed/missing
 // dashes and parenthetical annotations readable.
 func codeify(cell string) string {
@@ -363,20 +461,20 @@ func codeify(cell string) string {
 	return strings.Join(parts, "; ")
 }
 
-func generatedSection(doc string) (string, error) {
-	i := strings.Index(doc, beginMarker)
-	j := strings.Index(doc, endMarker)
+func generatedSection(doc, path, begin, end string) (string, error) {
+	i := strings.Index(doc, begin)
+	j := strings.Index(doc, end)
 	if i < 0 || j < 0 || j < i {
-		return "", fmt.Errorf("%s: generated-section markers not found", targetDoc)
+		return "", fmt.Errorf("%s: generated-section markers not found", path)
 	}
-	return doc[i : j+len(endMarker)], nil
+	return doc[i : j+len(end)], nil
 }
 
-func replaceGeneratedSection(doc, generated string) (string, error) {
-	i := strings.Index(doc, beginMarker)
-	j := strings.Index(doc, endMarker)
+func replaceGeneratedSection(doc, generated, path, begin, end string) (string, error) {
+	i := strings.Index(doc, begin)
+	j := strings.Index(doc, end)
 	if i < 0 || j < 0 || j < i {
-		return "", fmt.Errorf("%s: generated-section markers not found (add %q and %q)", targetDoc, beginMarker, endMarker)
+		return "", fmt.Errorf("%s: generated-section markers not found (add %q and %q)", path, begin, end)
 	}
-	return doc[:i] + strings.TrimSpace(generated) + doc[j+len(endMarker):], nil
+	return doc[:i] + strings.TrimSpace(generated) + doc[j+len(end):], nil
 }

@@ -48,13 +48,14 @@ gen-benchdocs:
 check-benchdocs:
 	@go run ./tools/benchdocs -verify
 
-# Regenerate the generated tables in docs/comparison-uber-h3-go.md from
-# docs/comparison-uber-h3-go.csv (offline; uses committed inventories).
+# Regenerate the generated tables in docs/comparison-uber-h3-go.md and the
+# C→Go API map in docs/api-map.md from docs/comparison-uber-h3-go.csv
+# (offline; uses committed inventories).
 gen-ubercompare:
 	@go run ./tools/ubercompare -write
 
 # Drift gate: comparison matrix vs C-API inventory vs locked API surface vs
-# the generated doc tables (offline; runs in CI).
+# the generated doc tables (comparison + API map; offline; runs in CI).
 check-ubercompare:
 	@go run ./tools/ubercompare -verify
 

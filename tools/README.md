@@ -13,7 +13,7 @@ full details (`go doc ./tools/<name>`) and accepts `-h`.
 | [upstreamdiff](upstreamdiff) | Symbol-level diff of two upstream H3 trees, mapped to the Go port | `make upstream-diff FROM=4.3.0 TO=4.4.0` | Upstream syncs (manual, mandatory) |
 | [docscheck](docscheck) | Verify relative Markdown links and #anchors | `make check-docs` | CI (`docs` job) |
 | [benchdocs](benchdocs) | Generate and verify the README scorecard and complete benchmark comparison from committed artifacts | `make gen-benchdocs` / `make check-benchdocs` | CI (`docs` job), benchmark refreshes |
-| [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
+| [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables and the C→Go API map | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
 | [layoutinventory](layoutinventory) | Classify every root source file into its architectural layer; verify none is unclassifiable | `make layout-inventory` / `make check-layout` | CI (`fast`, `api-gates`), layout discoverability ([docs/repository-layout-review.md](../docs/repository-layout-review.md)) |
 | [unexport](unexport) | **Historical** one-time migration sweep (Phase 2 unexport) | `go run ./tools/unexport` (dry run) | Nothing — kept as a migration record |
 
@@ -99,22 +99,25 @@ on every push/PR, including docs-only changes.
 
 ## ubercompare
 
-Maintains the comparison matrix against the official cgo binding. The
-curated data lives in
+Maintains the comparison matrix against the official cgo binding and the
+simplified C→Go API map projected from it. The curated data lives in
 [docs/comparison-uber-h3-go.csv](../docs/comparison-uber-h3-go.csv) (one
 row per public C function); the tool renders it into the generated tables
 of [docs/comparison-uber-h3-go.md](../docs/comparison-uber-h3-go.md) and
-cross-checks it — entirely offline — against the committed inventories.
+[docs/api-map.md](../docs/api-map.md) (C function → idiomatic Go API →
+additive `Append*`/`*Seq`/grouped forms) and cross-checks it — entirely
+offline — against the committed inventories.
 
 - **Default mode** prints the generated Markdown tables to stdout.
-- **`-write`** rewrites the marked generated section of the comparison doc
+- **`-write`** rewrites the marked generated sections of both documents
   (`make gen-ubercompare`) — an explicitly file-modifying mode.
 - **`-verify`** exits 1 on drift (`make check-ubercompare`, run by the CI
   `docs` job): every matrix row must be a public C function from
   [docs/c-api-inventory.csv](../docs/c-api-inventory.csv) and vice versa;
   every `this_api` symbol must exist in
   [docs/api-surface.txt](../docs/api-surface.txt); statuses must come from
-  the fixed vocabulary; the doc tables must match the CSV.
+  the fixed vocabulary; both documents' generated tables must match the
+  CSV.
 - Flags: `-repo`, `-write`, `-verify`.
 - The binding's side of the matrix needs the uber/h3-go dependency and is
   verified by `TestMappingSymbolsExist` in
