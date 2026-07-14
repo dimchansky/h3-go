@@ -280,10 +280,18 @@ hidden `sync.Pool`.
   end-pointer memset, segfault under glibc). Found by this repo's parity
   suite on Linux CI; details in DEVIATIONS.md item 9. The Go port is
   unaffected (bounded slice zeroing).
-- **Push and watch the first GitHub CI run.** The workflow (matrix build,
-  no-unsafe gate, api-gates job, parity job) is verified locally
-  command-for-command but has never executed on GitHub runners. Commits and
-  tags (`v0.1.0`, `v0.2.0`) exist locally only.
+- **Repository publication and release polish**:
+  - Before making the repository public, set the GitHub homepage to
+    `https://pkg.go.dev/github.com/dimchansky/h3-go` and verify the CI,
+    Nightly, Go Reference, and latest-tag badges from an anonymous session.
+    Add Go Report Card only after the service can access the repository.
+  - Publish the archives and `SHA256SUMS` produced by
+    [release-builds.yml](../.github/workflows/release-builds.yml) as GitHub
+    Release assets, with release notes, and link the releases from the CLI
+    documentation. If this grows into a complete release procedure, move it
+    into a dedicated `docs/releasing.md`.
+  - Optionally add a Code of Conduct and configure a GitHub social-preview
+    image based on the project logo before public launch.
 - **uberdiff extensions**: the benchmark-comparison half is **done** —
   [interop/uberbench](../interop/uberbench/README.md) benchmarks every
   operation category against the binding with equivalence gating, plus
