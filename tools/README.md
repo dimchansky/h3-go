@@ -16,6 +16,7 @@ full details (`go doc ./tools/<name>`) and accepts `-h`.
 | [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables and the C→Go API map | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
 | [layoutinventory](layoutinventory) | Classify every root source file into its architectural layer; verify none is unclassifiable | `make layout-inventory` / `make check-layout` | CI (`fast`, `api-gates`), layout discoverability ([docs/repository-layout-review.md](../docs/repository-layout-review.md)) |
 | [cirequired](cirequired) | Evaluate the final CI job results against the required-check truth table | `go run ./tools/cirequired` (CI-only) | CI (`required` job — the "CI / required" aggregate merge gate) |
+| [releasepack](releasepack) | Single authoritative release build: invariant checks, hermetic cross-builds, deterministic archives, SHA256SUMS | `make release-dist VERSION=vX.Y.Z OUT=<dir>` | release-builds workflow (`build` + `verify-reproducible`), the local release procedure (docs/releasing.md) |
 | [unexport](unexport) | **Historical** one-time migration sweep (Phase 2 unexport) | `go run ./tools/unexport` (dry run) | Nothing — kept as a migration record |
 
 All of them exit non-zero on failure and, except for the explicitly marked
@@ -169,6 +170,38 @@ pass/fail decision to this tool.
   and the workflow's `needs:` list together.
 - Table-driven tests cover every truth-table row and every rejection path
   (`go test ./tools/cirequired`).
+
+## releasepack
+
+The single authoritative release-build implementation behind
+`make release-dist VERSION=<tag> OUT=<empty dir>`. The release-builds
+workflow's `build` job, its independent `verify-reproducible` job, and the
+local release procedure (docs/releasing.md) all run exactly this code, and
+their archives must be byte-identical.
+
+- **Preconditions (reject, don't warn):** canonical tag syntax (`vX.Y.Z` or
+  `vX.Y.Z-rc.N` per [docs/versioning.md](../docs/versioning.md)); clean
+  worktree and index; the tag exists and points at `HEAD`; `go env
+  GOVERSION` equals the pinned release toolchain (`requiredGoVersion` in
+  `main.go`, kept in lockstep with the workflow's `RELEASE_GO_VERSION`);
+  empty output directory (pass one **outside** the repository).
+- **Hermetic builds:** six `CGO_ENABLED=0 go build -trimpath` cross-builds
+  with `-ldflags "-s -w -buildid= -X …internal/cli.buildVersion=<tag>"`;
+  `GOTOOLCHAIN=local`, `GOENV=off`, `GOWORK=off`, empty
+  `GOFLAGS`/`GOEXPERIMENT`, `TZ=UTC`, `LC_ALL=C`, and per-target
+  `GOAMD64=v1`/`GOARM64=v8.0` are set explicitly — host settings cannot
+  leak into the binaries. `SOURCE_DATE_EPOCH` derives from the tagged
+  commit, never from the environment.
+- **Postconditions:** every binary's `go version -m` must report the module
+  path, the tagged commit, `vcs.modified=false`, the target GOOS/GOARCH,
+  and no host paths; the host-runnable binary is executed and must print
+  `h3 4.4.0 (<tag>)`.
+- **Deterministic archives:** sorted entries, uid/gid 0, modes 0755/0644,
+  all mtimes = `SOURCE_DATE_EPOCH`, zero gzip MTIME/name, extra-field-free
+  zip entries with fixed DOS timestamps; plus a sha256sum-compatible
+  `SHA256SUMS`. Structural tests inspect headers, ordering, ownership,
+  timestamps, and manifest contents, and prove run-twice byte-identity
+  (`go test ./tools/releasepack`).
 
 ## unexport (historical)
 
