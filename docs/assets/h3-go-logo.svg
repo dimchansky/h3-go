@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">h3-go</title>
+  <desc id="desc">Abstract hexagonal grid disk in the Go color palette: a solid center cell showing its seven-child H3 subdivision, surrounded by six fading hexagons, above the wordmark h3-go.</desc>
+  <polygon points="429.39,150.00 396.39,207.16 330.39,207.16 297.39,150.00 330.39,92.84 396.39,92.84" fill="#00ADD8" fill-opacity="0.42" stroke="#00ADD8" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="429.39,274.00 396.39,331.16 330.39,331.16 297.39,274.00 330.39,216.84 396.39,216.84" fill="#00ADD8" fill-opacity="0.3" stroke="#00ADD8" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="322.00,336.00 289.00,393.16 223.00,393.16 190.00,336.00 223.00,278.84 289.00,278.84" fill="#00ADD8" fill-opacity="0.2" stroke="#00ADD8" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="214.61,274.00 181.61,331.16 115.61,331.16 82.61,274.00 115.61,216.84 181.61,216.84" fill="#00ADD8" fill-opacity="0.12" stroke="#00ADD8" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="214.61,150.00 181.61,207.16 115.61,207.16 82.61,150.00 115.61,92.84 181.61,92.84" fill="#00ADD8" fill-opacity="0.06" stroke="#00ADD8" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="322.00,88.00 289.00,145.16 223.00,145.16 190.00,88.00 223.00,30.84 289.00,30.84" fill="#00ADD8" fill-opacity="0.55" stroke="#00ADD8" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="322.00,212.00 289.00,269.16 223.00,269.16 190.00,212.00 223.00,154.84 289.00,154.84" fill="#00ADD8" stroke="#007D9C" stroke-width="3.5" stroke-linejoin="round"/>
+  <g stroke="#FFFFFF" stroke-opacity="0.8" stroke-width="2.4" fill="none" stroke-linejoin="round">
+    <polygon points="279.57,220.17 260.71,236.50 237.14,228.33 232.43,203.83 251.29,187.50 274.86,195.67"/>
+    <polygon points="307.86,252.83 289.00,269.16 265.43,260.99 260.71,236.50 279.57,220.17 303.14,228.33"/>
+    <polygon points="265.43,260.99 246.57,277.32 223.00,269.16 218.29,244.66 237.14,228.33 260.71,236.50"/>
+    <polygon points="237.14,228.33 218.29,244.66 194.71,236.50 190.00,212.00 208.86,195.67 232.43,203.83"/>
+    <polygon points="251.29,187.50 232.43,203.83 208.86,195.67 204.14,171.17 223.00,154.84 246.57,163.01"/>
+    <polygon points="293.71,179.34 274.86,195.67 251.29,187.50 246.57,163.01 265.43,146.68 289.00,154.84"/>
+    <polygon points="322.00,212.00 303.14,228.33 279.57,220.17 274.86,195.67 293.71,179.34 317.29,187.50"/>
+  </g>
+  <text x="256" y="472" text-anchor="middle" font-family="'SF Mono', 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="82" font-weight="700" fill="#00ADD8">h3-go</text>
+</svg>

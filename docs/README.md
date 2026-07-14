@@ -5,6 +5,35 @@ stay current. The project front door is the [root README](../README.md);
 contributor ground rules are in [CONTRIBUTING.md](../CONTRIBUTING.md), with
 a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 
+## Repository map
+
+The root directory is the `h3` library: one flat Go package deliberately
+holding the public API layer, the mechanically ported C layer, and the
+opt-in parity harness. Why a package split is impossible without breaking
+the zero-copy/method architecture — and how to recognize which layer any
+root file belongs to — is documented in
+[repository-layout-review.md](repository-layout-review.md) (DR-008); the
+generated per-file map is
+[file-layer-inventory.csv](file-layer-inventory.csv)
+(`make layout-inventory`; gated by `make check-layout`).
+
+| Path | What it is |
+|---|---|
+| [`cmd/h3`](../cmd/h3) | The `h3` executable — a minimal `main` that delegates to `internal/cli` |
+| [`internal/cli`](../internal/cli) | CLI implementation: upstream-compatible parser, command registry, output encoders, exit-code mapping; consumes only the public `h3` API |
+| [`interop/uberdiff`](../interop/uberdiff) | Separate Go module that differentially tests this library against the official uber/h3-go cgo binding (nightly CI) |
+| [`interop/uberbench`](../interop/uberbench) | Separate Go module benchmarking this library against uber/h3-go — equivalence-gated benchmarks plus process-level memory probes; results in [benchmarks](benchmarks/README.md) |
+| [`testref`](../testref) | Scaffolding that downloads pristine upstream H3 C sources for the parity suite and gates — never vendored |
+| [`tools`](../tools) | Maintenance commands: API/test/CLI inventories, upstream symbol diff, docs link check ([tools/README.md](../tools/README.md)) |
+| [`docs`](.) | Design records, compatibility contracts, and generated inventories (this index) |
+| [`.github/workflows`](../.github/workflows) | Tiered CI: fast checks + C parity on every code change, heavy suites nightly and on tags ([ci-policy.md](ci-policy.md)) |
+
+## API discovery
+
+| Document | Contents |
+|---|---|
+| [api-map.md](api-map.md) | Generated C→Go API map: every public H3 C v4.4.0 function with its idiomatic Go equivalent and the additive `Append*`/`*Seq` forms — the quick-discovery projection of the comparison matrix. |
+
 ## Design and policy
 
 | Document | Contents |
@@ -51,7 +80,8 @@ a one-page maintainer/agent quick reference in [AGENTS.md](../AGENTS.md).
 | [cli-test-inventory.csv](cli-test-inventory.csv) | All 170 upstream CLI scenarios with expected outputs and source hashes. | `go run ./tools/cliinventory -emit-cases` / `make check-cli-inventory` |
 | [cli-fixture-inventory.csv](cli-fixture-inventory.csv) | Upstream CLI input fixtures with hashes. | `go run ./tools/cliinventory -emit-fixtures` / `make check-cli-inventory` |
 | [cli-source-inventory.csv](cli-source-inventory.csv) | Upstream sources that define the CLI contract, with hashes. | `go run ./tools/cliinventory -emit-sources` / `make check-cli-inventory` |
-| [comparison-uber-h3-go.csv](comparison-uber-h3-go.csv) | Curated per-C-function comparison matrix vs uber/h3-go (source of the generated tables in comparison-uber-h3-go.md). | edit by hand, then `make gen-ubercompare` / `make check-ubercompare` |
+| [comparison-uber-h3-go.csv](comparison-uber-h3-go.csv) | Curated per-C-function comparison matrix vs uber/h3-go (source of the generated tables in comparison-uber-h3-go.md and api-map.md). | edit by hand, then `make gen-ubercompare` / `make check-ubercompare` |
+| [api-map.md](api-map.md) | Simplified C→Go API map rendered from the comparison matrix (generated section only; the framing text is hand-written). | `make gen-ubercompare` / `make check-ubercompare` |
 | [benchmarks/](benchmarks/README.md) | Committed benchmark artifacts per environment (raw, benchstat, memory, metadata), plus a generated all-scenario comparison and README scorecard. | `make bench-uber`; `make gen-benchdocs` / `make check-benchdocs` |
 
 The tools behind these files are documented in

@@ -5,7 +5,7 @@ H3: it vendors the H3 C sources and calls them through cgo. This library is
 a pure-Go reimplementation of the same C code. Both are correct, maintained
 ways to use H3 from Go; they differ in build model, API shape, allocation
 control, and per-operation performance. This document is the evidence-based
-comparison behind the README's ["Why this library"](../README.md#why-this-library)
+comparison behind the README's ["Why h3-go"](../README.md#why-h3-go)
 section: exact versions, a function-by-function coverage matrix, behavioral
 differences, and trade-offs in both directions.
 

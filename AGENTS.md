@@ -10,10 +10,10 @@ documents it links, those win.
 
 A pure-Go, dependency-free port of Uber's H3 C v4.4.0 — all 78 public
 functions behind a typed Go API — plus the upstream-compatible `h3` CLI
-(`cmd/h3`, implemented in `internal/cli`). The [README](README.md) has the
-repository map; [docs/README.md](docs/README.md) indexes every document and
-generated inventory; [tools/README.md](tools/README.md) covers the
-maintenance tools.
+(`cmd/h3`, implemented in `internal/cli`). The repository map and the index
+of every document and generated inventory are in
+[docs/README.md](docs/README.md); [tools/README.md](tools/README.md) covers
+the maintenance tools.
 
 ## Invariants you must not break
 
