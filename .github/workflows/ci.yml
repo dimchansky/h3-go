@@ -162,3 +162,30 @@ jobs:
         run: make test-c2go TIMEOUT=300s
         env:
           GOTRACEBACK: system
+
+  # Aggregate merge gate — the ONLY status check branch protection requires
+  # ("CI / required"). Runs on every outcome (`if: always()`) and delegates
+  # the pass/fail decision to tools/cirequired, which evaluates the final
+  # result of every job above against an explicit truth table: docs-only
+  # changes must SKIP the Go jobs, code changes must RUN them, and any
+  # failure, cancellation, or unexpected skip (e.g. a broken job condition)
+  # fails the gate. The needs JSON is passed via the environment, never
+  # interpolated into the command line.
+  required:
+    name: CI / required
+    needs: [ changes, docs, fast, race, api-gates, parity ]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: 'stable'
+          cache: false # tiny job; the root module has no dependencies to cache
+      - name: Evaluate the required-check truth table
+        env:
+          GOTOOLCHAIN: local
+          CIREQUIRED_NEEDS: ${{ toJSON(needs) }}
+          CIREQUIRED_EVENT: ${{ github.event_name }}
+          CIREQUIRED_CODE: ${{ needs.changes.outputs.code }}
+        run: go run ./tools/cirequired
