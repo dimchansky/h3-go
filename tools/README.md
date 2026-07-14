@@ -15,6 +15,7 @@ full details (`go doc ./tools/<name>`) and accepts `-h`.
 | [benchdocs](benchdocs) | Generate and verify the README scorecard and complete benchmark comparison from committed artifacts | `make gen-benchdocs` / `make check-benchdocs` | CI (`docs` job), benchmark refreshes |
 | [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables and the C→Go API map | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
 | [layoutinventory](layoutinventory) | Classify every root source file into its architectural layer; verify none is unclassifiable | `make layout-inventory` / `make check-layout` | CI (`fast`, `api-gates`), layout discoverability ([docs/repository-layout-review.md](../docs/repository-layout-review.md)) |
+| [cirequired](cirequired) | Evaluate the final CI job results against the required-check truth table | `go run ./tools/cirequired` (CI-only) | CI (`required` job — the "CI / required" aggregate merge gate) |
 | [unexport](unexport) | **Historical** one-time migration sweep (Phase 2 unexport) | `go run ./tools/unexport` (dry run) | Nothing — kept as a migration record |
 
 All of them exit non-zero on failure and, except for the explicitly marked
@@ -144,6 +145,30 @@ layer taxonomy and its rationale live in
   (`make check-layout`, run by the CI `fast` job; the `api-gates` job also
   fails if the committed CSV is stale).
 - Flags: `-repo`, `-verify`. Runs without `testref/`.
+
+## cirequired
+
+The logic behind the `CI / required` aggregate status check — the single
+context branch protection requires. The `required` job in
+[.github/workflows/ci.yml](../.github/workflows/ci.yml) runs with
+`if: always()`, passes the final `needs` results plus the event name and the
+docs-only classifier verdict through environment variables
+(`CIREQUIRED_NEEDS`/`CIREQUIRED_EVENT`/`CIREQUIRED_CODE`), and delegates the
+pass/fail decision to this tool.
+
+- Passes only when the results match the truth-table row for the event and
+  classifier verdict exactly: docs-only changes must *skip* the Go jobs,
+  code changes must *run* them (`race` is a PR-only merge gate, so it is
+  expected `skipped` on pushes).
+- Fails on unknown events, invalid classifier values, malformed or
+  duplicate-key JSON, unknown/missing jobs, and any failure, cancellation,
+  or unexpected skip — a broken job condition fails the gate instead of
+  slipping a change past it. There is deliberately no generic
+  "success or skipped" acceptance.
+- The gated job set is defined once in `main.go` (`gatedJobs`); change it
+  and the workflow's `needs:` list together.
+- Table-driven tests cover every truth-table row and every rejection path
+  (`go test ./tools/cirequired`).
 
 ## unexport (historical)
 
