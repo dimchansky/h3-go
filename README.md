@@ -188,9 +188,12 @@ printf '[[37.775, -122.418], [40.689, -74.044]]' | h3 greatCircleDistanceKm -i -
 All 63 H3 C v4.4.0 commands are implemented and locked by the 170 upstream
 CLI test scenarios plus differential runs against the compiled C binary.
 See [cmd/h3](cmd/h3) and the
-[compatibility contract](docs/cli-compatibility.md). Every `v*` tag builds
-reproducible archives for six OS/architecture targets
-([release-builds workflow](.github/workflows/release-builds.yml)).
+[compatibility contract](docs/cli-compatibility.md). Prebuilt,
+bit-reproducible archives for six OS/architecture targets (with
+`SHA256SUMS`) are published on
+[GitHub Releases](https://github.com/dimchansky/h3-go/releases), built and
+verified by the
+[release-builds workflow](.github/workflows/release-builds.yml).
 
 ## Compatibility and versioning
 

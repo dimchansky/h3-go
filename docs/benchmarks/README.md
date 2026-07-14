@@ -21,6 +21,17 @@ directories, only within one:
 | [darwin-arm64](darwin-arm64/metadata.txt) | Apple M1 Max laptop (AC power; normal desktop services active, with no concurrent repository work) |
 | [linux-amd64](linux-amd64/metadata.txt) | GitHub Actions `ubuntu-latest` shared runner (see noise caveats) — the committed artifact of a [benchmarks workflow](../../.github/workflows/benchmarks.yml) run |
 
+Artifacts are measured at the commit recorded in their `metadata.txt` and
+stay published until a code change plausibly affects measured paths. One
+such change landed after the current artifacts were recorded —
+`Cell.Vertexes` now delegates through `Cell.AppendVertexes` — and was
+re-verified on 2026-07-14 with an interleaved A/B benchmark comparison
+(baseline = the commit before the change, same Apple M1 Max machine, same
+go1.26.5 toolchain, pinned benchstat): `Vertexes`/`VertexLatLng` timings
+were statistically indistinguishable (p ≥ 0.5) and the allocation profile
+was unchanged (48 B/op, 1 alloc/op), so the published tables remain
+representative.
+
 Each contains:
 
 - `metadata.txt` — full environment pin: repository commit, uber/h3-go

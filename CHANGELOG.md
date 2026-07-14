@@ -9,111 +9,115 @@ versioning and release policy is [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
-- Added zero-allocation `Cell.AppendVertexes(dst []Vertex)`: appends the
-  cell's 6 (hexagon) or 5 (pentagon) topological vertexes to a
-  caller-owned buffer with true append semantics — the prefix is
-  preserved, a capacity of 6 always suffices for an allocation-free warm
-  path, and on error `dst` is returned unchanged. `Cell.Vertexes` now
-  delegates to it with identical results, errors, and allocation profile
-  (one 48 B result slice). Measured on an allocation study of the vertex
-  path: warm reuse is the only observable win (0 allocs/op, −24% on
-  center-child cells, −1.2% on a mixed 20-cell workload); the ported
-  `cellToVertexes` internals are untouched.
-- Repository layout review (DR-008, `docs/repository-layout-review.md`):
-  the flat single-package layout is reaffirmed against an `internal/h3`
-  split with compile-probe and benchmark evidence. Layer discoverability is
-  now machine-checked — `tools/layoutinventory` classifies every root
-  source file into its architectural layer, the generated
-  `docs/file-layer-inventory.csv` is freshness-gated in CI alongside a new
-  `make check-layout` gate, the README repository map documents the layers
-  and their recognition rules, and the lone filename-casing outlier
-  (`h3Index_getBaseCellNumber.go`) was renamed to the standard `h3index_`
-  prefix. No API or behavior changes.
-- Refreshed the complete Apple M1 Max darwin/arm64 comparative benchmark
-  and process-memory artifacts with Go 1.26.5. Generated README excerpts
-  now reflect that clean run; Linux/amd64 measurements remain unchanged.
-  The refresh review records the mixed timing changes without attributing
-  them to an unisolated compiler optimization.
-- API ergonomics review: added generic typed `IsValidIndex`,
-  `DirectedEdge.IndexDigit`, `Vertex.IndexDigit`, `Cell.ImmediateParent`,
-  `Cell.ImmediateChildren`, zero-allocation
-  `Cell.AppendImmediateChildren`, `Cell.GridDiskDistancesGrouped`, and
-  `NumIcosahedronFaces`. The efficient flat/`Append*` traversal APIs and
-  `CoordIJ`'s explicit `int32` C-parity representation remain unchanged.
-  New public tests, allocation assertions, equivalence checks against
-  uber/h3-go, runnable examples, and focused benchmarks cover the additions.
-- Performance documentation now presents separate Apple M1 Max darwin/arm64
-  and shared-runner linux/amd64 excerpts, including platform reversals and
-  Go-heap allocation metrics. `tools/benchdocs` generates and verifies those
-  excerpts from committed `benchstat.csv` and metadata artifacts, preventing
-  stale narrative/run/metadata drift without network access.
+## [v0.3.0] — 2026-07-14
 
-- Evidence-based comparison with the official cgo binding uber/h3-go:
-  a function-by-function coverage matrix (`docs/comparison-uber-h3-go.md`,
-  generated from a curated CSV by the new `tools/ubercompare`, drift-gated
-  in CI), a migration guide (`docs/migration-from-uber-h3-go.md`, with its
-  before/after example kept executable by a test), and a new comparative
-  benchmark module `interop/uberbench` — equivalence-gated benchmarks
-  across scalar/geometry/collection/batch workloads plus a process-level
-  memory probe (`cmd/memprobe`), with committed per-environment artifacts
-  under `docs/benchmarks/` and a manual/monthly `benchmarks` workflow.
-  The README's "Why this library" and "Performance" sections now cite
-  these measured results. The uberdiff differential module was re-pinned
-  from uber/h3-go v4.2.2 to v4.4.1 (vendoring H3 C v4.4.1, behaviorally
-  identical to this library's v4.4.0 target).
-- CI: the Nightly workflow (schedule, manual dispatch, and `v*` release
-  tags) now replays the full upstream fixture suites — 526,546 golden
-  conversion/boundary records — as a step of the `parity` job, reusing its
-  downloaded reference tree.
-- Maintainer guidance is now tracked: a one-page `AGENTS.md` quick reference
-  (with `CLAUDE.md` as a pointer to it) replaces the previously gitignored
-  local agent files; the durable rules they carried live in
-  `CONTRIBUTING.md` (`__` static-helper naming, commit-trailer policy).
-- Lint policy documented in `docs/lint-policy.md`: the style-tier
-  gocritic/revive exclusions are now path-scoped to mechanically ported
-  files instead of disabled globally (new idiomatic code gets the full rule
-  set), and two stale global exclusions (staticcheck SA1019, govet
-  fieldalignment-in-tests) were removed after verifying nothing fires.
+Feature release and first public release. The behavioral compatibility
+target is unchanged: **H3 C v4.4.0**. No breaking Go API changes — every
+API addition below is purely additive.
+
+### Added
+
+- Zero-allocation `Cell.AppendVertexes(dst []Vertex)`: appends the cell's
+  6 (hexagon) or 5 (pentagon) topological vertexes to a caller-owned
+  buffer with true append semantics; a capacity of 6 always suffices for
+  an allocation-free warm path, and on error `dst` is returned unchanged.
+  `Cell.Vertexes` now delegates to it with identical results, errors, and
+  allocation profile (one 48 B result slice); an allocation study recorded
+  warm reuse as the only observable win, and a post-change interleaved
+  benchmark comparison confirmed the delegation is within noise.
+- API ergonomics additions: generic typed `IsValidIndex`,
+  `DirectedEdge.IndexDigit`, `Vertex.IndexDigit`, `Cell.ImmediateParent`,
+  `Cell.ImmediateChildren`, zero-allocation `Cell.AppendImmediateChildren`,
+  `Cell.GridDiskDistancesGrouped`, and `NumIcosahedronFaces` — covered by
+  public tests, allocation assertions, equivalence checks against
+  uber/h3-go, runnable examples, and focused benchmarks.
+- A pure-Go `h3` executable compatible with all 63 commands and all 170
+  registered CLI scenarios from H3 C v4.4.0 — file/stdin workflows,
+  JSON/WKT/newline formats, upstream exit codes — plus semantic CLI,
+  scenario, fixture, and defining-source inventories with a strict
+  upstream drift gate, opt-in differential tests against the C `h3_bin`,
+  and cross-platform builds.
+- Evidence-based comparison with the official cgo binding uber/h3-go: a
+  function-by-function coverage matrix (`docs/comparison-uber-h3-go.md`),
+  a migration guide (`docs/migration-from-uber-h3-go.md`, its before/after
+  example kept executable by a test), a comparative benchmark module
+  `interop/uberbench` with equivalence-gated benchmarks and a
+  process-level memory probe (`cmd/memprobe`), committed per-environment
+  artifacts under `docs/benchmarks/`, and a manual/monthly `benchmarks`
+  workflow.
+- Validation depth: the Nightly workflow (schedule, manual dispatch, and
+  `v*` release tags) replays the full upstream fixture suites — 526,546
+  golden conversion/boundary records — and the fuzz rotation grew from
+  three to six targets (the seventh is seed-corpus-only pending an
+  investigation of pathologically slow in-domain polygon inputs, tracked
+  in issue #3).
+- Release engineering for the first public release: a single authoritative
+  release builder (`tools/releasepack`, `make release-dist`) producing
+  bit-reproducible archives verified by an independent CI rebuild and
+  runtime-smoked on architecture-proven runners; an aggregate
+  `CI / required` merge gate (`tools/cirequired`) with an explicit
+  truth table; pinned release toolchain and SHA-pinned actions; pinned
+  vulnerability (`govulncheck`) and full-history secret (`gitleaks`) scans
+  in the tag-triggered release gate; Dependabot for actions and interop
+  modules; a standalone README shipped inside every release archive.
+- Maintenance tooling and gates: `tools/docscheck` Markdown link/anchor
+  checker (`make check-docs`, run on every push/PR including docs-only);
+  `tools/upstreamdiff` symbol-level C-tree diff (mandatory in upstream
+  syncs); `tools/layoutinventory` with the freshness-gated
+  `docs/file-layer-inventory.csv` and `make check-layout`;
+  `tools/benchdocs` and `tools/ubercompare` generating and drift-gating
+  the performance and comparison documentation.
+
+### Changed
 
 - Documentation overhaul: rewritten README (repository map, CLI section,
-  per-audience documentation paths), new indexes `docs/README.md` and
-  `tools/README.md`, READMEs for `cmd/h3` and `interop/uberdiff`, package
-  documentation and compatibility-invariant comments throughout
-  `internal/cli`, and `-h` usage summaries for all tools. Corrected stale
+  per-audience documentation paths), new `docs/README.md` and
+  `tools/README.md` indexes, READMEs for `cmd/h3` and `interop/uberdiff`,
+  package documentation throughout `internal/cli`, and corrected stale
   statements (test-inventory dispositions, DEVIATIONS parity target,
-  architecture-document status, two broken README anchors).
-- New `tools/docscheck` Markdown link/anchor checker with `make check-docs`;
-  CI now runs it on every push/PR — including docs-only changes, which
-  previously ran no checks at all.
+  architecture-document status, two broken README anchors). Maintainer
+  guidance is tracked in `AGENTS.md`/`CLAUDE.md`; public-readiness
+  documents (CONTRIBUTING, SECURITY, this changelog, `docs/releasing.md`,
+  issue templates, `CODE_OF_CONDUCT.md`) are in place.
+- Performance documentation presents separate Apple M1 Max darwin/arm64
+  and shared-runner linux/amd64 excerpts (including platform reversals and
+  Go-heap allocation metrics), generated and drift-gated by
+  `tools/benchdocs`. The complete darwin/arm64 artifacts were re-measured
+  with Go 1.26.5; linux/amd64 measurements are unchanged.
+- CI: tiered pipeline (`docs/ci-policy.md`) — docs-only changes skip Go
+  jobs, fast checks signal in ~3 minutes, race runs on PRs/nightly/tags,
+  heavy suites nightly/on-demand; version-agnostic parity include paths
+  (no H3 version hardcoded in code); in-flight runs cancelled by newer
+  commits.
+- Lint policy documented in `docs/lint-policy.md`: style-tier
+  gocritic/revive exclusions are path-scoped to the mechanically ported
+  tier instead of disabled globally; two stale global exclusions were
+  removed.
+- The uberdiff differential module was re-pinned from uber/h3-go v4.2.2 to
+  v4.4.1 (vendoring H3 C v4.4.1, behaviorally identical to this library's
+  v4.4.0 target).
+- Repository layout review (DR-008, `docs/repository-layout-review.md`):
+  the flat single-package layout reaffirmed with compile-probe and
+  benchmark evidence; the filename-casing outlier
+  (`h3Index_getBaseCellNumber.go`) renamed to the standard `h3index_`
+  prefix. No API or behavior changes.
+- `go.mod` now retracts the stale 2019 pseudo-version
+  `v0.0.0-20191115084349-4ab39a97d2af` — a pre-rewrite codebase previously
+  cached by the Go module proxy that is not part of this line; `go`
+  tooling will warn anyone still pinned to it.
 
-- Added a pure-Go `h3` executable compatible with all 63 commands and all 170
-  registered CLI scenarios from H3 C v4.4.0, including file/stdin workflows,
-  JSON/WKT/newline formats, upstream exit codes, process tests, and opt-in
-  differential tests against `h3_bin`.
-- Added semantic CLI, scenario, fixture, and defining-source inventories plus
-  a strict upstream drift gate; CI now builds/tests the CLI and nightly/tag
-  validation performs C differential and cross-platform builds.
+### Fixed
 
-- **4.4.0 sync completion**: the v0.2.0 sync ported the implementation delta
-  but missed the upstream *test* delta. Now closed: ported the new
+- **4.4.0 sync completion**: the v0.2.0 sync ported the implementation
+  delta but missed the upstream *test* delta. Now closed: ported the new
   `testConstructCell.c` and `testIndexDigits.c` suites and the 4.4.0
-  additions to five existing test files; full symbol-level audit recorded in
-  `docs/sync/4.3.0-to-4.4.0.md` (all implementation changes verified —
-  the remaining 4.4.0 code changes were release-behavior no-ops).
-- New `tools/upstreamdiff` (`make upstream-diff FROM=... TO=...`): symbol-level
-  C tree diff mapped to the Go port via attribution comments; upstream-sync
-  documentation now makes this review mandatory.
-- CI: tiered pipeline (docs/ci-policy.md) — docs-only changes skip Go jobs,
-  fast checks signal in ~3 minutes, race runs on PRs/nightly/tags, heavy
-  suites nightly/on-demand; in-flight runs are cancelled by newer commits.
-- CI: version-agnostic parity/include paths (no H3 version hardcoded in
-  code); platform-independent allocation assertions; Linux parity build
-  fixes (portable `C.int64_t`, `-lm`, no section-GC linker flags) and
-  platform-deterministic parity tests (avoids C UB in `gridRing(k<0)` and
-  `clz(0)`, zeroed C output buffers). Discovered upstream-reportable UB in
-  C `gridRing` with negative k.
-- Public-readiness documentation: README overhaul, CONTRIBUTING, SECURITY,
-  changelog.
+  additions to five existing test files; full symbol-level audit in
+  `docs/sync/4.3.0-to-4.4.0.md` (all remaining 4.4.0 implementation
+  changes verified as release-behavior no-ops).
+- Linux parity build fixes (portable `C.int64_t`, `-lm`, no section-GC
+  linker flags) and platform-deterministic parity tests — avoiding C
+  undefined behavior in `gridRing(k<0)` and `clz(0)` with zeroed C output
+  buffers; the `gridRing` negative-k UB is an upstream-reportable finding.
 
 ## [v0.2.0] — 2026-07-11
 
@@ -155,6 +159,7 @@ represented through an idiomatic, strongly typed Go surface:
   ported upstream unit tests, fuzz targets, allocation assertions, and a
   differential suite against the official uber/h3-go binding.
 
-[Unreleased]: https://github.com/dimchansky/h3-go/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/dimchansky/h3-go/compare/v0.3.0...HEAD
+[v0.3.0]: https://github.com/dimchansky/h3-go/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/dimchansky/h3-go/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/dimchansky/h3-go/releases/tag/v0.1.0

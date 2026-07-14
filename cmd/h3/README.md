@@ -14,11 +14,20 @@ the deliberate compatibility quirks — is
 go install github.com/dimchansky/h3-go/cmd/h3@latest
 ```
 
-No C toolchain is needed (`CGO_ENABLED=0` works). Every `v*` tag also builds
-reproducible archives — linux, macOS, and Windows on amd64 and arm64, with a
-`SHA256SUMS` file — as artifacts of the
-[release-builds workflow](../../.github/workflows/release-builds.yml).
-From a checkout: `make build-cli`.
+No C toolchain is needed (`CGO_ENABLED=0` works). Prebuilt archives —
+linux, macOS, and Windows on amd64 and arm64, with a `SHA256SUMS` file —
+are published as downloadable assets on
+[GitHub Releases](https://github.com/dimchansky/h3-go/releases). They are
+built bit-reproducibly (pinned Go toolchain, `CGO_ENABLED=0`, `-trimpath`,
+normalized archive metadata) by the
+[release-builds workflow](../../.github/workflows/release-builds.yml)
+through the single `make release-dist` entry point, verified by an
+independent CI rebuild, and runtime-smoked on architecture-proven runners
+(linux/amd64, windows/amd64, darwin/arm64; the release notes state each
+release's runtime-tested vs cross-built platform matrix). Releases are
+published immutable; each ships with a `README.md`, `LICENSE`, and
+`NOTICE`, and each release's notes carry the exact toolchain and rebuild
+command. From a checkout: `make build-cli`.
 
 ## Usage
 
@@ -56,7 +65,7 @@ contract); no command or an unknown command exits `1`.
 
 ```sh
 h3 --version
-# h3 4.4.0 (v0.2.0)
+# h3 4.4.0 (v0.3.0)
 ```
 
 The first number is the H3 C compatibility version. The parenthesized value
