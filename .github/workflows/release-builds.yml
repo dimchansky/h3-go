@@ -1,9 +1,25 @@
+# Release artifact pipeline. Policy: docs/ci-policy.md; procedure:
+# docs/releasing.md. Three independent gates on every v* tag:
+#   build              — the single authoritative entry point
+#                        (make release-dist → tools/releasepack): invariant
+#                        checks, hermetic cross-builds with the pinned
+#                        toolchain, deterministic archives, SHA256SUMS.
+#   verify-reproducible — an independent job repeats the identical build
+#                        from a fresh checkout; the two SHA256SUMS must be
+#                        byte-identical (full archive equality, not just
+#                        binary equality).
+#   smoke              — runtime execution of the produced artifacts on
+#                        real runners, each of which first PROVES its
+#                        architecture (labels are never trusted).
+# Publication stays human-controlled: assets are uploaded to the immutable
+# GitHub Release manually after inspection (docs/releasing.md), so the
+# workflow keeps contents: read.
 name: Release builds
 
 on:
   push:
     tags: [ 'v*' ]
-  workflow_dispatch:
+  workflow_dispatch: # reruns only; the guard below rejects non-tag refs
 
 permissions:
   contents: read
@@ -12,41 +28,129 @@ concurrency:
   group: release-builds-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Exact release toolchain. Must equal requiredGoVersion in
+  # tools/releasepack/main.go (which enforces it); bump both together per
+  # docs/releasing.md.
+  RELEASE_GO_VERSION: '1.26.5'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: Require a canonical release tag ref
+        run: |
+          set -euo pipefail
+          # Canonical module SemVer plus the -rc.N prerelease form documented
+          # in docs/versioning.md (rc counting starts at 1). Build metadata is
+          # rejected as project policy — it cannot be a distinct canonical Go
+          # module version and must not encode the H3 axis. tools/releasepack
+          # re-validates the same rule.
+          [[ "${GITHUB_REF}" == refs/tags/* ]] || { echo "release-builds requires a v* tag ref (got ${GITHUB_REF})"; exit 1; }
+          [[ "${GITHUB_REF_NAME}" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-rc\.[1-9][0-9]*)?$ ]] \
+            || { echo "tag ${GITHUB_REF_NAME} violates the tag policy in docs/versioning.md"; exit 1; }
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          go-version: 'stable'
-      - name: Build reproducible archives
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: ${{ env.RELEASE_GO_VERSION }}
+          cache: false
+      - name: Build release archives (single authoritative entry point)
+        run: make release-dist VERSION="${GITHUB_REF_NAME}" OUT="${RUNNER_TEMP}/dist"
+      - name: Upload release-ready artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: h3-${{ github.ref_name }}
+          path: ${{ runner.temp }}/dist/
+          if-no-files-found: error
+
+  # Independent rebuild from a fresh checkout with the same entry point;
+  # byte-identical archives are a hard release gate.
+  verify-reproducible:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: ${{ env.RELEASE_GO_VERSION }}
+          cache: false
+      - name: Rebuild independently
+        run: make release-dist VERSION="${GITHUB_REF_NAME}" OUT="${RUNNER_TEMP}/dist2"
+      - name: Download the build job's artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: h3-${{ github.ref_name }}
+          path: ${{ runner.temp }}/dist1
+      - name: Full archive SHA-256 equality
+        run: |
+          set -euo pipefail
+          echo "--- build job ---";  cat "${RUNNER_TEMP}/dist1/SHA256SUMS"
+          echo "--- this job  ---";  cat "${RUNNER_TEMP}/dist2/SHA256SUMS"
+          diff "${RUNNER_TEMP}/dist1/SHA256SUMS" "${RUNNER_TEMP}/dist2/SHA256SUMS"
+          echo "reproducible: all archives byte-identical across independent builds"
+
+  # Runtime smoke of the exact produced artifacts. Each job first proves the
+  # runner's architecture — labels are never trusted — then executes the
+  # matching asset. Platforms not covered here are cross-built only; the
+  # release notes state the tested-vs-built matrix (docs/releasing.md).
+  smoke:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            expect_arch: x86_64
+            platform: linux-amd64
+            archive: tar
+          - runner: windows-latest
+            expect_arch: x86_64
+            platform: windows-amd64
+            archive: zip
+          - runner: macos-latest
+            expect_arch: arm64
+            platform: darwin-arm64
+            archive: tar
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Prove runner architecture
         shell: bash
         run: |
           set -euo pipefail
-          version="${GITHUB_REF_NAME:-devel}"
-          mkdir -p dist stage
-          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
-            os=${target%/*}
-            arch=${target#*/}
-            name="h3-${version}-${os}-${arch}"
-            suffix=""
-            if [ "$os" = windows ]; then suffix=.exe; fi
-            mkdir "stage/$name"
-            CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
-              -ldflags="-s -w -buildid= -X github.com/dimchansky/h3-go/internal/cli.buildVersion=$version" \
-              -o "stage/$name/h3$suffix" ./cmd/h3
-            cp LICENSE NOTICE "stage/$name/"
-            if [ "$os" = windows ]; then
-              (cd stage && zip -qr "../dist/$name.zip" "$name")
-            else
-              tar -C stage -czf "dist/$name.tar.gz" "$name"
-            fi
-          done
-          (cd dist && sha256sum h3-* > SHA256SUMS)
-      - name: Upload release-ready artifacts
-        uses: actions/upload-artifact@v4
+          got="$(uname -m)"
+          [[ "$got" == "${{ matrix.expect_arch }}" ]] \
+            || { echo "runner ${{ matrix.runner }} is $got, expected ${{ matrix.expect_arch }} — fix the smoke matrix"; exit 1; }
+      - name: Download release artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: h3-${{ github.ref_name }}
-          path: dist/
-          if-no-files-found: error
+          path: dist
+      - name: Extract and execute the matching asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="h3-${GITHUB_REF_NAME}-${{ matrix.platform }}"
+          if [[ "${{ matrix.archive }}" == zip ]]; then
+            unzip -q "dist/${name}.zip"
+          else
+            tar -xzf "dist/${name}.tar.gz"
+          fi
+          bin="${name}/h3"
+          [[ -f "${name}/h3.exe" ]] && bin="${name}/h3.exe"
+          version_out="$("$bin" --version)"
+          echo "$version_out"
+          [[ "$version_out" == "h3 4.4.0 (${GITHUB_REF_NAME})" ]] \
+            || { echo "unexpected --version output"; exit 1; }
+          cell="$("$bin" latLngToCell -r 9 --lat 37.7759 --lng -122.4180)"
+          echo "$cell"
+          [[ "$cell" == '"8928308280fffff"' ]] \
+            || { echo "unexpected latLngToCell output"; exit 1; }
+          for doc in LICENSE NOTICE README.md; do
+            [[ -f "${name}/${doc}" ]] || { echo "archive lacks ${doc}"; exit 1; }
+          done

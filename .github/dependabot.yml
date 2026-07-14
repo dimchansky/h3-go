@@ -1,0 +1,17 @@
+# Keeps the SHA-pinned GitHub Actions and the test-only interop module
+# dependencies current. The root module has zero dependencies by design
+# (DR-007), so there is nothing for gomod to track there.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /interop/uberbench
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /interop/uberdiff
+    schedule:
+      interval: weekly
