@@ -1,0 +1,16 @@
+# gitleaks configuration for the Nightly secret-scan job and the local
+# defense-in-depth scan (docs/releasing.md). Extends the default ruleset;
+# every allowlist below dismisses a triaged FALSE POSITIVE with its
+# reasoning — never a real credential. First triage: 2026-07-14, 11
+# findings, all false positives (details in each block).
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "docs/upstream-test-inventory.csv records SHA-256 digests of public upstream H3 test-fixture files (drift detection); 64-hex content hashes of public files are not secrets"
+paths = ['''docs/upstream-test-inventory\.csv''']
+
+[[allowlists]]
+description = "H3 C API doc-comment lines: getHexagonAreaAvgKm2/getHexagonAreaAvgM2 are public C function names that the generic-api-key rule mistakes for credentials"
+regexes = ['''getHexagonAreaAvg(Km|M)2''']
