@@ -421,7 +421,7 @@ func TestAppendVertexes(t *testing.T) {
 	if !errors.Is(err, ErrFailed) || !slices.Equal(got, snapshot) {
 		t.Errorf("invalid AppendVertexes(prefix) = %v, %v; want %v and ErrFailed", got, err, snapshot)
 	}
-	if len(got) != len(prefix) || &got[0] != &prefix[0] {
+	if len(got) != len(prefix) || cap(got) != cap(prefix) || &got[0] != &prefix[0] {
 		t.Error("invalid AppendVertexes(prefix) did not return dst itself")
 	}
 	if got, err := invalid.AppendVertexes(nil); !errors.Is(err, ErrFailed) || got != nil {
