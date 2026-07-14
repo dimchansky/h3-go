@@ -410,10 +410,19 @@ func TestAppendVertexes(t *testing.T) {
 		}
 	}
 
-	// On error dst is returned unchanged (a nil dst stays nil).
+	// On error dst is returned unchanged (a nil dst stays nil). The
+	// returned slice aliases dst, so compare against an independent
+	// snapshot of the pre-call contents — comparing got with prefix
+	// itself could never detect an in-place mutation. Spare capacity
+	// beyond len(dst) is append-style scratch, deliberately unasserted.
 	invalid := Cell(0xffffffffffffffff)
-	if got, err := invalid.AppendVertexes(prefix); !errors.Is(err, ErrFailed) || !slices.Equal(got, prefix) {
-		t.Errorf("invalid AppendVertexes(prefix) = %v, %v; want unchanged dst and ErrFailed", got, err)
+	snapshot := slices.Clone(prefix)
+	got, err = invalid.AppendVertexes(prefix)
+	if !errors.Is(err, ErrFailed) || !slices.Equal(got, snapshot) {
+		t.Errorf("invalid AppendVertexes(prefix) = %v, %v; want %v and ErrFailed", got, err, snapshot)
+	}
+	if len(got) != len(prefix) || &got[0] != &prefix[0] {
+		t.Error("invalid AppendVertexes(prefix) did not return dst itself")
 	}
 	if got, err := invalid.AppendVertexes(nil); !errors.Is(err, ErrFailed) || got != nil {
 		t.Errorf("invalid AppendVertexes(nil) = %v, %v; want nil and ErrFailed", got, err)
