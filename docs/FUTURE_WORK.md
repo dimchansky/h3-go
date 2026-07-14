@@ -287,9 +287,11 @@ hidden `sync.Pool`.
     Add Go Report Card only after the service can access the repository.
   - Publish the archives and `SHA256SUMS` produced by
     [release-builds.yml](../.github/workflows/release-builds.yml) as GitHub
-    Release assets, with release notes, and link the releases from the CLI
-    documentation. If this grows into a complete release procedure, move it
-    into a dedicated `docs/releasing.md`.
+    Release assets, with release notes following the title and outline in
+    [versioning.md](versioning.md) (`h3-go vX.Y.Z — H3 Core vA.B.C`), and
+    link the releases from the CLI documentation. If this grows into a
+    complete release procedure, move it into a dedicated
+    `docs/releasing.md`.
   - Optionally add a Code of Conduct and configure a GitHub social-preview
     image based on the project logo before public launch.
 - **uberdiff extensions**: the benchmark-comparison half is **done** —
@@ -370,9 +372,11 @@ and [DEVIATIONS.md](./DEVIATIONS.md):
 ### Release considerations before v1.0.0
 
 v1 freezes the public surface (`docs/api-surface.txt` is the inventory of
-what gets frozen). Before tagging:
+what gets frozen). Versioning mechanics — tag format, the independent H3
+Core target, release titles, and the release-note outline — are fixed in
+[versioning.md](versioning.md). Before tagging:
 
-1. CI green on GitHub (all four jobs), including the api-gates job against a
+1. CI green on GitHub (all jobs), including the api-gates job against a
    fresh upstream download.
 2. Settle item 1's *boundary* decision — specifically, commit to "no JSON
    marshaling on core geometry types" (the sub-package can come later).

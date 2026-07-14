@@ -136,3 +136,7 @@ The short version:
 - Benchmark deltas are expected for performance-related changes
   (`make bench`), and allocation assertions must keep passing — new
   convenience APIs must not add allocations to existing paths.
+- Releases: the module version (Git tag) and the H3 Core compatibility
+  target are independent axes; tag format, release titles, and the
+  release-note outline are fixed in
+  [docs/versioning.md](docs/versioning.md).

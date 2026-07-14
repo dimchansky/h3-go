@@ -205,6 +205,9 @@ reproducible archives for six OS/architecture targets
   pre-1.0 breaking changes remain possible and are documented in the
   [CHANGELOG](CHANGELOG.md). The pre-v1.0.0 checklist lives in
   [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md).
+- **Versioning**: the module version (the Git tag) and the H3 Core target
+  are independent axes — tags are plain SemVer and never encode the H3
+  version. The full policy is [docs/versioning.md](docs/versioning.md).
 - **Go**: from the [go.mod](go.mod) version up to the latest stable
   release (CI tests both ends).
 

@@ -3,7 +3,9 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org). Pre-1.0, minor versions may
-contain breaking changes (called out explicitly below).
+contain breaking changes (called out explicitly below). The module version
+and the H3 Core compatibility target are independent axes; the full
+versioning and release policy is [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
