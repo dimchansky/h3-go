@@ -280,20 +280,21 @@ hidden `sync.Pool`.
   end-pointer memset, segfault under glibc). Found by this repo's parity
   suite on Linux CI; details in DEVIATIONS.md item 9. The Go port is
   unaffected (bounded slice zeroing).
-- **Repository publication and release polish**:
-  - Before making the repository public, set the GitHub homepage to
-    `https://pkg.go.dev/github.com/dimchansky/h3-go` and verify the CI,
-    Nightly, Go Reference, and latest-tag badges from an anonymous session.
-    Add Go Report Card only after the service can access the repository.
-  - Publish the archives and `SHA256SUMS` produced by
-    [release-builds.yml](../.github/workflows/release-builds.yml) as GitHub
-    Release assets, with release notes following the title and outline in
-    [versioning.md](versioning.md) (`h3-go vX.Y.Z — H3 Core vA.B.C`), and
-    link the releases from the CLI documentation. If this grows into a
-    complete release procedure, move it into a dedicated
-    `docs/releasing.md`.
-  - Optionally add a Code of Conduct and configure a GitHub social-preview
-    image based on the project logo before public launch.
+- **Repository publication and release polish** — largely **done** for
+  v0.3.0: the complete release procedure lives in
+  [releasing.md](releasing.md) (reproducible archives published as
+  immutable GitHub Release assets, notes per [versioning.md](versioning.md),
+  CLI docs linking the Releases page); the Code of Conduct, issue
+  templates, and CODEOWNERS are in place. Remaining, inherently
+  post-public items (tracked in releasing.md and the release checklist):
+  homepage → pkg.go.dev after the new version renders there; anonymous
+  badge verification; Go Report Card badge once the service can access the
+  repository; the social-preview image upload.
+  - Evaluate **OpenSSF Scorecard** (workflow + badge) as a post-public
+    repository-security improvement: it grades pinned dependencies, token
+    permissions, branch protection, and fuzzing — most of which this
+    repository already satisfies — at the cost of one more scheduled
+    workflow. Decide once the repository has been public for a while.
 - **uberdiff extensions**: the benchmark-comparison half is **done** —
   [interop/uberbench](../interop/uberbench/README.md) benchmarks every
   operation category against the binding with equivalence gating, plus

@@ -1,0 +1,4 @@
+# Informational ownership map. There is deliberately no
+# require-codeowner-review rule (a solo maintainer cannot approve their own
+# pull requests); the merge gate is the "CI / required" status check.
+* @dimchansky

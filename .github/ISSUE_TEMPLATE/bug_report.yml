@@ -1,0 +1,52 @@
+name: Bug report
+description: Behavior that differs from H3 C v4.4.0, a crash, or another defect
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for the report. This library targets behavioral equivalence
+        with H3 C v4.4.0 (intentional differences are listed in
+        [docs/DEVIATIONS.md](https://github.com/dimchansky/h3-go/blob/master/docs/DEVIATIONS.md)) —
+        a divergence from the C implementation that is not listed there is
+        always a bug. For security-sensitive reports, please use
+        [private vulnerability reporting](https://github.com/dimchansky/h3-go/security/advisories/new)
+        instead of a public issue.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+      placeholder: |
+        Calling h3.LatLngToCell(..., 9) returns X, but H3 C v4.4.0 (or
+        uber/h3-go v4.4.x) returns Y for the same input.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: A short Go snippet or `h3` CLI command with exact inputs.
+      render: go
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: h3-go version
+      description: Module version (`go list -m github.com/dimchansky/h3-go`) or `h3 --version` output.
+      placeholder: v0.3.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Go version and platform
+      placeholder: go1.26.5 darwin/arm64
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else?
+      description: C-comparison output, links, or other context.

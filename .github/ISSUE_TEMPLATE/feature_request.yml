@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose an API addition, CLI capability, or other improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Note the project's scope: a pure-Go port of the complete H3 C
+        public API plus deliberate Go-idiomatic conveniences. New H3
+        *algorithms* generally arrive via upstream syncs
+        ([docs/versioning.md](https://github.com/dimchansky/h3-go/blob/master/docs/versioning.md));
+        already-considered ideas live in
+        [docs/FUTURE_WORK.md](https://github.com/dimchansky/h3-go/blob/master/docs/FUTURE_WORK.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do that is awkward or impossible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed shape
+      description: Sketch the API/CLI you would want (signatures welcome).
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you use now, or prior art in uber/h3-go / H3 C.
