@@ -131,6 +131,33 @@ jobs:
         with:
           name: h3-${{ github.ref_name }}
           path: dist
+      # The next two steps execute the EXACT single-asset verification
+      # commands documented for users (cmd/h3/README-archive.md), on the
+      # real platform, before extraction — the docs are a CI-validated
+      # contract, not prose.
+      - name: Verify the documented single-asset checksum command (Unix)
+        if: matrix.archive == 'tar'
+        shell: bash
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          archive="h3-${GITHUB_REF_NAME}-${{ matrix.platform }}.tar.gz"
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            grep -F "$(shasum -a 256 "$archive")" SHA256SUMS
+          else
+            grep -F "$(sha256sum "$archive")" SHA256SUMS
+          fi
+      - name: Verify the documented single-asset checksum command (Windows PowerShell)
+        if: matrix.archive == 'zip'
+        shell: powershell
+        working-directory: dist
+        run: |
+          $archive = "h3-$env:GITHUB_REF_NAME-${{ matrix.platform }}.zip"
+          $entries = @(Select-String -Path SHA256SUMS -SimpleMatch $archive)
+          if ($entries.Count -ne 1) { throw "expected exactly 1 manifest entry for $archive, found $($entries.Count)" }
+          $hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLower()
+          if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $archive" }
+          "OK: checksum verified"
       - name: Extract and execute the matching asset
         shell: bash
         run: |

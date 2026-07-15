@@ -33,7 +33,7 @@ the exact verified binary**, then run it:
 
 ```sh
 archive=h3-v0.3.0-darwin-arm64.tar.gz            # darwin-amd64 on Intel Macs
-grep "  $archive$" SHA256SUMS | shasum -a 256 -c -
+grep -F "$(shasum -a 256 "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
 
 tar -xzf "$archive"
 xattr -d com.apple.quarantine h3-v0.3.0-darwin-arm64/h3
@@ -80,17 +80,42 @@ at build time). The two are independent axes — see
 ## Verifying your download
 
 Every release publishes a `SHA256SUMS` manifest next to the archives
-(tokenless, works anywhere). It lists **all six** archives, and you
-normally download just one — verify that single asset with:
+(tokenless). It lists **all six** archives; verify just the one you
+downloaded, from the directory containing the archive and `SHA256SUMS`.
+
+macOS:
 
 ```sh
-archive=h3-<version>-<os>-<arch>.tar.gz          # or .zip on Windows
-grep "  $archive$" SHA256SUMS | shasum -a 256 -c -
+archive=h3-<version>-darwin-<arch>.tar.gz
+grep -F "$(shasum -a 256 "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
 ```
 
-(`shasum -a 256 -c SHA256SUMS` verifies the whole manifest at once, but
-only works when all six archives sit in the directory; otherwise it reports
-the absent ones as missing.)
+Linux:
+
+```sh
+archive=h3-<version>-linux-<arch>.tar.gz
+grep -F "$(sha256sum "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
+```
+
+Windows (PowerShell):
+
+```powershell
+$archive = "h3-<version>-windows-<arch>.zip"
+$entries = @(Select-String -Path SHA256SUMS -SimpleMatch $archive)
+if ($entries.Count -ne 1) { throw "expected exactly 1 manifest entry for $archive, found $($entries.Count)" }
+$hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLower()
+if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $archive" }
+"OK: checksum verified"
+```
+
+The Unix commands compare the complete computed `<hash>  <name>` line
+against the manifest as a fixed string — no regular expressions — so one
+match verifies the hash and the exact file name together; a printed
+manifest line means success, "VERIFICATION FAILED" means the hash or name
+did not match. The PowerShell version fails explicitly on zero or multiple
+manifest entries and on any hash mismatch. (`shasum -a 256 -c SHA256SUMS`
+on macOS or `sha256sum -c SHA256SUMS` on Linux checks the whole manifest at
+once, but requires all six archives to be present in the directory.)
 
 Releases are published as GitHub **immutable releases** (tag and assets are
 locked at publication and carry a release attestation). With an
