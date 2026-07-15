@@ -175,12 +175,44 @@ jobs:
         shell: powershell
         working-directory: dist
         run: |
+          # POSITIVE: the EXACT documented command (cmd/h3/README-archive.md).
           $archive = "h3-$env:GITHUB_REF_NAME-${{ matrix.platform }}.zip"
           $entries = @(Select-String -Path SHA256SUMS -SimpleMatch $archive)
           if ($entries.Count -ne 1) { throw "expected exactly 1 manifest entry for $archive, found $($entries.Count)" }
           $hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLower()
           if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $archive" }
           "OK: checksum verified"
+          # NEGATIVE 1: corrupted archive (correct name, wrong bytes) must be
+          # rejected without ever printing the success line.
+          New-Item -ItemType Directory corrupt-test | Out-Null
+          Copy-Item SHA256SUMS corrupt-test/
+          Copy-Item $archive corrupt-test/
+          Add-Content -Path "corrupt-test/$archive" -Value "x" -NoNewline
+          $failed = $false
+          try {
+            Push-Location corrupt-test
+            $entries = @(Select-String -Path SHA256SUMS -SimpleMatch $archive)
+            if ($entries.Count -ne 1) { throw "expected exactly 1 manifest entry for $archive, found $($entries.Count)" }
+            $hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLower()
+            if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $archive" }
+            "OK: checksum verified"
+          } catch { $failed = $true } finally { Pop-Location }
+          if (-not $failed) { throw "FAIL-OPEN: corrupted archive passed verification" }
+          "negative test passed: corrupted archive rejected"
+          Remove-Item -Recurse corrupt-test
+          # NEGATIVE 2: missing archive must be rejected (zero manifest
+          # entries throws before any hashing) without the success line.
+          $archive = "no-such-file.zip"
+          $failed = $false
+          try {
+            $entries = @(Select-String -Path SHA256SUMS -SimpleMatch $archive)
+            if ($entries.Count -ne 1) { throw "expected exactly 1 manifest entry for $archive, found $($entries.Count)" }
+            $hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLower()
+            if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $archive" }
+            "OK: checksum verified"
+          } catch { $failed = $true }
+          if (-not $failed) { throw "FAIL-OPEN: missing archive passed verification" }
+          "negative test passed: missing archive rejected"
       - name: Extract and execute the matching asset
         shell: bash
         run: |
