@@ -31,12 +31,35 @@ command. From a checkout: `make build-cli`.
 
 Verify a downloaded archive against the release's `SHA256SUMS` before
 extracting it — the manifest lists all six archives, so check just the one
-you downloaded:
+you downloaded (run in the directory holding both files). On macOS:
 
 ```sh
-archive=h3-<version>-<os>-<arch>.tar.gz
-grep "  $archive$" SHA256SUMS | shasum -a 256 -c -
+archive=h3-<version>-darwin-<arch>.tar.gz
+grep -F "$(shasum -a 256 "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
 ```
+
+On Linux, the same with `sha256sum`:
+
+```sh
+archive=h3-<version>-linux-<arch>.tar.gz
+grep -F "$(sha256sum "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
+```
+
+On Windows (PowerShell):
+
+```powershell
+$archive = "h3-<version>-windows-<arch>.zip"
+$entries = @(Select-String -Path SHA256SUMS -SimpleMatch $archive)
+if ($entries.Count -ne 1) { throw "expected exactly 1 manifest entry for $archive, found $($entries.Count)" }
+$hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLower()
+if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $archive" }
+"OK: checksum verified"
+```
+
+The Unix commands match the complete computed `<hash>  <name>` line against
+the manifest as a fixed string (no regular expressions); the PowerShell
+version fails explicitly on zero/multiple manifest entries or a hash
+mismatch.
 
 macOS note: the prebuilt darwin binaries are **ad-hoc linker-signed, but
 not Developer ID-signed or notarized**, so Gatekeeper can reject
