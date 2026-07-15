@@ -149,6 +149,13 @@ gh release create vX.Y.Z --draft --title "h3-go vX.Y.Z — H3 Core vA.B.C" \
 gh release edit vX.Y.Z --draft=false --latest
 ```
 
+Draft-association caution: after creating the draft — and after **every**
+draft mutation (a body-only `PATCH` on a draft silently drops its tag
+association to an `untagged-…` placeholder) — verify
+`gh release view vX.Y.Z` resolves to the draft and its `tag_name` equals
+the release tag; if not, `gh api -X PATCH …/releases/<id> -f tag_name=vX.Y.Z`
+and re-verify.
+
 Immediately verify while authenticated: the Release reports **Immutable**;
 `gh release verify vX.Y.Z --repo dimchansky/h3-go` passes;
 `gh release verify-asset` passes for **every** uploaded asset from a fresh
