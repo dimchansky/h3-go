@@ -13,7 +13,9 @@ H3 C v4.4.0.
 
 ## Install
 
-Extract and place the binary anywhere on your `PATH`:
+**Verify first, then extract** (see "Verifying your download" below for the
+one-command single-asset check), and place the binary anywhere on your
+`PATH`:
 
 ```sh
 tar -xzf h3-<version>-<os>-<arch>.tar.gz        # linux / macOS
@@ -21,8 +23,35 @@ tar -xzf h3-<version>-<os>-<arch>.tar.gz        # linux / macOS
 install -m 0755 h3-<version>-<os>-<arch>/h3 ~/bin/h3
 ```
 
-macOS Gatekeeper note: the binaries are not notarized; if macOS quarantines
-the download, clear it with `xattr -d com.apple.quarantine h3`.
+### macOS Gatekeeper
+
+The prebuilt macOS binaries are **ad-hoc linker-signed, but are not
+Developer ID-signed or notarized**, so Gatekeeper can reject them when the
+archive was downloaded through a browser. The safe order is: verify the
+downloaded archive, extract it, remove the quarantine attribute **only from
+the exact verified binary**, then run it:
+
+```sh
+archive=h3-v0.3.0-darwin-arm64.tar.gz            # darwin-amd64 on Intel Macs
+grep "  $archive$" SHA256SUMS | shasum -a 256 -c -
+
+tar -xzf "$archive"
+xattr -d com.apple.quarantine h3-v0.3.0-darwin-arm64/h3
+h3-v0.3.0-darwin-arm64/h3 --version
+```
+
+Alternatives and cautions:
+
+- If you already have Go, `go install github.com/dimchansky/h3-go/cmd/h3@v0.3.0`
+  is the simplest path — a locally built binary never inherits
+  browser-download quarantine.
+- Apple's UI path after a blocked first launch: System Settings →
+  Privacy & Security → **Open Anyway**.
+- Remove quarantine only **after** checksum or release-attestation
+  verification, never before.
+- Never disable Gatekeeper globally, and never run broad commands such as
+  `xattr -dr` over `~/Downloads` or any directory — target only the one
+  verified binary.
 
 ## Quick start
 
@@ -51,11 +80,17 @@ at build time). The two are independent axes — see
 ## Verifying your download
 
 Every release publishes a `SHA256SUMS` manifest next to the archives
-(tokenless, works anywhere):
+(tokenless, works anywhere). It lists **all six** archives, and you
+normally download just one — verify that single asset with:
 
 ```sh
-shasum -a 256 -c SHA256SUMS      # or: sha256sum -c SHA256SUMS
+archive=h3-<version>-<os>-<arch>.tar.gz          # or .zip on Windows
+grep "  $archive$" SHA256SUMS | shasum -a 256 -c -
 ```
+
+(`shasum -a 256 -c SHA256SUMS` verifies the whole manifest at once, but
+only works when all six archives sit in the directory; otherwise it reports
+the absent ones as missing.)
 
 Releases are published as GitHub **immutable releases** (tag and assets are
 locked at publication and carry a release attestation). With an

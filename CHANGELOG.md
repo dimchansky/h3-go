@@ -106,11 +106,11 @@ API addition below is purely additive.
   `v0.0.0-20191115084349-4ab39a97d2af` — a pre-rewrite codebase previously
   cached by the Go module proxy that is not part of this line; `go`
   tooling will warn anyone still pinned to it.
-- Copyright attribution clarified for publication: `NOTICE` now opens with
-  the project notice (`h3-go, Copyright 2019-2026 Dmitrij Koniajev`,
-  reflecting the project's 2019 origin) ahead of the Uber Technologies H3
-  attribution, and `LICENSE` is restored to the canonical, unmodified
-  Apache License 2.0 text with its original appendix placeholder.
+- The project copyright (`Copyright 2019-2026 Dmitrij Koniajev`,
+  reflecting the project's 2019 origin) is now recorded consistently in
+  `LICENSE` (the Apache License 2.0 application notice) and in `NOTICE`,
+  which opens with the project notice ahead of the clearly distinguished
+  Uber Technologies H3 attribution.
 
 ### Fixed
 
