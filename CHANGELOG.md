@@ -9,7 +9,7 @@ versioning and release policy is [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
-## [v0.3.0] — 2026-07-14
+## [v0.3.0] — 2026-07-15
 
 Feature release and first public release. The behavioral compatibility
 target is unchanged: **H3 C v4.4.0**. No breaking Go API changes — every
@@ -50,7 +50,8 @@ API addition below is purely additive.
   golden conversion/boundary records — and the fuzz rotation grew from
   three to six targets (the seventh is seed-corpus-only pending an
   investigation of pathologically slow in-domain polygon inputs, tracked
-  in issue #3).
+  in issue #3 with a preserved reproducer under
+  `testdata/fuzz-findings/`).
 - Release engineering for the first public release: a single authoritative
   release builder (`tools/releasepack`, `make release-dist`) producing
   bit-reproducible archives verified by an independent CI rebuild and
@@ -105,6 +106,11 @@ API addition below is purely additive.
   `v0.0.0-20191115084349-4ab39a97d2af` — a pre-rewrite codebase previously
   cached by the Go module proxy that is not part of this line; `go`
   tooling will warn anyone still pinned to it.
+- Copyright attribution clarified for publication: `NOTICE` now opens with
+  the project notice (`h3-go, Copyright 2019-2026 Dmitrij Koniajev`,
+  reflecting the project's 2019 origin) ahead of the Uber Technologies H3
+  attribution, and `LICENSE` is restored to the canonical, unmodified
+  Apache License 2.0 text with its original appendix placeholder.
 
 ### Fixed
 
