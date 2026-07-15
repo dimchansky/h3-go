@@ -1,4 +1,8 @@
-h3-go — a pure-Go implementation of Uber's H3 geospatial indexing system.
+h3-go
+Copyright 2019-2026 Dmitrij Koniajev
+
+h3-go is a pure-Go implementation of Uber's H3 geospatial indexing system,
+licensed under the Apache License, Version 2.0 (see LICENSE).
 
 This project is a derivative work of Uber's H3 library
 (https://github.com/uber/h3):
@@ -20,6 +24,3 @@ sources into `testref/` at test time and compiles them for in-process
 comparison against the Go implementation; that infrastructure is excluded
 from every normal build of this module, which is pure Go with no cgo and
 no dependencies.
-
-This project is licensed under the Apache License, Version 2.0 (see
-LICENSE).
