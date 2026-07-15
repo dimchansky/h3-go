@@ -142,11 +142,34 @@ jobs:
         run: |
           set -euo pipefail
           archive="h3-${GITHUB_REF_NAME}-${{ matrix.platform }}.tar.gz"
+          # POSITIVE: the EXACT documented fail-closed command per platform
+          # (cmd/h3/README-archive.md) must succeed and print the OK line.
           if [[ "$RUNNER_OS" == "macOS" ]]; then
-            grep -F "$(shasum -a 256 "$archive")" SHA256SUMS
+            actual=$(shasum -a 256 "$archive") &&
+              grep -Fxq -- "$actual" SHA256SUMS &&
+              echo "OK: checksum verified"
           else
-            grep -F "$(sha256sum "$archive")" SHA256SUMS
+            actual=$(sha256sum "$archive") &&
+              grep -Fxq -- "$actual" SHA256SUMS &&
+              echo "OK: checksum verified"
           fi
+          sumtool() { if [[ "$RUNNER_OS" == "macOS" ]]; then shasum -a 256 "$@"; else sha256sum "$@"; fi; }
+          # NEGATIVE 1: corrupted archive (correct name, wrong bytes) must
+          # leave a non-zero status and never reach the OK line.
+          mkdir corrupt-test
+          cp SHA256SUMS corrupt-test/ && cp "$archive" corrupt-test/
+          printf x >> "corrupt-test/$archive"
+          if (cd corrupt-test && actual=$(sumtool "$archive") && grep -Fxq -- "$actual" SHA256SUMS && echo "OK: checksum verified"); then
+            echo "FAIL-OPEN: corrupted archive passed verification"; exit 1
+          fi
+          rm -r corrupt-test
+          echo "negative test passed: corrupted archive rejected with non-zero exit"
+          # NEGATIVE 2: missing archive must fail at the checksum tool itself
+          # (its non-zero exit stops the && chain before grep can match).
+          if (actual=$(sumtool "no-such-file.tar.gz" 2>/dev/null) && grep -Fxq -- "$actual" SHA256SUMS && echo "OK: checksum verified"); then
+            echo "FAIL-OPEN: missing archive passed verification"; exit 1
+          fi
+          echo "negative test passed: missing archive rejected with non-zero exit"
       - name: Verify the documented single-asset checksum command (Windows PowerShell)
         if: matrix.archive == 'zip'
         shell: powershell

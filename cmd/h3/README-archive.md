@@ -33,12 +33,17 @@ the exact verified binary**, then run it:
 
 ```sh
 archive=h3-v0.3.0-darwin-arm64.tar.gz            # darwin-amd64 on Intel Macs
-grep -F "$(shasum -a 256 "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
-
-tar -xzf "$archive"
-xattr -d com.apple.quarantine h3-v0.3.0-darwin-arm64/h3
-h3-v0.3.0-darwin-arm64/h3 --version
+actual=$(shasum -a 256 "$archive") &&
+  grep -Fxq -- "$actual" SHA256SUMS &&
+  echo "OK: checksum verified" &&
+  tar -xzf "$archive" &&
+  xattr -d com.apple.quarantine h3-v0.3.0-darwin-arm64/h3 &&
+  h3-v0.3.0-darwin-arm64/h3 --version
 ```
+
+The whole sequence is one `&&` chain: extraction and quarantine removal run
+**only after** `OK: checksum verified` — a missing or corrupted archive
+stops the chain with a non-zero status before anything is extracted.
 
 Alternatives and cautions:
 
@@ -87,14 +92,18 @@ macOS:
 
 ```sh
 archive=h3-<version>-darwin-<arch>.tar.gz
-grep -F "$(shasum -a 256 "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
+actual=$(shasum -a 256 "$archive") &&
+  grep -Fxq -- "$actual" SHA256SUMS &&
+  echo "OK: checksum verified"
 ```
 
 Linux:
 
 ```sh
 archive=h3-<version>-linux-<arch>.tar.gz
-grep -F "$(sha256sum "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
+actual=$(sha256sum "$archive") &&
+  grep -Fxq -- "$actual" SHA256SUMS &&
+  echo "OK: checksum verified"
 ```
 
 Windows (PowerShell):
@@ -108,14 +117,20 @@ if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $arch
 "OK: checksum verified"
 ```
 
-The Unix commands compare the complete computed `<hash>  <name>` line
-against the manifest as a fixed string — no regular expressions — so one
-match verifies the hash and the exact file name together; a printed
-manifest line means success, "VERIFICATION FAILED" means the hash or name
-did not match. The PowerShell version fails explicitly on zero or multiple
-manifest entries and on any hash mismatch. (`shasum -a 256 -c SHA256SUMS`
-on macOS or `sha256sum -c SHA256SUMS` on Linux checks the whole manifest at
-once, but requires all six archives to be present in the directory.)
+The Unix commands are fail-closed: `grep -Fxq` requires the complete
+computed `<hash>  <name>` line to match a manifest line **exactly** (fixed
+string, whole line — no regular expressions), so a match verifies the hash
+and the exact file name together, and every failure — a missing archive
+(the checksum tool's own error stops the `&&` chain), a corrupted archive,
+or a name not in the manifest — ends with a non-zero exit status and
+**without** the `OK: checksum verified` line, which is printed only after
+successful verification. The PowerShell version fails explicitly on zero
+or multiple manifest entries and on any hash mismatch. Every release run
+executes these exact commands, plus corrupted-archive and missing-archive
+negative cases, on real macOS, Linux, and Windows runners.
+(`shasum -a 256 -c SHA256SUMS` on macOS or `sha256sum -c SHA256SUMS` on
+Linux checks the whole manifest at once, but requires all six archives to
+be present in the directory.)
 
 Releases are published as GitHub **immutable releases** (tag and assets are
 locked at publication and carry a release attestation). With an

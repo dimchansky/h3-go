@@ -35,14 +35,18 @@ you downloaded (run in the directory holding both files). On macOS:
 
 ```sh
 archive=h3-<version>-darwin-<arch>.tar.gz
-grep -F "$(shasum -a 256 "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
+actual=$(shasum -a 256 "$archive") &&
+  grep -Fxq -- "$actual" SHA256SUMS &&
+  echo "OK: checksum verified"
 ```
 
 On Linux, the same with `sha256sum`:
 
 ```sh
 archive=h3-<version>-linux-<arch>.tar.gz
-grep -F "$(sha256sum "$archive")" SHA256SUMS || echo "VERIFICATION FAILED"
+actual=$(sha256sum "$archive") &&
+  grep -Fxq -- "$actual" SHA256SUMS &&
+  echo "OK: checksum verified"
 ```
 
 On Windows (PowerShell):
@@ -56,10 +60,14 @@ if ($entries[0].Line -ne "$hash  $archive") { throw "checksum mismatch for $arch
 "OK: checksum verified"
 ```
 
-The Unix commands match the complete computed `<hash>  <name>` line against
-the manifest as a fixed string (no regular expressions); the PowerShell
-version fails explicitly on zero/multiple manifest entries or a hash
-mismatch.
+The Unix commands are fail-closed: `grep -Fxq` requires an exact whole-line
+fixed-string match of the computed `<hash>  <name>` line, a missing archive
+stops the `&&` chain at the checksum tool itself, and `OK: checksum
+verified` is printed only after success — any failure exits non-zero
+without it. The PowerShell version fails explicitly on zero/multiple
+manifest entries or a hash mismatch. Every release run executes these
+exact commands (plus corrupted- and missing-archive negative cases) on
+real macOS, Linux, and Windows runners.
 
 macOS note: the prebuilt darwin binaries are **ad-hoc linker-signed, but
 not Developer ID-signed or notarized**, so Gatekeeper can reject
