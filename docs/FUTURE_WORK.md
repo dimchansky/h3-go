@@ -295,6 +295,24 @@ hidden `sync.Pool`.
     permissions, branch protection, and fuzzing — most of which this
     repository already satisfies — at the cost of one more scheduled
     workflow. Decide once the repository has been public for a while.
+  - **Developer ID signing and Apple notarization for the macOS release
+    assets.** Today the darwin binaries are ad-hoc linker-signed but not
+    Developer ID-signed or notarized, so Gatekeeper can reject
+    browser-downloaded copies (the archive README documents the safe
+    per-binary workaround). Doing this properly requires: an Apple
+    Developer Program membership; secure handling of the signing and
+    notarization credentials; signing + notarization steps in the release
+    pipeline; Gatekeeper testing on clean macOS systems; and a deliberate
+    design for the current byte-for-byte reproducibility guarantee —
+    signatures embed secure timestamps, so the design must either keep
+    reproducible unsigned build artifacts alongside separately signed
+    distribution artifacts, or redefine (and re-verify) reproducibility at
+    the pre-signing stage while treating signed assets as
+    provenance-attested outputs. Which design wins is an open decision for
+    that future work. References:
+    [Developer ID](https://developer.apple.com/support/developer-id/),
+    [notarizing macOS software](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution),
+    [Gatekeeper/user guidance](https://support.apple.com/en-us/102445).
 - **uberdiff extensions**: the benchmark-comparison half is **done** —
   [interop/uberbench](../interop/uberbench/README.md) benchmarks every
   operation category against the binding with equivalence gating, plus

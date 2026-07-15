@@ -32,6 +32,9 @@ cp testdata/fuzz-findings/FuzzUpstreamPolygonOperations/bcefd1d03714b6b6 \
    testdata/fuzz/FuzzUpstreamPolygonOperations/
 CGO_ENABLED=0 go test -run 'FuzzUpstreamPolygonOperations/bcefd1d03714b6b6' -v .
 # --- PASS (finite), but expect roughly 15 s of CPU for this single input.
-# Clean up afterwards so ordinary test runs stay fast:
-rm -r testdata/fuzz
+# Clean up afterwards so ordinary test runs stay fast — remove ONLY the
+# copied reproducer (never `rm -r testdata/fuzz`, which would also delete
+# any fuzz corpus entries of your own):
+rm testdata/fuzz/FuzzUpstreamPolygonOperations/bcefd1d03714b6b6
+rmdir testdata/fuzz/FuzzUpstreamPolygonOperations testdata/fuzz 2>/dev/null || true
 ```

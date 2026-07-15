@@ -29,6 +29,25 @@ published immutable; each ships with a `README.md`, `LICENSE`, and
 `NOTICE`, and each release's notes carry the exact toolchain and rebuild
 command. From a checkout: `make build-cli`.
 
+Verify a downloaded archive against the release's `SHA256SUMS` before
+extracting it — the manifest lists all six archives, so check just the one
+you downloaded:
+
+```sh
+archive=h3-<version>-<os>-<arch>.tar.gz
+grep "  $archive$" SHA256SUMS | shasum -a 256 -c -
+```
+
+macOS note: the prebuilt darwin binaries are **ad-hoc linker-signed, but
+not Developer ID-signed or notarized**, so Gatekeeper can reject
+browser-downloaded copies. After verifying and extracting, remove
+quarantine from the exact verified binary only
+(`xattr -d com.apple.quarantine h3-<version>-darwin-<arch>/h3`) or use
+System Settings → Privacy & Security → Open Anyway; `go install` builds
+never carry quarantine. Never disable Gatekeeper globally. Full steps are
+in the README inside each archive
+([README-archive.md](README-archive.md)).
+
 ## Usage
 
 `h3 --help` lists every command; `h3 <command> --help` shows its flags.
