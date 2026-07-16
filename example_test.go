@@ -258,6 +258,79 @@ func ExampleCell_GridDiskDistancesGrouped() {
 }
 
 func ExamplePolygonToCells() {
+	// Loops are implicitly closed (the first vertex is not repeated) and
+	// use radians-backed LatLng values; holes are given structurally.
+	outer := h3.GeoLoop{
+		h3.LatLngDegs(37.813, -122.408),
+		h3.LatLngDegs(37.782, -122.386),
+		h3.LatLngDegs(37.708, -122.390),
+		h3.LatLngDegs(37.708, -122.507),
+		h3.LatLngDegs(37.784, -122.511),
+	}
+	hole := h3.GeoLoop{
+		h3.LatLngDegs(37.790, -122.490),
+		h3.LatLngDegs(37.790, -122.410),
+		h3.LatLngDegs(37.720, -122.410),
+		h3.LatLngDegs(37.720, -122.490),
+	}
+	cells, err := h3.PolygonToCells(h3.GeoPolygon{GeoLoop: outer}, 7)
+	if err != nil {
+		panic(err)
+	}
+	holed, err := h3.PolygonToCells(h3.GeoPolygon{GeoLoop: outer, Holes: []h3.GeoLoop{hole}}, 7)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(len(cells), "cells;", len(holed), "outside the hole")
+	// Output: 20 cells; 10 outside the hole
+}
+
+func ExamplePolygonToCells_antimeridian() {
+	// Loops crossing the antimeridian are handled automatically; longitudes
+	// need not be pre-unwrapped.
+	polygon := h3.GeoPolygon{GeoLoop: h3.GeoLoop{
+		h3.LatLngDegs(0.5, 179.5),
+		h3.LatLngDegs(0.5, -179.5),
+		h3.LatLngDegs(-0.5, -179.5),
+		h3.LatLngDegs(-0.5, 179.5),
+	}}
+	cells, err := h3.PolygonToCells(polygon, 4)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(len(cells), "cells")
+	// Output: 8 cells
+}
+
+func ExampleCellsToMultiPolygon() {
+	// The hollow ring around a cell outlines as one polygon with one hole.
+	center, _ := h3.ParseCell("8928308280fffff")
+	ring, err := center.GridRing(1)
+	if err != nil {
+		panic(err)
+	}
+	polys, err := h3.CellsToMultiPolygon(ring)
+	if err != nil {
+		panic(err)
+	}
+	p := polys[0]
+	fmt.Println(len(polys), "polygon;", len(p.GeoLoop), "outer vertices;", len(p.Holes), "hole")
+
+	// The structure is GeoJSON-like but not GeoJSON: to export, convert
+	// radians to degrees, swap to [lng, lat] order, and close each ring by
+	// repeating its first position.
+	ringCoords := make([][2]float64, 0, len(p.GeoLoop)+1)
+	for _, v := range p.GeoLoop {
+		ringCoords = append(ringCoords, [2]float64{v.Lng.Deg(), v.Lat.Deg()})
+	}
+	ringCoords = append(ringCoords, ringCoords[0]) // explicit GeoJSON closure
+	fmt.Println("closed:", len(ringCoords), "positions; first == last:", ringCoords[0] == ringCoords[len(ringCoords)-1])
+	// Output:
+	// 1 polygon; 18 outer vertices; 1 hole
+	// closed: 19 positions; first == last: true
+}
+
+func ExamplePolygonToCellsExperimentalSeq() {
 	polygon := h3.GeoPolygon{GeoLoop: h3.GeoLoop{
 		h3.LatLngDegs(37.813, -122.408),
 		h3.LatLngDegs(37.782, -122.386),
@@ -265,12 +338,25 @@ func ExamplePolygonToCells() {
 		h3.LatLngDegs(37.708, -122.507),
 		h3.LatLngDegs(37.784, -122.511),
 	}}
-	cells, err := h3.PolygonToCells(polygon, 7)
+	// Validation happens up front; iteration itself cannot fail.
+	seq, err := h3.PolygonToCellsExperimentalSeq(polygon, 7, h3.ContainmentCenter)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(len(cells), "cells")
-	// Output: 20 cells
+	total := 0
+	for range seq {
+		total++
+	}
+	// The sequence is re-runnable, and breaking early is safe.
+	first := 0
+	for range seq {
+		first++
+		if first == 5 {
+			break
+		}
+	}
+	fmt.Println(total, "cells; stopped early at", first)
+	// Output: 20 cells; stopped early at 5
 }
 
 func ExampleCell_DirectedEdges() {
