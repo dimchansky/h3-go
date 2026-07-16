@@ -123,10 +123,55 @@ func ExampleCell_AppendGridDisk() {
 		}
 		fmt.Println(len(disk))
 	}
+
+	// On error the destination comes back with its original length and
+	// elements — no partial results are observable.
+	disk, _ := cell.AppendGridDisk(buf[:0], 1)
+	rolled, err := cell.AppendGridDisk(disk, -1)
+	fmt.Println(errors.Is(err, h3.ErrDomain), len(rolled) == len(disk))
 	// Output:
 	// 7
 	// 19
 	// 37
+	// true true
+}
+
+func ExampleCell_GridDistance() {
+	a, _ := h3.ParseCell("8928308280fffff")
+	b, _ := h3.ParseCell("8928308280bffff")
+	d, err := a.GridDistance(b)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("grid moves:", d)
+
+	// Cells of different resolutions fail with ErrResolutionMismatch.
+	coarser, _ := a.Parent(5)
+	_, err = a.GridDistance(coarser)
+	fmt.Println(errors.Is(err, h3.ErrResolutionMismatch))
+	// Output:
+	// grid moves: 1
+	// true
+}
+
+func ExampleCellToLocalIJ() {
+	origin, _ := h3.ParseCell("8928308280fffff")
+	cell, _ := h3.ParseCell("8928308280bffff")
+
+	// IJ coordinates are only meaningful relative to their origin, and the
+	// coordinate space may change between H3 versions — don't persist them.
+	ij, err := h3.CellToLocalIJ(origin, cell)
+	if err != nil {
+		panic(err)
+	}
+
+	// Within one H3 version and origin, LocalIJToCell inverts the mapping.
+	back, err := h3.LocalIJToCell(origin, ij)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(back == cell)
+	// Output: true
 }
 
 func ExampleCell_Parent() {

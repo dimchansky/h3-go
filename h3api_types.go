@@ -47,13 +47,19 @@ type GeoPolygon struct {
 	Holes   []GeoLoop
 }
 
-// CoordIJ represents IJ coordinates from h3api.h (axial coordinates).
+// CoordIJ represents local IJ coordinates from h3api.h (axial coordinates)
+// anchored at an origin cell (see CellToLocalIJ). Values are meaningful
+// only relative to the origin they were produced with: they are not
+// comparable across origins, and the local coordinate space is not
+// guaranteed to be compatible across H3 versions — do not persist IJ
+// coordinates across library upgrades.
+//
 // I and J use int32 because H3 C defines the full local-IJ domain with C int;
 // this preserves its range and overflow behavior consistently on every Go
 // platform and avoids silent narrowing at the implementation boundary.
 type CoordIJ struct {
-	I int32 // i component
-	J int32 // j component
+	I int32 // i component, origin-relative (see CellToLocalIJ)
+	J int32 // j component, origin-relative (see CellToLocalIJ)
 }
 
 // linkedLatLng mirrors the C struct from h3api.h - a coordinate node in a linked geo structure.
