@@ -522,6 +522,7 @@ polygon__validatePolygonFlags.go,ported-impl,h3,"-",1,0,0
 polygon__validatePolygonFlags_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 polygon_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 polygon_types.go,ported-public-types,h3,"-",0,1,6
+public_docs_test.go,public-api-test,h3_test,"-",0,0,-
 public_ergonomics_test.go,public-api-test,h3,"-",0,0,-
 public_h3v44_test.go,public-api-test,h3,"-",0,0,-
 public_typed_text_test.go,public-api-test,h3,"-",0,0,-
