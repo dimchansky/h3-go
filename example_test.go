@@ -204,6 +204,44 @@ func ExampleCell_ImmediateChildren() {
 	// Output: 7 immediate children
 }
 
+func ExampleCell_ChildPos() {
+	cell, _ := h3.ParseCell("8928308280fffff") // resolution 9
+	// A cell's position within the canonical child order of its ancestor
+	// round-trips through ChildAtPos.
+	pos, err := cell.ChildPos(5)
+	if err != nil {
+		panic(err)
+	}
+	parent, _ := cell.Parent(5)
+	back, err := parent.ChildAtPos(pos, 9)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(pos, back == cell)
+	// Output: 1718 true
+}
+
+func ExampleCompactCells() {
+	parent, _ := h3.ParseCell("85283473fffffff")
+	// Valid input: cells of one resolution, no duplicates.
+	children, _ := parent.Children(6)
+	compacted, err := h3.CompactCells(children)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(len(children), "->", len(compacted), compacted[0] == parent)
+
+	// UncompactCells reverses the compaction at the chosen resolution.
+	uncompacted, err := h3.UncompactCells(compacted, 6)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(len(uncompacted))
+	// Output:
+	// 7 -> 1 true
+	// 7
+}
+
 func ExampleCell_GridDiskDistancesGrouped() {
 	cell, _ := h3.ParseCell("8928308280fffff")
 	rings, err := cell.GridDiskDistancesGrouped(2)

@@ -139,16 +139,23 @@ func CellsToMultiPolygon(cells []Cell) ([]GeoPolygon, error) {
 }
 
 // CompactCells returns the minimal set of cells of coarser resolutions that
-// exactly covers the given set of same-resolution cells. The input must not
-// contain duplicates.
+// exactly covers the given set of cells. Input cells must have the same
+// resolution and must not contain duplicates. Behavior for inputs violating
+// these preconditions is not guaranteed; some such inputs may return
+// ErrDuplicateInput or ErrResolutionMismatch. The order of the output is
+// not guaranteed.
 //
 // H3 C API: compactCells.
 func CompactCells(cells []Cell) ([]Cell, error) { return AppendCompactCells(nil, cells) }
 
 // AppendCompactCells appends the compacted equivalent of cells to dst and
-// returns the extended slice. The destination is reused, but the algorithm
-// itself allocates three internal working arrays per call (the C
-// implementation performs the same heap allocations).
+// returns the extended slice; see CompactCells for the input preconditions.
+// It reuses the destination buffer but may allocate internal working
+// storage for nontrivial inputs; the amount depends on the input and
+// compaction depth (mirroring the C implementation's heap allocations).
+// dst must not share memory with cells — results are unspecified when they
+// overlap. On error the returned slice has dst's original length and
+// elements.
 //
 // H3 C API: compactCells.
 func AppendCompactCells(dst, cells []Cell) ([]Cell, error) {
@@ -160,8 +167,10 @@ func AppendCompactCells(dst, cells []Cell) ([]Cell, error) {
 	return dst[:start+compactNonNull(win)], nil
 }
 
-// UncompactCellsSize returns the number of cells UncompactCells produces for
-// the given compacted set at the given resolution.
+// UncompactCellsSize returns the number of cells UncompactCells produces
+// for the given compacted set at the given resolution. Any input cell finer
+// than res fails with ErrResolutionMismatch; res outside 0..MaxResolution
+// fails with ErrResolutionDomain.
 //
 // H3 C API: uncompactCellsSize.
 func UncompactCellsSize(cells []Cell, res int) (int64, error) {
@@ -176,7 +185,9 @@ func UncompactCellsSize(cells []Cell, res int) (int64, error) {
 }
 
 // UncompactCells expands a compacted set of cells to the given resolution.
-// H3_NULL (zero) entries in the input are skipped, mirroring C.
+// H3_NULL (zero) entries in the input are skipped, mirroring C. Any input
+// cell finer than res fails with ErrResolutionMismatch; res outside
+// 0..MaxResolution fails with ErrResolutionDomain.
 //
 // H3 C API: uncompactCells.
 func UncompactCells(cells []Cell, res int) ([]Cell, error) {
@@ -184,7 +195,11 @@ func UncompactCells(cells []Cell, res int) ([]Cell, error) {
 }
 
 // AppendUncompactCells appends the expansion of the compacted set at the
-// given resolution to dst and returns the extended slice.
+// given resolution to dst and returns the extended slice; see
+// UncompactCells for the error conditions. dst must not share memory with
+// cells — the expansion is written while the input is read, so results are
+// unspecified when they overlap. On error the returned slice has dst's
+// original length and elements.
 //
 // H3 C API: uncompactCells.
 func AppendUncompactCells(dst, cells []Cell, res int) ([]Cell, error) {
