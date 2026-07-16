@@ -104,12 +104,25 @@ The short version:
    disposition in `docs/sync/<old>-to-<ver>.md`.
    Then `go run ./tools/apiinventory -h3ver <ver> -verify` for the public-API
    completeness view.
-3. Port each changed C function in its own file, preserving the attribution
+3. Review **documentation drift**: public GoDoc mirrors upstream contracts,
+   and `upstream-diff` ignores *leading* comments, so comment drift is
+   invisible to the symbol diff. Run
+   `go run ./tools/upstreamdiff -from testref/h3-<old> -to testref/h3-<ver> -comments`
+   (or, as a fallback, a raw
+   `diff -ru testref/h3-<old>/src/h3lib testref/h3-<ver>/src/h3lib`) and
+   review the changed leading comments of **all extracted symbols** in the
+   affected domain — public functions, internal helpers, tables/constants,
+   types, and macros. Leading API comments of public C functions are
+   contract sources; internal symbols' comments are explanatory sources,
+   not automatic public contract. Record a per-domain "docs reviewed"
+   disposition in `docs/sync/<old>-to-<ver>.md` and refresh the affected
+   GoDoc.
+4. Port each changed C function in its own file, preserving the attribution
    comment. Never hardcode an H3 version in code — include paths come from
    `make test-c2go` (`H3VER=` selects the tree).
-4. Add/extend a `<cfile>_cgo.go` wrapper and a `*_parity_test.go`
+5. Add/extend a `<cfile>_cgo.go` wrapper and a `*_parity_test.go`
    (both `//go:build cgo && c2go`), then `make test-c2go H3VER=<ver>`.
-5. Audit every changed upstream test-ecosystem entry, port meaningful
+6. Audit every changed upstream test-ecosystem entry, port meaningful
    behavior, update `docs/upstream-test-inventory.csv`, and run
    `make check-test-inventory`. The scope includes named `TEST` cases,
    input-driven executables, CLI registrations, fuzzers, benchmarks,
@@ -119,7 +132,7 @@ The short version:
    CMake target naming, parser sources, `h3.c`, CLI tests, or fixtures require
    reviewed updates to the inventories in `docs/cli-*.csv`, followed by
    `make test-cli-diff H3VER=<ver>`.
-6. Add the public wrapper with its `H3 C API:` line, tests (including an
+7. Add the public wrapper with its `H3 C API:` line, tests (including an
    allocation assertion if it returns collections), and regenerate the
    inventory + API surface.
 
