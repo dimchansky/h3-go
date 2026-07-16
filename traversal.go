@@ -40,7 +40,10 @@ func growZeroed(dst []Cell, n int) ([]Cell, []Cell) {
 }
 
 // MaxGridDiskSize returns the maximum number of cells in a grid disk of
-// radius k, for pre-sizing AppendGridDisk destination buffers.
+// radius k, for pre-sizing AppendGridDisk destination buffers. Like every
+// k-taking function in this package, it accepts 0 <= k <= math.MaxInt32 and
+// fails with ErrDomain otherwise (the pre-check guards the int32 narrowing;
+// docs/DEVIATIONS.md).
 //
 // H3 C API: maxGridDiskSize.
 func MaxGridDiskSize(k int) (int64, error) {
@@ -55,7 +58,8 @@ func MaxGridDiskSize(k int) (int64, error) {
 }
 
 // MaxGridRingSize returns the maximum number of cells in a hollow grid ring
-// of radius k, for pre-sizing AppendGridRing destination buffers.
+// of radius k (1 for k=0), for pre-sizing AppendGridRing destination
+// buffers. k outside 0..math.MaxInt32 fails with ErrDomain.
 //
 // H3 C API: maxGridRingSize.
 func MaxGridRingSize(k int) (int64, error) {
@@ -70,15 +74,21 @@ func MaxGridRingSize(k int) (int64, error) {
 }
 
 // GridDisk returns all cells within grid distance k of c (including c), in
-// no particular order.
+// no particular order. k outside 0..math.MaxInt32 fails with ErrDomain.
+// Near pentagons the result may contain fewer than MaxGridDiskSize(k)
+// cells: the H3_NULL holes C leaves in its output are pruned
+// (docs/DEVIATIONS.md).
 //
 // H3 C API: gridDisk.
 func (c Cell) GridDisk(k int) ([]Cell, error) { return c.AppendGridDisk(nil, k) }
 
 // AppendGridDisk appends all cells within grid distance k of c to dst and
 // returns the extended slice, in no particular order. Pass dst[:0] (or nil)
-// to reuse dst's capacity; when capacity suffices the only allocation is the
-// algorithm's internal distance scratch (as in H3 C).
+// to reuse dst's capacity; when capacity suffices the call may still
+// allocate an internal distance scratch, but only when the fast unsafe
+// algorithm falls back to the safe one near pentagons (as in H3 C). On
+// error the returned slice has dst's original length and elements — no
+// partial results are observable.
 //
 // H3 C API: gridDisk.
 func (c Cell) AppendGridDisk(dst []Cell, k int) ([]Cell, error) {
@@ -94,16 +104,19 @@ func (c Cell) AppendGridDisk(dst []Cell, k int) ([]Cell, error) {
 	return dst[:start+compactNonNull(win)], nil
 }
 
-// GridDiskUnsafe returns all cells within grid distance k of c in ring-walk
-// order (origin first, then each ring counterclockwise). It fails with
-// ErrPentagon if a pentagon or pentagon distortion is encountered; use
-// GridDisk for the safe variant.
+// GridDiskUnsafe returns all cells within grid distance k of c, in order of
+// increasing distance from the origin (origin first, then each ring in
+// turn; order within a ring is not part of the contract). It fails with
+// ErrPentagon if a pentagon or pentagon distortion is encountered, because
+// the fast algorithm's output would be undefined there; use GridDisk for
+// the safe variant. The result is dense (no pruning).
 //
 // H3 C API: gridDiskUnsafe.
 func (c Cell) GridDiskUnsafe(k int) ([]Cell, error) { return c.AppendGridDiskUnsafe(nil, k) }
 
-// AppendGridDiskUnsafe appends the ring-walk-ordered grid disk of radius k
-// to dst; see GridDiskUnsafe.
+// AppendGridDiskUnsafe appends the grid disk of radius k to dst in order of
+// increasing distance; see GridDiskUnsafe. On error the returned slice has
+// dst's original length and elements.
 //
 // H3 C API: gridDiskUnsafe.
 func (c Cell) AppendGridDiskUnsafe(dst []Cell, k int) ([]Cell, error) {
@@ -120,8 +133,12 @@ func (c Cell) AppendGridDiskUnsafe(dst []Cell, k int) ([]Cell, error) {
 }
 
 // GridDiskDistances returns all cells within grid distance k of c along with
-// each cell's grid distance from c, in no particular order. The distances
-// slice is int32 to match the H3 C representation without a conversion copy.
+// each cell's grid distance from c (in grid moves, not a geographic
+// measure), in no particular order. k outside 0..math.MaxInt32 fails with
+// ErrDomain, and near pentagons the result may contain fewer than
+// MaxGridDiskSize(k) cells (H3_NULL holes pruned, cells and distances in
+// tandem). The distances slice is int32 to match the H3 C representation
+// without a conversion copy.
 //
 // H3 C API: gridDiskDistances.
 func (c Cell) GridDiskDistances(k int) ([]Cell, []int32, error) {
@@ -129,11 +146,12 @@ func (c Cell) GridDiskDistances(k int) ([]Cell, []int32, error) {
 }
 
 // GridDiskDistancesGrouped returns cells within grid distance k of c grouped
-// by distance: result[d] contains exactly the cells at distance d. Empty
-// rings are retained, H3_NULL holes near pentagons are omitted, and no order
-// within a ring is guaranteed. All rings share one backing cell array and
-// have their capacity limited to their length, so appending to one ring
-// cannot overwrite another.
+// by distance: the result always has k+1 rings and result[d] contains
+// exactly the cells at distance d. Empty rings are retained, H3_NULL holes
+// near pentagons are omitted, and no order within a ring is guaranteed. All
+// rings share one backing cell array and have their capacity limited to
+// their length, so appending to one ring cannot overwrite another. k
+// outside 0..math.MaxInt32 fails with ErrDomain (returning a nil result).
 //
 // The flat GridDiskDistances and AppendGridDiskDistances forms remain the
 // allocation-efficient choices when grouped slices are unnecessary.
@@ -194,24 +212,31 @@ func (c Cell) GridDiskDistancesGrouped(k int) ([][]Cell, error) {
 
 // AppendGridDiskDistances appends the cells within grid distance k of c to
 // dst and their distances to dstDist, returning both extended slices. When
-// both capacities suffice the call does not allocate.
+// both capacities suffice the call does not allocate. On error both
+// returned slices have their original lengths and elements — the cell and
+// distance outputs are rolled back in tandem, and no partial results are
+// observable.
 //
 // H3 C API: gridDiskDistances.
 func (c Cell) AppendGridDiskDistances(dst []Cell, dstDist []int32, k int) ([]Cell, []int32, error) {
 	return c.appendGridDiskDistances(dst, dstDist, k, gridDiskDistances, true)
 }
 
-// GridDiskDistancesSafe is the always-correct but slower variant of
-// GridDiskDistances (no unsafe-algorithm fast path).
+// GridDiskDistancesSafe is the variant of GridDiskDistances that never runs
+// the optimistic unsafe fast path: GridDiskDistances tries the faster
+// unsafe algorithm first and falls back to the safe one when a pentagon is
+// encountered, while this function runs the safe algorithm directly. The
+// results are equivalent.
 //
 // H3 C API: gridDiskDistancesSafe.
 func (c Cell) GridDiskDistancesSafe(k int) ([]Cell, []int32, error) {
 	return c.appendGridDiskDistances(nil, nil, k, gridDiskDistancesSafe, true)
 }
 
-// GridDiskDistancesUnsafe returns the grid disk and distances in ring-walk
-// order. It fails with ErrPentagon if a pentagon or pentagon distortion is
-// encountered.
+// GridDiskDistancesUnsafe returns the grid disk and distances in order of
+// increasing distance from the origin (order within a ring is not part of
+// the contract). It fails with ErrPentagon if a pentagon or pentagon
+// distortion is encountered; the result is dense (no pruning).
 //
 // H3 C API: gridDiskDistancesUnsafe.
 func (c Cell) GridDiskDistancesUnsafe(k int) ([]Cell, []int32, error) {
@@ -247,10 +272,12 @@ func (c Cell) appendGridDiskDistances(dst []Cell, dstDist []int32, k int,
 	return dst, dstDist, nil
 }
 
-// GridDisksUnsafe returns the concatenated ring-walk-ordered grid disks of
-// radius k around every origin. It fails with ErrPentagon if any disk
-// encounters a pentagon; the result is grouped by origin, each group of size
-// MaxGridDiskSize(k).
+// GridDisksUnsafe returns the concatenated grid disks of radius k around
+// every origin. The result is grouped by origin in input order, each group
+// of size MaxGridDiskSize(k) ordered by increasing ring distance; upstream
+// guarantees no sorting within each ring group. It fails with ErrPentagon
+// (returning a nil slice) if any disk encounters a pentagon or pentagon
+// distortion.
 //
 // H3 C API: gridDisksUnsafe.
 func GridDisksUnsafe(origins []Cell, k int) ([]Cell, error) {
@@ -266,13 +293,17 @@ func GridDisksUnsafe(origins []Cell, k int) ([]Cell, error) {
 }
 
 // GridRing returns the "hollow" ring of cells at exactly grid distance k
-// from c, in no particular order.
+// from c, in no particular order. k=0 returns just the origin cell. k
+// outside 0..math.MaxInt32 fails with ErrDomain (in C, negative k is
+// undefined behavior here — docs/DEVIATIONS.md). Near pentagons the ring
+// may contain fewer than MaxGridRingSize(k) cells (H3_NULL holes pruned).
 //
 // H3 C API: gridRing.
 func (c Cell) GridRing(k int) ([]Cell, error) { return c.AppendGridRing(nil, k) }
 
 // AppendGridRing appends the hollow ring of radius k around c to dst; see
-// GridRing.
+// GridRing. On error the returned slice has dst's original length and
+// elements.
 //
 // H3 C API: gridRing.
 func (c Cell) AppendGridRing(dst []Cell, k int) ([]Cell, error) {
@@ -288,16 +319,18 @@ func (c Cell) AppendGridRing(dst []Cell, k int) ([]Cell, error) {
 	return dst[:start+compactNonNull(win)], nil
 }
 
-// GridRingUnsafe returns the hollow ring of cells at exactly grid distance k
-// from c in counterclockwise ring-walk order. It fails with ErrPentagon if a
-// pentagon or pentagon distortion is encountered; use GridRing for the safe
-// variant.
+// GridRingUnsafe returns the hollow ring of cells at exactly grid distance
+// k from c (k=0 returns just the origin cell); the order within the ring is
+// not part of the contract. It fails with ErrPentagon if a pentagon or
+// pentagon distortion is encountered — upstream notes these failure cases
+// may be fixed in future versions. Use GridRing for the safe variant.
 //
 // H3 C API: gridRingUnsafe.
 func (c Cell) GridRingUnsafe(k int) ([]Cell, error) { return c.AppendGridRingUnsafe(nil, k) }
 
-// AppendGridRingUnsafe appends the counterclockwise-ordered hollow ring of
-// radius k around c to dst; see GridRingUnsafe.
+// AppendGridRingUnsafe appends the hollow ring of radius k around c to dst;
+// see GridRingUnsafe. On error the returned slice has dst's original length
+// and elements.
 //
 // H3 C API: gridRingUnsafe.
 func (c Cell) AppendGridRingUnsafe(dst []Cell, k int) ([]Cell, error) {
@@ -313,9 +346,11 @@ func (c Cell) AppendGridRingUnsafe(dst []Cell, k int) ([]Cell, error) {
 	return dst, nil
 }
 
-// GridDistance returns the grid distance (minimum number of grid moves)
-// between the two cells. It fails with ErrFailed when the distance cannot be
-// computed (e.g. across pentagon distortion or very distant cells).
+// GridDistance returns the grid distance — the minimum number of grid
+// moves between the two cells, not a Euclidean or great-circle measure.
+// Cells of different resolutions fail with ErrResolutionMismatch. The
+// computation itself can fail with ErrFailed, e.g. across pentagon
+// distortion or for very distant cells.
 //
 // H3 C API: gridDistance.
 func (c Cell) GridDistance(other Cell) (int, error) {
@@ -327,7 +362,9 @@ func (c Cell) GridDistance(other Cell) (int, error) {
 }
 
 // GridPathLen returns the number of cells in the grid path from c to other,
-// including both endpoints.
+// including both endpoints — always GridDistance(c, other)+1. It shares
+// GridDistance's failure modes: ErrResolutionMismatch for cells of
+// different resolutions, ErrFailed when no path can be computed.
 //
 // H3 C API: gridPathCellsSize.
 func (c Cell) GridPathLen(other Cell) (int, error) {
@@ -338,15 +375,21 @@ func (c Cell) GridPathLen(other Cell) (int, error) {
 	return int(sz), nil
 }
 
-// GridPath returns the contiguous line of cells from c to other (inclusive).
-// The path is not guaranteed unique or stable across library versions and
-// may fail with ErrFailed across pentagon distortion.
+// GridPath returns the line of cells from c to other, ordered from c to
+// other inclusive. Upstream guarantees the path's length is
+// GridDistance(c, other)+1 and that every cell is a neighbor of the
+// preceding one. Paths are drawn in grid space and may not correspond to
+// Cartesian lines or great arcs; the specific path is not guaranteed unique
+// or stable across H3 versions. Cells of different resolutions fail with
+// ErrResolutionMismatch; ErrFailed when no path can be computed (e.g.
+// across pentagon distortion).
 //
 // H3 C API: gridPathCells.
 func (c Cell) GridPath(other Cell) ([]Cell, error) { return c.AppendGridPath(nil, other) }
 
 // AppendGridPath appends the grid path from c to other (inclusive) to dst;
-// see GridPath.
+// see GridPath. On error the returned slice has dst's original length and
+// elements.
 //
 // H3 C API: gridPathCells.
 func (c Cell) AppendGridPath(dst []Cell, other Cell) ([]Cell, error) {
@@ -362,10 +405,13 @@ func (c Cell) AppendGridPath(dst []Cell, other Cell) ([]Cell, error) {
 	return dst, nil
 }
 
-// CellToLocalIJ returns the local IJ coordinates of cell anchored at origin.
-// Coordinates are only comparable when produced with the same origin, and
-// the conversion can fail with ErrFailed for cells too far apart or across
-// pentagon distortion.
+// CellToLocalIJ returns the local IJ coordinates of cell anchored at
+// origin. Coordinates are only comparable when produced with the same
+// origin, and the local coordinate space is not guaranteed to be compatible
+// across H3 versions — do not persist IJ coordinates across library
+// upgrades. origin and cell of different resolutions fail with
+// ErrResolutionMismatch; the conversion itself can fail with ErrFailed for
+// cells too far apart or across pentagon distortion.
 //
 // H3 C API: cellToLocalIj.
 func CellToLocalIJ(origin, cell Cell) (CoordIJ, error) {
@@ -377,7 +423,11 @@ func CellToLocalIJ(origin, cell Cell) (CoordIJ, error) {
 }
 
 // LocalIJToCell returns the cell at the local IJ coordinates anchored at
-// origin; it is the inverse of CellToLocalIJ.
+// origin. It fails with ErrFailed when the coordinates are too far from the
+// origin, cross pentagon distortion, or do not correspond to a cell. Like
+// CellToLocalIJ, the local coordinate space is not guaranteed to be
+// compatible across H3 versions, so it inverts CellToLocalIJ only within a
+// single H3 version and for the same origin.
 //
 // H3 C API: localIjToCell.
 func LocalIJToCell(origin Cell, ij CoordIJ) (Cell, error) {
