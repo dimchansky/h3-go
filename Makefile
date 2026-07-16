@@ -35,9 +35,12 @@ check-unsafe:
 	@echo "check-unsafe: OK"
 
 # Documentation gate: every relative Markdown link and #anchor must resolve
-# (tools/docscheck). Runs in CI on every push/PR, including docs-only changes.
+# (tools/docscheck), and every [Symbol] doc link in the root package's GoDoc
+# must resolve (tools/doclinkcheck). Runs in CI on every push/PR, including
+# docs-only changes.
 check-docs:
 	@go run ./tools/docscheck
+	@go run ./tools/doclinkcheck
 	@go run ./tools/benchdocs -verify
 
 # Regenerate/verify the README scorecard and complete benchmark comparison
