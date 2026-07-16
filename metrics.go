@@ -86,8 +86,9 @@ func (e DirectedEdge) LengthM() (float64, error) {
 
 // HexagonAreaAvgKm2 returns the average hexagon area in square kilometers
 // at the given resolution (pentagons excluded). The average assumes the
-// same spherical earth model as Cell.AreaKm2; for the exact area of a
-// specific cell, use Cell.AreaKm2.
+// same spherical earth model as Cell.AreaKm2 (WGS84 authalic sphere,
+// radius 6371.007180918475 km); for the exact area of a specific cell, use
+// Cell.AreaKm2.
 //
 // H3 C API: getHexagonAreaAvgKm2.
 func HexagonAreaAvgKm2(res int) (float64, error) {
@@ -119,8 +120,9 @@ func HexagonAreaAvgM2(res int) (float64, error) {
 
 // HexagonEdgeLengthAvgKm returns the average hexagon edge length in
 // kilometers at the given resolution (pentagons excluded). The average
-// assumes the same spherical earth model as DirectedEdge.LengthKm; for the
-// exact length of a specific edge, use DirectedEdge.LengthKm.
+// assumes the same spherical earth model as DirectedEdge.LengthKm (WGS84
+// authalic sphere, radius 6371.007180918475 km); for the exact length of a
+// specific edge, use DirectedEdge.LengthKm.
 //
 // H3 C API: getHexagonEdgeLengthAvgKm.
 func HexagonEdgeLengthAvgKm(res int) (float64, error) {
