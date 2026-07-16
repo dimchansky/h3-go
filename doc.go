@@ -6,6 +6,39 @@
 // cgo && c2go) that compares every ported function against the original C
 // objects compiled from pristine upstream sources.
 //
+// # Cells, resolutions, and the grid
+//
+// H3 tessellates the sphere with hexagonal cells at 16 resolutions, from 0
+// (coarsest, 122 base cells) to [MaxResolution] (finest). Each finer
+// resolution subdivides the grid roughly sevenfold ([NumCells] gives the
+// exact count). The grid is built by projecting the sphere onto a regular
+// icosahedron: 12 cells per resolution — one at each icosahedron vertex —
+// are pentagons rather than hexagons ([Cell.IsPentagon], [Pentagons]).
+// Successive resolutions alternate between two orientations: Class II
+// (even) and Class III (odd), the latter rotated ~19.1°
+// ([Cell.IsResClassIII]).
+//
+// # Pentagons and icosahedron distortion
+//
+// Pentagons and icosahedron faces are the two systematic irregularities of
+// the grid, and they surface in the API. Fast "Unsafe" traversal variants
+// fail with [ErrPentagon] when they meet a pentagon or its distortion area;
+// grid paths and local IJ conversions can fail near pentagons with
+// [ErrFailed]; and cell or edge boundaries gain extra "distortion vertices"
+// where they cross icosahedron faces ([Cell.Boundary],
+// [DirectedEdge.Boundary]).
+//
+// # Hierarchy is logical, not geometric
+//
+// Parent/child relationships ([Cell.Parent], [Cell.Children]) are defined
+// on the index hierarchy, not by geometric containment: a child's boundary
+// is not required to lie within its parent's boundary, and a cell's center
+// ([Cell.LatLng]) is not guaranteed to be its geographic centroid. Exact
+// subdivision of a hexagon into hexagons is impossible, so each level's
+// children only approximately cover the parent. Use polygon operations
+// (for example [PolygonToCellsExperimental] with [ContainmentFull]) when
+// geometric containment matters.
+//
 // # Index types
 //
 // The three H3 index kinds are distinct uint64 types: [Cell] (a hexagon or
@@ -23,24 +56,55 @@
 // (stored in radians). Construct them explicitly — [LatLngDegs] for degrees,
 // [NewLatLng] with [Deg] or [Rad] angles — so degree/radian mix-ups cannot
 // compile. Accessors convert on the way out: ll.Lat.Deg(), ll.Lng.Rad().
+// Polygon inputs ([GeoLoop], [GeoPolygon]) use implicitly closed loops of
+// these radians-backed coordinates and handle antimeridian crossings
+// automatically. Local IJ coordinates ([CoordIJ]) are origin-relative and
+// not stable across H3 versions; see [CellToLocalIJ].
+//
+// # Earth model and measurements
+//
+// All kilometer and meter results — areas, edge lengths, great-circle
+// distances, and their per-resolution averages — are spherical
+// approximations computed on a sphere of WGS84 authalic radius
+// 6371.007180918475 km, not ellipsoidal geodesic values. Exact per-cell and
+// per-edge measurements ([Cell.AreaKm2], [DirectedEdge.LengthKm]) account
+// for the actual, distortion-aware boundary; the HexagonAreaAvg and
+// HexagonEdgeLengthAvg families return per-resolution hexagon averages.
+//
+// # Ordering and stability
+//
+// Result ordering is documented per function and never exceeds the H3 C
+// public contract: some results are explicitly unordered ([Cell.GridDisk],
+// [PolygonToCells], [CompactCells]), some have a documented structure
+// (increasing ring distance for the unsafe disk variants, canonical child
+// order for [Cell.Children]), and none are silently sorted. Grid paths and
+// local IJ coordinate spaces are not guaranteed to be stable across H3
+// versions; do not persist them across library upgrades.
 //
 // # Errors
 //
 // Operations return sentinel errors matching the H3 C error codes
 // ([ErrPentagon], [ErrCellInvalid], [ErrResolutionDomain], ...); match them
-// with errors.Is. Pure bit accessors (Resolution, BaseCellNumber, IsValid,
-// String) do not fail.
+// with errors.Is. Each sentinel's documentation names representative
+// operations that return it. Pure bit accessors (Resolution,
+// BaseCellNumber, IsValid, String) do not fail, and parse/unmarshal syntax
+// errors wrap strconv errors rather than sentinels (see [ParseCell]).
 //
 // # Allocation control
 //
-// Collection-returning operations come in two forms: a convenience form that
-// allocates its result (GridDisk, Children, PolygonToCells, ...) and an
-// Append* form (AppendGridDisk, AppendChildren, AppendPolygonToCells, ...)
-// that appends to a caller-provided buffer and allocates nothing when
-// capacity suffices. Iterator forms ([Cell.ChildrenSeq], [CellsAtRes],
-// [PolygonToCellsExperimentalSeq]) yield cells one at a time with zero
-// allocation. [CellBoundary] is a fixed-size value type; obtaining a
-// boundary performs no heap allocation.
+// Collection-returning operations come in two forms: a convenience form
+// that allocates its result (GridDisk, Children, PolygonToCells, ...) and
+// an Append* form (AppendGridDisk, AppendChildren, AppendPolygonToCells,
+// ...) that appends into a caller-provided buffer. Append* forms add no
+// allocation for the result itself when capacity suffices, but some may
+// allocate internal working storage — for example [AppendCompactCells] for
+// nontrivial inputs, or the gridDisk family's distance scratch on its
+// pentagon fallback path — so the per-function documentation is
+// authoritative. The [Cell.ChildrenSeq] and [CellsAtRes] iterators yield
+// cells one at a time and allocate nothing (assertion-backed);
+// [PolygonToCellsExperimentalSeq] may allocate internal iterator state.
+// [CellBoundary] is a fixed-size value type; obtaining a boundary performs
+// no heap allocation.
 //
 // # Relationship to H3 C
 //
