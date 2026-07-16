@@ -26,10 +26,12 @@ func (c Cell) ChildrenSeq(res int) iter.Seq[Cell] {
 	}
 }
 
-// CellsAtRes returns an iterator over all cells at the given resolution, in
-// base-cell order, without materializing them (there are NumCells(res) of
-// them — over 500 trillion at resolution 15). Iterating allocates nothing.
-// If the resolution is invalid the sequence is empty.
+// CellsAtRes returns an iterator over all cells at the given resolution,
+// without materializing them (there are NumCells(res) of them — over 500
+// trillion at resolution 15). The iteration order is not part of the
+// contract. The sequence is re-runnable — each range restarts from the
+// first cell — and breaking early is safe. Iterating allocates nothing. If
+// the resolution is invalid the sequence is empty.
 //
 // H3 C API: iterInitRes / iterStepRes (iterators.h).
 func CellsAtRes(res int) iter.Seq[Cell] {

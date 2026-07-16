@@ -185,6 +185,17 @@ func TestIterAllocations(t *testing.T) {
 			t.Fatal(n)
 		}
 	})
+	// Backs the documented "iterating allocates nothing" guarantee on
+	// CellsAtRes.
+	assertMaxAllocsPerRun(t, "CellsAtRes iteration", 50, 0, func() {
+		n := 0
+		for range CellsAtRes(0) {
+			n++
+		}
+		if n != 122 {
+			t.Fatal(n)
+		}
+	})
 }
 
 func TestCompactUncompactRoundTrip(t *testing.T) {

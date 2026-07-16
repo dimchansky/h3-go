@@ -374,6 +374,83 @@ func ExampleCell_DirectedEdges() {
 	// Output: 6 edges; first leads to a neighbor: true
 }
 
+func ExampleCell_Vertex() {
+	// A topological corner is shared by three cells; the canonical owner
+	// makes the Vertex value identical no matter which cell derives it.
+	cell, _ := h3.ParseCell("8928308280fffff")
+	v0, err := cell.Vertex(0)
+	if err != nil {
+		panic(err)
+	}
+	shared := 0
+	ring, _ := cell.GridRing(1)
+	for _, neighbor := range ring {
+		vs, err := neighbor.Vertexes()
+		if err != nil {
+			panic(err)
+		}
+		for _, v := range vs {
+			if v == v0 {
+				shared++
+			}
+		}
+	}
+	fmt.Println("neighbors deriving the same Vertex value:", shared)
+	// Output: neighbors deriving the same Vertex value: 2
+}
+
+func ExampleDirectedEdge() {
+	origin, _ := h3.ParseCell("8928308280fffff")
+	edges, err := origin.DirectedEdges()
+	if err != nil {
+		panic(err)
+	}
+	edge := edges[0]
+
+	// Cells returns origin and destination, in that order.
+	o, d, err := edge.Cells()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("origin matches:", o == origin)
+
+	// The reverse edge runs from the destination back to the origin.
+	back, err := d.DirectedEdgeTo(o)
+	if err != nil {
+		panic(err)
+	}
+	ro, _ := back.Origin()
+	fmt.Println("reverse origin is destination:", ro == d)
+
+	// An edge boundary holds the two topological endpoints, plus one
+	// distortion vertex when the edge crosses an icosahedron face.
+	b, err := edge.Boundary()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("boundary vertices:", b.Len())
+	// Output:
+	// origin matches: true
+	// reverse origin is destination: true
+	// boundary vertices: 2
+}
+
+func ExampleCell_AreaKm2() {
+	cell, _ := h3.ParseCell("8928308280fffff")
+	// The exact spherical area of this specific cell...
+	exact, err := cell.AreaKm2()
+	if err != nil {
+		panic(err)
+	}
+	// ...versus the average hexagon area at its resolution.
+	avg, err := h3.HexagonAreaAvgKm2(9)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("exact %.6f km², average %.6f km²\n", exact, avg)
+	// Output: exact 0.109398 km², average 0.105333 km²
+}
+
 func ExampleCell_AppendVertexes() {
 	cell, _ := h3.ParseCell("8928308280fffff")
 	// Reuse one buffer across many cells: capacity 6 always suffices, so
