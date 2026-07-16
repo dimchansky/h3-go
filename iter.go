@@ -47,9 +47,19 @@ func CellsAtRes(res int) iter.Seq[Cell] {
 }
 
 // PolygonToCellsExperimentalSeq returns an iterator over the cells matching
-// the polygon under the given containment mode, without materializing the
-// full result. Input validation happens before the sequence is returned;
-// iteration itself cannot fail.
+// the polygon under the given containment mode (see ContainmentMode),
+// without materializing the full result, in no particular order. Input
+// validation happens before the sequence is returned; iteration itself
+// cannot fail. The sequence is re-runnable — each range restarts the
+// underlying iterator — and breaking early is safe (internal iterator
+// state is released). Iteration may allocate internal iterator state; it
+// is not allocation-free.
+//
+// The polygon is captured as a struct of slice headers: its coordinate
+// slices are shared, not copied. Mutations made before a later iteration
+// are observed by that iteration and may affect its results. Callers must
+// not mutate the polygon's backing slices during an active iteration;
+// concurrent mutation is unsafe.
 //
 // Like its C counterpart, this API is experimental and may change in minor
 // versions.

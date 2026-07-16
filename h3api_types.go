@@ -36,15 +36,26 @@ type CellBoundary struct {
 	verts    [MaxCellBoundaryVerts]LatLng // vertices in ccw order
 }
 
-// GeoLoop is a simple loop of LatLng coordinates (closed implicitly).
-// Mirrors the GeoLoop type from h3api.h.
+// GeoLoop is a loop of LatLng coordinates (Angle values, radians
+// internally) describing one polygon ring. Closure is implicit — the
+// segment from the last vertex back to the first is assumed — so callers do
+// not need to repeat the first vertex; the canonical representation omits
+// the duplicated closing vertex. Loops that cross the antimeridian (±180°
+// longitude) are detected and handled automatically; longitudes do not need
+// to be pre-unwrapped. Mirrors the GeoLoop type from h3api.h.
 type GeoLoop []LatLng
 
-// GeoPolygon is an outer loop with optional holes.
-// Mirrors the GeoPolygon struct from h3api.h.
+// GeoPolygon is a polygon with an outer boundary and optional holes, all
+// following the GeoLoop conventions (implicit closure, radians, automatic
+// antimeridian handling). Holes are identified structurally by the Holes
+// field — not by winding order, as in GeoJSON. Mirrors the GeoPolygon
+// struct from h3api.h.
 type GeoPolygon struct {
+	// GeoLoop is the outer boundary of the polygon.
 	GeoLoop GeoLoop
-	Holes   []GeoLoop
+	// Holes are inner rings excluded from the polygon, each following the
+	// same GeoLoop conventions as the outer boundary.
+	Holes []GeoLoop
 }
 
 // CoordIJ represents local IJ coordinates from h3api.h (axial coordinates)

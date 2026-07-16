@@ -7,7 +7,9 @@ import (
 
 // MaxPolygonToCellsSize returns an upper bound on the number of cells
 // PolygonToCells produces for the polygon at the given resolution, for
-// pre-sizing AppendPolygonToCells destination buffers.
+// pre-sizing AppendPolygonToCells destination buffers. The estimate is
+// derived from the polygon's bounding box, so it can overshoot
+// substantially for sparse or strongly non-convex polygons.
 //
 // H3 C API: maxPolygonToCellsSize.
 func MaxPolygonToCellsSize(p GeoPolygon, res int) (int64, error) {
@@ -21,8 +23,11 @@ func MaxPolygonToCellsSize(p GeoPolygon, res int) (int64, error) {
 	return sz, nil
 }
 
-// PolygonToCells returns all cells at the given resolution whose center point
-// is contained in the polygon (holes excluded), in no particular order.
+// PolygonToCells returns all cells at the given resolution whose center
+// point is contained in the polygon (holes excluded), in no particular
+// order. The polygon follows the GeoLoop conventions (implicit closure,
+// radians, automatic antimeridian handling); res outside 0..MaxResolution
+// fails with ErrResolutionDomain.
 //
 // H3 C API: polygonToCells.
 func PolygonToCells(p GeoPolygon, res int) ([]Cell, error) {
@@ -30,8 +35,9 @@ func PolygonToCells(p GeoPolygon, res int) ([]Cell, error) {
 }
 
 // AppendPolygonToCells appends the cells whose center point is contained in
-// the polygon to dst and returns the extended slice. Pass dst[:0] (or nil)
-// to reuse dst's capacity.
+// the polygon to dst and returns the extended slice; see PolygonToCells.
+// Pass dst[:0] (or nil) to reuse dst's capacity. On error the returned
+// slice has dst's original length and elements.
 //
 // H3 C API: polygonToCells.
 func AppendPolygonToCells(dst []Cell, p GeoPolygon, res int) ([]Cell, error) {
@@ -48,8 +54,10 @@ func AppendPolygonToCells(dst []Cell, p GeoPolygon, res int) ([]Cell, error) {
 }
 
 // MaxPolygonToCellsSizeExperimental returns an upper bound on the number of
-// cells PolygonToCellsExperimental produces for the polygon, resolution, and
-// containment mode.
+// cells PolygonToCellsExperimental produces for the polygon, resolution,
+// and containment mode (see ContainmentMode). The bounding-box-derived
+// estimate can overshoot substantially for sparse or strongly non-convex
+// polygons.
 //
 // Like its C counterpart, this API is experimental and may change in minor
 // versions.
@@ -67,8 +75,11 @@ func MaxPolygonToCellsSizeExperimental(p GeoPolygon, res int, mode ContainmentMo
 }
 
 // PolygonToCellsExperimental returns all cells at the given resolution that
-// match the polygon under the given containment mode, in no particular
-// order.
+// match the polygon under the given containment mode (see ContainmentMode
+// for the CENTER/FULL/OVERLAPPING/OVERLAPPING_BBOX semantics; holes
+// participate per mode), in no particular order. The polygon follows the
+// GeoLoop conventions; an invalid mode fails with ErrOptionInvalid and res
+// outside 0..MaxResolution with ErrResolutionDomain.
 //
 // Like its C counterpart, this API is experimental and may change in minor
 // versions.
@@ -79,7 +90,9 @@ func PolygonToCellsExperimental(p GeoPolygon, res int, mode ContainmentMode) ([]
 }
 
 // AppendPolygonToCellsExperimental appends the cells matching the polygon
-// under the given containment mode to dst and returns the extended slice.
+// under the given containment mode to dst and returns the extended slice;
+// see PolygonToCellsExperimental. On error the returned slice has dst's
+// original length and elements.
 //
 // H3 C API: polygonToCellsExperimental.
 func AppendPolygonToCellsExperimental(dst []Cell, p GeoPolygon, res int, mode ContainmentMode) ([]Cell, error) {
@@ -95,10 +108,22 @@ func AppendPolygonToCellsExperimental(dst []Cell, p GeoPolygon, res int, mode Co
 	return dst[:start+compactNonNull(win)], nil
 }
 
-// CellsToMultiPolygon returns the multipolygon (one GeoPolygon per contiguous
-// region, holes included) describing the outline of the given set of
-// same-resolution cells. Vertices are cell-boundary vertices; an empty input
-// yields a nil result.
+// CellsToMultiPolygon returns the multipolygon — one GeoPolygon per
+// contiguous region, holes included — describing the outline of the given
+// set of cells. The input cells must all have the same resolution and
+// contain no duplicates; output for input violating these preconditions is
+// undefined (no error is guaranteed). An empty input yields a nil result.
+//
+// The output follows GeoJSON MultiPolygon structure rules: within each
+// GeoPolygon the outer boundary is in the GeoLoop field with its holes in
+// Holes, and holes have clockwise winding. It is not GeoJSON, however:
+// vertices are cell-boundary vertices as radians-backed LatLng values in
+// (lat, lng) field order, rings are open (the closing vertex is not
+// repeated), loops may cross the antimeridian, and the order of the
+// returned polygons is unspecified. Producing GeoJSON therefore requires
+// converting radians to degrees, swapping to [lng, lat] coordinate order,
+// explicitly closing each ring by repeating its first position, and
+// handling antimeridian crossings per RFC 7946.
 //
 // H3 C API: cellsToLinkedMultiPolygon (the linked-list output is converted
 // to slice-based GeoPolygon values; C's destroyLinkedMultiPolygon is
