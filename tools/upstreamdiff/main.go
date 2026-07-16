@@ -9,6 +9,7 @@
 //
 //	go run ./tools/upstreamdiff -from testref/h3-4.3.0 -to testref/h3-4.4.0
 //	go run ./tools/upstreamdiff -from ... -to ... -strict   # exit 1 on unmapped changes
+//	go run ./tools/upstreamdiff -from ... -to ... -comments # + leading-comment drift
 //
 // Output: a Markdown report (stdout) with three sections — library symbol
 // changes (functions, tables, macros, types) each mapped to its Go file,
@@ -16,6 +17,17 @@
 // cross-checked against docs/upstream-test-inventory.csv. Symbols whose Go mapping is
 // missing or ambiguous are flagged for human review; the tool never edits
 // Go code.
+//
+// By default only symbol bodies are compared (leading comments are
+// invisible to the diff; comments inside bodies count as body changes).
+// With -comments, the leading documentation comment of every extracted
+// symbol is compared as an independent dimension: the symbol table gains a
+// Change column (body / comment-only / body+comment) and a derived
+// "Leading-comment-only changes" section lists symbols whose body is
+// unchanged. This exists because public GoDoc mirrors upstream contract
+// comments, so comment drift is documentation drift (see the sync workflow
+// in CONTRIBUTING.md). -strict is unaffected by -comments: it still exits 1
+// only for changed symbols that lack a Go mapping.
 package main
 
 import (
@@ -34,10 +46,11 @@ import (
 // ---------------------------------------------------------------------------
 
 type symbol struct {
-	kind string // func, table, macro, type
-	name string
-	file string // base name, e.g. "h3Index.c"
-	body string // normalized source text of the definition
+	kind    string // func, table, macro, type
+	name    string
+	file    string // base name, e.g. "h3Index.c"
+	body    string // normalized source text of the definition
+	comment string // normalized leading comment block ("" if none)
 }
 
 var (
@@ -64,13 +77,17 @@ func extractSymbols(path string) ([]symbol, error) {
 
 	i := 0
 	inComment := false
+	var pending []string // most recent contiguous leading comment block
 	for i < len(lines) {
 		line := lines[i]
 		trimmed := strings.TrimSpace(line)
 
 		// Track /* ... */ block comments; their continuation lines may start
 		// at column 0 without a leading '*' (free-form prose in H3 sources).
+		// The block accumulates as the pending leading comment of whatever
+		// symbol immediately follows it.
 		if inComment {
+			pending = append(pending, trimmed)
 			if strings.Contains(trimmed, "*/") {
 				inComment = false
 			}
@@ -79,6 +96,7 @@ func extractSymbols(path string) ([]symbol, error) {
 		}
 		if strings.HasPrefix(trimmed, "/*") && !strings.Contains(trimmed, "*/") {
 			inComment = true
+			pending = []string{trimmed}
 			i++
 			continue
 		}
@@ -90,15 +108,23 @@ func extractSymbols(path string) ([]symbol, error) {
 				i++
 			}
 			out = append(out, symbol{kind: "macro", name: m[1], file: base,
-				body: norm(strings.Join(lines[start:i+1], "\n"))})
+				body:    norm(strings.Join(lines[start:i+1], "\n")),
+				comment: norm(strings.Join(pending, "\n"))})
+			pending = nil
 			i++
 			continue
 		}
 
-		// Skip preprocessor, comments, blank, closing braces.
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") ||
-			strings.HasPrefix(trimmed, "//") || strings.HasPrefix(trimmed, "/*") ||
-			strings.HasPrefix(trimmed, "*") || strings.HasPrefix(trimmed, "}") {
+		// Single-line comments accumulate as pending; a blank line, other
+		// preprocessor directive, or stray closing brace breaks attachment.
+		if strings.HasPrefix(trimmed, "//") || strings.HasPrefix(trimmed, "/*") ||
+			strings.HasPrefix(trimmed, "*") {
+			pending = append(pending, trimmed)
+			i++
+			continue
+		}
+		if trimmed == "" || strings.HasPrefix(trimmed, "#") || strings.HasPrefix(trimmed, "}") {
+			pending = nil
 			i++
 			continue
 		}
@@ -107,6 +133,7 @@ func extractSymbols(path string) ([]symbol, error) {
 		c := line[0]
 		isIdentStart := c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 		if !isIdentStart {
+			pending = nil
 			i++
 			continue
 		}
@@ -181,8 +208,10 @@ func extractSymbols(path string) ([]symbol, error) {
 		}
 
 		if name != "" && kind != "" {
-			out = append(out, symbol{kind: kind, name: name, file: base, body: norm(block)})
+			out = append(out, symbol{kind: kind, name: name, file: base,
+				body: norm(block), comment: norm(strings.Join(pending, "\n"))})
 		}
+		pending = nil
 		i = end + 1
 	}
 	return out, nil
@@ -205,6 +234,63 @@ func parenIdx(header string) int {
 var wsRe = regexp.MustCompile(`\s+`)
 
 func norm(s string) string { return strings.TrimSpace(wsRe.ReplaceAllString(s, " ")) }
+
+// ---------------------------------------------------------------------------
+// Symbol diff
+// ---------------------------------------------------------------------------
+
+// change is one changed/added/removed symbol with its change dimensions
+// tracked independently: bodyChanged and commentChanged can both be true.
+type change struct {
+	status         string // added, changed, removed
+	kind           string
+	key            string // file::name
+	bodyChanged    bool
+	commentChanged bool
+}
+
+// diffSymbols compares two scanned trees. Without includeComments the
+// result is the historical body-only diff (leading comments ignored). With
+// includeComments, symbols whose leading documentation comment changed are
+// also reported, and body/comment dimensions are set independently so a
+// symbol with both changes is visible on both axes.
+func diffSymbols(oldSyms, newSyms map[string]symbol, includeComments bool) []change {
+	var out []change
+	for k, ns := range newSyms {
+		olds, ok := oldSyms[k]
+		if !ok {
+			out = append(out, change{status: "added", kind: ns.kind, key: k, bodyChanged: true})
+			continue
+		}
+		bodyChanged := olds.body != ns.body
+		commentChanged := includeComments && olds.comment != ns.comment
+		if bodyChanged || commentChanged {
+			out = append(out, change{status: "changed", kind: ns.kind, key: k,
+				bodyChanged: bodyChanged, commentChanged: commentChanged})
+		}
+	}
+	for k, olds := range oldSyms {
+		if _, ok := newSyms[k]; !ok {
+			out = append(out, change{status: "removed", kind: olds.kind, key: k, bodyChanged: true})
+		}
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].key < out[j].key })
+	return out
+}
+
+// changeDims renders the change-dimension cell for -comments mode.
+func changeDims(r change) string {
+	switch {
+	case r.status != "changed":
+		return "—"
+	case r.bodyChanged && r.commentChanged:
+		return "body+comment"
+	case r.commentChanged:
+		return "comment-only"
+	default:
+		return "body"
+	}
+}
 
 // ---------------------------------------------------------------------------
 // Tree scanning
@@ -312,6 +398,7 @@ func main() {
 	repo := flag.String("repo", ".", "repository root containing the Go port")
 	portedTests := flag.String("ported-tests", "docs/upstream-test-inventory.csv", "reviewed upstream test inventory")
 	strict := flag.Bool("strict", false, "exit 1 if any changed lib symbol lacks a Go mapping")
+	comments := flag.Bool("comments", false, "also diff each symbol's leading documentation comment (documentation-drift review)")
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "upstreamdiff diffs two upstream H3 trees at the symbol level and maps changes to the Go port (Markdown to stdout).")
 		fmt.Fprintln(os.Stderr, "usage: go run ./tools/upstreamdiff -from <oldtree> -to <newtree> [flags]")
@@ -330,21 +417,7 @@ func main() {
 	attrs, err := goAttributions(*repo)
 	check(err)
 
-	type row struct{ status, kind, key string }
-	var rows []row
-	for k, ns := range newSyms {
-		if os, ok := oldSyms[k]; !ok {
-			rows = append(rows, row{"added", ns.kind, k})
-		} else if os.body != ns.body {
-			rows = append(rows, row{"changed", ns.kind, k})
-		}
-	}
-	for k, os := range oldSyms {
-		if _, ok := newSyms[k]; !ok {
-			rows = append(rows, row{"removed", os.kind, k})
-		}
-	}
-	sort.Slice(rows, func(i, j int) bool { return rows[i].key < rows[j].key })
+	rows := diffSymbols(oldSyms, newSyms, *comments)
 
 	fmt.Printf("# Upstream diff: %s -> %s\n\n", filepath.Base(*from), filepath.Base(*to))
 	fmt.Printf("Symbols scanned: %d old, %d new. Changed/added/removed: %d.\n\n",
@@ -353,8 +426,13 @@ func main() {
 	unmapped := 0
 	fmt.Println("## Library and header symbol changes")
 	fmt.Println()
-	fmt.Println("| Status | Kind | C symbol | Go mapping | Review |")
-	fmt.Println("|---|---|---|---|---|")
+	if *comments {
+		fmt.Println("| Status | Kind | C symbol | Change | Go mapping | Review |")
+		fmt.Println("|---|---|---|---|---|---|")
+	} else {
+		fmt.Println("| Status | Kind | C symbol | Go mapping | Review |")
+		fmt.Println("|---|---|---|---|---|")
+	}
 	for _, r := range rows {
 		name := r.key[strings.Index(r.key, "::")+2:]
 		goFiles := attrs[r.key]
@@ -377,7 +455,31 @@ func main() {
 		if r.status == "removed" {
 			note = "removed upstream — check Go side for retirement"
 		}
-		fmt.Printf("| %s | %s | `%s` | %s | %s |\n", r.status, r.kind, r.key, mapping, note)
+		if *comments {
+			if r.status == "changed" && r.commentChanged {
+				note += "; review the leading-comment diff for GoDoc drift"
+			}
+			fmt.Printf("| %s | %s | `%s` | %s | %s | %s |\n",
+				r.status, r.kind, r.key, changeDims(r), mapping, note)
+		} else {
+			fmt.Printf("| %s | %s | `%s` | %s | %s |\n", r.status, r.kind, r.key, mapping, note)
+		}
+	}
+
+	if *comments {
+		fmt.Println()
+		fmt.Println("### Leading-comment-only changes")
+		fmt.Println()
+		n := 0
+		for _, r := range rows {
+			if r.status == "changed" && r.commentChanged && !r.bodyChanged {
+				fmt.Printf("- `%s`\n", r.key)
+				n++
+			}
+		}
+		if n == 0 {
+			fmt.Println("(none)")
+		}
 	}
 
 	// Test files.

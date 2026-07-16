@@ -12,6 +12,7 @@ full details (`go doc ./tools/<name>`) and accepts `-h`.
 | [cliinventory](cliinventory) | Discover the upstream CLI contract; verify the committed CLI registries against it | `make check-cli-inventory` | CI (`api-gates`, nightly), upstream syncs |
 | [upstreamdiff](upstreamdiff) | Symbol-level diff of two upstream H3 trees, mapped to the Go port | `make upstream-diff FROM=4.3.0 TO=4.4.0` | Upstream syncs (manual, mandatory) |
 | [docscheck](docscheck) | Verify relative Markdown links and #anchors | `make check-docs` | CI (`docs` job) |
+| [doclinkcheck](doclinkcheck) | Verify `[Symbol]` doc links in the root package's GoDoc resolve | `make check-docs` | CI (`docs` job) |
 | [benchdocs](benchdocs) | Generate and verify the README scorecard and complete benchmark comparison from committed artifacts | `make gen-benchdocs` / `make check-benchdocs` | CI (`docs` job), benchmark refreshes |
 | [ubercompare](ubercompare) | Generate and verify the uber/h3-go comparison-matrix tables and the C→Go API map | `make gen-ubercompare` / `make check-ubercompare` | CI (`docs` job), binding/H3 release updates |
 | [layoutinventory](layoutinventory) | Classify every root source file into its architectural layer; verify none is unclassifiable | `make layout-inventory` / `make check-layout` | CI (`fast`, `api-gates`), layout discoverability ([docs/repository-layout-review.md](../docs/repository-layout-review.md)) |
@@ -87,8 +88,18 @@ equivalence.
   files, plus changed upstream test files) — commit the reviewed result as
   `docs/sync/<old>-to-<new>.md`.
 - **`-strict`** exits 1 if any changed library symbol has no Go mapping.
-- Flags: `-from`, `-to` (required), `-repo`, `-ported-tests`, `-strict`.
-  Both trees must exist under `testref/`
+- **`-comments`** additionally diffs every extracted symbol's *leading*
+  documentation comment as an independent dimension (public functions,
+  internal helpers, tables/constants, types, macros). The symbol table
+  gains a Change column (`body` / `comment-only` / `body+comment`) and a
+  derived "Leading-comment-only changes" section lists symbols whose body
+  is unchanged. Default mode ignores leading comments entirely (its output
+  is unchanged by this flag's existence); comments *inside* bodies always
+  count as body changes. This is the documentation-drift review step of
+  the sync workflow (public GoDoc mirrors upstream contract comments) —
+  see CONTRIBUTING.md. `-strict` is unaffected by `-comments`.
+- Flags: `-from`, `-to` (required), `-repo`, `-ported-tests`, `-strict`,
+  `-comments`. Both trees must exist under `testref/`
   (`make -C testref H3_VERSION=<ver> h3-source`).
 
 ## docscheck
@@ -98,6 +109,19 @@ links must resolve to existing files/directories, and `#fragment` links into
 Markdown files must match a GitHub-generated heading anchor. Fenced code
 blocks and inline code are ignored. Run with `make check-docs`; CI runs it
 on every push/PR, including docs-only changes.
+
+## doclinkcheck
+
+Checks that every `[Symbol]` / `[Type.Method]` doc-link candidate in the
+root package's doc comments resolves to a declared package symbol.
+`go/doc/comment` leaves unresolvable candidates as plain text (no `DocLink`
+node is emitted), so the tool scans the syntactic candidates itself:
+bracketed exported identifiers in package, declaration, spec, and
+struct-field doc comments. Candidates not starting with an uppercase letter
+(numeric ranges, GeoJSON `[lng, lat]`) and package-qualified references are
+ignored; test files are skipped. `-dir` selects another package directory
+(used by its own fixture test). Run with `make check-docs`; CI runs it on
+every push/PR, including docs-only changes.
 
 ## ubercompare
 
