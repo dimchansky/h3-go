@@ -12,6 +12,13 @@ func checkRes(res int) error {
 // LatLngToCell returns the cell containing the given coordinate at the given
 // resolution.
 //
+// A non-finite (NaN or infinite) latitude or longitude fails with
+// ErrLatLngDomain, and a resolution outside 0..MaxResolution fails with
+// ErrResolutionDomain. Finite coordinates outside the conventional ranges
+// (latitude [-π/2, π/2], longitude [-π, π] radians) are not validated and
+// the result for such input is unspecified — normalize coordinates before
+// calling.
+//
 // H3 C API: latLngToCell.
 func LatLngToCell(g LatLng, res int) (Cell, error) {
 	if err := checkRes(res); err != nil {
@@ -35,8 +42,10 @@ func (c Cell) LatLng() (LatLng, error) {
 	return g, nil
 }
 
-// Boundary returns the cell's boundary in counterclockwise order: 6 vertices
-// for hexagons, 5 for pentagons (up to 10 for distorted pentagon boundaries).
+// Boundary returns the cell's boundary in counterclockwise order. The
+// boundary contains the cell's topological vertices — 6 for a hexagon, 5 for
+// a pentagon — plus any distortion vertices introduced where the boundary
+// crosses icosahedron faces; the total never exceeds MaxCellBoundaryVerts.
 // The returned value involves no heap allocation.
 //
 // H3 C API: cellToBoundary.
@@ -126,7 +135,8 @@ func indexDigit[T index](idx T, res int) (int, error) {
 // IndexDigit returns the indexing digit of the cell at the given resolution
 // (1..MaxResolution; resolution 0 is the base cell number, not a digit). res
 // may exceed the cell's actual resolution, in which case the stored digit
-// (7 for valid cells) is returned.
+// (7 for valid cells) is returned. A res of 0 or outside the valid range
+// fails with ErrResolutionDomain.
 //
 // H3 C API: getIndexDigit (added in H3 4.4.0).
 func (c Cell) IndexDigit(res int) (int, error) {
@@ -135,8 +145,11 @@ func (c Cell) IndexDigit(res int) (int, error) {
 
 // ConstructCell creates a cell from its components: a resolution, a base
 // cell number (0..NumBaseCells-1), and res child digits (each 0..6). Only
-// valid cells can be constructed; invalid digit sequences fail with
-// ErrDigitDomain or ErrDeletedDigit.
+// valid cells can be constructed. A resolution outside 0..MaxResolution
+// fails with ErrResolutionDomain, a base cell number outside its range with
+// ErrBaseCellDomain, fewer than res digits or a digit outside 0..6 with
+// ErrDigitDomain, and a digit sequence entering a pentagon's deleted
+// subsequence with ErrDeletedDigit. Digits beyond the first res are ignored.
 //
 // H3 C API: constructCell (added in H3 4.4.0).
 func ConstructCell(res, baseCellNumber int, digits []int) (Cell, error) {

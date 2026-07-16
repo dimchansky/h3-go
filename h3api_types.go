@@ -12,14 +12,20 @@ package h3
 // DirectedEdge/Vertex at the boundary.
 type h3Index = Cell
 
-// LatLng mirrors the C struct from h3api.h
-// Latitude and longitude stored as angle.Angle (internally in radians).
+// LatLng is a geographic coordinate: a latitude/longitude pair whose fields
+// are Angle values (stored in radians). It mirrors the C LatLng struct from
+// h3api.h. Construct values with NewLatLng or LatLngDegs and read the
+// fields through their Deg/Rad accessors so degree/radian mix-ups cannot
+// compile.
 type LatLng struct {
-	Lat Angle // latitude
-	Lng Angle // longitude
+	Lat Angle // latitude as an Angle (radians internally)
+	Lng Angle // longitude as an Angle (radians internally)
 }
 
-// CellBoundary is the boundary of a cell or directed edge, in ccw order.
+// CellBoundary is the boundary of a cell or directed edge, in ccw order. A
+// boundary holds the topological vertices plus any distortion vertices
+// introduced where it crosses icosahedron faces, up to MaxCellBoundaryVerts
+// in total (see Cell.Boundary and DirectedEdge.Boundary).
 //
 // It mirrors the C CellBoundary struct from h3api.h: a fixed-size array of
 // up to MaxCellBoundaryVerts vertices plus a count. It is a value type;

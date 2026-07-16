@@ -5,8 +5,14 @@ import (
 	"math"
 )
 
-// Angle represents an angle stored internally in radians.
-// It provides type safety and convenience methods for angle operations.
+// Angle represents an angle stored internally in radians. Construct values
+// with Deg or Rad (or the Pi/TwoPi/PiOver2 constants) so degree/radian
+// mix-ups cannot compile.
+//
+// Angle performs no normalization or range clamping: values outside
+// [-π, π] or [0, 2π), negative values, and non-finite values are stored and
+// returned as-is by every method. Note that String formats the value in
+// degrees even though the internal representation is radians.
 type Angle float64
 
 // Common angle constants and conversion factors.
@@ -71,5 +77,6 @@ func (a Angle) Tan() float64 { return math.Tan(float64(a)) }
 // SinCos returns the sine and cosine of the angle.
 func (a Angle) SinCos() (float64, float64) { return math.Sincos(float64(a)) }
 
-// String returns a human-readable representation of the angle in degrees with the ° symbol.
+// String returns a human-readable representation of the angle converted to
+// degrees, with six decimals and the ° symbol (e.g. "37.775939°").
 func (a Angle) String() string { return fmt.Sprintf("%.6f°", a.Deg()) }
