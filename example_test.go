@@ -1,10 +1,87 @@
 package h3_test
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"strconv"
 
 	h3 "github.com/dimchansky/h3-go"
 )
+
+func ExampleParseCell() {
+	// Upper/lowercase hex digits, an optional "0x"/"0X" prefix, and leading
+	// zeros are all accepted.
+	a, _ := h3.ParseCell("0x8928308280FFFFF")
+	b, _ := h3.ParseCell("8928308280fffff")
+	fmt.Println(a == b)
+
+	// A well-formed string that is not a valid cell fails with the
+	// ErrCellInvalid sentinel...
+	_, err := h3.ParseCell("ffffffffffffffff")
+	fmt.Println(errors.Is(err, h3.ErrCellInvalid))
+
+	// ...while malformed text fails with a wrapped strconv error instead of
+	// an Err* sentinel.
+	_, err = h3.ParseCell("not-hex")
+	fmt.Println(errors.Is(err, strconv.ErrSyntax), errors.Is(err, h3.ErrCellInvalid))
+	// Output:
+	// true
+	// true
+	// true false
+}
+
+func ExampleCell_MarshalText() {
+	type record struct {
+		Cell h3.Cell `json:"cell"`
+	}
+	in := record{Cell: h3.Cell(0x8928308280fffff)}
+	data, err := json.Marshal(in)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(data))
+
+	var out record
+	if err := json.Unmarshal(data, &out); err != nil {
+		panic(err)
+	}
+	fmt.Println(out.Cell == in.Cell)
+
+	// MarshalText never validates — even the zero Cell marshals (as "0") —
+	// while UnmarshalText is the validating direction and rejects it.
+	zero, _ := json.Marshal(record{})
+	fmt.Println(string(zero))
+	err = json.Unmarshal(zero, &out)
+	fmt.Println(errors.Is(err, h3.ErrCellInvalid))
+	// Output:
+	// {"cell":"8928308280fffff"}
+	// true
+	// {"cell":"0"}
+	// true
+}
+
+func ExampleCell_Boundary() {
+	cell, _ := h3.ParseCell("8928308280fffff")
+	boundary, err := cell.Boundary()
+	if err != nil {
+		panic(err)
+	}
+	// Iterate with Len/At: a boundary holds the cell's topological vertices
+	// (6 for a hexagon, 5 for a pentagon) plus any distortion vertices where
+	// it crosses icosahedron faces, so the count varies by cell.
+	for i := 0; i < boundary.Len(); i++ {
+		v := boundary.At(i)
+		fmt.Printf("%.4f, %.4f\n", v.Lat.Deg(), v.Lng.Deg())
+	}
+	// Output:
+	// 37.7752, -122.4172
+	// 37.7769, -122.4161
+	// 37.7784, -122.4174
+	// 37.7782, -122.4197
+	// 37.7765, -122.4208
+	// 37.7750, -122.4195
+}
 
 func ExampleLatLngToCell() {
 	cell, err := h3.LatLngToCell(h3.LatLngDegs(37.775938728915946, -122.41795063018799), 9)
