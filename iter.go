@@ -3,9 +3,12 @@ package h3
 import "iter"
 
 // ChildrenSeq returns an iterator over all descendants of the cell at the
-// given finer resolution, in canonical child order, without materializing
-// them. Iterating allocates nothing. If the cell or resolution is invalid
-// the sequence is empty (matching the C iterator's null-iterator contract).
+// given finer resolution, in canonical child order (see Children), without
+// materializing them. The sequence is re-runnable — each range restarts
+// from the first child, unlike C's single-pass iterator structs — and
+// breaking early is safe. Iterating allocates nothing. If the cell or
+// resolution is invalid the sequence is empty (matching the C iterator's
+// null-iterator contract).
 //
 // H3 C API: iterInitParent / iterStepChild (iterators.h).
 func (c Cell) ChildrenSeq(res int) iter.Seq[Cell] {

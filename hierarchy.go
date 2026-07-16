@@ -3,6 +3,13 @@ package h3
 import "slices"
 
 // Parent returns the ancestor of the cell at the given coarser resolution.
+// The parent/child relationship is logical (index-hierarchical), not
+// geometric: a descendant's boundary is not required to lie within its
+// ancestor's boundary.
+//
+// Requesting the cell's own resolution returns the cell itself; a
+// resolution finer than the cell's fails with ErrResolutionMismatch, and
+// res outside 0..MaxResolution fails with ErrResolutionDomain.
 //
 // H3 C API: cellToParent.
 func (c Cell) Parent(res int) (Cell, error) {
@@ -25,7 +32,10 @@ func (c Cell) ImmediateParent() (Cell, error) {
 }
 
 // CenterChild returns the center descendant of the cell at the given finer
-// resolution.
+// resolution (the hierarchy is logical, not geometric — see Parent).
+// Requesting the cell's own resolution returns the cell itself; a
+// resolution coarser than the cell's, or outside 0..MaxResolution, fails
+// with ErrResolutionDomain.
 //
 // H3 C API: cellToCenterChild.
 func (c Cell) CenterChild(res int) (Cell, error) {
@@ -40,7 +50,10 @@ func (c Cell) CenterChild(res int) (Cell, error) {
 }
 
 // NumChildren returns the number of descendants of the cell at the given
-// finer resolution.
+// finer resolution. Pentagons have fewer descendants than hexagons at the
+// same depth (each pentagon level contributes 6 rather than 7 children), so
+// the count depends on the cell. A resolution coarser than the cell's, or
+// outside 0..MaxResolution, fails with ErrResolutionDomain.
 //
 // H3 C API: cellToChildrenSize.
 func (c Cell) NumChildren(res int) (int64, error) {
@@ -54,15 +67,20 @@ func (c Cell) NumChildren(res int) (int64, error) {
 	return n, nil
 }
 
-// Children returns all descendants of the cell at the given finer resolution,
-// in canonical child order.
+// Children returns all descendants of the cell at the given finer
+// resolution, in canonical child order: the fixed deterministic order in
+// which H3 C's cellToChildren produces children. It is the same order that
+// ChildPos and ChildAtPos index, so Children(res)[i] is the cell
+// ChildAtPos(i, res) returns; the concrete sequence is otherwise
+// unspecified. Like Parent, the hierarchy is logical, not geometric — a
+// child's boundary is not required to lie within this cell's boundary.
 //
 // H3 C API: cellToChildren.
 func (c Cell) Children(res int) ([]Cell, error) { return c.AppendChildren(nil, res) }
 
 // ImmediateChildren returns the cell's children one resolution finer, in
-// canonical child order: 7 for a hexagon and 6 for a pentagon. A
-// resolution-MaxResolution cell has no children and returns
+// canonical child order (see Children): 7 for a hexagon and 6 for a
+// pentagon. A resolution-MaxResolution cell has no children and returns
 // ErrResolutionDomain.
 //
 // H3 C API: cellToChildren.
@@ -71,9 +89,10 @@ func (c Cell) ImmediateChildren() ([]Cell, error) {
 }
 
 // AppendImmediateChildren appends the cell's children one resolution finer
-// to dst and returns the extended slice, in canonical child order. Pass
-// dst[:0] (or nil) to reuse capacity; a capacity of 7 is always sufficient
-// and makes the call allocation-free.
+// to dst and returns the extended slice, in canonical child order (see
+// Children). Pass dst[:0] (or nil) to reuse capacity; a capacity of 7 is
+// always sufficient and makes the call allocation-free. On error the
+// returned slice has dst's original length and elements.
 //
 // H3 C API: cellToChildren.
 func (c Cell) AppendImmediateChildren(dst []Cell) ([]Cell, error) {
@@ -98,9 +117,10 @@ func (c Cell) AppendImmediateChildren(dst []Cell) ([]Cell, error) {
 }
 
 // AppendChildren appends all descendants of the cell at the given finer
-// resolution to dst and returns the extended slice, in canonical child order.
-// Pass dst[:0] (or a nil slice) to reuse dst's capacity; when capacity
-// suffices the call does not allocate.
+// resolution to dst and returns the extended slice, in canonical child
+// order (see Children). Pass dst[:0] (or a nil slice) to reuse dst's
+// capacity; when capacity suffices the call does not allocate. On error the
+// returned slice has dst's original length and elements.
 //
 // H3 C API: cellToChildren.
 func (c Cell) AppendChildren(dst []Cell, res int) ([]Cell, error) {
@@ -116,8 +136,11 @@ func (c Cell) AppendChildren(dst []Cell, res int) ([]Cell, error) {
 	return dst, nil
 }
 
-// ChildPos returns the position of the cell within an ordered list of all
-// children of the cell's ancestor at the given coarser resolution.
+// ChildPos returns the position of the cell within the canonical child
+// order (see Children) of its ancestor at the given coarser resolution.
+// Positions round-trip with ChildAtPos. A parentRes finer than the cell's
+// resolution fails with ErrResolutionMismatch; parentRes outside
+// 0..MaxResolution fails with ErrResolutionDomain.
 //
 // H3 C API: cellToChildPos.
 func (c Cell) ChildPos(parentRes int) (int64, error) {
@@ -131,9 +154,10 @@ func (c Cell) ChildPos(parentRes int) (int64, error) {
 	return pos, nil
 }
 
-// ChildAtPos returns the child cell at the given position within an ordered
-// list of all descendants of c at the given finer resolution; it is the
-// inverse of ChildPos.
+// ChildAtPos returns the child cell at the given position within the
+// canonical child order (see Children) of c's descendants at the given
+// finer resolution; it is the inverse of ChildPos. A position outside
+// 0..NumChildren(res)-1 fails with ErrDomain.
 //
 // H3 C API: childPosToCell.
 func (c Cell) ChildAtPos(pos int64, res int) (Cell, error) {
