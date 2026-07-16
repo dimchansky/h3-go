@@ -4,7 +4,9 @@ import "slices"
 
 // Vertex is an H3 vertex index: a single topological vertex of an H3 cell,
 // shared by three cells. One of the three neighboring cells is arbitrarily
-// designated the vertex's "owner" and determines its canonical index.
+// designated the vertex's "owner" and determines its canonical index — so
+// the same topological corner yields the identical Vertex value regardless
+// of which of its three adjacent cells it is derived from.
 //
 // The zero value is not a valid vertex; IsValid reports false for it. A
 // Vertex may be constructed by conversion from a raw uint64 index (unchecked
@@ -28,16 +30,19 @@ func (c Cell) Vertex(vertexNum int) (Vertex, error) {
 }
 
 // Vertexes returns all topological vertexes of the cell: 6 for hexagons, 5
-// for pentagons.
+// for pentagons. Unlike Cell.Boundary, which returns geographic vertices
+// and may additionally include distortion vertices, the result covers the
+// cell's topological corners only — distortion vertices have no Vertex
+// index.
 //
 // H3 C API: cellToVertexes.
 func (c Cell) Vertexes() ([]Vertex, error) { return c.AppendVertexes(nil) }
 
 // AppendVertexes appends all topological vertexes of the cell to dst and
-// returns the extended slice: 6 vertexes for a hexagon, 5 for a pentagon.
-// Pass dst[:0] (or nil) to reuse dst's capacity; a capacity of 6 is always
-// sufficient and makes the call allocation-free. On error dst is returned
-// unchanged.
+// returns the extended slice: 6 vertexes for a hexagon, 5 for a pentagon
+// (see Vertexes). Pass dst[:0] (or nil) to reuse dst's capacity; a capacity
+// of 6 is always sufficient and makes the call allocation-free. On error
+// the returned slice has dst's original length and elements.
 //
 // H3 C API: cellToVertexes.
 func (c Cell) AppendVertexes(dst []Vertex) ([]Vertex, error) {

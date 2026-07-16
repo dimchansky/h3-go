@@ -182,7 +182,8 @@ func ConstructCell(res, baseCellNumber int, digits []int) (Cell, error) {
 // H3 C API: isValidIndex (added in H3 4.4.0).
 func IsValidIndex[T Index](index T) bool { return isValidIndex(h3Index(index)) }
 
-// Pentagons returns the 12 pentagonal cells at the given resolution.
+// Pentagons returns the 12 pentagonal cells at the given resolution, in no
+// guaranteed order.
 //
 // H3 C API: getPentagons.
 func Pentagons(res int) ([]Cell, error) {
@@ -196,8 +197,8 @@ func Pentagons(res int) ([]Cell, error) {
 	return out, nil
 }
 
-// Res0Cells returns all 122 resolution-0 cells (the base cells), in ascending
-// base-cell order.
+// Res0Cells returns all 122 resolution-0 cells (the base cells). The order
+// is not part of the contract.
 //
 // H3 C API: getRes0Cells.
 func Res0Cells() []Cell {
@@ -207,7 +208,9 @@ func Res0Cells() []Cell {
 	return out
 }
 
-// NumCells returns the number of unique H3 cells at the given resolution.
+// NumCells returns the number of unique H3 cells at the given resolution:
+// 2 + 120*7^res (about 5.7e14 at resolution 15), per the cell-count table
+// in the official H3 documentation.
 //
 // H3 C API: getNumCells.
 func NumCells(res int) (int64, error) {

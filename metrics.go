@@ -1,6 +1,9 @@
 package h3
 
-// AreaRads2 returns the exact spherical area of the cell in square radians.
+// AreaRads2 returns the exact spherical area of the cell in square
+// radians, computed by triangulating the cell's actual boundary (including
+// any distortion vertices). For the resolution-wide hexagon average, see
+// HexagonAreaAvgKm2.
 //
 // H3 C API: cellAreaRads2.
 func (c Cell) AreaRads2() (float64, error) {
@@ -11,7 +14,12 @@ func (c Cell) AreaRads2() (float64, error) {
 	return a, nil
 }
 
-// AreaKm2 returns the exact spherical area of the cell in square kilometers.
+// AreaKm2 returns the exact spherical area of the cell in square
+// kilometers, computed by triangulating the cell's actual boundary
+// (including any distortion vertices). The result is a spherical
+// approximation on the WGS84 authalic sphere (radius 6371.007180918475
+// km), not an ellipsoidal geodesic value. For the resolution-wide hexagon
+// average, see HexagonAreaAvgKm2.
 //
 // H3 C API: cellAreaKm2.
 func (c Cell) AreaKm2() (float64, error) {
@@ -22,7 +30,8 @@ func (c Cell) AreaKm2() (float64, error) {
 	return a, nil
 }
 
-// AreaM2 returns the exact spherical area of the cell in square meters.
+// AreaM2 returns the exact spherical area of the cell in square meters;
+// see AreaKm2 for the computation method and earth model.
 //
 // H3 C API: cellAreaM2.
 func (c Cell) AreaM2() (float64, error) {
@@ -33,7 +42,10 @@ func (c Cell) AreaM2() (float64, error) {
 	return a, nil
 }
 
-// LengthRads returns the exact spherical length of the edge in radians.
+// LengthRads returns the exact spherical length of the edge in radians,
+// computed by summing great-circle segments along the edge's boundary
+// (including any distortion vertex). For the resolution-wide hexagon
+// average, see HexagonEdgeLengthAvgKm.
 //
 // H3 C API: edgeLengthRads.
 func (e DirectedEdge) LengthRads() (float64, error) {
@@ -44,7 +56,12 @@ func (e DirectedEdge) LengthRads() (float64, error) {
 	return l, nil
 }
 
-// LengthKm returns the exact spherical length of the edge in kilometers.
+// LengthKm returns the exact spherical length of the edge in kilometers,
+// computed by summing great-circle segments along the edge's boundary
+// (including any distortion vertex). The result is a spherical
+// approximation on the WGS84 authalic sphere (radius 6371.007180918475
+// km), not an ellipsoidal geodesic value. For the resolution-wide hexagon
+// average, see HexagonEdgeLengthAvgKm.
 //
 // H3 C API: edgeLengthKm.
 func (e DirectedEdge) LengthKm() (float64, error) {
@@ -55,7 +72,8 @@ func (e DirectedEdge) LengthKm() (float64, error) {
 	return l, nil
 }
 
-// LengthM returns the exact spherical length of the edge in meters.
+// LengthM returns the exact spherical length of the edge in meters; see
+// LengthKm for the computation method and earth model.
 //
 // H3 C API: edgeLengthM.
 func (e DirectedEdge) LengthM() (float64, error) {
@@ -66,8 +84,10 @@ func (e DirectedEdge) LengthM() (float64, error) {
 	return l, nil
 }
 
-// HexagonAreaAvgKm2 returns the average hexagon area in square kilometers at
-// the given resolution (pentagons excluded).
+// HexagonAreaAvgKm2 returns the average hexagon area in square kilometers
+// at the given resolution (pentagons excluded). The average assumes the
+// same spherical earth model as Cell.AreaKm2; for the exact area of a
+// specific cell, use Cell.AreaKm2.
 //
 // H3 C API: getHexagonAreaAvgKm2.
 func HexagonAreaAvgKm2(res int) (float64, error) {
@@ -81,8 +101,9 @@ func HexagonAreaAvgKm2(res int) (float64, error) {
 	return a, nil
 }
 
-// HexagonAreaAvgM2 returns the average hexagon area in square meters at the
-// given resolution (pentagons excluded).
+// HexagonAreaAvgM2 returns the average hexagon area in square meters at
+// the given resolution (pentagons excluded); see HexagonAreaAvgKm2. For
+// the exact area of a specific cell, use Cell.AreaM2.
 //
 // H3 C API: getHexagonAreaAvgM2.
 func HexagonAreaAvgM2(res int) (float64, error) {
@@ -97,7 +118,9 @@ func HexagonAreaAvgM2(res int) (float64, error) {
 }
 
 // HexagonEdgeLengthAvgKm returns the average hexagon edge length in
-// kilometers at the given resolution (pentagons excluded).
+// kilometers at the given resolution (pentagons excluded). The average
+// assumes the same spherical earth model as DirectedEdge.LengthKm; for the
+// exact length of a specific edge, use DirectedEdge.LengthKm.
 //
 // H3 C API: getHexagonEdgeLengthAvgKm.
 func HexagonEdgeLengthAvgKm(res int) (float64, error) {
@@ -111,8 +134,9 @@ func HexagonEdgeLengthAvgKm(res int) (float64, error) {
 	return l, nil
 }
 
-// HexagonEdgeLengthAvgM returns the average hexagon edge length in meters at
-// the given resolution (pentagons excluded).
+// HexagonEdgeLengthAvgM returns the average hexagon edge length in meters
+// at the given resolution (pentagons excluded); see HexagonEdgeLengthAvgKm.
+// For the exact length of a specific edge, use DirectedEdge.LengthM.
 //
 // H3 C API: getHexagonEdgeLengthAvgM.
 func HexagonEdgeLengthAvgM(res int) (float64, error) {
@@ -126,20 +150,23 @@ func HexagonEdgeLengthAvgM(res int) (float64, error) {
 	return l, nil
 }
 
-// GreatCircleDistanceRads returns the great-circle distance between the two
-// coordinates in radians.
+// GreatCircleDistanceRads returns the great-circle distance between the
+// two coordinates in radians, computed with the haversine formula.
 //
 // H3 C API: greatCircleDistanceRads.
 func GreatCircleDistanceRads(a, b LatLng) float64 { return greatCircleDistanceRads(&a, &b) }
 
 // GreatCircleDistanceKm returns the great-circle distance between the two
-// coordinates in kilometers.
+// coordinates in kilometers, computed with the haversine formula on the
+// WGS84 authalic sphere (radius 6371.007180918475 km) — a spherical
+// approximation, not an ellipsoidal geodesic distance.
 //
 // H3 C API: greatCircleDistanceKm.
 func GreatCircleDistanceKm(a, b LatLng) float64 { return greatCircleDistanceKm(&a, &b) }
 
 // GreatCircleDistanceM returns the great-circle distance between the two
-// coordinates in meters.
+// coordinates in meters; see GreatCircleDistanceKm for the formula and
+// earth model.
 //
 // H3 C API: greatCircleDistanceM.
 func GreatCircleDistanceM(a, b LatLng) float64 { return greatCircleDistanceM(&a, &b) }

@@ -9,9 +9,11 @@ package h3
 // produced by operations such as Cell.DirectedEdgeTo.
 type DirectedEdge uint64
 
-// IsNeighbor reports whether the two cells are adjacent. It fails with
-// ErrCellInvalid for invalid cells and ErrResolutionMismatch for cells of
-// different resolutions.
+// IsNeighbor reports whether the two cells are adjacent. A cell is never
+// its own neighbor: comparing a cell with itself returns false with a nil
+// error. It fails with ErrCellInvalid when either index is not in cell mode
+// (a lightweight mode check, not full validation) and with
+// ErrResolutionMismatch for cells of different resolutions.
 //
 // H3 C API: areNeighborCells.
 func (c Cell) IsNeighbor(other Cell) (bool, error) {
@@ -96,7 +98,8 @@ func (e DirectedEdge) Destination() (Cell, error) {
 	return out, nil
 }
 
-// Cells returns the origin and destination cells of the directed edge.
+// Cells returns the origin and destination cells of the directed edge, in
+// that order.
 //
 // H3 C API: directedEdgeToCells.
 func (e DirectedEdge) Cells() (origin, destination Cell, err error) {
@@ -107,9 +110,11 @@ func (e DirectedEdge) Cells() (origin, destination Cell, err error) {
 	return pair[0], pair[1], nil
 }
 
-// Boundary returns the geographic boundary of the directed edge: the shared
-// vertices between origin and destination (2 for undistorted edges, up to 3
-// across icosahedron edges). The returned value involves no heap allocation.
+// Boundary returns the geographic boundary of the directed edge: the
+// vertices shared by its origin and destination. The boundary contains the
+// edge's two topological endpoints and may contain one additional
+// distortion vertex when the edge crosses an icosahedron face. The returned
+// value involves no heap allocation.
 //
 // H3 C API: directedEdgeToBoundary.
 func (e DirectedEdge) Boundary() (CellBoundary, error) {
