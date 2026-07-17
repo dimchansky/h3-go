@@ -497,6 +497,7 @@ polyfill_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 polyfill_constants.go,ported-impl,h3,"-",8,0,0
 polyfill_maxPolygonToCellsSizeExperimental.go,ported-impl,h3,"-",1,0,0
 polyfill_maxPolygonToCellsSizeExperimental_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+polyfill_maxPolygonToCellsSizeExperimental_test.go,ported-internal-test,h3,"-",0,0,-
 polyfill_polygonToCellsExperimental.go,ported-impl,h3,"-",9,0,0
 polyfill_polygonToCellsExperimental_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 polyfill_testPolyfillInternal_test.go,ported-internal-test,h3,"-",0,0,-
@@ -513,6 +514,7 @@ polygon__cellBoundaryInsidePolygon_parity_test.go,parity-test,h3,"cgo && c2go",0
 polygon__isClockwiseGeoLoop.go,ported-impl,h3,"-",2,0,0
 polygon__isClockwiseGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 polygon__lineCrossesLine.go,ported-impl,h3,"-",1,0,0
+polygon__lineCrossesLine_test.go,ported-internal-test,h3,"-",0,0,-
 polygon__parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 polygon__pointInsideGeoLoop.go,ported-impl,h3,"-",1,0,0
 polygon__pointInsideGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
