@@ -76,7 +76,8 @@ func (v Vertex) Resolution() int { return int(getResolution(h3Index(v))) }
 // IndexDigit returns the indexing digit of the vertex's owner cell at the
 // given resolution (1..MaxResolution; resolution 0 is the base cell number,
 // not a digit). res may exceed the vertex's actual resolution, in which case
-// the stored digit (7 for valid vertexes) is returned.
+// the stored digit (7 for valid vertexes) is returned. A res of 0 or
+// outside the valid range fails with ErrResolutionDomain.
 //
 // H3 C API: getIndexDigit.
 func (v Vertex) IndexDigit(res int) (int, error) {

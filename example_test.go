@@ -423,16 +423,17 @@ func ExampleDirectedEdge() {
 	fmt.Println("reverse origin is destination:", ro == d)
 
 	// An edge boundary holds the two topological endpoints, plus one
-	// distortion vertex when the edge crosses an icosahedron face.
+	// distortion vertex when the edge crosses an icosahedron face — so its
+	// length varies by edge; iterate it rather than assuming a count.
 	b, err := edge.Boundary()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("boundary vertices:", b.Len())
+	fmt.Println("has both endpoints:", b.Len() >= 2)
 	// Output:
 	// origin matches: true
 	// reverse origin is destination: true
-	// boundary vertices: 2
+	// has both endpoints: true
 }
 
 func ExampleCell_AreaKm2() {

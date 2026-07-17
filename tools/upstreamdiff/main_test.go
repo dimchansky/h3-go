@@ -128,6 +128,39 @@ H3Error frobnicate(H3Index h) {
 	}
 }
 
+func TestDiffCommentWhitespaceLayoutChange(t *testing.T) {
+	t.Parallel()
+	// H3 doc comments contain ASCII diagrams whose meaning lives in their
+	// alignment. A re-layout that only moves spacing/line structure — same
+	// words — must still surface as a comment change in -comments mode.
+	oldTree := scan(t, writeTree(t, map[string]string{"demo.c": `/** Direction layout:
+ *      J----K
+ *      |    |
+ *      I----L
+ */
+H3Error frobnicate(H3Index h) {
+    return doWork(h);
+}
+`}))
+	newTree := scan(t, writeTree(t, map[string]string{"demo.c": `/** Direction layout:
+ *   J----K
+ *   |       |
+ *   I----L
+ */
+H3Error frobnicate(H3Index h) {
+    return doWork(h);
+}
+`}))
+
+	if rows := diffSymbols(oldTree, newTree, false); len(rows) != 0 {
+		t.Fatalf("default mode reported %d changes, want 0: %+v", len(rows), rows)
+	}
+	rows := diffSymbols(oldTree, newTree, true)
+	if len(rows) != 1 || rows[0].bodyChanged || !rows[0].commentChanged {
+		t.Fatalf("layout-only comment change not detected as comment-only: %+v", rows)
+	}
+}
+
 func TestLeadingCommentAttachment(t *testing.T) {
 	t.Parallel()
 	syms := scan(t, writeTree(t, map[string]string{"demo.c": `/*
@@ -146,7 +179,7 @@ H3Error bare(H3Index h) {
 	if !ok {
 		t.Fatal("FACTORS not extracted")
 	}
-	if want := norm("// Table of frobnication factors."); table.comment != want {
+	if want := "// Table of frobnication factors."; table.comment != want {
 		t.Fatalf("FACTORS comment = %q, want %q", table.comment, want)
 	}
 	bare, ok := syms["demo.c::bare"]

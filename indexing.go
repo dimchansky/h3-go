@@ -88,7 +88,8 @@ func (c Cell) IsPentagon() bool { return isPentagon(c) }
 func (c Cell) IsResClassIII() bool { return isResClassIII(c) }
 
 // IcosahedronFaces returns the icosahedron face numbers (0..19) intersected
-// by the cell, in ascending order. Cells intersect at most 5 faces.
+// by the cell; the order is not part of the contract. Cells intersect at
+// most 5 faces.
 //
 // H3 C API: getIcosahedronFaces (sized via maxFaceCount).
 func (c Cell) IcosahedronFaces() ([]int, error) {
