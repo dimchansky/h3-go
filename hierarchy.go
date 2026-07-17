@@ -160,7 +160,8 @@ func (c Cell) ChildPos(parentRes int) (int64, error) {
 // ChildAtPos returns the child cell at the given position within the
 // canonical child order (see Children) of c's descendants at the given
 // finer resolution; it is the inverse of ChildPos. A position outside
-// 0..NumChildren(res)-1 fails with ErrDomain, and res outside
+// 0..NumChildren(res)-1 fails with ErrDomain, a res coarser than the
+// cell's resolution fails with ErrResolutionMismatch, and res outside
 // 0..MaxResolution fails with ErrResolutionDomain.
 //
 // H3 C API: childPosToCell.

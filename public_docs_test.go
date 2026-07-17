@@ -37,9 +37,14 @@ func TestDocumentedErrorContracts(t *testing.T) {
 		t.Errorf("CenterChild(coarser res) error = %v, want ErrResolutionDomain", err)
 	}
 
-	// Cell.ChildAtPos: an out-of-range position is a guaranteed ErrDomain.
+	// Cell.ChildAtPos: an out-of-range position is a guaranteed ErrDomain,
+	// and a res coarser than the cell's is a guaranteed
+	// ErrResolutionMismatch.
 	if _, err := cell.ChildAtPos(int64(1)<<40, 10); !errors.Is(err, h3.ErrDomain) {
 		t.Errorf("ChildAtPos(out of range) error = %v, want ErrDomain", err)
+	}
+	if _, err := cell.ChildAtPos(0, cell.Resolution()-1); !errors.Is(err, h3.ErrResolutionMismatch) {
+		t.Errorf("ChildAtPos(coarser res) error = %v, want ErrResolutionMismatch", err)
 	}
 
 	// UncompactCells family: input finer than the target resolution is a
