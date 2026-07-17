@@ -51,10 +51,11 @@ type GeoLoop []LatLng
 // field — not by winding order, as in GeoJSON. Mirrors the GeoPolygon
 // struct from h3api.h.
 type GeoPolygon struct {
-	// GeoLoop is the outer boundary of the polygon.
+	// GeoLoop is the outer boundary of the polygon: LatLng coordinates
+	// backed by Angle values (radians internally).
 	GeoLoop GeoLoop
-	// Holes are inner rings excluded from the polygon, each following the
-	// same GeoLoop conventions as the outer boundary.
+	// Holes are inner rings excluded from the polygon, in the same units
+	// and following the same GeoLoop conventions as the outer boundary.
 	Holes []GeoLoop
 }
 

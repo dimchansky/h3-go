@@ -84,10 +84,11 @@ func extractSymbols(path string) ([]symbol, error) {
 
 		// Track /* ... */ block comments; their continuation lines may start
 		// at column 0 without a leading '*' (free-form prose in H3 sources).
-		// The block accumulates as the pending leading comment of whatever
-		// symbol immediately follows it.
+		// The block accumulates — with its line structure and internal
+		// spacing preserved, so ASCII-diagram re-layouts are visible — as
+		// the pending leading comment of whatever symbol follows it.
 		if inComment {
-			pending = append(pending, trimmed)
+			pending = append(pending, line)
 			if strings.Contains(trimmed, "*/") {
 				inComment = false
 			}
@@ -96,7 +97,7 @@ func extractSymbols(path string) ([]symbol, error) {
 		}
 		if strings.HasPrefix(trimmed, "/*") && !strings.Contains(trimmed, "*/") {
 			inComment = true
-			pending = []string{trimmed}
+			pending = []string{line}
 			i++
 			continue
 		}
@@ -109,7 +110,7 @@ func extractSymbols(path string) ([]symbol, error) {
 			}
 			out = append(out, symbol{kind: "macro", name: m[1], file: base,
 				body:    norm(strings.Join(lines[start:i+1], "\n")),
-				comment: norm(strings.Join(pending, "\n"))})
+				comment: normComment(pending)})
 			pending = nil
 			i++
 			continue
@@ -119,7 +120,7 @@ func extractSymbols(path string) ([]symbol, error) {
 		// preprocessor directive, or stray closing brace breaks attachment.
 		if strings.HasPrefix(trimmed, "//") || strings.HasPrefix(trimmed, "/*") ||
 			strings.HasPrefix(trimmed, "*") {
-			pending = append(pending, trimmed)
+			pending = append(pending, line)
 			i++
 			continue
 		}
@@ -209,7 +210,7 @@ func extractSymbols(path string) ([]symbol, error) {
 
 		if name != "" && kind != "" {
 			out = append(out, symbol{kind: kind, name: name, file: base,
-				body: norm(block), comment: norm(strings.Join(pending, "\n"))})
+				body: norm(block), comment: normComment(pending)})
 		}
 		pending = nil
 		i = end + 1
@@ -234,6 +235,27 @@ func parenIdx(header string) int {
 var wsRe = regexp.MustCompile(`\s+`)
 
 func norm(s string) string { return strings.TrimSpace(wsRe.ReplaceAllString(s, " ")) }
+
+// normComment normalizes a leading comment block for comparison. Unlike
+// norm, it preserves line breaks and internal spacing — H3 documentation
+// comments contain ASCII diagrams (e.g. traversal-direction layouts) whose
+// meaning lives in their alignment, so collapsing whitespace would hide
+// diagram-only edits. Only trailing whitespace per line (including CR) and
+// leading/trailing blank lines are dropped.
+func normComment(lines []string) string {
+	trimmed := make([]string, len(lines))
+	for i, l := range lines {
+		trimmed[i] = strings.TrimRight(l, " \t\r")
+	}
+	start, end := 0, len(trimmed)
+	for start < end && trimmed[start] == "" {
+		start++
+	}
+	for end > start && trimmed[end-1] == "" {
+		end--
+	}
+	return strings.Join(trimmed[start:end], "\n")
+}
 
 // ---------------------------------------------------------------------------
 // Symbol diff
