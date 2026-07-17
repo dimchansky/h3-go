@@ -60,6 +60,36 @@ func TestDocumentedErrorContracts(t *testing.T) {
 	if ok, err := cell.IsNeighbor(cell); ok || err != nil {
 		t.Errorf("IsNeighbor(self) = %v, %v; want false, nil", ok, err)
 	}
+
+	// Cell.Vertex: a vertexNum outside the valid range is a guaranteed
+	// ErrDomain.
+	if _, err := cell.Vertex(6); !errors.Is(err, h3.ErrDomain) {
+		t.Errorf("Vertex(6) error = %v, want ErrDomain", err)
+	}
+
+	// Directly res-validated package functions: res outside
+	// 0..MaxResolution is a guaranteed ErrResolutionDomain.
+	if _, err := h3.Pentagons(16); !errors.Is(err, h3.ErrResolutionDomain) {
+		t.Errorf("Pentagons(16) error = %v, want ErrResolutionDomain", err)
+	}
+	if _, err := h3.NumCells(-1); !errors.Is(err, h3.ErrResolutionDomain) {
+		t.Errorf("NumCells(-1) error = %v, want ErrResolutionDomain", err)
+	}
+	if _, err := h3.HexagonAreaAvgKm2(16); !errors.Is(err, h3.ErrResolutionDomain) {
+		t.Errorf("HexagonAreaAvgKm2(16) error = %v, want ErrResolutionDomain", err)
+	}
+	if _, err := h3.HexagonEdgeLengthAvgM(-1); !errors.Is(err, h3.ErrResolutionDomain) {
+		t.Errorf("HexagonEdgeLengthAvgM(-1) error = %v, want ErrResolutionDomain", err)
+	}
+	if _, err := h3.MaxPolygonToCellsSize(h3.GeoPolygon{}, 16); !errors.Is(err, h3.ErrResolutionDomain) {
+		t.Errorf("MaxPolygonToCellsSize(res 16) error = %v, want ErrResolutionDomain", err)
+	}
+	if _, err := h3.MaxPolygonToCellsSizeExperimental(h3.GeoPolygon{}, 16, h3.ContainmentCenter); !errors.Is(err, h3.ErrResolutionDomain) {
+		t.Errorf("MaxPolygonToCellsSizeExperimental(res 16) error = %v, want ErrResolutionDomain", err)
+	}
+	if _, err := h3.MaxPolygonToCellsSizeExperimental(h3.GeoPolygon{GeoLoop: h3.GeoLoop{h3.LatLngDegs(0, 0), h3.LatLngDegs(0, 1), h3.LatLngDegs(1, 0)}}, 5, h3.ContainmentInvalid); !errors.Is(err, h3.ErrOptionInvalid) {
+		t.Errorf("MaxPolygonToCellsSizeExperimental(invalid mode) error = %v, want ErrOptionInvalid", err)
+	}
 }
 
 // TestChildrenNotGeometricallyContained pins the documented

@@ -15,7 +15,8 @@ import "slices"
 type Vertex uint64
 
 // Vertex returns the cell's topological vertex with the given number
-// (0..5 for hexagons, 0..4 for pentagons).
+// (0..5 for hexagons, 0..4 for pentagons). A vertexNum outside the cell's
+// valid range fails with ErrDomain.
 //
 // H3 C API: cellToVertex.
 func (c Cell) Vertex(vertexNum int) (Vertex, error) {

@@ -74,6 +74,8 @@ func (c Cell) NumChildren(res int) (int64, error) {
 // ChildAtPos(i, res) returns; the concrete sequence is otherwise
 // unspecified. Like Parent, the hierarchy is logical, not geometric — a
 // child's boundary is not required to lie within this cell's boundary.
+// Resolution errors are those of NumChildren (a res coarser than the
+// cell's, or outside 0..MaxResolution, fails with ErrResolutionDomain).
 //
 // H3 C API: cellToChildren.
 func (c Cell) Children(res int) ([]Cell, error) { return c.AppendChildren(nil, res) }
@@ -90,9 +92,10 @@ func (c Cell) ImmediateChildren() ([]Cell, error) {
 
 // AppendImmediateChildren appends the cell's children one resolution finer
 // to dst and returns the extended slice, in canonical child order (see
-// Children). Pass dst[:0] (or nil) to reuse capacity; a capacity of 7 is
-// always sufficient and makes the call allocation-free. On error the
-// returned slice has dst's original length and elements.
+// Children). A resolution-MaxResolution cell has no children and fails
+// with ErrResolutionDomain. Pass dst[:0] (or nil) to reuse capacity; a
+// capacity of 7 is always sufficient and makes the call allocation-free.
+// On error the returned slice has dst's original length and elements.
 //
 // H3 C API: cellToChildren.
 func (c Cell) AppendImmediateChildren(dst []Cell) ([]Cell, error) {
@@ -157,7 +160,8 @@ func (c Cell) ChildPos(parentRes int) (int64, error) {
 // ChildAtPos returns the child cell at the given position within the
 // canonical child order (see Children) of c's descendants at the given
 // finer resolution; it is the inverse of ChildPos. A position outside
-// 0..NumChildren(res)-1 fails with ErrDomain.
+// 0..NumChildren(res)-1 fails with ErrDomain, and res outside
+// 0..MaxResolution fails with ErrResolutionDomain.
 //
 // H3 C API: childPosToCell.
 func (c Cell) ChildAtPos(pos int64, res int) (Cell, error) {
