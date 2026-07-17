@@ -7,7 +7,8 @@ import (
 
 // MaxPolygonToCellsSize returns an upper bound on the number of cells
 // PolygonToCells produces for the polygon at the given resolution, for
-// pre-sizing AppendPolygonToCells destination buffers. The estimate is
+// pre-sizing AppendPolygonToCells destination buffers. A res outside
+// 0..MaxResolution fails with ErrResolutionDomain. The estimate is
 // derived from the polygon's bounding box, so it can overshoot
 // substantially for sparse or strongly non-convex polygons.
 //
@@ -55,9 +56,10 @@ func AppendPolygonToCells(dst []Cell, p GeoPolygon, res int) ([]Cell, error) {
 
 // MaxPolygonToCellsSizeExperimental returns an upper bound on the number of
 // cells PolygonToCellsExperimental produces for the polygon, resolution,
-// and containment mode (see ContainmentMode). The bounding-box-derived
-// estimate can overshoot substantially for sparse or strongly non-convex
-// polygons.
+// and containment mode (see ContainmentMode). A res outside
+// 0..MaxResolution fails with ErrResolutionDomain and an invalid mode with
+// ErrOptionInvalid. The bounding-box-derived estimate can overshoot
+// substantially for sparse or strongly non-convex polygons.
 //
 // Like its C counterpart, this API is experimental and may change in minor
 // versions.
@@ -112,7 +114,8 @@ func AppendPolygonToCellsExperimental(dst []Cell, p GeoPolygon, res int, mode Co
 // contiguous region, holes included — describing the outline of the given
 // set of cells. The input cells must all have the same resolution and
 // contain no duplicates; output for input violating these preconditions is
-// undefined (no error is guaranteed). An empty input yields a nil result.
+// undefined (no error is guaranteed). An empty input yields a nil result,
+// and more than math.MaxInt32 input cells fail with ErrDomain.
 //
 // The output follows GeoJSON MultiPolygon structure rules: within each
 // GeoPolygon the outer boundary is in the GeoLoop field with its holes in

@@ -184,7 +184,8 @@ func ConstructCell(res, baseCellNumber int, digits []int) (Cell, error) {
 func IsValidIndex[T Index](index T) bool { return isValidIndex(h3Index(index)) }
 
 // Pentagons returns the 12 pentagonal cells at the given resolution, in no
-// guaranteed order.
+// guaranteed order. A res outside 0..MaxResolution fails with
+// ErrResolutionDomain.
 //
 // H3 C API: getPentagons.
 func Pentagons(res int) ([]Cell, error) {
@@ -211,7 +212,8 @@ func Res0Cells() []Cell {
 
 // NumCells returns the number of unique H3 cells at the given resolution:
 // 2 + 120*7^res (about 5.7e14 at resolution 15), per the cell-count table
-// in the official H3 documentation.
+// in the official H3 documentation. A res outside 0..MaxResolution fails
+// with ErrResolutionDomain.
 //
 // H3 C API: getNumCells.
 func NumCells(res int) (int64, error) {

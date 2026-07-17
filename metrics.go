@@ -85,7 +85,8 @@ func (e DirectedEdge) LengthM() (float64, error) {
 }
 
 // HexagonAreaAvgKm2 returns the average hexagon area in square kilometers
-// at the given resolution (pentagons excluded). The average assumes the
+// at the given resolution (pentagons excluded). A res outside
+// 0..MaxResolution fails with ErrResolutionDomain. The average assumes the
 // same spherical earth model as Cell.AreaKm2 (WGS84 authalic sphere,
 // radius 6371.007180918475 km); for the exact area of a specific cell, use
 // Cell.AreaKm2.
@@ -103,8 +104,9 @@ func HexagonAreaAvgKm2(res int) (float64, error) {
 }
 
 // HexagonAreaAvgM2 returns the average hexagon area in square meters at
-// the given resolution (pentagons excluded); see HexagonAreaAvgKm2. For
-// the exact area of a specific cell, use Cell.AreaM2.
+// the given resolution (pentagons excluded); see HexagonAreaAvgKm2 for the
+// earth model and the ErrResolutionDomain condition. For the exact area of
+// a specific cell, use Cell.AreaM2.
 //
 // H3 C API: getHexagonAreaAvgM2.
 func HexagonAreaAvgM2(res int) (float64, error) {
@@ -119,10 +121,11 @@ func HexagonAreaAvgM2(res int) (float64, error) {
 }
 
 // HexagonEdgeLengthAvgKm returns the average hexagon edge length in
-// kilometers at the given resolution (pentagons excluded). The average
-// assumes the same spherical earth model as DirectedEdge.LengthKm (WGS84
-// authalic sphere, radius 6371.007180918475 km); for the exact length of a
-// specific edge, use DirectedEdge.LengthKm.
+// kilometers at the given resolution (pentagons excluded). A res outside
+// 0..MaxResolution fails with ErrResolutionDomain. The average assumes the
+// same spherical earth model as DirectedEdge.LengthKm (WGS84 authalic
+// sphere, radius 6371.007180918475 km); for the exact length of a specific
+// edge, use DirectedEdge.LengthKm.
 //
 // H3 C API: getHexagonEdgeLengthAvgKm.
 func HexagonEdgeLengthAvgKm(res int) (float64, error) {
@@ -137,8 +140,9 @@ func HexagonEdgeLengthAvgKm(res int) (float64, error) {
 }
 
 // HexagonEdgeLengthAvgM returns the average hexagon edge length in meters
-// at the given resolution (pentagons excluded); see HexagonEdgeLengthAvgKm.
-// For the exact length of a specific edge, use DirectedEdge.LengthM.
+// at the given resolution (pentagons excluded); see HexagonEdgeLengthAvgKm
+// for the earth model and the ErrResolutionDomain condition. For the exact
+// length of a specific edge, use DirectedEdge.LengthM.
 //
 // H3 C API: getHexagonEdgeLengthAvgM.
 func HexagonEdgeLengthAvgM(res int) (float64, error) {

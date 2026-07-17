@@ -51,8 +51,9 @@ func CellsAtRes(res int) iter.Seq[Cell] {
 // PolygonToCellsExperimentalSeq returns an iterator over the cells matching
 // the polygon under the given containment mode (see ContainmentMode),
 // without materializing the full result, in no particular order. Input
-// validation happens before the sequence is returned; iteration itself
-// cannot fail. The sequence is re-runnable — each range restarts the
+// validation happens before the sequence is returned (res outside
+// 0..MaxResolution fails with ErrResolutionDomain, an invalid mode with
+// ErrOptionInvalid); iteration itself cannot fail. The sequence is re-runnable — each range restarts the
 // underlying iterator — and breaking early is safe (internal iterator
 // state is released). Iteration may allocate internal iterator state; it
 // is not allocation-free.
