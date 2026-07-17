@@ -3,6 +3,7 @@
 package h3
 
 import (
+	"math"
 	"testing"
 )
 
@@ -101,6 +102,65 @@ func Test_maxPolygonToCellsSizeExperimental_parity(t *testing.T) {
 				Holes: []GeoLoop{},
 			},
 			res:     12,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
+		},
+		// NaN/Inf/huge-magnitude coordinates are in-domain for the upstream
+		// polygon fuzzers (raw doubles as radians). Before the
+		// lineCrossesLine NaN fix the Go port diverged from C on the
+		// Inf/NaN loops below (issue #3 investigation finding). Resolutions
+		// are kept low: on these degenerate bboxes the estimator's
+		// resolution-coarsening loop is defeated, so higher resolutions
+		// scan the whole planet (the issue #3 slow reproducer).
+		{
+			name: "NaN latitude vertex",
+			polygon: GeoPolygon{
+				GeoLoop: GeoLoop{
+					{Lat: Angle(math.NaN()), Lng: 0},
+					{Lat: 0.1, Lng: 0.1},
+					{Lat: 0.1, Lng: 0},
+				},
+			},
+			res:     4,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
+		},
+		{
+			name: "+Inf latitude vertex",
+			polygon: GeoPolygon{
+				GeoLoop: GeoLoop{
+					{Lat: Angle(math.Inf(1)), Lng: 0},
+					{Lat: 0.1, Lng: 0.1},
+					{Lat: 0.1, Lng: 0},
+				},
+			},
+			res:     4,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
+		},
+		{
+			name: "NaN longitude vertex",
+			polygon: GeoPolygon{
+				GeoLoop: GeoLoop{
+					{Lat: 0.2, Lng: Angle(math.NaN())},
+					{Lat: 0.1, Lng: 0.1},
+					{Lat: 0.1, Lng: 0},
+				},
+			},
+			res:     4,
+			flags:   uint32(ContainmentCenter),
+			wantErr: eSuccess,
+		},
+		{
+			name: "huge-magnitude latitudes (negative rough bbox area)",
+			polygon: GeoPolygon{
+				GeoLoop: GeoLoop{
+					{Lat: Angle(3.6864520893115203e+267), Lng: 0},
+					{Lat: Angle(-4.782802678075986e+287), Lng: 0.1},
+					{Lat: 0.1, Lng: 0},
+				},
+			},
+			res:     4,
 			flags:   uint32(ContainmentCenter),
 			wantErr: eSuccess,
 		},

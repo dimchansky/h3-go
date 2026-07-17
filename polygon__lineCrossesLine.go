@@ -12,8 +12,7 @@ func lineCrossesLine(a1, a2, b1, b2 *LatLng) bool {
 		return false
 	}
 	test = ((a2.Lat-a1.Lat)*(a1.Lng-b1.Lng) - (a2.Lng-a1.Lng)*(a1.Lat-b1.Lat)) / denom
-	if test < 0 || test > 1 {
-		return false
-	}
-	return true
+	// C returns (test >= 0 && test <= 1); the negated form is not equivalent
+	// when test is NaN (huge/Inf/NaN coordinates), so keep the C shape.
+	return test >= 0 && test <= 1
 }
