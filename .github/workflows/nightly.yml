@@ -55,8 +55,12 @@ jobs:
   # harnesses (otherwise seed-corpus-only under plain `go test`).
   # FuzzUpstreamPolygonOperations stays seed-corpus-only: its input domain
   # (raw float64 coordinates, mirroring upstream) contains finite but
-  # pathologically slow (~15 s) inputs that the fuzz engine kills as hung —
-  # tracked in issue #3; return it to the rotation once resolved.
+  # pathologically slow (~15 s) inputs that the fuzz engine kills as hung.
+  # Issue #3 established this is inherited upstream behavior (H3 C is even
+  # slower on the same input) in maxPolygonToCellsSizeExperimental's size
+  # estimation, so no harness guard is justified; the target can return to
+  # the rotation once upstream bounds the estimator
+  # (testdata/fuzz-findings/README.md has the full analysis).
   fuzz-smoke:
     runs-on: ubuntu-latest
     steps:

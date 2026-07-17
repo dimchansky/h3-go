@@ -280,6 +280,21 @@ hidden `sync.Pool`.
   end-pointer memset, segfault under glibc). Found by this repo's parity
   suite on Linux CI; details in DEVIATIONS.md item 9. The Go port is
   unaffected (bounded slice zeroing).
+- **Report the `maxPolygonToCellsSizeExperimental` timeout pathology
+  upstream.** On loops with huge-magnitude latitudes (~1e287 rad — in-domain
+  for upstream's own `fuzzerPolygonToCellsExperimental`, which feeds raw
+  doubles as radians), the estimator's rough bbox area
+  `height * width / cos(min(|north|, |south|)) * R²` comes out *negative*
+  (cosine of a huge angle can be negative), which defeats the
+  resolution-coarsening loop, so the size estimate scans every cell of the
+  planet at the requested resolution. One such input costs ~27 s in H3 C
+  4.4.0 (~15 s in this port) — past OSS-Fuzz's default 25 s single-input
+  budget. Found by this repo's fuzz port and analyzed in issue #3; the
+  reproducer and full analysis live in
+  [testdata/fuzz-findings/README.md](../testdata/fuzz-findings/README.md).
+  A `fabs()` around the area (or clamping negative estimates) restores the
+  coarsening and would bound the scan; behavior parity keeps this port
+  matching C until upstream decides.
 - **Repository publication and release polish** — largely **done** for
   v0.3.0: the complete release procedure lives in
   [releasing.md](releasing.md) (reproducible archives published as

@@ -13,10 +13,33 @@ polygon input discovered by a 30-second fuzz run of
 `FuzzUpstreamPolygonOperations` — tracked in
 [issue #3](https://github.com/dimchansky/h3-go/issues/3). Because Go's fuzz
 engine kills workers that exceed its per-execution budget, this keeps the
-target out of the Nightly `-fuzz` rotation (seed-corpus only) until the
-pathology is understood. Parity with the H3 C implementation on this input
-has **not yet been established** — that comparison is part of the issue's
-checklist.
+target out of the Nightly `-fuzz` rotation (seed-corpus only).
+
+**Root cause (established 2026-07-17, issue #3):** the input decodes to a
+16-vertex loop whose latitudes reach ~1e287 radians. All of the time is
+burned in `maxPolygonToCellsSizeExperimental`: its rough bounding-box area
+estimate divides by `cos(min(|north|, |south|))`, which is *negative* for
+these huge angles, so the negative "area" defeats the resolution-coarsening
+loop and the size estimate scans every res-6 cell on the planet (~14M
+cells) against the 16-vertex loop. The classic `maxPolygonToCellsSize`
+takes microseconds on the same input; `polygonToCells*` never run (the
+harness caps `size <= 10000`).
+
+**Parity with H3 C is established:** upstream H3 C 4.4.0 exhibits the same
+pathology on this input and is slower (~27 s vs ~15 s Go on the same
+machine), returning the identical size (7068476). Upstream's own
+`fuzzerPolygonToCellsExperimental` uses the same unguarded input domain and
+calls the estimator unconditionally, so this is an upstream-reportable
+timeout finding (OSS-Fuzz's default single-input budget is 25 s), not a
+port defect — no local guard or bound is justified by the parity contract.
+The upstream report is tracked in
+[docs/FUTURE_WORK.md](../../docs/FUTURE_WORK.md). Cheap C-verified
+regression coverage for this input class (NaN/Inf/huge-magnitude
+coordinates, including the negative-rough-area mechanism at low
+resolutions) lives in `polyfill_maxPolygonToCellsSizeExperimental_test.go`
+and `polygon__lineCrossesLine_test.go`; this reproducer stays preserved
+here for manual replay because a ~15 s test earns no extra assertion
+value.
 
 SHA-256 (also the basis of the Go corpus entry name):
 
