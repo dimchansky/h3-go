@@ -381,8 +381,10 @@ func (c Cell) GridPathLen(other Cell) (int, error) {
 // preceding one. Paths are drawn in grid space and may not correspond to
 // Cartesian lines or great arcs; the specific path is not guaranteed unique
 // or stable across H3 versions. Cells of different resolutions fail with
-// ErrResolutionMismatch; ErrFailed when no path can be computed (e.g.
-// across pentagon distortion).
+// ErrResolutionMismatch; ErrFailed or ErrPentagon when no path can be
+// computed (interpolation is attempted from both endpoints' local
+// coordinate charts, so many pentagon-adjacent paths succeed, but some
+// pairs remain uncomputable).
 //
 // H3 C API: gridPathCells.
 func (c Cell) GridPath(other Cell) ([]Cell, error) { return c.AppendGridPath(nil, other) }
