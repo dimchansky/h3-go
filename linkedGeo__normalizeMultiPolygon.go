@@ -2,8 +2,9 @@ package h3
 
 // normalizeMultiPolygon normalizes a linkedGeoPolygon in-place into a structure following GeoJSON
 // MultiPolygon rules. Each polygon must have exactly one outer loop, which must be first in the list,
-// followed by any holes. Holes are identified by winding order (holes are clockwise), which is
-// guaranteed by the h3SetToVertexGraph algorithm.
+// followed by any holes. Holes are identified by winding order (holes are clockwise).
+// (The 4.5.0 upstream comment drops "which is guaranteed by the h3SetToVertexGraph
+// algorithm" — that algorithm was deleted with the cellsToMultiPolygon rewrite.)
 //
 // Technical details:
 // - Input is assumed to be a single polygon including all loops to normalize

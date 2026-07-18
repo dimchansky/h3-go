@@ -8,8 +8,8 @@ import "math"
 // Returns eFailed if signed integer overflow could occur.
 // Assumes ijk is IJK+ coordinates (no negative numbers).
 //
-// Mirrors H3's coordijk.c::_upAp7rChecked behavior.
-// Ported from H3 C: coordijk.c::_upAp7rChecked.
+// Mirrors H3's coordijk.h::_upAp7rChecked behavior.
+// Ported from H3 C: coordijk.h::_upAp7rChecked.
 func _upAp7rChecked(ijk *coordIJK) h3Error {
 	// Doesn't need to be checked because i, j, and k must all be non-negative
 	i := ijk.I - ijk.K

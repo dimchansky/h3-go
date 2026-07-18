@@ -3,8 +3,8 @@ package h3
 import "math"
 
 // _hex2dToCoordIJK converts 2D hex coordinates to IJK coordinates.
-// Mirrors H3's coordijk.c::_hex2dToCoordIJK behavior.
-// Ported from H3 C: coordijk.c::_hex2dToCoordIJK.
+// Mirrors H3's coordijk.h::_hex2dToCoordIJK behavior.
+// Ported from H3 C: coordijk.h::_hex2dToCoordIJK.
 func _hex2dToCoordIJK(v *vec2d, h *coordIJK) {
 	var a1, a2 float64
 	var x1, x2 float64
