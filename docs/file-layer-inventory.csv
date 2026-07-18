@@ -25,9 +25,9 @@ algos__h3NeighborRotations_test.go,ported-internal-test,h3,"-",0,0,-
 algos__maxGridDiskSize.go,ported-impl,h3,"-",1,0,0
 algos__maxGridDiskSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 algos__vertexGraphToLinkedGeo.go,ported-impl,h3,"-",1,0,0
-algos__vertexGraphToLinkedGeo_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos__vertexGraphToLinkedGeo_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 algos_cellsToLinkedMultiPolygon.go,ported-impl,h3,"-",1,0,0
-algos_cellsToLinkedMultiPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_cellsToLinkedMultiPolygon_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 algos_cellsToLinkedMultiPolygon_test.go,ported-internal-test,h3,"-",0,0,-
 algos_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 algos_constants.go,ported-impl,h3,"-",5,0,0
@@ -40,7 +40,7 @@ algos_gridRing.go,ported-impl,h3,"-",1,0,0
 algos_gridRing_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 algos_gridRing_test.go,ported-internal-test,h3,"-",0,0,-
 algos_h3SetToVertexGraph.go,ported-impl,h3,"-",1,0,0
-algos_h3SetToVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_h3SetToVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 algos_h3SetToVertexGraph_test.go,ported-internal-test,h3,"-",0,0,-
 algos_maxGridRingSize.go,ported-impl,h3,"-",1,0,0
 algos_maxGridRingSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -49,6 +49,7 @@ algos_maxPolygonToCellsSize_degenerate_parity_test.go,parity-test,h3,"cgo && c2g
 algos_maxPolygonToCellsSize_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 algos_polygonToCells.go,ported-impl,h3,"-",1,0,0
 algos_polygonToCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+algos_vertexgraph_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && !h3v450",0,0,-
 allocation_assert_norace_test.go,public-api-test,h3,"!race",0,0,-
 allocation_assert_race_test.go,public-api-test,h3,"race",0,0,-
 angle.go,public-api,h3,"-",0,0,8
@@ -210,18 +211,19 @@ faceijk__faceIjkPentToVerts_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 faceijk__faceIjkToCellBoundary.go,ported-impl,h3,"-",1,0,0
 faceijk__faceIjkToCellBoundary_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 faceijk__faceIjkToGeo.go,ported-impl,h3,"-",1,0,0
-faceijk__faceIjkToGeo_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__faceIjkToGeo_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 faceijk__faceIjkToVerts.go,ported-impl,h3,"-",1,0,0
 faceijk__faceIjkToVerts_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 faceijk__geoToClosestFace.go,ported-impl,h3,"-",1,0,0
-faceijk__geoToClosestFace_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__geoToClosestFace_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 faceijk__geoToFaceIjk.go,ported-impl,h3,"-",1,0,0
 faceijk__geoToHex2d.go,ported-impl,h3,"-",1,0,0
-faceijk__geoToHex2d_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__geoToHex2d_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 faceijk__hex2dToGeo.go,ported-impl,h3,"-",1,0,0
-faceijk__hex2dToGeo_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+faceijk__hex2dToGeo_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 faceijk_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 faceijk_constants.go,ported-impl,h3,"-",3,0,0
+faceijk_h3v44_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && !h3v450",0,0,-
 faceijk_neighbors.go,ported-impl,h3,"-",1,0,0
 faceijk_types.go,ported-impl,h3,"-",0,0,0
 format.go,public-api,h3,"-",0,6,3
@@ -333,8 +335,10 @@ h3index_isValidIndex.go,ported-impl,h3,"-",1,0,0
 h3index_isValidIndex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 h3index_testPentagonIndexes_test.go,ported-internal-test,h3,"-",0,0,-
 h3lib_algos_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_area_c2go.c,parity-c-shim,-,"cgo && c2go && h3v450",0,0,-
 h3lib_baseCells_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
 h3lib_bbox_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_cellsToMultiPoly_c2go.c,parity-c-shim,-,"cgo && c2go && h3v450",0,0,-
 h3lib_coordijk_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
 h3lib_directedEdge_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
 h3lib_faceijk_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
@@ -347,8 +351,8 @@ h3lib_polyfill_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
 h3lib_polygon_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
 h3lib_utility_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
 h3lib_vec2d_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
-h3lib_vec3d_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
-h3lib_vertexGraph_cgo.c,parity-c-shim,-,"cgo && c2go",0,0,-
+h3lib_vec3d_c2go.c,parity-c-shim,-,"cgo && c2go && !h3v450",0,0,-
+h3lib_vertexGraph_cgo.c,parity-c-shim,-,"cgo && c2go && !h3v450",0,0,-
 h3lib_vertex_c2go.c,parity-c-shim,-,"cgo && c2go",0,0,-
 hierarchy.go,public-api,h3,"-",0,10,0
 indexing.go,public-api,h3,"-",0,15,7
@@ -375,7 +379,7 @@ latLng__cellAreaKm2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__cellAreaM2.go,ported-impl,h3,"-",1,0,0
 latLng__cellAreaM2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__cellAreaRads2.go,ported-impl,h3,"-",1,0,0
-latLng__cellAreaRads2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__cellAreaRads2_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 latLng__constrainLat.go,ported-impl,h3,"-",1,0,0
 latLng__constrainLat_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__constrainLng.go,ported-impl,h3,"-",1,0,0
@@ -387,9 +391,9 @@ latLng__geoAlmostEqualThreshold.go,ported-impl,h3,"-",1,0,0
 latLng__geoAlmostEqualThreshold_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__geoAlmostEqual_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__geoAzDistanceRads.go,ported-impl,h3,"-",1,0,0
-latLng__geoAzDistanceRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__geoAzDistanceRads_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 latLng__geoAzimuthRads.go,ported-impl,h3,"-",1,0,0
-latLng__geoAzimuthRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__geoAzimuthRads_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 latLng__getNumCells.go,ported-impl,h3,"-",1,0,0
 latLng__getNumCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__greatCircleDistanceKm.go,ported-impl,h3,"-",1,0,0
@@ -409,9 +413,9 @@ latLng__setGeoDegs_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__setGeoRads.go,ported-impl,h3,"-",1,0,0
 latLng__setGeoRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__triangleArea.go,ported-impl,h3,"-",1,0,0
-latLng__triangleArea_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__triangleArea_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 latLng__triangleEdgeLengthsToArea.go,ported-impl,h3,"-",1,0,0
-latLng__triangleEdgeLengthsToArea_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+latLng__triangleEdgeLengthsToArea_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 latLng_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 latLng_edgeLengthKm.go,ported-impl,h3,"-",1,0,0
 latLng_edgeLengthKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -428,6 +432,7 @@ latLng_getHexagonEdgeLengthAvgKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0
 latLng_getHexagonEdgeLengthAvgM.go,ported-impl,h3,"-",1,0,0
 latLng_getHexagonEdgeLengthAvgM_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng_h3CellAreaExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
+latLng_h3v44_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && !h3v450",0,0,-
 latlng.go,public-api,h3,"-",0,1,2
 linkedGeo__addLinkedCoord.go,ported-impl,h3,"-",1,0,0
 linkedGeo__addLinkedCoord_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -489,6 +494,7 @@ mathExtensions__overflowChecking_parity_test.go,parity-test,h3,"cgo && c2go",0,0
 mathExtensions_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 mathExtensions_internal_test.go,ported-internal-test,h3,"-",0,0,-
 metrics.go,public-api,h3,"-",0,13,7
+parity_float_helpers_test.go,public-api-test,h3,"cgo && c2go",0,0,-
 polyfill__baseCellNumToCell.go,ported-impl,h3,"-",1,0,0
 polyfill_cellToBBox.go,ported-impl,h3,"-",1,0,0
 polyfill_cellToBBox_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -591,35 +597,35 @@ vec2d_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 vec2d_testVec2dInternal_test.go,ported-internal-test,h3,"-",0,0,-
 vec2d_types.go,ported-impl,h3,"-",0,0,0
 vec3d__geoToVec3d.go,ported-impl,h3,"-",1,0,0
-vec3d__geoToVec3d_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec3d__geoToVec3d_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vec3d__geoToVec3d_test.go,ported-internal-test,h3,"-",0,0,-
 vec3d__pointSquareDist.go,ported-impl,h3,"-",1,0,0
-vec3d__pointSquareDist_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vec3d__pointSquareDist_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vec3d__pointSquareDist_test.go,ported-internal-test,h3,"-",0,0,-
 vec3d__square.go,ported-impl,h3,"-",1,0,0
-vec3d__square_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
-vec3d_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+vec3d__square_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
+vec3d_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && !h3v450",0,0,-
 vec3d_types.go,ported-impl,h3,"-",0,0,0
 vertex.go,public-api,h3,"-",0,7,1
 vertexGraph__hashVertex.go,ported-impl,h3,"-",1,0,0
-vertexGraph__hashVertex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph__hashVertex_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph__initVertexGraph.go,ported-impl,h3,"-",1,0,0
-vertexGraph__initVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph__initVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph__initVertexNode.go,ported-impl,h3,"-",1,0,0
-vertexGraph__initVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph__initVertexNode_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph_addVertexNode.go,ported-impl,h3,"-",1,0,0
-vertexGraph_addVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
-vertexGraph_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+vertexGraph_addVertexNode_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
+vertexGraph_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph_destroyVertexGraph.go,ported-impl,h3,"-",1,0,0
-vertexGraph_destroyVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_destroyVertexGraph_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph_findNodeForEdge.go,ported-impl,h3,"-",1,0,0
-vertexGraph_findNodeForEdge_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_findNodeForEdge_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph_findNodeForVertex.go,ported-impl,h3,"-",1,0,0
-vertexGraph_findNodeForVertex_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_findNodeForVertex_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph_firstVertexNode.go,ported-impl,h3,"-",1,0,0
-vertexGraph_firstVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_firstVertexNode_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph_removeVertexNode.go,ported-impl,h3,"-",1,0,0
-vertexGraph_removeVertexNode_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+vertexGraph_removeVertexNode_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 vertexGraph_types.go,ported-impl,h3,"-",0,0,0
 vertex__directionForVertexNum.go,ported-impl,h3,"-",1,0,0
 vertex__directionForVertexNum_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-

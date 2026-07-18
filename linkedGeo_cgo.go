@@ -8,8 +8,8 @@ package h3
 #include "linkedGeo.h"
 #include "bbox.h"
 // Prototypes for the original C helpers in linkedGeo.c
-int countLinkedCoords(LinkedGeoLoop* loop);
-int countLinkedLoops(LinkedGeoPolygon* polygon);
+// (countLinkedCoords/countLinkedLoops come from linkedGeo.h — redeclaring
+// them here would conflict with the const-qualified 4.5.0 signatures.)
 int countLinkedPolygonsC(LinkedGeoPolygon* polygon);
 void bboxFromLinkedGeoLoopC(const LinkedGeoLoop *loop, BBox *bbox);
 bool pointInsideLinkedGeoLoopC(const LinkedGeoLoop *loop, const BBox *bbox, const LatLng *coord);

@@ -238,6 +238,16 @@ $(SMRCPTR):
 #   make test-c2go COVERAGE=1                   # Run tests with coverage report
 #   make test-c2go COVERAGE=1 COVERPROFILE=coverage-c2go.out  # Save to specific file
 H3VER ?= 4.4.0
+# Version build tag for the parity harness (docs/sync/4.4.0-to-4.5.0.md
+# §15.1): harness files that exist for only one upstream tree shape carry
+# `h3v450`/`!h3v450` constraints; the tag is derived from H3VER here and
+# passed to `go test` by the test-c2go recipe. The exclusions are tracked
+# in docs/sync/h3v450-exclusion-inventory.md.
+ifeq ($(H3VER),4.5.0)
+C2GO_TAGS = c2go,h3v450
+else
+C2GO_TAGS = c2go
+endif
 TEST ?=
 VERBOSE ?=
 TIMEOUT ?= 30s
@@ -283,7 +293,7 @@ test-c2go:
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib -I$$APPS_BASE/include -I$$APPS_BASE/lib" \
 	CGO_CFLAGS="$$CFLAGS_ENV" \
 	CGO_LDFLAGS="$$LDFLAGS_ENV" \
-	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="c2go" ./... || { \
+	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="$(C2GO_TAGS)" ./... || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
 		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \

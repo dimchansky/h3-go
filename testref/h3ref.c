@@ -33,8 +33,10 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "  downAp7r <i> <j> <k> - _downAp7r\n");
         fprintf(stderr, "  downAp3 <i> <j> <k> - _downAp3\n");
         fprintf(stderr, "  downAp3r <i> <j> <k> - _downAp3r\n");
+#ifdef H3REF_HAVE_GEO_INTERMEDIATES
         fprintf(stderr, "  geoToFaceIjk <lat> <lng> <res> - _geoToFaceIjk\n");
         fprintf(stderr, "  geoToHex2d <lat> <lng> <res> - _geoToHex2d\n");
+#endif
         return 1;
     }
 
@@ -210,6 +212,9 @@ int main(int argc, char *argv[]) {
         _downAp3r(&v);
         printf("%d %d %d\n", v.i, v.j, v.k);
 
+#ifdef H3REF_HAVE_GEO_INTERMEDIATES
+    /* _geoToFaceIjk/_geoToHex2d exist only in the 4.4.x tree; the 4.5.0
+       Vec3 pipeline removed them (docs/sync/4.4.0-to-4.5.0.md §15.1). */
     } else if (strcmp(command, "geoToFaceIjk") == 0) {
         if (argc < 5) {
             fprintf(stderr, "Usage: %s geoToFaceIjk <lat> <lng> <res>\n", argv[0]);
@@ -236,6 +241,7 @@ int main(int argc, char *argv[]) {
         Vec2d v;
         _geoToHex2d(&g, res, &face, &v);
         printf("%d %.17g %.17g\n", face, v.x, v.y);
+#endif /* H3REF_HAVE_GEO_INTERMEDIATES */
 
     } else {
         fprintf(stderr, "Unknown command: %s\n", command);

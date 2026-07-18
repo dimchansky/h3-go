@@ -314,21 +314,6 @@ func latLngToCellC(g *LatLng, res int32, out *h3Index) uint32 {
 	return uint32(err)
 }
 
-// debugGeoToFaceIjkC calls the original C _geoToFaceIjk implementation.
-func debugGeoToFaceIjkC(g *LatLng, res int32, fijk *faceIJK) {
-	var cg C.LatLng
-	cg.lat = C.double(g.Lat.Rad())
-	cg.lng = C.double(g.Lng.Rad())
-
-	var cfijk C.FaceIJK
-	C._geoToFaceIjk(&cg, C.int(res), &cfijk)
-
-	fijk.Face = int32(cfijk.face)
-	fijk.Coord.I = int32(cfijk.coord.i)
-	fijk.Coord.J = int32(cfijk.coord.j)
-	fijk.Coord.K = int32(cfijk.coord.k)
-}
-
 // debugFaceIjkToH3C calls the original C _faceIjkToH3 implementation.
 func debugFaceIjkToH3C(fijk *faceIJK, res int32) h3Index {
 	var cfijk C.FaceIJK

@@ -28,3 +28,9 @@ How the sources are used:
 `h3ref.c` builds a small standalone CLI (`make -C testref`) for manually
 querying the reference implementation while debugging, e.g.
 `./testref/h3ref latLngToCell 37.775 -122.418 9`. No Go test depends on it.
+The upstream sources are compiled by a recipe-time glob over
+`src/h3lib/lib/*.c`, so the build adapts to either tree shape. Two
+commands are version-dependent: `geoToFaceIjk` and `geoToHex2d` call
+internals that H3 4.5.0 deleted, so they exist only in a
+4.4.x-configured build (`H3_VERSION=4.4.0`); a 4.5.0-configured h3ref
+rejects them with "Unknown command" (docs/sync/4.4.0-to-4.5.0.md §15.1).

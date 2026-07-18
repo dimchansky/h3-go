@@ -1,4 +1,4 @@
-//go:build cgo && c2go
+//go:build cgo && c2go && !h3v450
 
 package h3
 
@@ -60,16 +60,4 @@ func Test_cellAreaRads2_parity(t *testing.T) {
 			}
 		})
 	}
-}
-
-// Helper function for floating point comparison
-func floatAlmostEqual(a, b, tolerance float64) bool {
-	return abs(a-b) <= tolerance
-}
-
-func abs(x float64) float64 {
-	if x < 0 {
-		return -x
-	}
-	return x
 }
