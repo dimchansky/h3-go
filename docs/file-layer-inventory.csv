@@ -206,6 +206,9 @@ directedEdge_cellsToDirectedEdge_parity_test.go,parity-test,h3,"cgo && c2go",0,0
 directedEdge_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 directedEdge_directedEdgeToBoundary.go,ported-impl,h3,"-",1,0,0
 directedEdge_directedEdgeToBoundary_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
+directedEdge_reverseDirectedEdge.go,ported-impl,h3,"-",1,0,0
+directedEdge_reverseDirectedEdge_parity_h3v450_test.go,ported-internal-test,h3,"cgo && c2go && h3v450",0,0,-
+directedEdge_reverse_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && h3v450",0,0,-
 doc.go,public-api,h3,"-",0,1,0
 edge.go,public-api,h3,"-",0,10,1
 errors.go,public-api,h3,"-",0,0,19
@@ -483,6 +486,7 @@ localij_gridDistanceExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
 localij_gridDistance_test.go,ported-internal-test,h3,"-",0,0,-
 localij_gridPathCells.go,ported-impl,h3,"-",1,0,0
 localij_gridPathCellsExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
+localij_gridPathCellsInterpolate.go,ported-impl,h3,"-",1,0,0
 localij_gridPathCells_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 localij_gridPathCells_test.go,ported-internal-test,h3,"-",0,0,-
 localij_localijktocell.go,ported-impl,h3,"-",1,0,0

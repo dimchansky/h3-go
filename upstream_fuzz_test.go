@@ -57,6 +57,9 @@ func FuzzUpstreamCellOperations(f *testing.F) {
 			var length float64
 			_ = edgeLengthRads(edge, &length)
 			_ = directedEdgeToBoundary(edge, &boundary)
+			// 4.5.0 upstream harness addition (fuzzerDirectedEdge.c).
+			var reversed h3Index
+			_ = reverseDirectedEdge(edge, &reversed)
 		}
 
 		digits := make([]int32, res)
