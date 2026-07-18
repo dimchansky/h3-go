@@ -69,6 +69,7 @@ generated per-file map is
 |---|---|
 | [ported-c-tests.md](ported-c-tests.md) | Human-readable entry point for upstream test equivalence: audited scope, dispositions, fixture/fuzz suites, and the per-release update procedure. |
 | [sync/4.3.0-to-4.4.0.md](sync/4.3.0-to-4.4.0.md) | Reviewed record of the 4.3.0 → 4.4.0 upstream sync — the template future syncs follow. |
+| [sync/4.4.0-to-4.5.0.md](sync/4.4.0-to-4.5.0.md) | Discovery record for the 4.4.0 → 4.5.0 upstream migration: full symbol/test/CLI dispositions and the proposed implementation-issue decomposition. Discovery only — the parity target remains 4.4.0 until the implementation issues land. |
 
 ## Generated inventories (do not edit by hand)
 
