@@ -2,13 +2,16 @@ package h3
 
 import "math"
 
-// _geoToHex2d converts geographic coordinates to 2D hex coordinates on a specified face.
-// Mirrors _geoToHex2d in faceijk.c
-// Ported from H3 C: faceijk.c::_geoToHex2d.
-func _geoToHex2d(g *LatLng, res int32, face *int32, v *vec2d) {
+// _vec3ToHex2d encodes a coordinate on the sphere to the corresponding
+// icosahedral face and containing 2D hex coordinates relative to that
+// face center.
+//
+// Vec3d p is expected to be on the unit sphere.
+// Ported from H3 C: faceijk.c::_vec3ToHex2d.
+func _vec3ToHex2d(p *vec3d, res int32, face *int32, v *vec2d) {
 	// determine the icosahedron face
 	var sqd float64
-	_geoToClosestFace(g, face, &sqd)
+	_vec3ToClosestFace(p, face, &sqd)
 
 	// cos(r) = 1 - 2 * sin^2(r/2) = 1 - 2 * (sqd / 4) = 1 - sqd/2
 	r := math.Acos(1 - sqd*0.5)
@@ -20,8 +23,9 @@ func _geoToHex2d(g *LatLng, res int32, face *int32, v *vec2d) {
 	}
 
 	// now have face and r, now find CCW theta from CII i-axis
-	theta := _posAngleRads(faceAxesAzRadsCII[*face][0] -
-		_posAngleRads(_geoAzimuthRads(&faceCenterGeo[*face], g)))
+	theta := _posAngleRads(
+		faceAxesAzRadsCII[*face][0] -
+			_posAngleRads(_vec3AzimuthRads(faceCenterPoint[*face], *p)))
 
 	// adjust theta for Class III (odd resolutions)
 	if isResolutionClassIII(res) {

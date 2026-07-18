@@ -83,7 +83,9 @@ func _faceIjkToCellBoundary(h *faceIJK, res int32, start int32, length int32, g 
 			isIntersectionAtVertex := _v2dAlmostEquals(&orig2d0, &inter) ||
 				_v2dAlmostEquals(&orig2d1, &inter)
 			if !isIntersectionAtVertex {
-				_hex2dToGeo(&inter, centerIJK.Face, adjRes, 1, &g.verts[g.numVerts])
+				var v3 vec3d
+				_hex2dToVec3(&inter, centerIJK.Face, adjRes, 1, &v3)
+				g.verts[g.numVerts] = vec3ToLatLng(v3)
 				g.numVerts++
 			}
 		}
@@ -94,7 +96,9 @@ func _faceIjkToCellBoundary(h *faceIJK, res int32, start int32, length int32, g 
 		if vert < start+numHexVerts {
 			var vec vec2d
 			_ijkToHex2d(&fijk.Coord, &vec)
-			_hex2dToGeo(&vec, fijk.Face, adjRes, 1, &g.verts[g.numVerts])
+			var v3 vec3d
+			_hex2dToVec3(&vec, fijk.Face, adjRes, 1, &v3)
+			g.verts[g.numVerts] = vec3ToLatLng(v3)
 			g.numVerts++
 		}
 		lastFace = fijk.Face

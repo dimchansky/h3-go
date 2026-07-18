@@ -2,15 +2,15 @@ package h3
 
 import "math"
 
-// _hex2dToGeo converts 2D hexagonal coordinates to geographic coordinates.
-// Mirrors _hex2dToGeo in faceijk.c
-// Ported from H3 C: faceijk.c::_hex2dToGeo.
-func _hex2dToGeo(v *vec2d, face int32, res int32, substrate int32, g *LatLng) {
+// _hex2dToVec3 determines the 3D coordinates of a cell given by 2D
+// hex coordinates on a particular icosahedral face.
+// Ported from H3 C: faceijk.c::_hex2dToVec3.
+func _hex2dToVec3(v *vec2d, face int32, res int32, substrate int32, v3 *vec3d) {
 	// calculate (r, theta) in hex2d
 	r := _v2dMag(v)
 
 	if r < epsilon {
-		*g = faceCenterGeo[face]
+		*v3 = faceCenterPoint[face]
 		return
 	}
 
@@ -44,5 +44,11 @@ func _hex2dToGeo(v *vec2d, face int32, res int32, substrate int32, g *LatLng) {
 	theta = _posAngleRads(faceAxesAzRadsCII[face][0] - theta)
 
 	// now find the point at (r,theta) from the face center
-	_geoAzDistanceRads(&faceCenterGeo[face], theta, r, g)
+	var northDir, eastDir vec3d
+	_vec3TangentBasis(faceCenterPoint[face], &northDir, &eastDir)
+
+	dir := vec3LinComb(math.Cos(theta), northDir, math.Sin(theta), eastDir)
+
+	*v3 = vec3LinComb(math.Cos(r), faceCenterPoint[face], math.Sin(r), dir)
+	vec3Normalize(v3)
 }

@@ -14,13 +14,6 @@ func latLngToCell(g *LatLng, res int32, out *h3Index) h3Error {
 		return eLatlngDomain
 	}
 
-	var fijk faceIJK
-	_geoToFaceIjk(g, res, &fijk)
-	*out = _faceIjkToH3(&fijk, res)
-	// ALWAYS(*out) in C - check if result is truthy
-	if *out != 0 {
-		return eSuccess
-	} else {
-		return eFailed
-	}
+	v := latLngToVec3(*g)
+	return vec3ToCell(&v, res, out)
 }

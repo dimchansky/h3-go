@@ -17,21 +17,10 @@ skips. Each issue that removes entries updates this file; it must be
 
 | File | Excluded test functions | Owner |
 |---|---|---|
-| `vec3d_cgo.go` (wrappers: `pointSquareDistC`, `_geoToVec3dC`, `_squareC`) | — | I-A #29 (replaced by by-value Vec3 wrappers) |
-| `h3lib_vec3d_c2go.c` (shim for the deleted `vec3d.c`) | — | I-A #29 |
-| `vec3d__geoToVec3d_parity_test.go` | `Test_geoToVec3d_ParityWithC` | I-A #29 |
-| `vec3d__pointSquareDist_parity_test.go` | `Test_vec3d__pointSquareDist_Parity` | I-A #29 |
-| `vec3d__square_parity_test.go` | `Test_square_ParityWithC` | I-A #29 |
-| `latLng_h3v44_cgo.go` (wrappers: `_geoAzimuthRadsC`, `_geoAzDistanceRadsC`, `triangleEdgeLengthsToAreaC`, `triangleAreaC`) | — | I-A #29 / I-B #30 |
-| `latLng__geoAzimuthRads_parity_test.go` | `Test_geoAzimuthRads_ParityWithC` | I-A #29 |
-| `latLng__geoAzDistanceRads_parity_test.go` | `Test_geoAzDistanceRads_ParityWithC` | I-A #29 |
+| `latLng_h3v44_cgo.go` (wrappers: `triangleEdgeLengthsToAreaC`, `triangleAreaC`; the azimuth wrappers retired with I-A) | — | I-B #30 |
+| `h3lib_vec3d_c2go.c` (compiles 4.4.0's `vec3d.c`, which faceijk.c's `_geoToClosestFace` links against — needed by the 4.4.0 C library itself even though the Go vec3d wrappers retired with I-A) | — | I-I #36 (deleted at cutover) |
 | `latLng__triangleArea_parity_test.go` | `Test_triangleArea_ParityWithC` | I-B #30 |
 | `latLng__triangleEdgeLengthsToArea_parity_test.go` | `Test_triangleEdgeLengthsToArea_ParityWithC` | I-B #30 |
-| `faceijk_h3v44_cgo.go` (wrappers: `_geoToClosestFaceC`, `_geoToHex2dC`, `_hex2dToGeoC`, `_faceIjkToGeoC`, `debugGeoToFaceIjkC`) | — | I-A #29 |
-| `faceijk__faceIjkToGeo_parity_test.go` | `Test_faceIjkToGeo_ParityWithC`, `Test_faceIjkToGeo_FaceCenters` | I-A #29 |
-| `faceijk__geoToClosestFace_parity_test.go` | `Test_geoToClosestFace_ParityWithC` | I-A #29 |
-| `faceijk__geoToHex2d_parity_test.go` | `Test_geoToHex2d_ParityWithC` | I-A #29 |
-| `faceijk__hex2dToGeo_parity_test.go` | `Test_hex2dToGeo_ParityWithC`, `Test_hex2dToGeo_RoundTripConsistency` | I-A #29 |
 | `vertexGraph_cgo.go` | — | I-C #34 (whole domain retired) |
 | `h3lib_vertexGraph_cgo.c` (shim for the deleted `vertexGraph.c`) | — | I-C #34 |
 | `algos_vertexgraph_cgo.go` (wrappers: `_vertexGraphToLinkedGeoC`, `h3SetToVertexGraphC`, `h3SetToVertexGraphCForParity`) | — | I-C #34 |
@@ -65,8 +54,20 @@ skips. Each issue that removes entries updates this file; it must be
 - `h3lib_area_c2go.c` (shim for the new `area.c`)
 - `h3lib_cellsToMultiPoly_c2go.c` (shim for the new `cellsToMultiPoly.c`)
 
-Version-specific wrappers and parity tests for the new 4.5.0 symbols
-arrive with their owning issues (I-A/I-B/I-C/I-D/I-E) behind `h3v450`.
+- `vec3d_cgo.go`, `h3index_vec3_cgo.go` + `vec3d_vec3Ops_parity_h3v450_test.go`,
+  `h3index_cellToVec3_parity_h3v450_test.go` (landed with I-A #29)
+
+Version-specific wrappers and parity tests for the remaining new 4.5.0
+symbols arrive with their owning issues (I-B/I-C/I-D/I-E) behind
+`h3v450`.
+
+**Resolved by I-A #29** (files deleted with their replaced pipeline, so
+they are no longer exclusions): the old vec3d Go harness (the 4.4.0
+`vec3d_cgo.go`, three vec3d parity tests, two vec3d pure tests),
+`faceijk_h3v44_cgo.go` with the four old-projection parity tests, and
+the two latLng azimuth parity tests. The `h3lib_vec3d_c2go.c` C shim
+stays (row above): the 4.4.0 C library needs the translation unit
+regardless of the Go side.
 
 ## Still exercised at 4.5.0 despite upstream changes
 

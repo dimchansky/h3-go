@@ -21,6 +21,8 @@ func _faceIjkPentToCellBoundary(h *faceIJK, res int32, start int32, length int32
 	// adjust the face of each vertex as appropriate and introduce
 	// edge-crossing vertices as needed
 	g.numVerts = 0
+	// C 4.5.0 zero-initializes lastFijk (FaceIJK lastFijk = {0}); Go's var
+	// declaration is already zero-valued.
 	var lastFijk faceIJK
 
 	for vert := start; vert < start+length+additionalIteration; vert++ {
@@ -79,7 +81,9 @@ func _faceIjkPentToCellBoundary(h *faceIJK, res int32, start int32, length int32
 			// find the intersection and add the lat/lng point to the result
 			inter := _v2dIntersect(&orig2d0, &orig2d1, edge0, edge1)
 
-			_hex2dToGeo(&inter, tmpFijk.Face, adjRes, 1, &g.verts[g.numVerts])
+			var v3 vec3d
+			_hex2dToVec3(&inter, tmpFijk.Face, adjRes, 1, &v3)
+			g.verts[g.numVerts] = vec3ToLatLng(v3)
 			g.numVerts++
 		}
 
@@ -89,7 +93,9 @@ func _faceIjkPentToCellBoundary(h *faceIJK, res int32, start int32, length int32
 		if vert < start+numPentVerts {
 			var vec vec2d
 			_ijkToHex2d(&fijk.Coord, &vec)
-			_hex2dToGeo(&vec, fijk.Face, adjRes, 1, &g.verts[g.numVerts])
+			var v3 vec3d
+			_hex2dToVec3(&vec, fijk.Face, adjRes, 1, &v3)
+			g.verts[g.numVerts] = vec3ToLatLng(v3)
 			g.numVerts++
 		}
 		lastFijk = fijk

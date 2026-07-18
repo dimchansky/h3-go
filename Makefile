@@ -253,6 +253,13 @@ VERBOSE ?=
 TIMEOUT ?= 30s
 COVERAGE ?=
 COVERPROFILE ?=
+# The harness compiles the reference C with -ffp-contract=off: clang
+# contracts a*b+c into FMA even at -O0 on arm64, producing C results Go's
+# spec-mandated uncontracted float64 arithmetic can never match
+# bit-for-bit (first surfaced by the 4.5.0 vec3Dot parity tests). gcc on
+# the x86-64 CI runners does not contract by default, so the flag also
+# makes local Apple-Silicon parity match CI. Bit-exact parity is only
+# well-defined against IEEE-strict C.
 test-c2go:
 	@if [ -n "$(TEST)" ]; then \
 		echo "Running c2go parity test: $(TEST) (requires cgo)..."; \
@@ -282,9 +289,9 @@ test-c2go:
 	fi; \
 	TOOLCHAIN_ENV=""; \
 	if [ -n "$$CC" ]; then TOOLCHAIN_ENV="CC=$$CC CXX=$$CXX SDKROOT=$$SDKROOT"; fi; \
-	CFLAGS_ENV=""; LDFLAGS_ENV="-lm"; \
+	CFLAGS_ENV="-ffp-contract=off"; LDFLAGS_ENV="-lm"; \
 	if [ "$$(uname -s)" = "Darwin" ]; then \
-		CFLAGS_ENV="-ffunction-sections -fdata-sections"; \
+		CFLAGS_ENV="-ffp-contract=off -ffunction-sections -fdata-sections"; \
 		LDFLAGS_ENV="-Wl,-dead_strip"; \
 	fi; \
 	env $$TOOLCHAIN_ENV \
