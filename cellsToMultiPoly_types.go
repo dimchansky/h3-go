@@ -6,6 +6,8 @@ package h3
 // (docs/DEVIATIONS.md §4); the ported 4.5.0 multipolygon pipeline and
 // the area helpers consume this C-shaped form.
 // Ported from H3 C: h3api.h.in::GeoMultiPolygon.
+//
+//nolint:unused // exercised by the cgo && c2go parity tests; consumed by the I-C multipolygon port (#34)
 type geoMultiPolygon struct {
 	NumPolygons int32
 	Polygons    []GeoPolygon

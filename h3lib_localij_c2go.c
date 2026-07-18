@@ -2,3 +2,15 @@
 
 #include "localij.c"
 
+// H3 4.5.0 tree only (area.c is its marker file): test-only wrapper
+// exposing the file-static gridPathCellsInterpolate to the parity
+// harness, in the same translation unit as the static it calls.
+#if __has_include("area.c")
+H3Error h3goTest_gridPathCellsInterpolate(H3Index start, H3Index end,
+                                          int64_t distance, H3Index *out,
+                                          int64_t outOffset,
+                                          int64_t outStep) {
+    return gridPathCellsInterpolate(start, end, distance, out, outOffset,
+                                    outStep);
+}
+#endif

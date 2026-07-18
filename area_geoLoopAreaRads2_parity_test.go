@@ -73,3 +73,76 @@ func Test_cellAreaRads2_parity_450(t *testing.T) {
 		t.Errorf("cellAreaRads2(invalid): Go=%v C=%v", goErr, cErr)
 	}
 }
+
+func Test_kadd_parity(t *testing.T) {
+	// Pure arithmetic: bit-exact, including the compensation term.
+	terms := []float64{
+		1.0, 1e-16, -1e-16, 0.1, -4 * 3.141592653589793,
+		2.2440497074541694, 1e300, -1e300, 5e-324,
+	}
+	var goA adder
+	cA := adder{}
+	for _, x := range terms {
+		kadd(&goA, x)
+		cA = kaddC(cA, x)
+		if goA != cA {
+			t.Fatalf("kadd(%v): Go=%+v C=%+v", x, goA, cA)
+		}
+	}
+}
+
+func Test_cagnoli_parity(t *testing.T) {
+	// Trig-dependent: last-ulp tolerance (libm differences); see the
+	// file comment.
+	pts := []LatLng{
+		{Lat: Rad(0.5), Lng: Rad(-1.3)},
+		{Lat: Rad(0.6), Lng: Rad(-1.2)},
+		{Lat: Rad(-0.4), Lng: Rad(0.8)},
+		{Lat: Rad(1.5), Lng: Rad(3.1)},
+		{Lat: Rad(0), Lng: Rad(0)},
+	}
+	for _, x := range pts {
+		for _, y := range pts {
+			goT := _cagnoli(x, y)
+			cT := _cagnoliC(x, y)
+			if !vec3UlpClose(goT, cT) {
+				t.Errorf("cagnoli(%v,%v): Go=%v C=%v", x, y, goT, cT)
+			}
+		}
+	}
+}
+
+func Test_geoPolygonAreaRads2_parity(t *testing.T) {
+	ccwTriangle := GeoLoop{
+		{Lat: Rad(math.Pi / 2)}, {Lat: Rad(0)}, {Lat: Rad(0), Lng: Rad(math.Pi / 2)},
+	}
+	cwSmallHole := GeoLoop{
+		{Lat: Rad(0.2), Lng: Rad(0.2)}, {Lat: Rad(0.3), Lng: Rad(0.25)}, {Lat: Rad(0.25), Lng: Rad(0.3)},
+	}
+	polys := []GeoPolygon{
+		{GeoLoop: ccwTriangle},
+		{GeoLoop: ccwTriangle, Holes: []GeoLoop{cwSmallHole}},
+		{GeoLoop: ccwTriangle, Holes: []GeoLoop{cwSmallHole, cwSmallHole}},
+		{},
+	}
+	for i, poly := range polys {
+		goOut, goErr := geoPolygonAreaRads2(poly)
+		cOut, cErr := geoPolygonAreaRads2C(poly)
+		if goErr != cErr || !areaClose(goOut, cOut) {
+			t.Errorf("poly %d: Go=(%v,%v) C=(%v,%v)", i, goOut, goErr, cOut, cErr)
+		}
+	}
+
+	mpolys := []geoMultiPolygon{
+		{},
+		{NumPolygons: 1, Polygons: polys[:1]},
+		{NumPolygons: 3, Polygons: polys[:3]},
+	}
+	for i, mp := range mpolys {
+		goOut, goErr := geoMultiPolygonAreaRads2(mp)
+		cOut, cErr := geoMultiPolygonAreaRads2C(mp)
+		if goErr != cErr || !areaClose(goOut, cOut) {
+			t.Errorf("mpoly %d: Go=(%v,%v) C=(%v,%v)", i, goOut, goErr, cOut, cErr)
+		}
+	}
+}

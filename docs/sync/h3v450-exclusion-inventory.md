@@ -44,21 +44,31 @@ skips. Each issue that removes entries updates this file; it must be
 - `h3lib_coordijk_c2go.c`: `__has_include("coordijk.c")` — compiles the
   4.4.0 implementation; empty translation unit at 4.5.0 (the `static
   inline` header definitions serve every including TU). No test skips.
+- `h3lib_faceijk_c2go.c` / `h3lib_localij_c2go.c`: version-neutral
+  includes plus `#if __has_include("area.c")`-guarded test-only
+  wrappers (`h3goTest_*`) that expose the 4.5.0 file-static Vec3
+  pipeline helpers and `gridPathCellsInterpolate` to the parity
+  harness in their own translation units. No 4.4.0 impact.
 
 ## Present only in the 4.5.0 configuration (`h3v450`)
 
 - `h3lib_area_c2go.c` (shim for the new `area.c`)
 - `h3lib_cellsToMultiPoly_c2go.c` (shim for the new `cellsToMultiPoly.c`)
 
-- `vec3d_cgo.go`, `h3index_vec3_cgo.go` + `vec3d_vec3Ops_parity_h3v450_test.go`,
-  `h3index_cellToVec3_parity_h3v450_test.go` (landed with I-A #29)
-- `area_cgo.go` + `area_geoLoopAreaRads2_parity_h3v450_test.go`
-  (geoLoopAreaRads2 and the replacement cellAreaRads2 parity; landed
-  with I-B #30)
+- `vec3d_cgo.go`, `h3index_vec3_cgo.go`, `faceijk_vec3_cgo.go` +
+  `vec3d_vec3Ops_parity_test.go`, `h3index_cellToVec3_parity_test.go`,
+  `faceijk_vec3Pipeline_parity_test.go` (I-A #29)
+- `area_cgo.go` + `area_geoLoopAreaRads2_parity_test.go` (geoLoop/
+  geoPolygon/geoMultiPolygon/cellAreaRads2/kadd/cagnoli parity; I-B #30)
+- `localij_interpolate_cgo.go` +
+  `localij_gridPathCellsInterpolate_parity_test.go` (interpolate parity
+  and the exact 4.5.0 gridPathCells pairs; I-D #31)
+- `directedEdge_reverse_cgo.go` +
+  `directedEdge_reverseDirectedEdge_parity_test.go` (I-E #32)
 
-Version-specific wrappers and parity tests for the remaining new 4.5.0
-symbols arrive with their owning issues (I-B/I-C/I-D/I-E) behind
-`h3v450`.
+The only version-specific parity still to come is the I-C #34
+multipolygon domain (cellsToMultiPoly machinery + the rewritten
+cellsToLinkedMultiPolygon).
 
 **Resolved by I-B #30** (deleted with the replaced implementation): the
 triangle-area wrappers and parity tests (`latLng_h3v44_cgo.go`,

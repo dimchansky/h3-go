@@ -253,13 +253,17 @@ VERBOSE ?=
 TIMEOUT ?= 30s
 COVERAGE ?=
 COVERPROFILE ?=
-# The harness compiles the reference C with -ffp-contract=off: clang
-# contracts a*b+c into FMA even at -O0 on arm64, producing C results Go's
-# spec-mandated uncontracted float64 arithmetic can never match
-# bit-for-bit (first surfaced by the 4.5.0 vec3Dot parity tests). gcc on
-# the x86-64 CI runners does not contract by default, so the flag also
-# makes local Apple-Silicon parity match CI. Bit-exact parity is only
-# well-defined against IEEE-strict C.
+# The harness compiles the reference C with -ffp-contract=off. Evidence
+# (2026-07, corrective pass for #29-#32): without the flag, the
+# harness-compiled clang -O0 code on arm64 contracts a*b+/-c*d into FMA
+# — observable as vec3Cross(v,v) returning nonzero residuals (~5e-18),
+# impossible under strict IEEE — while gcc on the x86-64 CI runners
+# emits no FMA at its SSE2 baseline. The flag pins the oracle to strict
+# IEEE on every platform so local and CI parity compare the same
+# semantics. Go's gc also fuses on arm64 (the spec permits it); ported
+# code defeats that where needed via explicit float64() conversions,
+# which the spec guarantees force rounding. Discrete outputs (indexes,
+# error codes) are unaffected and always compared exactly.
 test-c2go:
 	@if [ -n "$(TEST)" ]; then \
 		echo "Running c2go parity test: $(TEST) (requires cgo)..."; \

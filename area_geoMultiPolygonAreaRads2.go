@@ -4,6 +4,8 @@ package h3
 // radians^2: the sum of the areas of its polygons. No check is made that
 // the polygons are disjoint.
 // Ported from H3 C: area.c::geoMultiPolygonAreaRads2.
+//
+//nolint:unused // exercised by the cgo && c2go parity tests; consumed by the I-C multipolygon port (#34)
 func geoMultiPolygonAreaRads2(mpoly geoMultiPolygon) (float64, h3Error) {
 	var a adder
 

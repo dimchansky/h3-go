@@ -4,3 +4,7 @@
 // relocated cellAreaRads2/Km2/M2 plus geoLoop/geoPolygon/geoMultiPolygon
 // area helpers. Compiled only in the h3v450 harness configuration.
 #include "area.c"
+
+// Test-only wrapper exposing the file-static cagnoli edge term to the
+// parity harness, in the same translation unit as the static it calls.
+double h3goTest_cagnoli(LatLng x, LatLng y) { return cagnoli(x, y); }

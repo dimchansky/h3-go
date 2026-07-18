@@ -8,8 +8,9 @@ import "testing"
 // (vec3d.h::latLngToVec3, vec3ToLatLng, vec3LinComb, vec3Cross, vec3Dot,
 // vec3NormSq, vec3Norm, vec3Normalize, vec3DistSq) against the exact C
 // definitions. Pure-arithmetic helpers compare bit-exactly (the harness
-// compiles C with -ffp-contract=off and the Go bodies are written to
-// defeat arm64 FMA fusion); the trig-dependent conversions
+// pins C to strict IEEE with -ffp-contract=off and the Go bodies force
+// per-product rounding via explicit conversions); the
+// trig-dependent conversions
 // (latLngToVec3, vec3ToLatLng) admit a last-ulp difference because Go's
 // math library and the platform libm legitimately differ by 1 ulp on
 // some sin/cos/asin/atan2 inputs.
