@@ -1,4 +1,6 @@
 file,layer,package,build_tags,attributions,h3_c_api_refs,exported_decls
+adder_kadd.go,unclassified,h3,"-",1,0,-
+adder_types.go,unclassified,h3,"-",1,0,-
 algos__directionForNeighbor.go,ported-impl,h3,"-",1,0,0
 algos__directionForNeighbor_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 algos__getEdgeHexagons.go,ported-impl,h3,"-",1,0,0
@@ -55,6 +57,15 @@ allocation_assert_race_test.go,public-api-test,h3,"race",0,0,-
 angle.go,public-api,h3,"-",0,0,8
 angle_test.go,public-api-test,h3,"-",0,0,-
 apisurface_test.go,public-api-test,h3,"-",0,0,-
+area__cagnoli.go,unclassified,h3,"-",1,0,-
+area_cellAreaKm2.go,unclassified,h3,"-",1,0,-
+area_cellAreaM2.go,unclassified,h3,"-",1,0,-
+area_cellAreaRads2.go,unclassified,h3,"-",1,0,-
+area_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && h3v450",0,0,-
+area_geoLoopAreaRads2.go,unclassified,h3,"-",1,0,-
+area_geoLoopAreaRads2_parity_h3v450_test.go,public-api-test,h3,"cgo && c2go && h3v450",0,0,-
+area_geoMultiPolygonAreaRads2.go,unclassified,h3,"-",1,0,-
+area_geoPolygonAreaRads2.go,unclassified,h3,"-",1,0,-
 baseCells__baseCellIsCwOffset.go,ported-impl,h3,"-",1,0,0
 baseCells__baseCellIsCwOffset_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 baseCells__baseCellToCCWrot60.go,ported-impl,h3,"-",1,0,0
@@ -109,6 +120,7 @@ bbox_types.go,ported-impl,h3,"-",0,0,0
 bench_public_test.go,public-api-test,h3,"-",0,0,-
 boundary.go,public-api,h3,"-",0,0,0
 cell.go,public-api,h3,"-",0,6,10
+cellsToMultiPoly_types.go,unclassified,h3,"-",1,0,-
 constants.go,public-api,h3,"-",1,0,0
 coordijk__cubeToIjk.go,ported-impl,h3,"-",1,0,0
 coordijk__cubeToIjk_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -375,12 +387,8 @@ iterators_iterStepRes.go,ported-impl,h3,"-",1,0,0
 iterators_iterStepRes_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 iterators_testH3IteratorsInternal_test.go,ported-internal-test,h3,"-",0,0,-
 iterators_types.go,ported-impl,h3,"-",0,0,0
-latLng__cellAreaKm2.go,ported-impl,h3,"-",1,0,0
 latLng__cellAreaKm2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
-latLng__cellAreaM2.go,ported-impl,h3,"-",1,0,0
 latLng__cellAreaM2_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
-latLng__cellAreaRads2.go,ported-impl,h3,"-",1,0,0
-latLng__cellAreaRads2_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 latLng__constrainLat.go,ported-impl,h3,"-",1,0,0
 latLng__constrainLat_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__constrainLng.go,ported-impl,h3,"-",1,0,0
@@ -409,10 +417,6 @@ latLng__setGeoDegs.go,ported-impl,h3,"-",1,0,0
 latLng__setGeoDegs_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng__setGeoRads.go,ported-impl,h3,"-",1,0,0
 latLng__setGeoRads_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
-latLng__triangleArea.go,ported-impl,h3,"-",1,0,0
-latLng__triangleArea_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
-latLng__triangleEdgeLengthsToArea.go,ported-impl,h3,"-",1,0,0
-latLng__triangleEdgeLengthsToArea_parity_test.go,parity-test,h3,"cgo && c2go && !h3v450",0,0,-
 latLng_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
 latLng_edgeLengthKm.go,ported-impl,h3,"-",1,0,0
 latLng_edgeLengthKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -429,7 +433,6 @@ latLng_getHexagonEdgeLengthAvgKm_parity_test.go,parity-test,h3,"cgo && c2go",0,0
 latLng_getHexagonEdgeLengthAvgM.go,ported-impl,h3,"-",1,0,0
 latLng_getHexagonEdgeLengthAvgM_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 latLng_h3CellAreaExhaustive_test.go,ported-internal-test,h3,"-",0,0,-
-latLng_h3v44_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && !h3v450",0,0,-
 latlng.go,public-api,h3,"-",0,1,2
 linkedGeo__addLinkedCoord.go,ported-impl,h3,"-",1,0,0
 linkedGeo__addLinkedCoord_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
@@ -545,6 +548,7 @@ testCellToLocalIj_test.go,ported-upstream-test,h3,"-",0,0,-
 testConstructCell_test.go,ported-upstream-test,h3,"-",1,0,-
 testDirectedEdgeExhaustive_test.go,ported-upstream-test,h3,"-",0,0,-
 testDirectedEdge_test.go,ported-upstream-test,h3,"-",0,0,-
+testGeoLoopArea_test.go,ported-upstream-test,h3,"-",0,0,-
 testGridDisk_test.go,ported-upstream-test,h3,"-",0,0,-
 testH3CellArea_test.go,ported-upstream-test,h3,"-",0,0,-
 testH3NeighborRotations_test.go,ported-upstream-test,h3,"-",0,0,-

@@ -17,10 +17,7 @@ skips. Each issue that removes entries updates this file; it must be
 
 | File | Excluded test functions | Owner |
 |---|---|---|
-| `latLng_h3v44_cgo.go` (wrappers: `triangleEdgeLengthsToAreaC`, `triangleAreaC`; the azimuth wrappers retired with I-A) | — | I-B #30 |
 | `h3lib_vec3d_c2go.c` (compiles 4.4.0's `vec3d.c`, which faceijk.c's `_geoToClosestFace` links against — needed by the 4.4.0 C library itself even though the Go vec3d wrappers retired with I-A) | — | I-I #36 (deleted at cutover) |
-| `latLng__triangleArea_parity_test.go` | `Test_triangleArea_ParityWithC` | I-B #30 |
-| `latLng__triangleEdgeLengthsToArea_parity_test.go` | `Test_triangleEdgeLengthsToArea_ParityWithC` | I-B #30 |
 | `vertexGraph_cgo.go` | — | I-C #34 (whole domain retired) |
 | `h3lib_vertexGraph_cgo.c` (shim for the deleted `vertexGraph.c`) | — | I-C #34 |
 | `algos_vertexgraph_cgo.go` (wrappers: `_vertexGraphToLinkedGeoC`, `h3SetToVertexGraphC`, `h3SetToVertexGraphCForParity`) | — | I-C #34 |
@@ -41,7 +38,6 @@ skips. Each issue that removes entries updates this file; it must be
 | File | Excluded test functions | 4.5.0 divergence (record ref) | Owner |
 |---|---|---|---|
 | `algos_cellsToLinkedMultiPolygon_parity_test.go` | `Test_cellsToLinkedMultiPolygon_parity` | invalid-cell input: Go(4.4.0)=E_FAILED vs C(4.5.0)=E_CELL_INVALID (§7.1) | I-C #34 |
-| `latLng__cellAreaRads2_parity_test.go` | `Test_cellAreaRads2_parity` | area algorithm change: 1.4e-15 diff at res 0 exceeds the test's tight tolerance (§7.4) | I-B #30 |
 
 ## Adaptive (not excluded — compiles differently per tree)
 
@@ -56,10 +52,20 @@ skips. Each issue that removes entries updates this file; it must be
 
 - `vec3d_cgo.go`, `h3index_vec3_cgo.go` + `vec3d_vec3Ops_parity_h3v450_test.go`,
   `h3index_cellToVec3_parity_h3v450_test.go` (landed with I-A #29)
+- `area_cgo.go` + `area_geoLoopAreaRads2_parity_h3v450_test.go`
+  (geoLoopAreaRads2 and the replacement cellAreaRads2 parity; landed
+  with I-B #30)
 
 Version-specific wrappers and parity tests for the remaining new 4.5.0
 symbols arrive with their owning issues (I-B/I-C/I-D/I-E) behind
 `h3v450`.
+
+**Resolved by I-B #30** (deleted with the replaced implementation): the
+triangle-area wrappers and parity tests (`latLng_h3v44_cgo.go`,
+`latLng__triangleArea_parity_test.go`,
+`latLng__triangleEdgeLengthsToArea_parity_test.go`) and the gated
+4.4.0-era `latLng__cellAreaRads2_parity_test.go` (replaced by the
+h3v450 area parity above).
 
 **Resolved by I-A #29** (files deleted with their replaced pipeline, so
 they are no longer exclusions): the old vec3d Go harness (the 4.4.0
