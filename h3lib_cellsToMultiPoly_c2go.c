@@ -193,9 +193,9 @@ H3Error h3goTest_createSortablePolyFromLoops(
     return E_SUCCESS;
 }
 
-// Direct createMultiPolygon on a synthetic, caller-supplied loop set
-// (serialization as for h3goTest_createMultiPolygonOnly). numLoops == 0
-// drives the createGlobeMultiPolygon branch.
+// Direct createMultiPolygon on a synthetic, caller-supplied loop set,
+// serialized as flattened per-polygon vertex/hole counts plus vertices.
+// numLoops == 0 drives the createGlobeMultiPolygon branch.
 H3Error h3goTest_createMultiPolygonFromLoops(
     const H3Index *roots, const double *areas, const int64_t *numVerts,
     LatLng *verts, int64_t numLoops, int64_t *numPolysOut,

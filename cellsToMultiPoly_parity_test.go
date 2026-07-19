@@ -61,6 +61,30 @@ func multiPolyParitySets(t *testing.T) map[string][]h3Index {
 			0x801bfffffffffff, 0x8035fffffffffff, 0x803ffffffffffff,
 			0x8053fffffffffff, 0x8043fffffffffff, 0x8021fffffffffff,
 			0x8011fffffffffff, 0x801ffffffffffff, 0x8097fffffffffff},
+		// The exact input of upstream 4.5.0's new globalEquatorCells
+		// regression (testCellsToLinkedMultiPolygon.c): a continuous
+		// band of 60 res-1 cells around the equator.
+		"globalEquatorCells": {
+			0x81807ffffffffff, 0x817efffffffffff, 0x81723ffffffffff,
+			0x817ebffffffffff, 0x817c3ffffffffff, 0x817e3ffffffffff,
+			0x817a3ffffffffff, 0x8166fffffffffff, 0x8172bffffffffff,
+			0x816afffffffffff, 0x81933ffffffffff, 0x8168fffffffffff,
+			0x8188fffffffffff, 0x81853ffffffffff, 0x817f7ffffffffff,
+			0x8180bffffffffff, 0x81783ffffffffff, 0x81743ffffffffff,
+			0x8170bffffffffff, 0x8173bffffffffff, 0x8179bffffffffff,
+			0x817cbffffffffff, 0x8188bffffffffff, 0x81857ffffffffff,
+			0x816f7ffffffffff, 0x8177bffffffffff, 0x81617ffffffffff,
+			0x816f3ffffffffff, 0x8174bffffffffff, 0x8180fffffffffff,
+			0x817a7ffffffffff, 0x81767ffffffffff, 0x81757ffffffffff,
+			0x81957ffffffffff, 0x81787ffffffffff, 0x81847ffffffffff,
+			0x81653ffffffffff, 0x817bbffffffffff, 0x816cfffffffffff,
+			0x816abffffffffff, 0x815f3ffffffffff, 0x817c7ffffffffff,
+			0x8168bffffffffff, 0x818cbffffffffff, 0x818cfffffffffff,
+			0x818afffffffffff, 0x8174fffffffffff, 0x8172fffffffffff,
+			0x8170fffffffffff, 0x816fbffffffffff, 0x81657ffffffffff,
+			0x816c7ffffffffff, 0x8186bffffffffff, 0x81763ffffffffff,
+			0x818a7ffffffffff, 0x8186fffffffffff, 0x81707ffffffffff,
+			0x8182bffffffffff, 0x818f3ffffffffff, 0x8182fffffffffff},
 	}
 	var res0 [122]h3Index
 	if err := getRes0Cells(res0[:]); err != eSuccess {
@@ -440,6 +464,68 @@ func Test_cellsToMultiPolygon_parity(t *testing.T) {
 	}
 }
 
+// linkedPolyRecord is one polygon node of a serialized linked chain:
+// per-loop coordinate counts plus the flattened vertices, preserving
+// the node's internal loop order and vertex sequence.
+type linkedPolyRecord struct {
+	coordsPerLoop []int32
+	verts         []LatLng
+}
+
+// splitLinkedShape splits a flattened cLinkedShape into per-polygon
+// records.
+func splitLinkedShape(t *testing.T, shape cLinkedShape) []linkedPolyRecord {
+	t.Helper()
+	recs := make([]linkedPolyRecord, 0, len(shape.loopsPerPoly))
+	loopIdx, vertIdx := 0, 0
+	for _, numLoops := range shape.loopsPerPoly {
+		var rec linkedPolyRecord
+		for l := int32(0); l < numLoops; l++ {
+			n := int(shape.coordsPerLoop[loopIdx])
+			loopIdx++
+			rec.coordsPerLoop = append(rec.coordsPerLoop, int32(n))
+			rec.verts = append(rec.verts, shape.verts[vertIdx:vertIdx+n]...)
+			vertIdx += n
+		}
+		recs = append(recs, rec)
+	}
+	if loopIdx != len(shape.coordsPerLoop) || vertIdx != len(shape.verts) {
+		t.Fatalf("shape not fully consumed: %d/%d loops, %d/%d verts",
+			loopIdx, len(shape.coordsPerLoop), vertIdx, len(shape.verts))
+	}
+	return recs
+}
+
+// sortLinkedPolyRecords orders polygon records by a canonical key —
+// loop count, then per-loop coordinate counts, then raw vertex values
+// — without touching any record's internal loop/vertex sequence. Used
+// only where the chain order of the polygon nodes themselves is
+// implementation-defined (the globe tiling's tied octant areas); the
+// octant vertices are exact literal constants on both sides, so
+// exact-value sorting yields the same canonical order on each side.
+func sortLinkedPolyRecords(recs []linkedPolyRecord) {
+	sort.Slice(recs, func(x, y int) bool {
+		a, b := recs[x], recs[y]
+		if len(a.coordsPerLoop) != len(b.coordsPerLoop) {
+			return len(a.coordsPerLoop) < len(b.coordsPerLoop)
+		}
+		for i := range a.coordsPerLoop {
+			if a.coordsPerLoop[i] != b.coordsPerLoop[i] {
+				return a.coordsPerLoop[i] < b.coordsPerLoop[i]
+			}
+		}
+		for i := range a.verts {
+			if a.verts[i].Lat.Rad() != b.verts[i].Lat.Rad() {
+				return a.verts[i].Lat.Rad() < b.verts[i].Lat.Rad()
+			}
+			if a.verts[i].Lng.Rad() != b.verts[i].Lng.Rad() {
+				return a.verts[i].Lng.Rad() < b.verts[i].Lng.Rad()
+			}
+		}
+		return false
+	})
+}
+
 func Test_cellsToLinkedMultiPolygon_450_parity(t *testing.T) {
 	// Isolated cellsToLinkedMultiPolygon: the C side calls ONLY the
 	// public function and serializes its linked output directly —
@@ -448,22 +534,22 @@ func Test_cellsToLinkedMultiPolygon_450_parity(t *testing.T) {
 	// pipeline in between; the Go side serializes its own linked
 	// output the same way. Vertices carry the boundary pipeline's
 	// vec3UlpClose discipline. For the globe tiling the eight octant
-	// polygons tie on outer area, so their order is
-	// implementation-defined and only the aggregate shape compares.
+	// polygons tie on outer area, so the chain order of the polygon
+	// nodes is implementation-defined; the records are order-normalized
+	// by sortLinkedPolyRecords independently on each side and then
+	// compared in full like every other set.
 	for name, cells := range multiPolyParitySets(t) {
 		var linked linkedGeoPolygon
 		goErr := cellsToLinkedMultiPolygon(cells, int32(len(cells)), &linked)
 		if goErr != eSuccess {
 			t.Fatalf("%s: cellsToLinkedMultiPolygon: %v", name, goErr)
 		}
-		var goShape cLinkedShape
+		var goRecs []linkedPolyRecord
 		goInv := true
 		for poly := &linked; poly != nil; poly = poly.Next {
 			st := goLinkedPolyState(poly)
 			goInv = goInv && st.invariantsOK
-			goShape.loopsPerPoly = append(goShape.loopsPerPoly, int32(len(st.coordsPerLoop)))
-			goShape.coordsPerLoop = append(goShape.coordsPerLoop, st.coordsPerLoop...)
-			goShape.verts = append(goShape.verts, st.verts...)
+			goRecs = append(goRecs, linkedPolyRecord{coordsPerLoop: st.coordsPerLoop, verts: st.verts})
 		}
 		maxLoops := 4 * len(cells)
 		if maxLoops < 64 {
@@ -476,30 +562,32 @@ func Test_cellsToLinkedMultiPolygon_450_parity(t *testing.T) {
 		if !goInv || !cInv {
 			t.Fatalf("%s: linkage invariants Go=%v C=%v", name, goInv, cInv)
 		}
-		if len(goShape.loopsPerPoly) != len(cShape.loopsPerPoly) ||
-			len(goShape.coordsPerLoop) != len(cShape.coordsPerLoop) ||
-			len(goShape.verts) != len(cShape.verts) {
-			t.Fatalf("%s: shape Go=(%d polys, %d loops, %d verts) C=(%d polys, %d loops, %d verts)",
-				name, len(goShape.loopsPerPoly), len(goShape.coordsPerLoop), len(goShape.verts),
-				len(cShape.loopsPerPoly), len(cShape.coordsPerLoop), len(cShape.verts))
+		cRecs := splitLinkedShape(t, cShape)
+		if len(goRecs) != len(cRecs) {
+			t.Fatalf("%s: NumPolygons Go=%d C=%d", name, len(goRecs), len(cRecs))
 		}
 		if name == "globeAllRes0" {
-			continue // tied octant order; aggregate shape compared above
+			sortLinkedPolyRecords(goRecs)
+			sortLinkedPolyRecords(cRecs)
 		}
-		for i := range goShape.loopsPerPoly {
-			if goShape.loopsPerPoly[i] != cShape.loopsPerPoly[i] {
-				t.Fatalf("%s poly %d: loops Go=%d C=%d", name, i, goShape.loopsPerPoly[i], cShape.loopsPerPoly[i])
+		for p := range goRecs {
+			gr, cr := goRecs[p], cRecs[p]
+			if len(gr.coordsPerLoop) != len(cr.coordsPerLoop) {
+				t.Fatalf("%s poly %d: loops Go=%d C=%d", name, p, len(gr.coordsPerLoop), len(cr.coordsPerLoop))
 			}
-		}
-		for i := range goShape.coordsPerLoop {
-			if goShape.coordsPerLoop[i] != cShape.coordsPerLoop[i] {
-				t.Fatalf("%s loop %d: coords Go=%d C=%d", name, i, goShape.coordsPerLoop[i], cShape.coordsPerLoop[i])
+			for l := range gr.coordsPerLoop {
+				if gr.coordsPerLoop[l] != cr.coordsPerLoop[l] {
+					t.Fatalf("%s poly %d loop %d: coords Go=%d C=%d", name, p, l, gr.coordsPerLoop[l], cr.coordsPerLoop[l])
+				}
 			}
-		}
-		for i := range goShape.verts {
-			if !vec3UlpClose(goShape.verts[i].Lat.Rad(), cShape.verts[i].Lat.Rad()) ||
-				!vec3UlpClose(goShape.verts[i].Lng.Rad(), cShape.verts[i].Lng.Rad()) {
-				t.Fatalf("%s vert %d: Go=%v C=%v", name, i, goShape.verts[i], cShape.verts[i])
+			if len(gr.verts) != len(cr.verts) {
+				t.Fatalf("%s poly %d: verts Go=%d C=%d", name, p, len(gr.verts), len(cr.verts))
+			}
+			for i := range gr.verts {
+				if !vec3UlpClose(gr.verts[i].Lat.Rad(), cr.verts[i].Lat.Rad()) ||
+					!vec3UlpClose(gr.verts[i].Lng.Rad(), cr.verts[i].Lng.Rad()) {
+					t.Fatalf("%s poly %d vert %d: Go=%v C=%v", name, p, i, gr.verts[i], cr.verts[i])
+				}
 			}
 		}
 	}
