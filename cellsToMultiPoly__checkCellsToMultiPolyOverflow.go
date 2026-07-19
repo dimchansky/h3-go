@@ -1,14 +1,19 @@
 package h3
 
-// C sizes on the LP64 platforms the parity oracle runs on: sizeof(Arc)
-// = 48 (8 id + 2 bools + 6 padding + 3×8 pointers + 8 rank), a pointer
-// is 8 bytes, and SIZE_MAX = 2^64-1. The Go port pins these so the
-// overflow threshold matches the C oracle bit-for-bit (verified by the
-// parity suite); Go's own allocator limits are unrelated.
+// Element sizes for the overflow pre-check. The struct sizes are the
+// LP64 C oracle's (sizeof(Arc) = 48: 8 id + 2 bools + 6 padding + 3×8
+// pointers + 8 rank; 8-byte pointers); on 32-bit Go targets the real
+// element sizes are smaller, so using these values makes the check
+// strictly more conservative there (it rejects earlier than a 32-bit C
+// build would), never less safe. cSizeMax is the platform's SIZE_MAX
+// equivalent (^uint(0)): 2^64-1 on 64-bit targets — where it reproduces
+// the C oracle's threshold bit-for-bit (the parity suite runs on
+// 64-bit platforms only) — and 2^32-1 on 32-bit targets, where the
+// stricter threshold guards Go's own allocation-length limits.
 const (
 	cSizeofArc    = 48
 	cSizeofArcPtr = 8
-	cSizeMax      = ^uint64(0)
+	cSizeMax      = uint64(^uint(0))
 )
 
 // checkCellsToMultiPolyOverflow checks for potential integer overflow in
@@ -33,7 +38,7 @@ func checkCellsToMultiPolyOverflow(numCells int64, hashMultiplier int64) h3Error
 
 	// Check if maxBytesPerCell * numCells would overflow size_t, which is
 	// what is used for allocations. Use SIZE_MAX since size_t may be 32
-	// bits (the oracle platforms are 64-bit; see cSizeMax above).
+	// bits (cSizeMax mirrors the platform width; see above).
 	if numCells > 0 && uint64(numCells) > cSizeMax/maxBytesPerCell {
 		return eMemoryBounds
 	}

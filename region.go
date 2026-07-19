@@ -135,6 +135,10 @@ func AppendPolygonToCellsExperimental(dst []Cell, p GeoPolygon, res int, mode Co
 // coordinate order, explicitly closing each ring by repeating its first
 // position, and handling antimeridian crossings per RFC 7946.
 //
+// CellsToMultiPolygon allocates its result and internal working sets
+// per call (as the C implementation does); no allocation bound is part
+// of the contract — the count scales with the input.
+//
 // H3 C API: cellsToLinkedMultiPolygon (this wrapper consumes the flat
 // GeoMultiPolygon intermediate that C's linked output is itself built
 // from, producing identical geometry; C's destroyLinkedMultiPolygon is

@@ -145,6 +145,7 @@ cellsToMultiPoly__unionArcs.go,ported-impl,h3,"-",1,0,0
 cellsToMultiPoly__validateCellSet.go,ported-impl,h3,"-",1,0,0
 cellsToMultiPoly_cellsToMultiPolygon.go,ported-impl,h3,"-",1,0,0
 cellsToMultiPoly_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && h3v450",0,0,-
+cellsToMultiPoly_direct_parity_test.go,parity-test,h3,"cgo && c2go && h3v450",0,0,-
 cellsToMultiPoly_parity_test.go,parity-test,h3,"cgo && c2go && h3v450",0,0,-
 cellsToMultiPoly_testCellsToMultiPolyInternal_test.go,ported-internal-test,h3,"-",0,0,-
 cellsToMultiPoly_types.go,ported-impl,h3,"-",7,0,0
@@ -497,6 +498,8 @@ linkedGeo__normalizeMultiPolygon_parity_test.go,parity-test,h3,"cgo && c2go",0,0
 linkedGeo__pointInsideLinkedGeoLoop.go,ported-impl,h3,"-",1,0,0
 linkedGeo__pointInsideLinkedGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 linkedGeo_cgo.go,parity-cgo-bridge,h3,"cgo && c2go",0,0,-
+linkedGeo_convert_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && h3v450",0,0,-
+linkedGeo_convert_parity_test.go,parity-test,h3,"cgo && c2go && h3v450",0,0,-
 linkedGeo_destroyLinkedGeoLoop.go,ported-impl,h3,"-",1,0,0
 linkedGeo_destroyLinkedGeoLoop_parity_test.go,parity-test,h3,"cgo && c2go",0,0,-
 linkedGeo_destroyLinkedMultiPolygon.go,ported-impl,h3,"-",1,0,0

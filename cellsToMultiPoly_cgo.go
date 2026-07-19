@@ -35,6 +35,45 @@ H3Error h3goTest_loopSet(const H3Index *cells, int64_t numCells,
                          LatLng *verts);
 H3Error h3goTest_globeMultiPolygon(int64_t *numPolysOut, int64_t *numVertsOut,
                                    LatLng *verts);
+H3Error h3goTest_cellToEdgeArcs(H3Index h, H3Index *ids, int64_t *nextIdx,
+                                int64_t *prevIdx, int64_t *parentIdx,
+                                int64_t *rank, int64_t *numEdgesOut);
+H3Error h3goTest_bucketState(const H3Index *cells, int64_t numCells,
+                             int64_t *bucketArcIdx, int64_t *numBucketsOut);
+H3Error h3goTest_visitedState(const H3Index *cells, int64_t numCells,
+                              int mode, uint8_t *visited, int64_t *numArcsOut);
+H3Error h3goTest_unionSequence(const H3Index *cells, int64_t numCells,
+                               const int64_t *pairA, const int64_t *pairB,
+                               int64_t numPairs, H3Index *rootId,
+                               int64_t *rank, int64_t *numArcsOut);
+H3Error h3goTest_createSortableLoop(const H3Index *cells, int64_t numCells,
+                                    int64_t arcIdx, H3Index *rootOut,
+                                    double *areaOut, int64_t *numVertsOut,
+                                    LatLng *verts);
+int h3goTest_cmp_SortableLoop(H3Index rootA, double areaA, H3Index rootB,
+                              double areaB);
+int h3goTest_cmp_SortablePoly(double areaA, double areaB);
+int h3goTest_cmp_uint64(H3Index a, H3Index b);
+H3Error h3goTest_createSortablePoly(const H3Index *cells, int64_t numCells,
+                                    int64_t loopStart, int64_t numHoles,
+                                    double *outerAreaOut,
+                                    int64_t *outerNumVertsOut,
+                                    LatLng *outerVerts, int64_t *holeNumVerts,
+                                    LatLng *holeVerts);
+H3Error h3goTest_createMultiPolygonOnly(const H3Index *cells,
+                                        int64_t numCells,
+                                        int64_t *numPolysOut,
+                                        int64_t *polyNumVerts,
+                                        int64_t *polyNumHoles,
+                                        int64_t *holeNumVerts, LatLng *verts);
+int h3goTest_destroyArcSet_state(const H3Index *cells, int64_t numCells);
+int h3goTest_destroyLoopSet_state(const H3Index *cells, int64_t numCells,
+                                  int shallow);
+int h3goTest_destroyGeoLoop_state(void);
+int h3goTest_destroyGeoPolygon_state(void);
+int h3goTest_destroyGeoMultiPolygon_state(const H3Index *cells,
+                                          int64_t numCells);
+int h3goTest_destroyLinkedTwice(const H3Index *cells, int numCells);
 
 // linkedGeo.h externs (4.5.0 conversion helpers).
 H3Error linkedGeoPolygonToGeoMultiPolygon(const LinkedGeoPolygon *linked,
@@ -211,6 +250,195 @@ func linkedMultiPolyAsGeoC(cells []h3Index, numCells int32) (geoMultiPolygon, h3
 	}
 	C.destroyGeoMultiPolygon(&cOut)
 	return out, eSuccess
+}
+
+// cEdgeArcs mirrors the serialized single-cell cellToEdgeArcs state.
+type cEdgeArcs struct {
+	ids              []h3Index
+	nextIdx, prevIdx []int64
+	parentIdx, rank  []int64
+}
+
+// cellToEdgeArcsC serializes the C cellToEdgeArcs output for one cell.
+func cellToEdgeArcsC(h h3Index) (cEdgeArcs, h3Error) {
+	ids := make([]h3Index, 6)
+	next := make([]int64, 6)
+	prev := make([]int64, 6)
+	parent := make([]int64, 6)
+	rank := make([]int64, 6)
+	var n C.int64_t
+	err := h3Error(C.h3goTest_cellToEdgeArcs(C.H3Index(h),
+		(*C.H3Index)(unsafe.Pointer(&ids[0])), (*C.int64_t)(&next[0]),
+		(*C.int64_t)(&prev[0]), (*C.int64_t)(&parent[0]),
+		(*C.int64_t)(&rank[0]), &n))
+	if err != eSuccess {
+		return cEdgeArcs{}, err
+	}
+	return cEdgeArcs{ids: ids[:n], nextIdx: next[:n], prevIdx: prev[:n],
+		parentIdx: parent[:n], rank: rank[:n]}, eSuccess
+}
+
+// bucketStateC serializes the hash-bucket layout after C createArcSet.
+func bucketStateC(cells []h3Index, numCells int64) ([]int64, h3Error) {
+	n := getNumEdgesC(cells, numCells) * hashTableMultiplier
+	buckets := make([]int64, n)
+	var nb C.int64_t
+	err := h3Error(C.h3goTest_bucketState(cellsPtr(cells), C.int64_t(numCells),
+		(*C.int64_t)(&buckets[0]), &nb))
+	if err != eSuccess {
+		return nil, err
+	}
+	return buckets[:nb], eSuccess
+}
+
+// visitedStateC serializes isVisited after countLoops (mode 0) or
+// countLoops+resetVisited (mode 1).
+func visitedStateC(cells []h3Index, numCells int64, mode int32) ([]bool, h3Error) {
+	n := getNumEdgesC(cells, numCells)
+	visited := make([]uint8, n)
+	var na C.int64_t
+	err := h3Error(C.h3goTest_visitedState(cellsPtr(cells), C.int64_t(numCells),
+		C.int(mode), (*C.uint8_t)(&visited[0]), &na))
+	if err != eSuccess {
+		return nil, err
+	}
+	out := make([]bool, na)
+	for i := range out {
+		out[i] = visited[i] != 0
+	}
+	return out, eSuccess
+}
+
+// unionSequenceC unions the given arc-index pairs on the C side and
+// serializes every arc's root id and rank.
+func unionSequenceC(cells []h3Index, numCells int64, pairs [][2]int64) ([]h3Index, []int64, h3Error) {
+	n := getNumEdgesC(cells, numCells)
+	pa := make([]int64, len(pairs))
+	pb := make([]int64, len(pairs))
+	for i, p := range pairs {
+		pa[i], pb[i] = p[0], p[1]
+	}
+	roots := make([]h3Index, n)
+	ranks := make([]int64, n)
+	var na C.int64_t
+	err := h3Error(C.h3goTest_unionSequence(cellsPtr(cells), C.int64_t(numCells),
+		(*C.int64_t)(&pa[0]), (*C.int64_t)(&pb[0]), C.int64_t(len(pairs)),
+		(*C.H3Index)(unsafe.Pointer(&roots[0])), (*C.int64_t)(&ranks[0]), &na))
+	if err != eSuccess {
+		return nil, nil, err
+	}
+	return roots[:na], ranks[:na], eSuccess
+}
+
+// createSortableLoopC calls C createSortableLoop on the arc at arcIdx.
+func createSortableLoopC(cells []h3Index, numCells, arcIdx int64) (sortableLoop, h3Error) {
+	n := getNumEdgesC(cells, numCells)
+	verts := make([]LatLng, 2*n)
+	var root C.H3Index
+	var area C.double
+	var nv C.int64_t
+	err := h3Error(C.h3goTest_createSortableLoop(cellsPtr(cells), C.int64_t(numCells),
+		C.int64_t(arcIdx), &root, &area, &nv,
+		(*C.LatLng)(unsafe.Pointer(&verts[0]))))
+	if err != eSuccess {
+		return sortableLoop{}, err
+	}
+	return sortableLoop{root: h3Index(root), area: float64(area),
+		loop: GeoLoop(verts[:nv])}, eSuccess
+}
+
+func cmp_SortableLoopC(rootA h3Index, areaA float64, rootB h3Index, areaB float64) int32 {
+	return int32(C.h3goTest_cmp_SortableLoop(C.H3Index(rootA), C.double(areaA),
+		C.H3Index(rootB), C.double(areaB)))
+}
+
+func cmp_SortablePolyC(areaA, areaB float64) int32 {
+	return int32(C.h3goTest_cmp_SortablePoly(C.double(areaA), C.double(areaB)))
+}
+
+func cmp_uint64C(a, b h3Index) int32 {
+	return int32(C.h3goTest_cmp_uint64(C.H3Index(a), C.H3Index(b)))
+}
+
+// createSortablePolyC calls C createSortablePoly on the sorted loop
+// set's polygon starting at loopStart with numHoles holes.
+func createSortablePolyC(cells []h3Index, numCells, loopStart, numHoles int64) (sortablePoly, h3Error) {
+	n := getNumEdgesC(cells, numCells)
+	outerVerts := make([]LatLng, 2*n)
+	holeVerts := make([]LatLng, 2*n)
+	holeNum := make([]int64, n+1)
+	var outerArea C.double
+	var outerNV C.int64_t
+	err := h3Error(C.h3goTest_createSortablePoly(cellsPtr(cells), C.int64_t(numCells),
+		C.int64_t(loopStart), C.int64_t(numHoles), &outerArea, &outerNV,
+		(*C.LatLng)(unsafe.Pointer(&outerVerts[0])), (*C.int64_t)(&holeNum[0]),
+		(*C.LatLng)(unsafe.Pointer(&holeVerts[0]))))
+	if err != eSuccess {
+		return sortablePoly{}, err
+	}
+	out := sortablePoly{outerArea: float64(outerArea),
+		poly: GeoPolygon{GeoLoop: GeoLoop(outerVerts[:outerNV])}}
+	v := int64(0)
+	for h := int64(0); h < numHoles; h++ {
+		out.poly.Holes = append(out.poly.Holes, GeoLoop(holeVerts[v:v+holeNum[h]]))
+		v += holeNum[h]
+	}
+	return out, eSuccess
+}
+
+// createMultiPolygonOnlyC runs the C pipeline to the sorted loop set
+// and calls createMultiPolygon only, serializing the result.
+func createMultiPolygonOnlyC(cells []h3Index, numCells int64) (geoMultiPolygon, h3Error) {
+	n := getNumEdgesC(cells, numCells)
+	if n < 24 {
+		n = 24 // globe branch emits 8 triangles regardless of input arcs
+	}
+	polyNV := make([]int64, n)
+	polyNH := make([]int64, n)
+	holeNV := make([]int64, n)
+	verts := make([]LatLng, 2*n+24)
+	var np C.int64_t
+	err := h3Error(C.h3goTest_createMultiPolygonOnly(cellsPtr(cells), C.int64_t(numCells),
+		&np, (*C.int64_t)(&polyNV[0]), (*C.int64_t)(&polyNH[0]),
+		(*C.int64_t)(&holeNV[0]), (*C.LatLng)(unsafe.Pointer(&verts[0]))))
+	if err != eSuccess {
+		return geoMultiPolygon{}, err
+	}
+	out := geoMultiPolygon{NumPolygons: int32(np)}
+	v, h := int64(0), int64(0)
+	for p := int64(0); p < int64(np); p++ {
+		poly := GeoPolygon{GeoLoop: GeoLoop(verts[v : v+polyNV[p]])}
+		v += polyNV[p]
+		for k := int64(0); k < polyNH[p]; k++ {
+			poly.Holes = append(poly.Holes, GeoLoop(verts[v:v+holeNV[h]]))
+			v += holeNV[h]
+			h++
+		}
+		out.Polygons = append(out.Polygons, poly)
+	}
+	return out, eSuccess
+}
+
+// Destroy-helper state probes (bit 1: nulled after first call; bit 2:
+// second call safe and still nulled).
+func destroyArcSetStateC(cells []h3Index, numCells int64) int32 {
+	return int32(C.h3goTest_destroyArcSet_state(cellsPtr(cells), C.int64_t(numCells)))
+}
+
+func destroyLoopSetStateC(cells []h3Index, numCells int64, shallow int32) int32 {
+	return int32(C.h3goTest_destroyLoopSet_state(cellsPtr(cells), C.int64_t(numCells), C.int(shallow)))
+}
+
+func destroyGeoLoopStateC() int32    { return int32(C.h3goTest_destroyGeoLoop_state()) }
+func destroyGeoPolygonStateC() int32 { return int32(C.h3goTest_destroyGeoPolygon_state()) }
+func destroyGeoMultiPolygonStateC(cells []h3Index, numCells int64) int32 {
+	return int32(C.h3goTest_destroyGeoMultiPolygon_state(cellsPtr(cells), C.int64_t(numCells)))
+}
+
+// destroyLinkedTwiceC exercises the 4.5.0 destroyLinkedMultiPolygon
+// idempotence on the C side (bits as above).
+func destroyLinkedTwiceC(cells []h3Index, numCells int32) int32 {
+	return int32(C.h3goTest_destroyLinkedTwice(cellsPtr(cells), C.int(numCells)))
 }
 
 func geoLoopFromC(cl C.GeoLoop) GeoLoop {

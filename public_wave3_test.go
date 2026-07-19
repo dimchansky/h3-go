@@ -424,6 +424,28 @@ func TestWave3Allocations(t *testing.T) {
 	la := LatLngDegs(34.0, -118.2)
 	assertAllocs("GreatCircleDistanceKm", 0, func() { _ = GreatCircleDistanceKm(sf, la) })
 
+	// CellsToMultiPolygon is inherently allocating (the result and the
+	// pipeline's working sets — arcs, buckets, loops — are built per
+	// call, exactly as the C implementation mallocs them), and the
+	// count scales with the input, so no allocation contract is
+	// documented. These pin the measured budgets for the fixed inputs
+	// so regressions surface (measured: 8 single-cell, 15 donut).
+	single := []Cell{sfCellRes9}
+	assertAllocs("CellsToMultiPolygon single", 8, func() {
+		if _, err := CellsToMultiPolygon(single); err != nil {
+			t.Fatal(err)
+		}
+	})
+	donut, err := sfCellRes9.GridRing(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertAllocs("CellsToMultiPolygon donut", 15, func() {
+		if _, err := CellsToMultiPolygon(donut); err != nil {
+			t.Fatal(err)
+		}
+	})
+
 	parent, _ := sfCellRes9.Parent(4)
 	children, err := parent.Children(6)
 	if err != nil {

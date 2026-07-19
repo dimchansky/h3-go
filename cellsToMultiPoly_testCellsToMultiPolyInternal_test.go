@@ -85,7 +85,16 @@ func TestCellsToMultiPolyInternal_destroySortablePolys_with_holes(t *testing.T) 
 	spolys[1].poly.Holes = nil
 
 	destroySortablePolys(spolys, 2)
-	// spolys is freed in C; can't assert on it
+
+	// C frees the spolys array itself (no Go equivalent — the caller's
+	// slice header survives by value semantics); the nested holes
+	// references must be cleared.
+	if spolys[0].poly.Holes != nil {
+		t.Error("holes should be cleared after destroy")
+	}
+	if spolys[1].poly.Holes != nil {
+		t.Error("nil holes should remain nil after destroy")
+	}
 }
 
 func TestCellsToMultiPolyInternal_destroySortablePolys_null(t *testing.T) {
@@ -109,7 +118,16 @@ func TestCellsToMultiPolyInternal_destroySortablePolyVerts_with_verts(t *testing
 	spolys[1].poly.GeoLoop = nil
 
 	destroySortablePolyVerts(spolys, 2)
-	// spolys is freed in C; can't assert on it
+
+	// C frees the spolys array itself (no Go equivalent — the caller's
+	// slice header survives by value semantics); the nested outer-loop
+	// references must be cleared.
+	if spolys[0].poly.GeoLoop != nil {
+		t.Error("outer loop verts should be cleared after destroy")
+	}
+	if spolys[1].poly.GeoLoop != nil {
+		t.Error("nil outer loop should remain nil after destroy")
+	}
 }
 
 func TestCellsToMultiPolyInternal_destroySortablePolyVerts_null(t *testing.T) {
@@ -176,6 +194,9 @@ func TestCellsToMultiPolyInternal_checkCellsToMultiPolyOverflow_safe(t *testing.
 
 	// Test with small and large hash multipliers.
 	// Largest allocated array will change, depending on multiplier.
+	// (Like the upstream suite, these expectations assume a 64-bit
+	// size_t: on a 32-bit target the multiplier-100 case crosses the
+	// stricter threshold.)
 	if err := checkCellsToMultiPolyOverflow(1000000, 1); err != eSuccess {
 		t.Errorf("multiplier 1: got %v", err)
 	}

@@ -67,3 +67,231 @@ void destroyLinkedGeoLoopC(LinkedGeoLoop *loop) {
     destroyLinkedGeoLoop(loop);
 }
 
+
+#if __has_include("area.c")
+// H3 4.5.0 tree (area.c is a 4.5.0 addition): test-only wrappers
+// exposing the linked<->flat conversion file-statics added to
+// linkedGeo.c in 4.5.0, in the same translation unit. Linked
+// structures are built with the extern helpers (addNewLinkedLoop,
+// addLinkedCoord, ...) and serialized as flattened vertex arrays.
+
+// linkedGeoLoopToGeoLoop on a loop built from verts[0..n).
+H3Error h3goTest_linkedGeoLoopToGeoLoop(const LatLng *verts, int n,
+                                        LatLng *outVerts, int *outN) {
+    LinkedGeoPolygon poly = {0};
+    LinkedGeoLoop *loop = addNewLinkedLoop(&poly);
+    for (int i = 0; i < n; i++) addLinkedCoord(loop, &verts[i]);
+    GeoLoop gl;
+    H3Error err = linkedGeoLoopToGeoLoop(loop, &gl);
+    if (!err) {
+        *outN = gl.numVerts;
+        for (int i = 0; i < gl.numVerts; i++) outVerts[i] = gl.verts[i];
+        destroyGeoLoop(&gl);
+    }
+    H3_EXPORT(destroyLinkedMultiPolygon)(&poly);
+    return err;
+}
+
+// geoLoopToLinkedGeoLoop on verts[0..n), serialized back by walking.
+H3Error h3goTest_geoLoopToLinkedGeoLoop(const LatLng *verts, int n,
+                                        LatLng *outVerts, int *outN) {
+    GeoLoop gl = {.numVerts = n, .verts = (LatLng *)verts};
+    LinkedGeoLoop loop = {0};
+    H3Error err = geoLoopToLinkedGeoLoop(&gl, &loop);
+    if (!err) {
+        int i = 0;
+        for (LinkedLatLng *c = loop.first; c != NULL; c = c->next) {
+            outVerts[i++] = c->vertex;
+        }
+        *outN = i;
+    }
+    destroyLinkedGeoLoop(&loop);
+    return err;
+}
+
+// linkedGeoPolygonToGeoPolygon on a polygon built from an outer loop
+// plus holes (flattened; loopNumVerts[0] is the outer loop).
+H3Error h3goTest_linkedGeoPolygonToGeoPolygon(
+    const LatLng *verts, const int *loopNumVerts, int numLoops,
+    int *outLoopNumVerts, LatLng *outVerts, int *outNumLoops) {
+    LinkedGeoPolygon poly = {0};
+    int v = 0;
+    for (int l = 0; l < numLoops; l++) {
+        LinkedGeoLoop *loop = addNewLinkedLoop(&poly);
+        for (int i = 0; i < loopNumVerts[l]; i++) {
+            addLinkedCoord(loop, &verts[v++]);
+        }
+    }
+    GeoPolygon gp = {0};
+    H3Error err = linkedGeoPolygonToGeoPolygon(&poly, &gp);
+    if (!err) {
+        int ov = 0;
+        *outNumLoops = 1 + gp.numHoles;
+        outLoopNumVerts[0] = gp.geoloop.numVerts;
+        for (int i = 0; i < gp.geoloop.numVerts; i++) {
+            outVerts[ov++] = gp.geoloop.verts[i];
+        }
+        for (int h = 0; h < gp.numHoles; h++) {
+            outLoopNumVerts[1 + h] = gp.holes[h].numVerts;
+            for (int i = 0; i < gp.holes[h].numVerts; i++) {
+                outVerts[ov++] = gp.holes[h].verts[i];
+            }
+        }
+        destroyGeoPolygon(&gp);
+    }
+    H3_EXPORT(destroyLinkedMultiPolygon)(&poly);
+    return err;
+}
+
+// addLinkedGeoLoop called `times` times with the same source loop
+// (covers both the first-loop and append branches); serialized back.
+H3Error h3goTest_addLinkedGeoLoop(const LatLng *verts, int n, int times,
+                                  int *outNumLoops, int *outCoordsPerLoop) {
+    GeoLoop gl = {.numVerts = n, .verts = (LatLng *)verts};
+    LinkedGeoPolygon poly = {0};
+    H3Error err = E_SUCCESS;
+    for (int i = 0; i < times && !err; i++) {
+        err = addLinkedGeoLoop(&gl, &poly);
+    }
+    int l = 0;
+    for (LinkedGeoLoop *loop = poly.first; loop != NULL; loop = loop->next) {
+        int c = 0;
+        for (LinkedLatLng *coord = loop->first; coord != NULL;
+             coord = coord->next) {
+            c++;
+        }
+        outCoordsPerLoop[l++] = c;
+    }
+    *outNumLoops = l;
+    H3_EXPORT(destroyLinkedMultiPolygon)(&poly);
+    return err;
+}
+
+// geoPolygonToLinkedGeoLoops on outer+holes (flattened input as for
+// linkedGeoPolygonToGeoPolygon); serialized loop/coord counts.
+H3Error h3goTest_geoPolygonToLinkedGeoLoops(const LatLng *verts,
+                                            const int *loopNumVerts,
+                                            int numLoops, int *outNumLoops,
+                                            int *outCoordsPerLoop) {
+    GeoPolygon gp = {0};
+    gp.geoloop.numVerts = loopNumVerts[0];
+    gp.geoloop.verts = (LatLng *)verts;
+    GeoLoop holes[8];
+    int v = loopNumVerts[0];
+    gp.numHoles = numLoops - 1;
+    gp.holes = holes;
+    for (int h = 1; h < numLoops; h++) {
+        holes[h - 1].numVerts = loopNumVerts[h];
+        holes[h - 1].verts = (LatLng *)&verts[v];
+        v += loopNumVerts[h];
+    }
+    LinkedGeoPolygon poly = {0};
+    H3Error err = geoPolygonToLinkedGeoLoops(&gp, &poly);
+    if (!err) {
+        int l = 0;
+        for (LinkedGeoLoop *loop = poly.first; loop != NULL;
+             loop = loop->next) {
+            int c = 0;
+            for (LinkedLatLng *coord = loop->first; coord != NULL;
+                 coord = coord->next) {
+                c++;
+            }
+            outCoordsPerLoop[l++] = c;
+        }
+        *outNumLoops = l;
+    }
+    H3_EXPORT(destroyLinkedMultiPolygon)(&poly);
+    return err;
+}
+
+// Error branches of the two conversion externs, on the upstream
+// testLinkedGeoConvert constructions:
+//   0: linked loop with 2 verts        -> linked->flat E_FAILED
+//   1: empty polygon node in chain     -> linked->flat E_FAILED
+//   2: geoloop with 2 verts            -> flat->linked E_FAILED
+//   3: empty chain                     -> linked->flat E_SUCCESS
+//   4: empty mpoly                     -> flat->linked E_SUCCESS
+H3Error h3goTest_linkedConvertError(int which) {
+    LatLng v1 = {0, 0};
+    LatLng v2 = {1, 0};
+    H3Error err = E_FAILED;
+    switch (which) {
+        case 0: {
+            LinkedGeoPolygon poly = {0};
+            LinkedGeoLoop *loop = addNewLinkedLoop(&poly);
+            addLinkedCoord(loop, &v1);
+            addLinkedCoord(loop, &v2);
+            GeoMultiPolygon mpoly;
+            err = linkedGeoPolygonToGeoMultiPolygon(&poly, &mpoly);
+            H3_EXPORT(destroyLinkedMultiPolygon)(&poly);
+            break;
+        }
+        case 1: {
+            LinkedGeoPolygon poly = {0};
+            addNewLinkedPolygon(&poly);
+            GeoMultiPolygon mpoly;
+            err = linkedGeoPolygonToGeoMultiPolygon(&poly, &mpoly);
+            H3_EXPORT(destroyLinkedMultiPolygon)(&poly);
+            break;
+        }
+        case 2: {
+            LatLng verts[2] = {{0, 0}, {1, 0}};
+            GeoPolygon gp = {.geoloop = {.numVerts = 2, .verts = verts}};
+            GeoMultiPolygon mpoly = {.numPolygons = 1, .polygons = &gp};
+            LinkedGeoPolygon out;
+            err = geoMultiPolygonToLinkedGeoPolygon(&mpoly, &out);
+            break;
+        }
+        case 3: {
+            LinkedGeoPolygon empty = {0};
+            GeoMultiPolygon mpoly;
+            err = linkedGeoPolygonToGeoMultiPolygon(&empty, &mpoly);
+            break;
+        }
+        case 4: {
+            GeoMultiPolygon mpoly = {.numPolygons = 0, .polygons = NULL};
+            LinkedGeoPolygon out;
+            err = geoMultiPolygonToLinkedGeoPolygon(&mpoly, &out);
+            break;
+        }
+    }
+    return err;
+}
+#endif
+
+#if __has_include("area.c")
+// Isolated success path of geoMultiPolygonToLinkedGeoPolygon: build the
+// flat input with cellsToMultiPolygon (its outputs are independently
+// parity-verified), convert, and serialize the linked chain as
+// per-polygon loop counts, per-loop coord counts, and flattened
+// vertices.
+H3Error h3goTest_geoMultiPolygonToLinked(const H3Index *cells, int64_t n,
+                                         int *numPolysOut, int *loopsPerPoly,
+                                         int *coordsPerLoop, LatLng *verts) {
+    GeoMultiPolygon mpoly;
+    H3Error err = H3_EXPORT(cellsToMultiPolygon)(cells, n, &mpoly);
+    if (err) return err;
+    LinkedGeoPolygon linked;
+    err = geoMultiPolygonToLinkedGeoPolygon(&mpoly, &linked);
+    H3_EXPORT(destroyGeoMultiPolygon)(&mpoly);
+    if (err) return err;
+    int p = 0, l = 0, v = 0;
+    for (LinkedGeoPolygon *poly = &linked; poly != NULL; poly = poly->next) {
+        int loops = 0;
+        for (LinkedGeoLoop *loop = poly->first; loop != NULL;
+             loop = loop->next) {
+            int coords = 0;
+            for (LinkedLatLng *c = loop->first; c != NULL; c = c->next) {
+                verts[v++] = c->vertex;
+                coords++;
+            }
+            coordsPerLoop[l++] = coords;
+            loops++;
+        }
+        loopsPerPoly[p++] = loops;
+    }
+    *numPolysOut = p;
+    H3_EXPORT(destroyLinkedMultiPolygon)(&linked);
+    return E_SUCCESS;
+}
+#endif
