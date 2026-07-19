@@ -103,7 +103,7 @@ check-cli-inventory:
 	@go run ./tools/cliinventory -upstream testref/h3-$(H3VER) -verify
 
 # Builds the pristine upstream C CLI under /tmp and differentially executes all
-# 170 registered scenarios. Requires cmake and a C toolchain.
+# 172 registered scenarios. Requires cmake and a C toolchain.
 test-cli-diff:
 	@cmake -E remove_directory /tmp/h3-cli-src-$(H3VER)
 	@cmake -E remove_directory /tmp/h3-cli-$(H3VER)

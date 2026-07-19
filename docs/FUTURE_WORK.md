@@ -22,7 +22,7 @@ Standing constraints that apply to everything below:
   (DR-003). Any serialization feature must convert at the edge, never by
   changing the internal representation.
 
-The upstream-compatible `h3` CLI, its 170 scenarios, differential harness,
+The upstream-compatible `h3` CLI, its 172 scenarios, differential harness,
 and release cross-builds are complete. Remaining CLI work is limited to
 optional shell completion; it should only be added if it remains dependency
 free and cannot alter upstream-compatible parsing or help.

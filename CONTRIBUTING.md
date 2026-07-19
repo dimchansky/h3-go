@@ -69,7 +69,7 @@ make check-api               # C-API completeness gate
 make api-inventory           # regenerate docs/c-api-inventory.csv
 make check-test-inventory    # case-level upstream test completeness gate
 make test-upstream-fixtures  # 526,546 golden conversion/boundary records
-make test-cli               # all 170 upstream CLI scenarios
+make test-cli               # all 172 upstream CLI scenarios
 make test-cli-process       # actual binary, pipes, stderr, exit status
 make check-cli-inventory    # CLI semantic/source/fixture drift gate
 make test-cli-diff          # build and compare with upstream C h3_bin

@@ -185,7 +185,7 @@ printf '[[37.775, -122.418], [40.689, -74.044]]' | h3 greatCircleDistanceKm -i -
 # 4126.3699216676
 ```
 
-All 63 H3 C v4.4.0 commands are implemented and locked by the 170 upstream
+All 63 H3 C v4.5.0 commands are implemented and locked by the 172 upstream
 CLI test scenarios plus differential runs against the compiled C binary.
 See [cmd/h3](cmd/h3) and the
 [compatibility contract](docs/cli-compatibility.md). Prebuilt,
@@ -263,7 +263,7 @@ Correctness is enforced in layers; each answers a different question:
 - **Differential vs the official binding** —
   [interop/uberdiff](interop/uberdiff) and the benchmark suite's
   equivalence gates run both implementations on identical inputs.
-- **CLI compatibility** — all 170 upstream CLI scenarios, plus differential
+- **CLI compatibility** — all 172 upstream CLI scenarios, plus differential
   execution against the compiled upstream `h3` binary.
 - **Allocation assertions** — `testing.AllocsPerRun` tests lock allocation
   budgets, including the zero-allocation guarantees of the warm paths that

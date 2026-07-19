@@ -24,8 +24,8 @@ type upstreamCLICase struct {
 
 func TestUpstreamCLICompatibility(t *testing.T) {
 	cases := loadUpstreamCLICases(t)
-	if len(cases) != 170 {
-		t.Fatalf("loaded %d upstream CLI cases; want 170", len(cases))
+	if len(cases) != 172 {
+		t.Fatalf("loaded %d upstream CLI cases; want 172", len(cases))
 	}
 	for _, tc := range cases {
 		tc := tc
@@ -49,6 +49,8 @@ func TestUpstreamCLICompatibility(t *testing.T) {
 					t.Fatal(err)
 				}
 				actual = fmt.Sprintf("%.3f", value)
+			case "linecount":
+				actual = strconv.Itoa(strings.Count(stdout.String(), "\n"))
 			}
 			if actual != tc.expected && !equivalentScalarFloat(actual, tc.expected) {
 				t.Fatalf("output mismatch\ncommand: %s\n got: %q\nwant: %q\nstderr: %q", tc.command, actual, tc.expected, stderr.String())
@@ -115,9 +117,15 @@ func prepareInvocation(t *testing.T, commandLine string) (argv []string, stdin [
 	if i := strings.Index(commandLine, " | "); i >= 0 {
 		pipeline := commandLine[i+3:]
 		commandLine = commandLine[:i]
-		if strings.Contains(pipeline, "xargs printf") {
+		switch {
+		case strings.Contains(pipeline, "xargs printf"):
 			transform = "float3"
-		} else {
+		case strings.Contains(pipeline, "wc -l"):
+			// The readCellsFromFile scenarios pipe through
+			// `wc -l | tr -d ' '`: the expectation is the output
+			// line count.
+			transform = "linecount"
+		default:
 			transform = "commas"
 		}
 	}
@@ -217,8 +225,8 @@ func TestParserAndTopLevelExitContract(t *testing.T) {
 		{name: "no args", code: 1, stdout: "Please use h3 --help"},
 		{name: "unknown", args: []string{"unknown"}, code: 1, stdout: "Please use h3 --help"},
 		{name: "general help", args: []string{"--help"}, code: 0, stdout: "cellToLatLng"},
-		{name: "version", args: []string{"--version"}, code: 0, stdout: "h3 4.4.0"},
-		{name: "command help", args: []string{"gridDisk", "--help"}, code: 0, stdout: "H3 4.4.0"},
+		{name: "version", args: []string{"--version"}, code: 0, stdout: "h3 4.5.0"},
+		{name: "command help", args: []string{"gridDisk", "--help"}, code: 0, stdout: "H3 4.5.0"},
 		{name: "missing required exits zero", args: []string{"gridDisk", "-k", "1"}, code: 0, stderr: "Required argument missing"},
 		{name: "duplicate exits zero", args: []string{"getNumCells", "-r", "1", "--resolution", "2"}, code: 0, stderr: "Argument specified multiple times"},
 		{name: "unknown option exits zero", args: []string{"pentagonCount", "--wat"}, code: 0, stderr: "Unknown argument"},

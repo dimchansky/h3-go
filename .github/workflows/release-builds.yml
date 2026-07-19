@@ -227,7 +227,7 @@ jobs:
           [[ -f "${name}/h3.exe" ]] && bin="${name}/h3.exe"
           version_out="$("$bin" --version)"
           echo "$version_out"
-          [[ "$version_out" == "h3 4.4.0 (${GITHUB_REF_NAME})" ]] \
+          [[ "$version_out" == "h3 4.5.0 (${GITHUB_REF_NAME})" ]] \
             || { echo "unexpected --version output"; exit 1; }
           cell="$("$bin" latLngToCell -r 9 --lat 37.7759 --lng -122.4180)"
           echo "$cell"

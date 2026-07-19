@@ -24,7 +24,7 @@
 //	                the tagged commit (vcs.revision), vcs.modified=false,
 //	                the target GOOS/GOARCH, and no host paths; the
 //	                host-runnable binary is executed and must print
-//	                "h3 4.4.0 (<tag>)".
+//	                "h3 4.5.0 (<tag>)".
 //	output          h3-<tag>-<os>-<arch>.tar.gz (.zip for windows) per
 //	                platform, each containing the binary, LICENSE, NOTICE,
 //	                and README.md (from cmd/h3/README-archive.md), plus a
@@ -185,7 +185,7 @@ func run(version, out, repo string) error {
 			if err != nil {
 				return fmt.Errorf("%s --version: %w", bin, err)
 			}
-			want := fmt.Sprintf("h3 4.4.0 (%s)", version)
+			want := fmt.Sprintf("h3 4.5.0 (%s)", version)
 			if verOut != want {
 				return fmt.Errorf("%s --version = %q, want %q", bin, verOut, want)
 			}

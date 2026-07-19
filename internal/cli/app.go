@@ -86,7 +86,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 0
 	}
 	if strings.EqualFold(args[0], "--version") {
-		writef(out, "h3 4.4.0 (%s)\n", versionText())
+		writef(out, "h3 4.5.0 (%s)\n", versionText())
 		if out.err != nil {
 			return 1
 		}
@@ -149,7 +149,7 @@ func failDirect(w io.Writer, message string) error {
 
 func printGeneralHelp(w io.Writer, commands []command) {
 	writeln(w, "h3: Please use one of the subcommands listed to perform an H3 calculation. Use h3 <SUBCOMMAND> --help for details on the usage of any subcommand.")
-	writeln(w, "H3 4.4.0")
+	writeln(w, "H3 4.5.0")
 	writeln(w)
 	writeln(w, "\t-h, --help\tShow this help message.")
 	for _, cmd := range commands {

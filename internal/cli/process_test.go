@@ -16,6 +16,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -183,6 +184,8 @@ func normalizedScenarioOutput(stdout, stderr string, merge bool, transform strin
 		return strings.NewReplacer("\r\n", ",", "\n", ",", "\r", ",").Replace(stdout)
 	case "float3":
 		return strings.TrimSpace(stdout)
+	case "linecount":
+		return strconv.Itoa(strings.Count(stdout, "\n"))
 	default:
 		return strings.TrimRight(actual, "\r\n")
 	}

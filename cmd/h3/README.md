@@ -2,7 +2,7 @@
 
 This directory builds **`h3`**, a drop-in, dependency-free replacement for
 the command-line utility that ships with the upstream
-[H3 C library](https://github.com/uber/h3). All 63 commands of H3 C v4.4.0
+[H3 C library](https://github.com/uber/h3). All 63 commands of H3 C v4.5.0
 are implemented with the same flags and aliases, input sources, output
 formats, and exit codes. The authoritative compatibility contract — including
 the deliberate compatibility quirks — is
@@ -115,7 +115,7 @@ contract); no command or an unknown command exits `1`.
 
 ```sh
 h3 --version
-# h3 4.4.0 (v0.3.0)
+# h3 4.5.0 (v0.4.0)
 ```
 
 The first number is the H3 C compatibility version. The parenthesized value
@@ -135,7 +135,7 @@ public `h3` package API. That split keeps the whole CLI testable in-process.
 Test layers (see [docs/cli-compatibility.md](../../docs/cli-compatibility.md)):
 
 ```sh
-make test-cli           # all 170 upstream CLI scenarios, in-process
+make test-cli           # all 172 upstream CLI scenarios, in-process
 make test-cli-process   # real binary: pipes, stderr, exit statuses
 make test-cli-diff      # differential vs the compiled upstream C h3 binary
 make check-cli-inventory # drift gate over commands/tests/fixtures/sources

@@ -87,9 +87,9 @@ func miscCommands() []command {
 		metricCellCommand("cellAreaM2", cell(), func(c h3.Cell) (float64, error) { return c.AreaM2() }),
 		metricResolutionCommand("getHexagonEdgeLengthAvgKm", res(), h3.HexagonEdgeLengthAvgKm),
 		metricResolutionCommand("getHexagonEdgeLengthAvgM", res(), h3.HexagonEdgeLengthAvgM),
-		metricEdgeCommand("edgeLengthRads", cell(), func(e h3.DirectedEdge) (float64, error) { return e.LengthRads() }),
-		metricEdgeCommand("edgeLengthKm", cell(), func(e h3.DirectedEdge) (float64, error) { return e.LengthKm() }),
-		metricEdgeCommand("edgeLengthM", cell(), func(e h3.DirectedEdge) (float64, error) { return e.LengthM() }),
+		metricEdgeCommand("edgeLengthRads", cell(), "%.10f\n", func(e h3.DirectedEdge) (float64, error) { return e.LengthRads() }),
+		metricEdgeCommand("edgeLengthKm", cell(), "%.10f\n", func(e h3.DirectedEdge) (float64, error) { return e.LengthKm() }),
+		metricEdgeCommand("edgeLengthM", cell(), "%.8f\n", func(e h3.DirectedEdge) (float64, error) { return e.LengthM() }),
 		{name: "getNumCells", description: "Returns the number of cells at a resolution", options: []optionSpec{res()}, run: runGetNumCells},
 		{name: "getRes0Cells", description: "Returns all resolution 0 cells", options: []optionSpec{format()}, run: runGetRes0Cells},
 		{name: "getPentagons", description: "Returns all pentagons at a resolution", options: []optionSpec{res(), format()}, run: runGetPentagons},
@@ -136,13 +136,16 @@ func metricCellCommand(name string, spec optionSpec, fn func(h3.Cell) (float64, 
 	}}
 }
 
-func metricEdgeCommand(name string, spec optionSpec, fn func(h3.DirectedEdge) (float64, error)) command {
+// metricEdgeCommand takes the printf format explicitly because the
+// group is no longer uniform: upstream prints edgeLengthRads/Km at
+// %.10lf but edgeLengthM at %.8lf (changed from %.10lf in H3 4.5.0).
+func metricEdgeCommand(name string, spec optionSpec, format string, fn func(h3.DirectedEdge) (float64, error)) command {
 	return command{name: name, description: name, options: []optionSpec{spec}, run: func(env environment, p parsedArgs) error {
 		value, err := fn(h3.DirectedEdge(rawHex(p.get("-c"))))
 		if err != nil {
 			return err
 		}
-		writef(env.out, "%.10f\n", value)
+		writef(env.out, format, value)
 		return nil
 	}}
 }
