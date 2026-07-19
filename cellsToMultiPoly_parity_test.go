@@ -393,16 +393,23 @@ func Test_createGlobeMultiPolygon_parity(t *testing.T) {
 }
 
 // assertMultiPolyParity compares a Go and C geoMultiPolygon: counts
-// exact; vertices within vec3UlpClose. When allTied is true (the globe
-// case: all outer areas equal, order implementation-defined), only the
-// counts are compared here — the globe contents are covered exactly by
-// Test_createGlobeMultiPolygon_parity.
-func assertMultiPolyParity(t *testing.T, name string, goOut, cOut geoMultiPolygon, allTied bool) {
+// exact; vertices within vec3UlpClose. When orderNormalize is true (the
+// globe case: all outer areas tie, so the polygon order is
+// implementation-defined), the polygon records are order-normalized by
+// sortLinkedPolyRecords independently on each side — each polygon's
+// internal outer/hole loop order and vertex sequence untouched — and
+// then the complete structure is compared: outer/hole counts, every
+// loop's vertex count, and every vertex.
+func assertMultiPolyParity(t *testing.T, name string, goOut, cOut geoMultiPolygon, orderNormalize bool) {
 	t.Helper()
 	if goOut.NumPolygons != cOut.NumPolygons {
 		t.Fatalf("%s: NumPolygons Go=%d C=%d", name, goOut.NumPolygons, cOut.NumPolygons)
 	}
-	if allTied {
+	if orderNormalize {
+		goRecs, cRecs := multiPolyRecords(goOut), multiPolyRecords(cOut)
+		sortLinkedPolyRecords(goRecs)
+		sortLinkedPolyRecords(cRecs)
+		assertPolyRecordsEqual(t, name, goRecs, cRecs)
 		return
 	}
 	for i := int32(0); i < goOut.NumPolygons; i++ {
@@ -526,6 +533,53 @@ func sortLinkedPolyRecords(recs []linkedPolyRecord) {
 	})
 }
 
+// multiPolyRecords converts a geoMultiPolygon into per-polygon records
+// (outer loop first, then holes, matching the linked-chain layout),
+// preserving each polygon's internal loop order and vertex sequence.
+func multiPolyRecords(m geoMultiPolygon) []linkedPolyRecord {
+	recs := make([]linkedPolyRecord, 0, m.NumPolygons)
+	for _, p := range m.Polygons {
+		rec := linkedPolyRecord{coordsPerLoop: []int32{int32(len(p.GeoLoop))}}
+		rec.verts = append(rec.verts, p.GeoLoop...)
+		for _, h := range p.Holes {
+			rec.coordsPerLoop = append(rec.coordsPerLoop, int32(len(h)))
+			rec.verts = append(rec.verts, h...)
+		}
+		recs = append(recs, rec)
+	}
+	return recs
+}
+
+// assertPolyRecordsEqual compares two per-polygon record slices in
+// full: loop counts and per-loop coordinate counts exact, every vertex
+// within vec3UlpClose.
+func assertPolyRecordsEqual(t *testing.T, name string, goRecs, cRecs []linkedPolyRecord) {
+	t.Helper()
+	if len(goRecs) != len(cRecs) {
+		t.Fatalf("%s: NumPolygons Go=%d C=%d", name, len(goRecs), len(cRecs))
+	}
+	for p := range goRecs {
+		gr, cr := goRecs[p], cRecs[p]
+		if len(gr.coordsPerLoop) != len(cr.coordsPerLoop) {
+			t.Fatalf("%s poly %d: loops Go=%d C=%d", name, p, len(gr.coordsPerLoop), len(cr.coordsPerLoop))
+		}
+		for l := range gr.coordsPerLoop {
+			if gr.coordsPerLoop[l] != cr.coordsPerLoop[l] {
+				t.Fatalf("%s poly %d loop %d: coords Go=%d C=%d", name, p, l, gr.coordsPerLoop[l], cr.coordsPerLoop[l])
+			}
+		}
+		if len(gr.verts) != len(cr.verts) {
+			t.Fatalf("%s poly %d: verts Go=%d C=%d", name, p, len(gr.verts), len(cr.verts))
+		}
+		for i := range gr.verts {
+			if !vec3UlpClose(gr.verts[i].Lat.Rad(), cr.verts[i].Lat.Rad()) ||
+				!vec3UlpClose(gr.verts[i].Lng.Rad(), cr.verts[i].Lng.Rad()) {
+				t.Fatalf("%s poly %d vert %d: Go=%v C=%v", name, p, i, gr.verts[i], cr.verts[i])
+			}
+		}
+	}
+}
+
 func Test_cellsToLinkedMultiPolygon_450_parity(t *testing.T) {
 	// Isolated cellsToLinkedMultiPolygon: the C side calls ONLY the
 	// public function and serializes its linked output directly —
@@ -563,33 +617,11 @@ func Test_cellsToLinkedMultiPolygon_450_parity(t *testing.T) {
 			t.Fatalf("%s: linkage invariants Go=%v C=%v", name, goInv, cInv)
 		}
 		cRecs := splitLinkedShape(t, cShape)
-		if len(goRecs) != len(cRecs) {
-			t.Fatalf("%s: NumPolygons Go=%d C=%d", name, len(goRecs), len(cRecs))
-		}
 		if name == "globeAllRes0" {
 			sortLinkedPolyRecords(goRecs)
 			sortLinkedPolyRecords(cRecs)
 		}
-		for p := range goRecs {
-			gr, cr := goRecs[p], cRecs[p]
-			if len(gr.coordsPerLoop) != len(cr.coordsPerLoop) {
-				t.Fatalf("%s poly %d: loops Go=%d C=%d", name, p, len(gr.coordsPerLoop), len(cr.coordsPerLoop))
-			}
-			for l := range gr.coordsPerLoop {
-				if gr.coordsPerLoop[l] != cr.coordsPerLoop[l] {
-					t.Fatalf("%s poly %d loop %d: coords Go=%d C=%d", name, p, l, gr.coordsPerLoop[l], cr.coordsPerLoop[l])
-				}
-			}
-			if len(gr.verts) != len(cr.verts) {
-				t.Fatalf("%s poly %d: verts Go=%d C=%d", name, p, len(gr.verts), len(cr.verts))
-			}
-			for i := range gr.verts {
-				if !vec3UlpClose(gr.verts[i].Lat.Rad(), cr.verts[i].Lat.Rad()) ||
-					!vec3UlpClose(gr.verts[i].Lng.Rad(), cr.verts[i].Lng.Rad()) {
-					t.Fatalf("%s poly %d vert %d: Go=%v C=%v", name, p, i, gr.verts[i], cr.verts[i])
-				}
-			}
-		}
+		assertPolyRecordsEqual(t, name, goRecs, cRecs)
 	}
 
 	// The 4.5.0 behavioral change: invalid cells now fail with
