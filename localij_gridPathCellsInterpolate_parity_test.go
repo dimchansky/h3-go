@@ -12,8 +12,11 @@ import "testing"
 // exactly.
 
 func Test_gridPathCellsInterpolate_parity(t *testing.T) {
-	// Deterministic same-res pairs from base-cell center children.
-	var cells []h3Index
+	// Deterministic same-res neighbor pairs around every listed base
+	// cell's center child (base 58 is a pentagon, exercising distorted
+	// neighborhoods). Short distances keep gridDistance computable.
+	type pair struct{ start, end h3Index }
+	var testPairs []pair
 	for _, base := range []int32{2, 15, 37, 58, 79, 100, 121} {
 		var cell h3Index
 		setH3Index(&cell, 0, base, 0)
@@ -21,18 +24,15 @@ func Test_gridPathCellsInterpolate_parity(t *testing.T) {
 		if err != eSuccess {
 			t.Fatalf("cellToCenterChild(base %d): %v", base, err)
 		}
-		cells = append(cells, child)
-	}
-	// Neighboring pairs (short distances keep gridDistance computable).
-	var ring [7]h3Index
-	if err := gridRing(cells[0], 1, ring[:]); err != eSuccess {
-		t.Fatalf("gridRing: %v", err)
-	}
-	type pair struct{ start, end h3Index }
-	testPairs := []pair{
-		{cells[0], ring[0]},
-		{cells[0], ring[3]},
-		{ring[0], ring[3]},
+		var ring [7]h3Index
+		if err := gridRing(child, 1, ring[:]); err != eSuccess {
+			t.Fatalf("gridRing(base %d): %v", base, err)
+		}
+		testPairs = append(testPairs,
+			pair{child, ring[0]},
+			pair{child, ring[3]},
+			pair{ring[0], ring[3]},
+		)
 	}
 	for _, p := range testPairs {
 		var distance int64
@@ -65,6 +65,60 @@ func Test_gridPathCellsInterpolate_parity(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func Test_gridPathCellsInterpolate_failingCases_parity(t *testing.T) {
+	// Direct helper parity on the two 4.5.0 behavioral gridPathCells
+	// pairs, calling the interpolation attempts exactly as
+	// gridPathCells issues them: the start-anchored forward fill, then
+	// the end-anchored reverse fill. For the pentagon pair the forward
+	// attempt fails and the reverse attempt succeeds; for the pinned
+	// pair both attempts fail. Error codes compare exactly on every
+	// attempt; the successful reverse fill compares every written cell.
+	cases := []struct {
+		name            string
+		start, end      h3Index
+		reverseSucceeds bool
+	}{
+		{"pentagonReverseInterpolation", 0x820807fffffffff, 0x8208e7fffffffff, true},
+		{"knownFailureNotCoveredByReverseInterpolation", 0x8411b61ffffffff, 0x84016d3ffffffff, false},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var distance int64
+			if err := gridDistance(tc.start, tc.end, &distance); err != eSuccess {
+				t.Fatalf("gridDistance: %v", err)
+			}
+			goOut := make([]h3Index, distance+1)
+			cOut := make([]h3Index, distance+1)
+
+			goFwd := gridPathCellsInterpolate(tc.start, tc.end, distance, goOut, 0, 1)
+			cFwd := gridPathCellsInterpolateC(tc.start, tc.end, distance, cOut, 0, 1)
+			if goFwd != cFwd {
+				t.Fatalf("forward interpolate: Go err=%v C err=%v", goFwd, cFwd)
+			}
+			if goFwd == eSuccess {
+				t.Fatalf("forward interpolate unexpectedly succeeded (case exists to exercise the failure)")
+			}
+
+			goRev := gridPathCellsInterpolate(tc.end, tc.start, distance, goOut, distance, -1)
+			cRev := gridPathCellsInterpolateC(tc.end, tc.start, distance, cOut, distance, -1)
+			if goRev != cRev {
+				t.Fatalf("reverse interpolate: Go err=%v C err=%v", goRev, cRev)
+			}
+			if got := goRev == eSuccess; got != tc.reverseSucceeds {
+				t.Fatalf("reverse interpolate: err=%v, want success=%v", goRev, tc.reverseSucceeds)
+			}
+			if goRev != eSuccess {
+				return
+			}
+			for i := range goOut {
+				if goOut[i] != cOut[i] {
+					t.Fatalf("reverse interpolate[%d]: Go=%x C=%x", i, uint64(goOut[i]), uint64(cOut[i]))
+				}
+			}
+		})
 	}
 }
 

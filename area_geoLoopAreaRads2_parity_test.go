@@ -92,8 +92,8 @@ func Test_kadd_parity(t *testing.T) {
 }
 
 func Test_cagnoli_parity(t *testing.T) {
-	// Trig-dependent: last-ulp tolerance (libm differences); see the
-	// file comment.
+	// Trig-dependent: compares with vec3UlpClose (libm differences;
+	// measured ≤1 ulp on these cases); see the file comment.
 	pts := []LatLng{
 		{Lat: Rad(0.5), Lng: Rad(-1.3)},
 		{Lat: Rad(0.6), Lng: Rad(-1.2)},

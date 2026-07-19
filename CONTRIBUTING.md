@@ -75,6 +75,34 @@ make check-cli-inventory    # CLI semantic/source/fixture drift gate
 make test-cli-diff          # build and compare with upstream C h3_bin
 ```
 
+### Floating-point profile of the C parity oracle
+
+The harness compiles the reference C with `-ffp-contract=off`
+(`make test-c2go`; the evidence is in the comment above that Makefile
+target). This is a deliberate policy choice, not an incidental flag:
+
+- **What it does:** it disables floating-point contraction only — the
+  compiler may not fuse `a*b + c` into an FMA — so every intermediate
+  product is rounded to `float64`. It does not change libm or any other
+  platform floating-point behavior.
+- **Why:** without it the oracle's arithmetic differs by platform
+  (clang contracts even at `-O0` on arm64; gcc at the x86-64 SSE2
+  baseline does not), so "parity" would mean different arithmetic
+  locally and in CI. Go's gc may also fuse (the spec permits it, and it
+  does on arm64); ported code that asserts bit-exact parity defeats
+  fusion with explicit `float64()` conversions, which the spec
+  guarantees force rounding (e.g. `vec3d_vec3Dot.go`).
+- **What must still compare exactly:** all discrete outputs — cell
+  indexes, error codes, faces, IJK coordinates — and pure-arithmetic
+  helpers (no libm calls), which are asserted bit-exact.
+- **What may not:** results that pass through libm (`sin`, `cos`,
+  `atan2`, …) can legitimately differ between Go's math library and the
+  platform libm by 1 ulp per call; each affected parity test documents
+  a measured tolerance (an explicit ulp-distance bound plus an absolute
+  floor for cancellation-dominated near-zero values, or upstream's own
+  relative tolerance for accumulated areas). Tolerances must be
+  measured and justified in the test, never widened ad hoc.
+
 Differential testing and benchmarking against the official cgo binding:
 
 ```sh

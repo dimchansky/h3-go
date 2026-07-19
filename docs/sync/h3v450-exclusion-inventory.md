@@ -91,6 +91,11 @@ regardless of the Go side.
 pass in both configurations (their absolute tolerances absorb the
 ~1e-15-relative area change) and deliberately stay ungated for coverage;
 `Test_latLngToCell/cellToLatLng/cellToBoundary` and the exhaustive
-parity suites pass unchanged at 4.5.0 on the tested inputs (the Vec3
-refactor produced no observable difference there — record §14 risk 1
-evidence).
+parity suites pass unchanged at 4.5.0 within their documented
+comparison disciplines — cell indexes and error codes exactly,
+cellToLatLng coordinates within the suite's 1e-10 rad tolerance,
+boundary vertices within 1e-12 rad, and the upstream fixtures within
+their 1e-6-degree threshold (latLngToCell fixture indexes exactly). At
+those tolerances the Vec3 refactor produced no observable difference
+(record §14 risk 1 evidence); bit-identity of the continuous outputs is
+not claimed.

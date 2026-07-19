@@ -8,9 +8,11 @@ import "testing"
 // (_vec3ToFaceIjk, _vec3ToHex2d, _vec3ToClosestFace, _faceIjkToVec3,
 // _hex2dToVec3, _vec3AzimuthRads, _vec3TangentBasis; file-statics via
 // same-TU wrappers). Discrete outputs (faces, IJK coordinates) compare
-// exactly; continuous outputs admit a last-ulp difference because the
+// exactly; continuous outputs compare with vec3UlpClose because the
 // pipeline runs through sin/cos/tan/atan2/acos, where Go's math library
-// and the platform libm legitimately differ by 1 ulp on some inputs.
+// and the platform libm legitimately differ by 1 ulp on some inputs —
+// measured here as up to 7 ulps relative plus sub-2e-16 absolute
+// cancellation residuals on small-magnitude components.
 
 func vec3PipelineSamplePoints(t *testing.T) []vec3d {
 	t.Helper()

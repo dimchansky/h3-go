@@ -114,12 +114,13 @@ func TestCellToVec3UnitSphere(t *testing.T) {
 		t.Fatalf("cellToVec3: %v", err)
 	}
 	// Upstream asserts < DBL_EPSILON, which holds only under C compilers'
-	// floating-point contraction (FMA in vec3Dot at -O2): with strict IEEE
-	// evaluation — mandated by Go, and produced by the uncontracted C the
-	// parity harness compiles — this cell's norm is exactly 1 ulp above
-	// 1.0. The vector components are bit-identical to C; only the
-	// test-local norm recomputation differs, so the assertion admits
-	// exactly one ulp here.
+	// floating-point contraction (FMA in vec3Dot at -O2). Go does not
+	// mandate uncontracted evaluation — the spec permits FMA fusion, and
+	// gc fuses on arm64 — but the ported vec3Dot forces per-product
+	// rounding via explicit float64() conversions, matching the
+	// uncontracted C the parity harness compiles (-ffp-contract=off).
+	// Under that shared uncontracted evaluation this cell's norm is
+	// exactly 1 ulp above 1.0; the assertion admits exactly one ulp here.
 	if math.Abs(vec3Norm(v)-1.0) > testVec3DblEpsilon {
 		t.Error("cellToVec3 result is on the unit sphere")
 	}

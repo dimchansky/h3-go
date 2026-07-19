@@ -257,13 +257,17 @@ COVERPROFILE ?=
 # (2026-07, corrective pass for #29-#32): without the flag, the
 # harness-compiled clang -O0 code on arm64 contracts a*b+/-c*d into FMA
 # — observable as vec3Cross(v,v) returning nonzero residuals (~5e-18),
-# impossible under strict IEEE — while gcc on the x86-64 CI runners
-# emits no FMA at its SSE2 baseline. The flag pins the oracle to strict
-# IEEE on every platform so local and CI parity compare the same
-# semantics. Go's gc also fuses on arm64 (the spec permits it); ported
-# code defeats that where needed via explicit float64() conversions,
-# which the spec guarantees force rounding. Discrete outputs (indexes,
-# error codes) are unaffected and always compared exactly.
+# impossible under uncontracted IEEE evaluation — while gcc on the
+# x86-64 CI runners emits no FMA at its SSE2 baseline. The flag only
+# disables contraction (it does not change libm or any other platform
+# floating-point behavior), so local and CI parity compare the same
+# contraction-free arithmetic; residual cross-libm differences are
+# covered by the measured tolerances documented in the parity tests.
+# Go's gc also fuses on arm64 (the spec permits it); ported code
+# defeats that where needed via explicit float64() conversions, which
+# the spec guarantees force rounding. Discrete outputs (indexes, error
+# codes) are unaffected and always compared exactly. Policy recorded in
+# CONTRIBUTING.md ("Floating-point profile of the C parity oracle").
 test-c2go:
 	@if [ -n "$(TEST)" ]; then \
 		echo "Running c2go parity test: $(TEST) (requires cgo)..."; \

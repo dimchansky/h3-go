@@ -10,10 +10,12 @@ import (
 // Parity for the internal cellToVec3/vec3ToCell added in H3 4.5.0
 // (h3Index.c) over every base cell's center child at several resolutions
 // plus error paths. Discrete results (cell indexes, error codes) must
-// match C exactly; the vec3 components admit a last-ulp difference
+// match C exactly; the vec3 components compare with vec3UlpClose
 // because the pipeline runs through sin/cos/atan2/acos, where Go's math
 // library and the platform libm legitimately differ by 1 ulp on some
-// inputs.
+// inputs — measured here as up to 7 ulps in the relative regime plus
+// sub-2e-16 absolute cancellation residuals on small-magnitude
+// components (see the comparator's doc for the regimes).
 
 func Test_cellToVec3_vec3ToCell_parity(t *testing.T) {
 	for base := int32(0); base < 122; base++ {
