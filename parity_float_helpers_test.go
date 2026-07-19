@@ -2,10 +2,8 @@
 
 package h3
 
-// Shared float-comparison helpers for the parity suite. They previously
-// lived in latLng__cellAreaRads2_parity_test.go, which is gated !h3v450
-// (docs/sync/h3v450-exclusion-inventory.md), while ungated tests such as
-// the cellAreaKm2/M2 parity tests still need them in both configurations.
+// Shared float-comparison helpers for the parity suite, used across
+// several parity test files (e.g. the cellAreaKm2/M2 and vec3 suites).
 
 // floatAlmostEqual is a helper function for floating point comparison.
 func floatAlmostEqual(a, b, tolerance float64) bool {

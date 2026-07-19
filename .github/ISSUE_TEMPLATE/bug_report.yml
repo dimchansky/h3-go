@@ -1,12 +1,12 @@
 name: Bug report
-description: Behavior that differs from H3 C v4.4.0, a crash, or another defect
+description: Behavior that differs from H3 C v4.5.0, a crash, or another defect
 labels: [bug]
 body:
   - type: markdown
     attributes:
       value: >
         Thanks for the report. This library targets behavioral equivalence
-        with H3 C v4.4.0 (intentional differences are listed in
+        with H3 C v4.5.0 (intentional differences are listed in
         [docs/DEVIATIONS.md](https://github.com/dimchansky/h3-go/blob/master/docs/DEVIATIONS.md)) —
         a divergence from the C implementation that is not listed there is
         always a bug. For security-sensitive reports, please use
@@ -18,7 +18,7 @@ body:
       label: What happened?
       description: What did you do, what did you expect, what happened instead?
       placeholder: |
-        Calling h3.LatLngToCell(..., 9) returns X, but H3 C v4.4.0 (or
+        Calling h3.LatLngToCell(..., 9) returns X, but H3 C v4.5.0 (or
         uber/h3-go v4.4.x) returns Y for the same input.
     validations:
       required: true

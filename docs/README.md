@@ -32,7 +32,7 @@ generated per-file map is
 
 | Document | Contents |
 |---|---|
-| [api-map.md](api-map.md) | Generated C→Go API map: every public H3 C v4.4.0 function with its idiomatic Go equivalent and the additive `Append*`/`*Seq` forms — the quick-discovery projection of the comparison matrix. |
+| [api-map.md](api-map.md) | Generated C→Go API map: every public H3 C v4.5.0 function with its idiomatic Go equivalent and the additive `Append*`/`*Seq` forms — the quick-discovery projection of the comparison matrix. |
 
 ## Design and policy
 
@@ -69,8 +69,7 @@ generated per-file map is
 |---|---|
 | [ported-c-tests.md](ported-c-tests.md) | Human-readable entry point for upstream test equivalence: audited scope, dispositions, fixture/fuzz suites, and the per-release update procedure. |
 | [sync/4.3.0-to-4.4.0.md](sync/4.3.0-to-4.4.0.md) | Reviewed record of the 4.3.0 → 4.4.0 upstream sync — the template future syncs follow. |
-| [sync/4.4.0-to-4.5.0.md](sync/4.4.0-to-4.5.0.md) | Discovery record for the 4.4.0 → 4.5.0 upstream migration: full symbol/test/CLI dispositions and the proposed implementation-issue decomposition. Discovery only — the parity target remains 4.4.0 until the implementation issues land. |
-| [sync/h3v450-exclusion-inventory.md](sync/h3v450-exclusion-inventory.md) | Temporary migration artifact (#27): every file/test excluded from the `H3VER=4.5.0` parity configuration by the `!h3v450` build tag, mapped to its owning implementation issue. Must be empty (and deleted) at the #36 cutover. |
+| [sync/4.4.0-to-4.5.0.md](sync/4.4.0-to-4.5.0.md) | Reviewed record of the 4.4.0 → 4.5.0 upstream migration: full symbol/test/CLI dispositions, the implementation-issue decomposition, and the appended completion evidence. The migration is complete — the parity target is 4.5.0. |
 
 ## Generated inventories (do not edit by hand)
 

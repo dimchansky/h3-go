@@ -68,6 +68,7 @@ getDirectedEdgeDestination,"H3Error getDirectedEdgeDestination(H3Index edge, H3I
 directedEdgeToCells,"H3Error directedEdgeToCells(H3Index edge, H3Index *originDestination)",directedEdge__directedEdgeToCells.go,directedEdgeToCells,"func directedEdgeToCells(edge h3Index, originDestination []h3Index) h3Error",true,attr: directedEdge.c
 originToDirectedEdges,"H3Error originToDirectedEdges(H3Index origin, H3Index *edges)",directedEdge__originToDirectedEdges.go,originToDirectedEdges,"func originToDirectedEdges(origin h3Index, edges []h3Index) h3Error",true,attr: directedEdge.c
 directedEdgeToBoundary,"H3Error directedEdgeToBoundary(H3Index edge, CellBoundary *gb)",directedEdge_directedEdgeToBoundary.go,directedEdgeToBoundary,"func directedEdgeToBoundary(edge h3Index, cb *CellBoundary) h3Error",true,attr: directedEdge.c
+reverseDirectedEdge,"H3Error reverseDirectedEdge(H3Index edge, H3Index *out)",directedEdge_reverseDirectedEdge.go,reverseDirectedEdge,"func reverseDirectedEdge(edge h3Index, out *h3Index) h3Error",true,attr: directedEdge.c
 cellToVertex,"H3Error cellToVertex(H3Index origin, int vertexNum, H3Index *out)",vertex_cellToVertex.go,cellToVertex,"func cellToVertex(cell h3Index, vertexNum int32, out *h3Index) h3Error",true,attr: vertex.c
 cellToVertexes,"H3Error cellToVertexes(H3Index origin, H3Index *vertexes)",vertex_cellToVertexes.go,cellToVertexes,"func cellToVertexes(cell h3Index, vertexes *[6]h3Index) h3Error",true,attr: vertex.c
 vertexToLatLng,"H3Error vertexToLatLng(H3Index vertex, LatLng *point)",vertex_vertexToLatLng.go,vertexToLatLng,"func vertexToLatLng(vertex h3Index, coord *LatLng) h3Error",true,attr: vertex.c
@@ -185,7 +186,6 @@ ijToIjk,(C-internal: coordijk.h),coordijk__ijToIjk.go,ijToIjk,"func ijToIjk(ij *
 ijkDistance,(C-internal: coordijk.h),coordijk__ijkDistance.go,ijkDistance,"func ijkDistance(c1, c2 *coordIJK) int32",false,kind: func
 ijkToCube,(C-internal: coordijk.h),coordijk__ijkToCube.go,ijkToCube,func ijkToCube(ijk *coordIJK),false,kind: func
 ijkToIj,(C-internal: coordijk.h),coordijk__ijkToIj.go,ijkToIj,"func ijkToIj(ijk *coordIJK, ij *CoordIJ)",false,kind: func
-reverseDirectedEdge,(C-internal: directedEdge.c),directedEdge_reverseDirectedEdge.go,reverseDirectedEdge,"func reverseDirectedEdge(edge h3Index, out *h3Index) h3Error",false,kind: func
 _adjustOverageClassII,(C-internal: faceijk.c),faceijk__adjustOverageClassII.go,_adjustOverageClassII,"func _adjustOverageClassII(fijk *faceIJK, res int32, pentLeading4 bool, substrate bool) overage",false,kind: func
 _adjustPentVertOverage,(C-internal: faceijk.c),faceijk__adjustPentVertOverage.go,_adjustPentVertOverage,"func _adjustPentVertOverage(fijk *faceIJK, res int32) overage",false,kind: func
 _faceIjkPentToCellBoundary,(C-internal: faceijk.c),faceijk__faceIjkPentToCellBoundary.go,_faceIjkPentToCellBoundary,"func _faceIjkPentToCellBoundary(h *faceIJK, res int32, start int32, length int32, g *CellBoundary)",false,kind: func
@@ -312,8 +312,8 @@ pointInsideGeoLoop,(C-internal: polygon.c),polygon__pointInsideGeoLoop.go,pointI
 pointInsidePolygon,(C-internal: polygon.c),polygon__pointInsidePolygon.go,pointInsidePolygon,"func pointInsidePolygon(poly GeoPolygon, bboxes []bbox, coord *LatLng) bool",false,kind: func
 validatePolygonFlags,(C-internal: polygon.c),polygon__validatePolygonFlags.go,validatePolygonFlags,func validatePolygonFlags(flags uint32) h3Error,false,kind: func
 GENERIC_LOOP_ALGO(bboxFrom),(C-internal: polygonAlgos.h),linkedGeo__bboxFromLinkedGeoLoop.go,bboxFromLinkedGeoLoop,"func bboxFromLinkedGeoLoop(loop *linkedGeoLoop, bb *bbox)",false,kind: func
-GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoop,func isClockwiseLinkedGeoLoop(loop *linkedGeoLoop) bool,false,kind: func
 GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoop,func isClockwiseGeoLoop(loop GeoLoop) bool,false,kind: func
+GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoop,func isClockwiseLinkedGeoLoop(loop *linkedGeoLoop) bool,false,kind: func
 GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoopNormalized,"func isClockwiseGeoLoopNormalized(loop GeoLoop, isTransmeridian bool) bool",false,kind: func
 GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoopNormalized,"func isClockwiseLinkedGeoLoopNormalized(loop *linkedGeoLoop, isTransmeridian bool) bool",false,kind: func
 GENERIC_LOOP_ALGO(pointInside),(C-internal: polygonAlgos.h),linkedGeo__pointInsideLinkedGeoLoop.go,pointInsideLinkedGeoLoop,"func pointInsideLinkedGeoLoop(loop *linkedGeoLoop, bbox *bbox, coord *LatLng) bool",false,kind: func

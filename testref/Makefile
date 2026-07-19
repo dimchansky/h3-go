@@ -2,7 +2,7 @@
 # Downloads and builds against H3 C library for test validation
 
 # To upgrade H3 version, simply change this line and run 'make clean-all && make'
-H3_VERSION = 4.4.0
+H3_VERSION = 4.5.0
 H3_URL = https://github.com/uber/h3/archive/v$(H3_VERSION).tar.gz
 H3_ARCHIVE = h3-$(H3_VERSION).tar.gz
 H3_DIR = h3-$(H3_VERSION)

@@ -36,7 +36,7 @@ then cross-references the two.
 - **`-verify`** exits 1 unless every C public function is ported *and*
   referenced by an `H3 C API:` doc line (or listed in the reviewed omissions
   table inside `main.go`).
-- Flags: `-repo`, `-h3ver` (default 4.4.0), `-header` (explicit header
+- Flags: `-repo`, `-h3ver` (default 4.5.0), `-header` (explicit header
   path), `-verify`. Requires `make -C testref h3-source` first.
 - CI keeps the committed CSV current: the `api-gates` job regenerates it and
   fails on `git diff`.
@@ -219,7 +219,7 @@ their archives must be byte-identical.
 - **Postconditions:** every binary's `go version -m` must report the module
   path, the tagged commit, `vcs.modified=false`, the target GOOS/GOARCH,
   and no host paths; the host-runnable binary is executed and must print
-  `h3 4.4.0 (<tag>)`.
+  `h3 4.5.0 (<tag>)`.
 - **Deterministic archives:** sorted entries, uid/gid 0, modes 0755/0644,
   all mtimes = `SOURCE_DATE_EPOCH`, zero gzip MTIME/name, extra-field-free
   zip entries with fixed DOS timestamps; plus a sha256sum-compatible

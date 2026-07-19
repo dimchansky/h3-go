@@ -202,11 +202,12 @@ func TestMetricsParity(t *testing.T) {
 			t.Fatal(err)
 		}
 		// This module pins exact index equality but only near-equality for
-		// areas: the binding wraps a different upstream patch release
-		// (v4.2.x vs our v4.4.0 parity target), and floating-point area
-		// computation differs at ~1e-10 relative near pentagons across
-		// those releases. Exact v4.4.0 equality is enforced by the cgo
-		// parity suite in the root module.
+		// areas: both sides now implement the H3 C v4.5.0 algorithm, but
+		// the binding computes through cgo-compiled C while this library
+		// is pure Go, and floating-point codegen/libm differences reach
+		// ~2e-12 relative near pentagons (measured across the pentagon
+		// 2-disks of res 0-6 at the v4.5.0/v4.5.0 pairing). Exact v4.5.0
+		// equality is enforced by the cgo parity suite in the root module.
 		if math.Abs(gotA-wantA)/wantA > 1e-9 {
 			t.Fatalf("AreaKm2(%v): %v != %v", c, gotA, wantA)
 		}

@@ -1,6 +1,6 @@
 # H3 C → Go API map
 
-Every public function of **H3 C v4.4.0**, mapped to this library's public
+Every public function of **H3 C v4.5.0**, mapped to this library's public
 Go API. Use this page to find the Go name for a C function you already
 know; full signatures and documentation are on
 [pkg.go.dev](https://pkg.go.dev/github.com/dimchansky/h3-go).
@@ -17,7 +17,7 @@ How to read the table:
   purpose because Go semantics absorb its job.
 
 Related documents: the [comparison matrix](comparison-uber-h3-go.md) maps
-the same 78 functions against the official uber/h3-go cgo binding with
+the same 79 functions against the official uber/h3-go cgo binding with
 status, semantics, allocation, and migration columns; the
 [migration guide](migration-from-uber-h3-go.md) covers call-site changes
 when switching from the binding.
@@ -31,7 +31,7 @@ drifts from the matrix, the C-API inventory, or the locked API surface.
 
 <!-- BEGIN GENERATED: ubercompare api-map (edit docs/comparison-uber-h3-go.csv and run `make gen-ubercompare`) -->
 
-All **78** public functions of the pinned H3 C release are mapped. A
+All **79** public functions of the pinned H3 C release are mapped. A
 long dash (—) in the Go API column marks a C function whose job is
 absorbed by Go semantics — sentinel errors carry the message text, the
 garbage collector replaces destructors, and one sizing helper stays
@@ -108,6 +108,7 @@ internal; the annotation says where that behavior lives.
 | `directedEdgeToCells` | `DirectedEdge.Cells` | — |
 | `originToDirectedEdges` | `Cell.DirectedEdges` | — |
 | `directedEdgeToBoundary` | `DirectedEdge.Boundary` | — |
+| `reverseDirectedEdge` | `DirectedEdge.Reverse` | — |
 
 ### Vertexes
 

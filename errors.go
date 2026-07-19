@@ -84,16 +84,16 @@ var (
 	// family for an invalid ContainmentMode.
 	ErrOptionInvalid = errors.New("h3: " + describeH3Error(eOptionInvalid))
 	// ErrIndexInvalid corresponds to eIndexInvalid: index argument was not
-	// valid (H3 C 4.4.0).
+	// valid (H3 C 4.5.0).
 	ErrIndexInvalid = errors.New("h3: " + describeH3Error(eIndexInvalid))
 	// ErrBaseCellDomain corresponds to eBaseCellDomain: base cell number was
-	// outside of acceptable range (H3 C 4.4.0).
+	// outside of acceptable range (H3 C 4.5.0).
 	ErrBaseCellDomain = errors.New("h3: " + describeH3Error(eBaseCellDomain))
 	// ErrDigitDomain corresponds to eDigitDomain: child digits invalid
-	// (H3 C 4.4.0).
+	// (H3 C 4.5.0).
 	ErrDigitDomain = errors.New("h3: " + describeH3Error(eDigitDomain))
 	// ErrDeletedDigit corresponds to eDeletedDigit: deleted subsequence
-	// indicates invalid index (H3 C 4.4.0).
+	// indicates invalid index (H3 C 4.5.0).
 	ErrDeletedDigit = errors.New("h3: " + describeH3Error(eDeletedDigit))
 )
 

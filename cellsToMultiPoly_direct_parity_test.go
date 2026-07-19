@@ -1,4 +1,4 @@
-//go:build cgo && c2go && h3v450
+//go:build cgo && c2go
 
 package h3
 
@@ -470,8 +470,8 @@ func Test_destroyLinkedMultiPolygon_idempotence_parity(t *testing.T) {
 	// zeroes the caller-owned head node, so a second call is a no-op.
 	// Both sides destroy twice; neither second call may fail (the C
 	// side would crash the harness), and the head must be zeroed after
-	// both calls. C side gated to 4.5.0 (this file's h3v450 build tag):
-	// the 4.4.0 implementation did not provide this contract.
+	// both calls. The 4.4.0 implementation did not provide this
+	// contract; it is part of the 4.5.0 parity surface.
 	for name, cells := range multiPolyParitySets(t) {
 		var linked linkedGeoPolygon
 		if err := cellsToLinkedMultiPolygon(cells, int32(len(cells)), &linked); err != eSuccess {

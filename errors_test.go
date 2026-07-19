@@ -130,8 +130,8 @@ func TestCuratedConstants(t *testing.T) {
 		t.Errorf("MaxCellBoundaryVerts = %d, want 10", MaxCellBoundaryVerts)
 	}
 	v := [3]int{VersionMajor, VersionMinor, VersionPatch}
-	if v != [3]int{4, 4, 0} {
-		t.Errorf("Version = %v, want [4 4 0]", v)
+	if v != [3]int{4, 5, 0} {
+		t.Errorf("Version = %v, want [4 5 0]", v)
 	}
 
 	// The error message text must never look like a Go-style wrapped chain.

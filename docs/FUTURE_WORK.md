@@ -416,9 +416,12 @@ Core target, release titles, and the release-note outline — are fixed in
    marshaling on core geometry types" (the sub-package can come later).
 3. Decide whether `Code(err)` (§12-Q7) is in or out — additive either way,
    but cheap to include if wanted.
-4. Ideally ride through one more upstream release (4.5.x) with the §10 sync
-   workflow to confirm the 4.4.0 rehearsal wasn't a one-off; the
-   `getIndexDigit` macro/function collision showed each sync can surface a
-   naming surprise.
+4. ~~Ideally ride through one more upstream release (4.5.x) with the §10
+   sync workflow to confirm the 4.4.0 rehearsal wasn't a one-off.~~
+   **Done** — the 4.4.0 → 4.5.0 migration completed via the reviewed
+   [sync record](sync/4.4.0-to-4.5.0.md) and its implementation issues
+   (#27–#36); the workflow held up across a far larger sync (multipolygon
+   algorithm replacement, a new public function, and a CLI contract
+   change).
 5. Re-run the full matrix on both supported Go versions and refresh the
    benchmark numbers in the README if they are quoted there.

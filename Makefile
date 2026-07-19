@@ -237,17 +237,8 @@ $(SMRCPTR):
 #   make test-c2go TIMEOUT=30s                  # Run all tests with 30s timeout
 #   make test-c2go COVERAGE=1                   # Run tests with coverage report
 #   make test-c2go COVERAGE=1 COVERPROFILE=coverage-c2go.out  # Save to specific file
-H3VER ?= 4.4.0
-# Version build tag for the parity harness (docs/sync/4.4.0-to-4.5.0.md
-# §15.1): harness files that exist for only one upstream tree shape carry
-# `h3v450`/`!h3v450` constraints; the tag is derived from H3VER here and
-# passed to `go test` by the test-c2go recipe. The exclusions are tracked
-# in docs/sync/h3v450-exclusion-inventory.md.
-ifeq ($(H3VER),4.5.0)
-C2GO_TAGS = c2go,h3v450
-else
+H3VER ?= 4.5.0
 C2GO_TAGS = c2go
-endif
 TEST ?=
 VERBOSE ?=
 TIMEOUT ?= 30s

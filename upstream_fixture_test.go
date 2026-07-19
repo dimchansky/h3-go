@@ -1,6 +1,6 @@
 package h3
 
-// Pure-Go equivalents of the input-driven H3 v4.4.0 test programs:
+// Pure-Go equivalents of the input-driven H3 v4.5.0 test programs:
 //   src/apps/testapps/testLatLngToCell.c
 //   src/apps/testapps/testCellToLatLng.c
 //   src/apps/testapps/testCellToBoundary.c

@@ -11,7 +11,8 @@ import (
 // false }; return true`, which returned true for NaN and broke parity with C
 // on polygons containing NaN/Inf/huge-magnitude coordinates (in-domain for
 // the upstream polygon fuzzers). All expectations below are verified against
-// H3 C 4.4.0 via the parity harness (Test_lineCrossesLine_ParityWithC).
+// H3 C 4.5.0 via the parity harness (Test_lineCrossesLine_ParityWithC;
+// polygon.c is byte-identical to 4.4.0, where they were first verified).
 func Test_lineCrossesLine_nonFiniteCoordinates(t *testing.T) {
 	t.Parallel()
 

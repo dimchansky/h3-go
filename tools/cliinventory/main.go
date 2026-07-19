@@ -8,7 +8,7 @@
 //
 // Verification (the CI mode, `make check-cli-inventory`):
 //
-//	go run ./tools/cliinventory -upstream testref/h3-4.4.0 -verify
+//	go run ./tools/cliinventory -upstream testref/h3-4.5.0 -verify
 //
 // checks the four committed registries — docs/cli-contract.csv,
 // docs/cli-test-inventory.csv, docs/cli-fixture-inventory.csv,
@@ -53,7 +53,7 @@ type sourceFile struct{ path, role, digest string }
 var commandRe = regexp.MustCompile(`SUBCOMMAND_INDEX\(([A-Za-z0-9_]+)\)`)
 
 func main() {
-	upstream := flag.String("upstream", "testref/h3-4.4.0", "upstream H3 tree")
+	upstream := flag.String("upstream", "testref/h3-4.5.0", "upstream H3 tree")
 	registry := flag.String("registry", "docs/cli-test-inventory.csv", "committed case registry")
 	contract := flag.String("contract", "docs/cli-contract.csv", "committed semantic command registry")
 	fixturesRegistry := flag.String("fixtures", "docs/cli-fixture-inventory.csv", "committed fixture registry")

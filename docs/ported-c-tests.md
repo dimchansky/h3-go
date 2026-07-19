@@ -1,27 +1,27 @@
-# Upstream H3 v4.4.0 test equivalence
+# Upstream H3 v4.5.0 test equivalence
 
 This is the human-readable entry point for the upstream-test registry. The
 case-level source of truth is
 [`upstream-test-inventory.csv`](upstream-test-inventory.csv), verified by
-`go run ./tools/testinventory -h3ver 4.4.0 -verify` (or
+`go run ./tools/testinventory -h3ver 4.5.0 -verify` (or
 `make check-test-inventory`). Do not maintain a second filename-only list.
 
 ## Audited scope
 
-The inventory is discovered from the pristine `testref/h3-4.4.0` tree and
-contains 771 reviewed entries:
+The inventory is discovered from the pristine `testref/h3-4.5.0` tree and
+contains 824 reviewed entries:
 
-- 63 `testapps` executables containing 449 named or synthetic cases;
-- 170 `h3_bin` CLI cases from 63 registration files;
-- 23 fuzzer harnesses;
-- 11 benchmark sources;
+- 66 `testapps` executables containing 498 named or synthetic cases;
+- 172 `h3_bin` CLI cases from 64 registration files;
+- 24 fuzzer harnesses;
+- 12 benchmark sources;
 - 9 filter/CLI executable sources and 2 random-input helpers;
 - 10 shared app/test support sources;
 - 94 checked-in input fixtures;
 - 2 authoritative CMake definitions and the optional generated country
   benchmark pipeline.
 
-Current dispositions are 716 `full`, 1 `partial`, 54 `na`, and zero
+Current dispositions are 760 `full`, 1 `partial`, 63 `na`, and zero
 `missing` or `deferred` (re-countable at any time with
 `make check-test-inventory`, which prints the totals). `full` means the
 upstream scenario and assertions were compared with the named Go test, not
@@ -31,7 +31,7 @@ The one partial entry is `testCellsToLinkedMultiPolygon.c::specificLeak`:
 the failure/no-crash regression is ported, while its Valgrind leak-detection
 facet is not applicable to garbage-collected Go.
 
-The 170 upstream CLI cases are `full`: the repository ships an
+The 172 upstream CLI cases are `full`: the repository ships an
 upstream-compatible `h3` executable (`cmd/h3`, implemented in
 `internal/cli`), and every registered scenario runs against it in-process
 (`TestUpstreamCLICompatibility`), with process-level and opt-in C
@@ -56,7 +56,7 @@ cell/coordinate records (including every boundary vertex comparison) with:
 
 ```sh
 make -C testref h3-source
-make test-upstream-fixtures H3VER=4.4.0
+make test-upstream-fixtures H3VER=4.5.0
 ```
 
 CI runs the full fixture suites in the Nightly workflow (as a step of the
@@ -72,7 +72,7 @@ with a truncated domain.
 
 ## Fuzzing, parity, and coverage
 
-The four `FuzzUpstream*` targets preserve the raw domains of all 23 upstream
+The four `FuzzUpstream*` targets preserve the raw domains of all 24 upstream
 libFuzzer/AFL harnesses: cell/index operations, cell sets, polygons, and
 internal IJK coordinates. Smoke them with, for example:
 

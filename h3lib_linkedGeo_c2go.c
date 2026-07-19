@@ -68,7 +68,6 @@ void destroyLinkedGeoLoopC(LinkedGeoLoop *loop) {
 }
 
 
-#if __has_include("area.c")
 // H3 4.5.0 tree (area.c is a 4.5.0 addition): test-only wrappers
 // exposing the linked<->flat conversion file-statics added to
 // linkedGeo.c in 4.5.0, in the same translation unit. Linked
@@ -276,10 +275,8 @@ H3Error h3goTest_linkedConvertError(int which) {
     }
     return err;
 }
-#endif
 
 
-#if __has_include("area.c")
 // Isolated geoMultiPolygonToLinkedGeoPolygon on a synthetic,
 // caller-supplied GeoMultiPolygon (identical bytes on both sides):
 // polyNumVerts/polyNumHoles/holeNumVerts describe the shape, verts is
@@ -396,9 +393,7 @@ H3Error h3goTest_linkedConvertCleanup(int which, int *cleanOut) {
     }
     return err;
 }
-#endif
 
-#if __has_include("area.c")
 // Isolated cellsToLinkedMultiPolygon: call ONLY the public function and
 // serialize its linked output directly — polygon/loop/coordinate
 // counts, every vertex, and the First/Last + tail-Next invariants —
@@ -467,4 +462,3 @@ H3Error h3goTest_linkedToGeoMultiPolygonSynthetic(
     H3_EXPORT(destroyGeoMultiPolygon)(&out);
     return E_SUCCESS;
 }
-#endif

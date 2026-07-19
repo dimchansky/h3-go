@@ -327,7 +327,7 @@ func resolveGoTest(ref string, decls map[string]bool) (missing []string) {
 // ---------------------------------------------------------------------------
 
 func main() {
-	h3ver := flag.String("h3ver", "4.4.0", "upstream H3 version under testref/")
+	h3ver := flag.String("h3ver", "4.5.0", "upstream H3 version under testref/")
 	upstreamRoot := flag.String("upstream", "", "explicit upstream tree path (overrides -h3ver)")
 	repo := flag.String("repo", ".", "repository root containing the Go port")
 	registryPath := flag.String("registry", "docs/upstream-test-inventory.csv", "registry CSV path (relative to -repo)")

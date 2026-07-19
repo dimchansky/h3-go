@@ -2,11 +2,10 @@
 
 #include "faceijk.c"
 
-// H3 4.5.0 tree only (area.c is its marker file): test-only wrappers
+// Test-only wrappers
 // exposing the file-static Vec3 pipeline helpers to the parity harness.
 // They live in the same translation unit as the statics they call
 // (docs/sync/4.4.0-to-4.5.0.md parity-first coverage requirement).
-#if __has_include("area.c")
 void h3goTest_vec3ToHex2d(const Vec3d *p, int res, int *face, Vec2d *v) {
     _vec3ToHex2d(p, res, face, v);
 }
@@ -23,4 +22,3 @@ double h3goTest_vec3AzimuthRads(Vec3d p1, Vec3d p2) {
 void h3goTest_vec3TangentBasis(Vec3d p, Vec3d *north, Vec3d *east) {
     _vec3TangentBasis(p, north, east);
 }
-#endif
