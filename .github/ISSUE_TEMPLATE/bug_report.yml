@@ -35,7 +35,7 @@ body:
     attributes:
       label: h3-go version
       description: Module version (`go list -m github.com/dimchansky/h3-go`) or `h3 --version` output.
-      placeholder: v0.3.0
+      placeholder: v0.4.0
     validations:
       required: true
   - type: input
