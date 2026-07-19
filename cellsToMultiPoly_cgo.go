@@ -37,7 +37,18 @@ H3Error h3goTest_globeMultiPolygon(int64_t *numPolysOut, int64_t *numVertsOut,
                                    LatLng *verts);
 H3Error h3goTest_cellToEdgeArcs(H3Index h, H3Index *ids, int64_t *nextIdx,
                                 int64_t *prevIdx, int64_t *parentIdx,
-                                int64_t *rank, int64_t *numEdgesOut);
+                                int64_t *rank, uint8_t *visited,
+                                uint8_t *removed, int64_t *numEdgesOut);
+H3Error h3goTest_createSortablePolyFromLoops(
+    const H3Index *roots, const double *areas, const int64_t *numVerts,
+    LatLng *verts, int64_t numLoops, int64_t loopStart, int64_t numHoles,
+    double *outerAreaOut, int64_t *outerNumVertsOut, LatLng *outerVerts,
+    int64_t *holeNumVerts, LatLng *holeVerts);
+H3Error h3goTest_createMultiPolygonFromLoops(
+    const H3Index *roots, const double *areas, const int64_t *numVerts,
+    LatLng *verts, int64_t numLoops, int64_t *numPolysOut,
+    int64_t *polyNumVerts, int64_t *polyNumHoles, int64_t *holeNumVerts,
+    LatLng *outVerts);
 H3Error h3goTest_bucketState(const H3Index *cells, int64_t numCells,
                              int64_t *bucketArcIdx, int64_t *numBucketsOut);
 H3Error h3goTest_visitedState(const H3Index *cells, int64_t numCells,
@@ -254,9 +265,10 @@ func linkedMultiPolyAsGeoC(cells []h3Index, numCells int32) (geoMultiPolygon, h3
 
 // cEdgeArcs mirrors the serialized single-cell cellToEdgeArcs state.
 type cEdgeArcs struct {
-	ids              []h3Index
-	nextIdx, prevIdx []int64
-	parentIdx, rank  []int64
+	ids                []h3Index
+	nextIdx, prevIdx   []int64
+	parentIdx, rank    []int64
+	isVisited, removed []bool
 }
 
 // cellToEdgeArcsC serializes the C cellToEdgeArcs output for one cell.
@@ -266,16 +278,24 @@ func cellToEdgeArcsC(h h3Index) (cEdgeArcs, h3Error) {
 	prev := make([]int64, 6)
 	parent := make([]int64, 6)
 	rank := make([]int64, 6)
+	visited := make([]uint8, 6)
+	removed := make([]uint8, 6)
 	var n C.int64_t
 	err := h3Error(C.h3goTest_cellToEdgeArcs(C.H3Index(h),
 		(*C.H3Index)(unsafe.Pointer(&ids[0])), (*C.int64_t)(&next[0]),
 		(*C.int64_t)(&prev[0]), (*C.int64_t)(&parent[0]),
-		(*C.int64_t)(&rank[0]), &n))
+		(*C.int64_t)(&rank[0]), (*C.uint8_t)(&visited[0]),
+		(*C.uint8_t)(&removed[0]), &n))
 	if err != eSuccess {
 		return cEdgeArcs{}, err
 	}
-	return cEdgeArcs{ids: ids[:n], nextIdx: next[:n], prevIdx: prev[:n],
-		parentIdx: parent[:n], rank: rank[:n]}, eSuccess
+	out := cEdgeArcs{ids: ids[:n], nextIdx: next[:n], prevIdx: prev[:n],
+		parentIdx: parent[:n], rank: rank[:n]}
+	for i := int64(0); i < int64(n); i++ {
+		out.isVisited = append(out.isVisited, visited[i] != 0)
+		out.removed = append(out.removed, removed[i] != 0)
+	}
+	return out, eSuccess
 }
 
 // bucketStateC serializes the hash-bucket layout after C createArcSet.
@@ -411,6 +431,85 @@ func createMultiPolygonOnlyC(cells []h3Index, numCells int64) (geoMultiPolygon, 
 		v += polyNV[p]
 		for k := int64(0); k < polyNH[p]; k++ {
 			poly.Holes = append(poly.Holes, GeoLoop(verts[v:v+holeNV[h]]))
+			v += holeNV[h]
+			h++
+		}
+		out.Polygons = append(out.Polygons, poly)
+	}
+	return out, eSuccess
+}
+
+// flattenLoops marshals a synthetic loop set for the FromLoops
+// wrappers (identical bytes fed to both sides).
+func flattenLoops(loops []sortableLoop) (roots []h3Index, areas []float64, numVerts []int64, verts []LatLng) {
+	for _, l := range loops {
+		roots = append(roots, l.root)
+		areas = append(areas, l.area)
+		numVerts = append(numVerts, int64(len(l.loop)))
+		verts = append(verts, l.loop...)
+	}
+	return
+}
+
+// createSortablePolyFromLoopsC calls C createSortablePoly on a
+// synthetic caller-supplied loop set.
+func createSortablePolyFromLoopsC(loops []sortableLoop, loopStart, numHoles int64) (sortablePoly, h3Error) {
+	roots, areas, numVerts, verts := flattenLoops(loops)
+	outerVerts := make([]LatLng, len(verts)+1)
+	holeVerts := make([]LatLng, len(verts)+1)
+	holeNum := make([]int64, len(loops)+1)
+	var outerArea C.double
+	var outerNV C.int64_t
+	err := h3Error(C.h3goTest_createSortablePolyFromLoops(
+		(*C.H3Index)(unsafe.Pointer(&roots[0])), (*C.double)(&areas[0]),
+		(*C.int64_t)(&numVerts[0]), (*C.LatLng)(unsafe.Pointer(&verts[0])),
+		C.int64_t(len(loops)), C.int64_t(loopStart), C.int64_t(numHoles),
+		&outerArea, &outerNV, (*C.LatLng)(unsafe.Pointer(&outerVerts[0])),
+		(*C.int64_t)(&holeNum[0]), (*C.LatLng)(unsafe.Pointer(&holeVerts[0]))))
+	if err != eSuccess {
+		return sortablePoly{}, err
+	}
+	out := sortablePoly{outerArea: float64(outerArea),
+		poly: GeoPolygon{GeoLoop: GeoLoop(outerVerts[:outerNV])}}
+	v := int64(0)
+	for h := int64(0); h < numHoles; h++ {
+		out.poly.Holes = append(out.poly.Holes, GeoLoop(holeVerts[v:v+holeNum[h]]))
+		v += holeNum[h]
+	}
+	return out, eSuccess
+}
+
+// createMultiPolygonFromLoopsC calls C createMultiPolygon on a
+// synthetic caller-supplied loop set (empty = globe branch).
+func createMultiPolygonFromLoopsC(loops []sortableLoop) (geoMultiPolygon, h3Error) {
+	roots, areas, numVerts, verts := flattenLoops(loops)
+	// Padded one-element inputs keep the C pointers valid for the
+	// empty (globe) case.
+	if len(loops) == 0 {
+		roots, areas, numVerts, verts = make([]h3Index, 1), make([]float64, 1), make([]int64, 1), make([]LatLng, 1)
+	}
+	bound := int64(len(verts)) + 30
+	polyNV := make([]int64, bound)
+	polyNH := make([]int64, bound)
+	holeNV := make([]int64, bound)
+	outVerts := make([]LatLng, 2*bound)
+	var np C.int64_t
+	err := h3Error(C.h3goTest_createMultiPolygonFromLoops(
+		(*C.H3Index)(unsafe.Pointer(&roots[0])), (*C.double)(&areas[0]),
+		(*C.int64_t)(&numVerts[0]), (*C.LatLng)(unsafe.Pointer(&verts[0])),
+		C.int64_t(len(loops)), &np, (*C.int64_t)(&polyNV[0]),
+		(*C.int64_t)(&polyNH[0]), (*C.int64_t)(&holeNV[0]),
+		(*C.LatLng)(unsafe.Pointer(&outVerts[0]))))
+	if err != eSuccess {
+		return geoMultiPolygon{}, err
+	}
+	out := geoMultiPolygon{NumPolygons: int32(np)}
+	v, h := int64(0), int64(0)
+	for p := int64(0); p < int64(np); p++ {
+		poly := GeoPolygon{GeoLoop: GeoLoop(outVerts[v : v+polyNV[p]])}
+		v += polyNV[p]
+		for k := int64(0); k < polyNH[p]; k++ {
+			poly.Holes = append(poly.Holes, GeoLoop(outVerts[v:v+holeNV[h]]))
 			v += holeNV[h]
 			h++
 		}

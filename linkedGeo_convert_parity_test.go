@@ -125,38 +125,86 @@ func Test_linkedGeoPolygonToGeoPolygon_direct_parity(t *testing.T) {
 	}
 }
 
+// goLinkedPolyState serializes one Go linked polygon node exactly as
+// the C serializer does, checking the same First/Last linkage
+// invariants.
+func goLinkedPolyState(poly *linkedGeoPolygon) cLinkedPolyState {
+	st := cLinkedPolyState{invariantsOK: true}
+	var lastLoop *linkedGeoLoop
+	for loop := poly.First; loop != nil; loop = loop.Next {
+		c := int32(0)
+		var lastCoord *linkedLatLng
+		for coord := loop.First; coord != nil; coord = coord.Next {
+			st.verts = append(st.verts, coord.Vertex)
+			lastCoord = coord
+			c++
+		}
+		if loop.Last != lastCoord || (lastCoord != nil && lastCoord.Next != nil) {
+			st.invariantsOK = false
+		}
+		st.coordsPerLoop = append(st.coordsPerLoop, c)
+		lastLoop = loop
+	}
+	if poly.Last != lastLoop {
+		st.invariantsOK = false
+	}
+	return st
+}
+
+func assertLinkedStateExact(t *testing.T, label string, goSt, cSt cLinkedPolyState) {
+	t.Helper()
+	if !goSt.invariantsOK || !cSt.invariantsOK {
+		t.Fatalf("%s: linkage invariants Go=%v C=%v", label, goSt.invariantsOK, cSt.invariantsOK)
+	}
+	if len(goSt.coordsPerLoop) != len(cSt.coordsPerLoop) || len(goSt.verts) != len(cSt.verts) {
+		t.Fatalf("%s: shape Go=(%d loops, %d verts) C=(%d loops, %d verts)",
+			label, len(goSt.coordsPerLoop), len(goSt.verts), len(cSt.coordsPerLoop), len(cSt.verts))
+	}
+	for i := range goSt.coordsPerLoop {
+		if goSt.coordsPerLoop[i] != cSt.coordsPerLoop[i] {
+			t.Fatalf("%s loop %d: coords Go=%d C=%d", label, i, goSt.coordsPerLoop[i], cSt.coordsPerLoop[i])
+		}
+	}
+	for i := range goSt.verts {
+		if goSt.verts[i] != cSt.verts[i] {
+			t.Fatalf("%s vert %d: Go=%v C=%v", label, i, goSt.verts[i], cSt.verts[i])
+		}
+	}
+}
+
 func Test_addLinkedGeoLoop_direct_parity(t *testing.T) {
 	tri := convertParityLoops(t)[1]
-	// times=2 covers both the first-loop and the append branch.
+	// times=2 covers both the first-loop and the append branch; the
+	// full state — every vertex plus the First/Last linkage
+	// invariants — compares exactly.
 	for _, times := range []int32{1, 2} {
 		var poly linkedGeoPolygon
 		goErr := eSuccess
 		for i := int32(0); i < times && goErr == eSuccess; i++ {
 			goErr = addLinkedGeoLoop(tri, &poly)
 		}
-		var goCoords []int32
-		for loop := poly.First; loop != nil; loop = loop.Next {
-			goCoords = append(goCoords, countLinkedCoords(loop))
+		goSt := goLinkedPolyState(&poly)
+		cSt, cErr := addLinkedGeoLoopC(tri, times)
+		if goErr != cErr {
+			t.Fatalf("times %d: Go err=%v C err=%v", times, goErr, cErr)
 		}
-		cLoops, cCoords, cErr := addLinkedGeoLoopC(tri, times)
-		if goErr != cErr || int32(len(goCoords)) != cLoops {
-			t.Fatalf("times %d: Go=(%d loops, %v) C=(%d loops, %v)", times, len(goCoords), goErr, cLoops, cErr)
-		}
-		for i := range goCoords {
-			if goCoords[i] != cCoords[i] {
-				t.Fatalf("times %d loop %d: coords Go=%d C=%d", times, i, goCoords[i], cCoords[i])
-			}
-		}
+		assertLinkedStateExact(t, "addLinkedGeoLoop", goSt, cSt)
 	}
 
-	// < 3 verts propagates eFailed from geoLoopToLinkedGeoLoop.
+	// < 3 verts fails, leaving identical partial state on both sides
+	// (the empty loop node was appended before the vertex check).
 	short := GeoLoop{{Lat: Rad(0.1)}, {Lat: Rad(0.2)}}
 	var poly linkedGeoPolygon
 	goErr := addLinkedGeoLoop(short, &poly)
-	_, _, cErr := addLinkedGeoLoopC(short, 1)
+	goSt := goLinkedPolyState(&poly)
+	cSt, cErr := addLinkedGeoLoopC(short, 1)
 	if goErr != cErr || goErr != eFailed {
-		t.Errorf("short loop: Go=%v C=%v, want eFailed from both", goErr, cErr)
+		t.Fatalf("short loop: Go=%v C=%v, want eFailed from both", goErr, cErr)
 	}
+	if len(goSt.coordsPerLoop) != 1 || goSt.coordsPerLoop[0] != 0 {
+		t.Fatalf("short loop partial state: Go %v, want one empty loop node", goSt.coordsPerLoop)
+	}
+	assertLinkedStateExact(t, "addLinkedGeoLoop partial", goSt, cSt)
 }
 
 func Test_geoPolygonToLinkedGeoLoops_direct_parity(t *testing.T) {
@@ -172,62 +220,65 @@ func Test_geoPolygonToLinkedGeoLoops_direct_parity(t *testing.T) {
 		}
 		var goPoly linkedGeoPolygon
 		goErr := geoPolygonToLinkedGeoLoops(&gp, &goPoly)
-		var goCoords []int32
-		for loop := goPoly.First; loop != nil; loop = loop.Next {
-			goCoords = append(goCoords, countLinkedCoords(loop))
+		goSt := goLinkedPolyState(&goPoly)
+		cSt, cErr := geoPolygonToLinkedGeoLoopsC(in)
+		if goErr != cErr {
+			t.Fatalf("input %d: Go err=%v C err=%v", i, goErr, cErr)
 		}
-		cLoops, cCoords, cErr := geoPolygonToLinkedGeoLoopsC(in)
-		if goErr != cErr || int32(len(goCoords)) != cLoops {
-			t.Fatalf("input %d: Go=(%d loops, %v) C=(%d loops, %v)", i, len(goCoords), goErr, cLoops, cErr)
-		}
-		for l := range goCoords {
-			if goCoords[l] != cCoords[l] {
-				t.Fatalf("input %d loop %d: coords Go=%d C=%d", i, l, goCoords[l], cCoords[l])
-			}
-		}
+		assertLinkedStateExact(t, "geoPolygonToLinkedGeoLoops", goSt, cSt)
 	}
+
+	// Valid outer + short hole: fails after the outer loop was fully
+	// converted; the partial linked state (outer loop + empty hole
+	// node) must match C before the owning extern cleans it.
+	short := GeoLoop{{Lat: Rad(0.1)}, {Lat: Rad(0.2)}}
+	gp := GeoPolygon{GeoLoop: loops[1], Holes: []GeoLoop{short}}
+	var goPoly linkedGeoPolygon
+	goErr := geoPolygonToLinkedGeoLoops(&gp, &goPoly)
+	goSt := goLinkedPolyState(&goPoly)
+	cSt, cErr := geoPolygonToLinkedGeoLoopsC([]GeoLoop{loops[1], short})
+	if goErr != cErr || goErr != eFailed {
+		t.Fatalf("outer+short hole: Go=%v C=%v, want eFailed from both", goErr, cErr)
+	}
+	if len(goSt.coordsPerLoop) != 2 || goSt.coordsPerLoop[0] != int32(len(loops[1])) || goSt.coordsPerLoop[1] != 0 {
+		t.Fatalf("partial state: Go %v, want [outer, empty hole node]", goSt.coordsPerLoop)
+	}
+	assertLinkedStateExact(t, "geoPolygonToLinkedGeoLoops partial", goSt, cSt)
 }
 
 func Test_geoMultiPolygonToLinked_direct_parity(t *testing.T) {
-	// Isolated success path of geoMultiPolygonToLinkedGeoPolygon: both
-	// sides convert cellsToMultiPolygon output (independently
-	// parity-verified) and compare the linked chain's shape and
-	// vertices. Vertices are copied verbatim by the conversion, so
-	// they carry the pipeline's vec3UlpClose discipline.
-	sets := map[string][]h3Index{
-		"singleHex": {0x890dab6220bffff},
-		"hole": {
-			0x892830828c7ffff, 0x892830828d7ffff, 0x8928308289bffff,
-			0x89283082813ffff, 0x8928308288fffff, 0x89283082883ffff},
-		"nonContiguous2": {0x8928308291bffff, 0x89283082943ffff},
+	// Isolated success path of geoMultiPolygonToLinkedGeoPolygon on a
+	// synthetic, identical GeoMultiPolygon fed to both sides: the
+	// linked chain's shape, every vertex (bit-exact — verbatim
+	// copies), and the linkage invariants compare.
+	tri := GeoLoop{{Lat: Rad(0.1), Lng: Rad(0.2)}, {Lat: Rad(0.3), Lng: Rad(0.1)}, {Lat: Rad(0.2), Lng: Rad(0.4)}}
+	quad := GeoLoop{{Lat: Rad(0.5)}, {Lat: Rad(0.6), Lng: Rad(0.1)}, {Lat: Rad(0.55), Lng: Rad(0.2)}, {Lat: Rad(0.45), Lng: Rad(0.1)}}
+	penta := GeoLoop{{Lat: Rad(-0.1)}, {Lat: Rad(-0.2), Lng: Rad(0.1)}, {Lat: Rad(-0.3)}, {Lat: Rad(-0.2), Lng: Rad(-0.1)}, {Lat: Rad(-0.15), Lng: Rad(-0.05)}}
+	inputs := map[string]geoMultiPolygon{
+		"onePolyNoHoles": {NumPolygons: 1, Polygons: []GeoPolygon{{GeoLoop: tri}}},
+		"onePolyOneHole": {NumPolygons: 1, Polygons: []GeoPolygon{{GeoLoop: quad, Holes: []GeoLoop{tri}}}},
+		"twoPolys":       {NumPolygons: 2, Polygons: []GeoPolygon{{GeoLoop: quad, Holes: []GeoLoop{tri}}, {GeoLoop: penta}}},
 	}
-	for name, cells := range sets {
-		n := int64(len(cells))
-		var mpoly geoMultiPolygon
-		if err := cellsToMultiPolygon(cells, n, &mpoly); err != eSuccess {
-			t.Fatalf("cellsToMultiPolygon(%s): %v", name, err)
-		}
+	for name, mp := range inputs {
 		var linked linkedGeoPolygon
-		if err := geoMultiPolygonToLinkedGeoPolygon(&mpoly, &linked); err != eSuccess {
+		if err := geoMultiPolygonToLinkedGeoPolygon(&mp, &linked); err != eSuccess {
 			t.Fatalf("geoMultiPolygonToLinkedGeoPolygon(%s): %v", name, err)
 		}
 		var goShape cLinkedShape
+		goInv := true
 		for poly := &linked; poly != nil; poly = poly.Next {
-			loops := int32(0)
-			for loop := poly.First; loop != nil; loop = loop.Next {
-				coords := int32(0)
-				for c := loop.First; c != nil; c = c.Next {
-					goShape.verts = append(goShape.verts, c.Vertex)
-					coords++
-				}
-				goShape.coordsPerLoop = append(goShape.coordsPerLoop, coords)
-				loops++
-			}
-			goShape.loopsPerPoly = append(goShape.loopsPerPoly, loops)
+			st := goLinkedPolyState(poly)
+			goInv = goInv && st.invariantsOK
+			goShape.loopsPerPoly = append(goShape.loopsPerPoly, int32(len(st.coordsPerLoop)))
+			goShape.coordsPerLoop = append(goShape.coordsPerLoop, st.coordsPerLoop...)
+			goShape.verts = append(goShape.verts, st.verts...)
 		}
-		cShape, err := geoMultiPolygonToLinkedC(cells, n, 64, 4096)
+		cShape, cInv, err := geoMultiPolygonToLinkedSyntheticC(mp)
 		if err != eSuccess {
-			t.Fatalf("geoMultiPolygonToLinkedC(%s): %v", name, err)
+			t.Fatalf("geoMultiPolygonToLinkedSyntheticC(%s): %v", name, err)
+		}
+		if !goInv || !cInv {
+			t.Fatalf("%s: linkage invariants Go=%v C=%v", name, goInv, cInv)
 		}
 		if len(goShape.loopsPerPoly) != len(cShape.loopsPerPoly) ||
 			len(goShape.coordsPerLoop) != len(cShape.coordsPerLoop) ||
@@ -247,10 +298,72 @@ func Test_geoMultiPolygonToLinked_direct_parity(t *testing.T) {
 			}
 		}
 		for i := range goShape.verts {
-			if !vec3UlpClose(goShape.verts[i].Lat.Rad(), cShape.verts[i].Lat.Rad()) ||
-				!vec3UlpClose(goShape.verts[i].Lng.Rad(), cShape.verts[i].Lng.Rad()) {
+			if goShape.verts[i] != cShape.verts[i] {
 				t.Fatalf("%s vert %d: Go=%v C=%v", name, i, goShape.verts[i], cShape.verts[i])
 			}
+		}
+	}
+}
+
+func Test_linkedConvertCleanup_parity(t *testing.T) {
+	// Valid-outer + invalid-hole (and invalid-second-element) cases for
+	// both conversion directions, comparing the promised cleanup state
+	// as well as the error code. Constructions mirror
+	// h3goTest_linkedConvertCleanup exactly.
+	tri := GeoLoop{{Lat: Rad(0.1), Lng: Rad(0.2)}, {Lat: Rad(0.3), Lng: Rad(0.1)}, {Lat: Rad(0.2), Lng: Rad(0.4)}}
+	duo := GeoLoop{{}, {Lat: Rad(1)}}
+	goErrs := make([]h3Error, 4)
+	goClean := make([]bool, 4)
+
+	{ // 0: linkedGeoPolygonToGeoPolygon leaves out zeroed after a hole fails.
+		var poly linkedGeoPolygon
+		outer := addNewLinkedLoop(&poly)
+		for i := range tri {
+			addLinkedCoord(outer, &tri[i])
+		}
+		hole := addNewLinkedLoop(&poly)
+		for i := range duo {
+			addLinkedCoord(hole, &duo[i])
+		}
+		var out GeoPolygon
+		goErrs[0] = linkedGeoPolygonToGeoPolygon(&poly, &out)
+		goClean[0] = out.GeoLoop == nil && out.Holes == nil
+	}
+	{ // 1: linkedGeoPolygonToGeoMultiPolygon cleans the partial multipolygon.
+		var poly linkedGeoPolygon
+		outer := addNewLinkedLoop(&poly)
+		for i := range tri {
+			addLinkedCoord(outer, &tri[i])
+		}
+		second := addNewLinkedPolygon(&poly)
+		bad := addNewLinkedLoop(second)
+		for i := range duo {
+			addLinkedCoord(bad, &duo[i])
+		}
+		var mpoly geoMultiPolygon
+		goErrs[1] = linkedGeoPolygonToGeoMultiPolygon(&poly, &mpoly)
+		goClean[1] = mpoly.Polygons == nil && mpoly.NumPolygons == 0
+	}
+	{ // 2: geoMultiPolygonToLinkedGeoPolygon zeroes the head (short hole).
+		mp := geoMultiPolygon{NumPolygons: 1, Polygons: []GeoPolygon{{GeoLoop: tri, Holes: []GeoLoop{duo}}}}
+		var out linkedGeoPolygon
+		goErrs[2] = geoMultiPolygonToLinkedGeoPolygon(&mp, &out)
+		goClean[2] = out.First == nil && out.Last == nil && out.Next == nil
+	}
+	{ // 3: geoMultiPolygonToLinkedGeoPolygon zeroes the head (short second poly).
+		mp := geoMultiPolygon{NumPolygons: 2, Polygons: []GeoPolygon{{GeoLoop: tri}, {GeoLoop: duo}}}
+		var out linkedGeoPolygon
+		goErrs[3] = geoMultiPolygonToLinkedGeoPolygon(&mp, &out)
+		goClean[3] = out.First == nil && out.Last == nil && out.Next == nil
+	}
+
+	for which := int32(0); which < 4; which++ {
+		cErr, cClean := linkedConvertCleanupC(which)
+		if goErrs[which] != cErr || goErrs[which] != eFailed {
+			t.Errorf("case %d: err Go=%v C=%v, want eFailed", which, goErrs[which], cErr)
+		}
+		if !goClean[which] || !cClean {
+			t.Errorf("case %d: cleanup state Go=%v C=%v, want clean on both sides", which, goClean[which], cClean)
 		}
 	}
 }

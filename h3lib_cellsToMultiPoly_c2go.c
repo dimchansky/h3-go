@@ -118,11 +118,19 @@ H3Error h3goTest_loopSet(const H3Index *cells, int64_t numCells,
 }
 
 // Direct single-cell cellToEdgeArcs state: ids, linkage as element
-// indices, parent index, rank. Buffers hold 6 entries.
+// indices, parent index, rank, and the explicitly initialized
+// isVisited/isRemoved flags. Buffers hold 6 entries.
 H3Error h3goTest_cellToEdgeArcs(H3Index h, H3Index *ids, int64_t *nextIdx,
                                 int64_t *prevIdx, int64_t *parentIdx,
-                                int64_t *rank, int64_t *numEdgesOut) {
+                                int64_t *rank, uint8_t *visited,
+                                uint8_t *removed, int64_t *numEdgesOut) {
     Arc arcs[6];
+    // Poison the flags so the comparison proves cellToEdgeArcs itself
+    // clears them (it explicitly initializes both fields).
+    for (int i = 0; i < 6; i++) {
+        arcs[i].isVisited = true;
+        arcs[i].isRemoved = true;
+    }
     H3Error err = cellToEdgeArcs(h, arcs, numEdgesOut);
     if (err) return err;
     for (int64_t i = 0; i < *numEdgesOut; i++) {
@@ -131,6 +139,103 @@ H3Error h3goTest_cellToEdgeArcs(H3Index h, H3Index *ids, int64_t *nextIdx,
         prevIdx[i] = arcs[i].prev - arcs;
         parentIdx[i] = arcs[i].parent - arcs;
         rank[i] = arcs[i].rank;
+        visited[i] = arcs[i].isVisited ? 1 : 0;
+        removed[i] = arcs[i].isRemoved ? 1 : 0;
+    }
+    return E_SUCCESS;
+}
+
+// Build a SortableLoopSet from caller-supplied synthetic loops
+// (identical bytes on both sides) — shared by the FromLoops wrappers.
+static void h3goTestBuildLoopSet(const H3Index *roots, const double *areas,
+                                 const int64_t *numVerts, LatLng *verts,
+                                 int64_t numLoops, SortableLoop *sloops,
+                                 SortableLoopSet *loopset) {
+    int64_t v = 0;
+    for (int64_t i = 0; i < numLoops; i++) {
+        sloops[i].root = roots[i];
+        sloops[i].area = areas[i];
+        sloops[i].loop.numVerts = numVerts[i];
+        sloops[i].loop.verts = &verts[v];
+        v += numVerts[i];
+    }
+    loopset->numLoops = numLoops;
+    loopset->sloops = sloops;
+}
+
+// Direct createSortablePoly on a synthetic, caller-supplied loop set.
+H3Error h3goTest_createSortablePolyFromLoops(
+    const H3Index *roots, const double *areas, const int64_t *numVerts,
+    LatLng *verts, int64_t numLoops, int64_t loopStart, int64_t numHoles,
+    double *outerAreaOut, int64_t *outerNumVertsOut, LatLng *outerVerts,
+    int64_t *holeNumVerts, LatLng *holeVerts) {
+    SortableLoop sloops[16];
+    SortableLoopSet loopset;
+    h3goTestBuildLoopSet(roots, areas, numVerts, verts, numLoops, sloops,
+                         &loopset);
+    SortablePoly spoly;
+    H3Error err =
+        createSortablePoly(&loopset.sloops[loopStart], numHoles, &spoly);
+    if (err) return err;
+    *outerAreaOut = spoly.outerArea;
+    *outerNumVertsOut = spoly.poly.geoloop.numVerts;
+    for (int64_t i = 0; i < spoly.poly.geoloop.numVerts; i++) {
+        outerVerts[i] = spoly.poly.geoloop.verts[i];
+    }
+    int64_t hv = 0;
+    for (int64_t h = 0; h < numHoles; h++) {
+        holeNumVerts[h] = spoly.poly.holes[h].numVerts;
+        for (int64_t i = 0; i < spoly.poly.holes[h].numVerts; i++) {
+            holeVerts[hv++] = spoly.poly.holes[h].verts[i];
+        }
+    }
+    if (spoly.poly.holes) H3_MEMORY(free)(spoly.poly.holes);
+    return E_SUCCESS;
+}
+
+// Direct createMultiPolygon on a synthetic, caller-supplied loop set
+// (serialization as for h3goTest_createMultiPolygonOnly). numLoops == 0
+// drives the createGlobeMultiPolygon branch.
+H3Error h3goTest_createMultiPolygonFromLoops(
+    const H3Index *roots, const double *areas, const int64_t *numVerts,
+    LatLng *verts, int64_t numLoops, int64_t *numPolysOut,
+    int64_t *polyNumVerts, int64_t *polyNumHoles, int64_t *holeNumVerts,
+    LatLng *outVerts) {
+    SortableLoop sloops[16];
+    SortableLoopSet loopset;
+    h3goTestBuildLoopSet(roots, areas, numVerts, verts, numLoops, sloops,
+                         &loopset);
+    GeoMultiPolygon mpoly;
+    H3Error err = createMultiPolygon(loopset, &mpoly);
+    if (err) return err;
+    *numPolysOut = mpoly.numPolygons;
+    int64_t v = 0, h = 0;
+    for (int p = 0; p < mpoly.numPolygons; p++) {
+        polyNumVerts[p] = mpoly.polygons[p].geoloop.numVerts;
+        polyNumHoles[p] = mpoly.polygons[p].numHoles;
+        for (int i = 0; i < mpoly.polygons[p].geoloop.numVerts; i++) {
+            outVerts[v++] = mpoly.polygons[p].geoloop.verts[i];
+        }
+        for (int k = 0; k < mpoly.polygons[p].numHoles; k++) {
+            holeNumVerts[h++] = mpoly.polygons[p].holes[k].numVerts;
+            for (int i = 0; i < mpoly.polygons[p].holes[k].numVerts; i++) {
+                outVerts[v++] = mpoly.polygons[p].holes[k].verts[i];
+            }
+        }
+    }
+    if (numLoops == 0) {
+        // Globe branch: the octant vertices are C-allocated.
+        H3_EXPORT(destroyGeoMultiPolygon)(&mpoly);
+    } else {
+        // The output polygons alias the synthetic loop set's caller
+        // memory (createSortablePoly copies GeoLoop headers, not
+        // vertices), so only the C-allocated arrays are freed here.
+        for (int p = 0; p < mpoly.numPolygons; p++) {
+            if (mpoly.polygons[p].holes) {
+                H3_MEMORY(free)(mpoly.polygons[p].holes);
+            }
+        }
+        H3_MEMORY(free)(mpoly.polygons);
     }
     return E_SUCCESS;
 }

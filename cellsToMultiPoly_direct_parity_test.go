@@ -17,6 +17,12 @@ func Test_cellToEdgeArcs_direct_parity(t *testing.T) {
 	cells := []h3Index{0x890dab6220bffff, 0x851c0003fffffff}
 	for _, cell := range cells {
 		var goArcs [6]arc
+		// Poison the flags so the comparison proves cellToEdgeArcs
+		// itself clears them (the C wrapper does the same).
+		for i := range goArcs {
+			goArcs[i].isVisited = true
+			goArcs[i].isRemoved = true
+		}
 		var goNum int64
 		if err := cellToEdgeArcs(cell, goArcs[:], &goNum); err != eSuccess {
 			t.Fatalf("cellToEdgeArcs(%x): %v", uint64(cell), err)
@@ -36,7 +42,8 @@ func Test_cellToEdgeArcs_direct_parity(t *testing.T) {
 			a := &goArcs[i]
 			if a.id != cSt.ids[i] || idx[a.next] != cSt.nextIdx[i] ||
 				idx[a.prev] != cSt.prevIdx[i] || idx[a.parent] != cSt.parentIdx[i] ||
-				a.rank != cSt.rank[i] {
+				a.rank != cSt.rank[i] ||
+				a.isVisited != cSt.isVisited[i] || a.isRemoved != cSt.removed[i] {
 				t.Fatalf("%x arc %d: Go={%x n%d p%d par%d r%d} C={%x n%d p%d par%d r%d}",
 					uint64(cell), i, uint64(a.id), idx[a.next], idx[a.prev], idx[a.parent], a.rank,
 					uint64(cSt.ids[i]), cSt.nextIdx[i], cSt.prevIdx[i], cSt.parentIdx[i], cSt.rank[i])
@@ -112,6 +119,10 @@ func Test_unionArcs_getRoot_direct_parity(t *testing.T) {
 	// component) no-op branch.
 	sequences := [][][2]int64{
 		{{0, 6}},
+		// {12, 0} after {0, 6}: a=root(12) has rank 1, b=root(0) has
+		// rank 2, so the a.rank < b.rank swap branch runs; the proof
+		// is below (the merged root must be arcs[0]'s component).
+		{{0, 6}, {12, 0}},
 		{{0, 6}, {12, 18}, {0, 12}},
 		{{0, 6}, {6, 12}, {0, 12}, {18, 24}, {24, 30}, {0, 18}},
 		{{0, 1}}, // same per-cell component already (a == b branch)
@@ -134,6 +145,17 @@ func Test_unionArcs_getRoot_direct_parity(t *testing.T) {
 				t.Fatalf("seq %d arc %d: Go root=%x rank=%d, C root=%x rank=%d",
 					si, i, uint64(goRoot), arcset.arcs[i].rank,
 					uint64(cRoots[i]), cRanks[i])
+			}
+		}
+		if si == 1 {
+			// Swap-path proof for {{0,6},{12,0}}: with the swap, the
+			// higher-rank component (arcs[0]'s, rank 2) absorbs
+			// arcs[12]'s and its rank grows to 3; without the swap the
+			// merged root would be arcs[12]'s component instead.
+			root0 := getRoot(&arcset.arcs[0])
+			if getRoot(&arcset.arcs[12]) != root0 || root0 != &arcset.arcs[0] || root0.rank != 3 {
+				t.Fatalf("swap sequence: root=%x (arc0=%x) rank=%d, want arc0's component with rank 3",
+					uint64(root0.id), uint64(arcset.arcs[0].id), root0.rank)
 			}
 		}
 	}
@@ -225,76 +247,119 @@ func Test_comparators_direct_parity(t *testing.T) {
 	}
 }
 
-func Test_createSortablePoly_direct_parity(t *testing.T) {
-	// The "hole" set sorts into one polygon: outer loop first, one
-	// hole after it.
-	cells := multiPolyParitySets(t)["hole"]
-	n := int64(len(cells))
-	var arcset arcSet
-	if err := createArcSet(cells, n, &arcset); err != eSuccess {
-		t.Fatalf("createArcSet: %v", err)
-	}
-	if err := cancelArcPairs(arcset); err != eSuccess {
-		t.Fatalf("cancelArcPairs: %v", err)
-	}
-	var loopset sortableLoopSet
-	if err := createSortableLoopSet(arcset, &loopset); err != eSuccess {
-		t.Fatalf("createSortableLoopSet: %v", err)
-	}
-	if loopset.numLoops != 2 {
-		t.Fatalf("hole set: %d loops, want 2", loopset.numLoops)
-	}
-	for _, numHoles := range []int64{0, 1} {
-		var goPoly sortablePoly
-		if err := createSortablePoly(loopset.sloops, numHoles, &goPoly); err != eSuccess {
-			t.Fatalf("createSortablePoly(holes %d): %v", numHoles, err)
+// syntheticLoopSet builds a fixed, fully synthetic sorted loop set —
+// identical bytes are fed to both sides, so every output vertex
+// compares exactly. Two components: root 1 (outer + one hole) and
+// root 2 (outer only), pre-sorted per cmp_SortableLoop.
+func syntheticLoopSet() []sortableLoop {
+	mk := func(base float64, n int) GeoLoop {
+		loop := make(GeoLoop, n)
+		for i := range loop {
+			loop[i] = LatLng{Lat: Rad(base + float64(i)*0.01), Lng: Rad(base - float64(i)*0.02)}
 		}
-		cPoly, err := createSortablePolyC(cells, n, 0, numHoles)
-		if err != eSuccess {
-			t.Fatalf("createSortablePolyC(holes %d): %v", numHoles, err)
+		return loop
+	}
+	return []sortableLoop{
+		{root: 1, area: 0.5, loop: mk(0.10, 5)},
+		{root: 1, area: 1.5, loop: mk(0.20, 4)},
+		{root: 2, area: 0.25, loop: mk(0.30, 3)},
+	}
+}
+
+func assertPolyExact(t *testing.T, label string, goPoly, cPoly sortablePoly) {
+	t.Helper()
+	if goPoly.outerArea != cPoly.outerArea ||
+		len(goPoly.poly.GeoLoop) != len(cPoly.poly.GeoLoop) ||
+		len(goPoly.poly.Holes) != len(cPoly.poly.Holes) {
+		t.Fatalf("%s: Go(area %v, %d verts, %d holes) C(area %v, %d verts, %d holes)",
+			label, goPoly.outerArea, len(goPoly.poly.GeoLoop), len(goPoly.poly.Holes),
+			cPoly.outerArea, len(cPoly.poly.GeoLoop), len(cPoly.poly.Holes))
+	}
+	for j := range goPoly.poly.GeoLoop {
+		if goPoly.poly.GeoLoop[j] != cPoly.poly.GeoLoop[j] {
+			t.Fatalf("%s outer vert %d: Go=%v C=%v", label, j, goPoly.poly.GeoLoop[j], cPoly.poly.GeoLoop[j])
 		}
-		if !areaClose(goPoly.outerArea, cPoly.outerArea) ||
-			len(goPoly.poly.GeoLoop) != len(cPoly.poly.GeoLoop) ||
-			len(goPoly.poly.Holes) != len(cPoly.poly.Holes) {
-			t.Fatalf("holes %d: Go(area %v, %d verts, %d holes) C(area %v, %d verts, %d holes)",
-				numHoles, goPoly.outerArea, len(goPoly.poly.GeoLoop), len(goPoly.poly.Holes),
-				cPoly.outerArea, len(cPoly.poly.GeoLoop), len(cPoly.poly.Holes))
+	}
+	for h := range goPoly.poly.Holes {
+		if len(goPoly.poly.Holes[h]) != len(cPoly.poly.Holes[h]) {
+			t.Fatalf("%s hole %d: verts Go=%d C=%d", label, h, len(goPoly.poly.Holes[h]), len(cPoly.poly.Holes[h]))
 		}
-		for h := range goPoly.poly.Holes {
-			if len(goPoly.poly.Holes[h]) != len(cPoly.poly.Holes[h]) {
-				t.Fatalf("holes %d hole %d: verts Go=%d C=%d",
-					numHoles, h, len(goPoly.poly.Holes[h]), len(cPoly.poly.Holes[h]))
+		for j := range goPoly.poly.Holes[h] {
+			if goPoly.poly.Holes[h][j] != cPoly.poly.Holes[h][j] {
+				t.Fatalf("%s hole %d vert %d: Go=%v C=%v", label, h, j, goPoly.poly.Holes[h][j], cPoly.poly.Holes[h][j])
 			}
 		}
 	}
 }
 
+func Test_createSortablePoly_direct_parity(t *testing.T) {
+	// Synthetic identical loop-set input on both sides; every output
+	// vertex (outer loop and holes) compares bit-exactly.
+	loops := syntheticLoopSet()
+	cases := []struct {
+		label     string
+		loopStart int64
+		numHoles  int64
+	}{
+		{"root1 outer only", 0, 0},
+		{"root1 outer + 1 hole", 0, 1},
+		{"root2 outer only", 2, 0},
+	}
+	for _, tc := range cases {
+		var goPoly sortablePoly
+		if err := createSortablePoly(loops[tc.loopStart:], tc.numHoles, &goPoly); err != eSuccess {
+			t.Fatalf("createSortablePoly(%s): %v", tc.label, err)
+		}
+		cPoly, err := createSortablePolyFromLoopsC(loops, tc.loopStart, tc.numHoles)
+		if err != eSuccess {
+			t.Fatalf("createSortablePolyFromLoopsC(%s): %v", tc.label, err)
+		}
+		assertPolyExact(t, tc.label, goPoly, cPoly)
+	}
+}
+
 func Test_createMultiPolygon_direct_parity(t *testing.T) {
-	// Isolated from validate/overflow: the pipeline runs to the sorted
-	// loop set, then createMultiPolygon only. The globe set drives its
-	// createGlobeMultiPolygon branch (empty loop set).
-	for name, cells := range multiPolyParitySets(t) {
-		n := int64(len(cells))
-		var arcset arcSet
-		if err := createArcSet(cells, n, &arcset); err != eSuccess {
-			t.Fatalf("createArcSet(%s): %v", name, err)
-		}
-		if err := cancelArcPairs(arcset); err != eSuccess {
-			t.Fatalf("cancelArcPairs(%s): %v", name, err)
-		}
-		var loopset sortableLoopSet
-		if err := createSortableLoopSet(arcset, &loopset); err != eSuccess {
-			t.Fatalf("createSortableLoopSet(%s): %v", name, err)
-		}
+	// Synthetic identical loop-set inputs on both sides (bit-exact
+	// output comparison), plus the empty set driving the
+	// createGlobeMultiPolygon branch.
+	loops := syntheticLoopSet()
+	inputs := map[string][]sortableLoop{
+		"twoComponents":  loops,
+		"singleWithHole": loops[:2],
+		"singleOuter":    loops[2:],
+	}
+	for name, in := range inputs {
+		loopset := sortableLoopSet{numLoops: int64(len(in)), sloops: in}
 		var goOut geoMultiPolygon
 		if err := createMultiPolygon(loopset, &goOut); err != eSuccess {
 			t.Fatalf("createMultiPolygon(%s): %v", name, err)
 		}
-		cOut, err := createMultiPolygonOnlyC(cells, n)
+		cOut, err := createMultiPolygonFromLoopsC(in)
 		if err != eSuccess {
-			t.Fatalf("createMultiPolygonOnlyC(%s): %v", name, err)
+			t.Fatalf("createMultiPolygonFromLoopsC(%s): %v", name, err)
 		}
-		assertMultiPolyParity(t, name, goOut, cOut, name == "globeAllRes0")
+		if goOut.NumPolygons != cOut.NumPolygons {
+			t.Fatalf("%s: NumPolygons Go=%d C=%d", name, goOut.NumPolygons, cOut.NumPolygons)
+		}
+		for p := int32(0); p < goOut.NumPolygons; p++ {
+			assertPolyExact(t, name, sortablePoly{poly: goOut.Polygons[p]}, sortablePoly{poly: cOut.Polygons[p]})
+		}
+	}
+
+	// Empty loop set: the globe branch. The octant tie-order is
+	// implementation-defined (equal areas), so counts compare here and
+	// the octant contents are covered exactly, order-normalized, by
+	// Test_createGlobeMultiPolygon_parity.
+	var goGlobe geoMultiPolygon
+	if err := createMultiPolygon(sortableLoopSet{}, &goGlobe); err != eSuccess {
+		t.Fatalf("createMultiPolygon(empty): %v", err)
+	}
+	cGlobe, err := createMultiPolygonFromLoopsC(nil)
+	if err != eSuccess {
+		t.Fatalf("createMultiPolygonFromLoopsC(empty): %v", err)
+	}
+	if goGlobe.NumPolygons != 8 || cGlobe.NumPolygons != 8 {
+		t.Fatalf("globe branch: NumPolygons Go=%d C=%d, want 8/8", goGlobe.NumPolygons, cGlobe.NumPolygons)
 	}
 }
 

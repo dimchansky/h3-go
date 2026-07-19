@@ -194,14 +194,23 @@ func TestCellsToMultiPolyInternal_checkCellsToMultiPolyOverflow_safe(t *testing.
 
 	// Test with small and large hash multipliers.
 	// Largest allocated array will change, depending on multiplier.
-	// (Like the upstream suite, these expectations assume a 64-bit
-	// size_t: on a 32-bit target the multiplier-100 case crosses the
-	// stricter threshold.)
-	if err := checkCellsToMultiPolyOverflow(1000000, 1); err != eSuccess {
-		t.Errorf("multiplier 1: got %v", err)
-	}
-	if err := checkCellsToMultiPolyOverflow(1000000, 100); err != eSuccess {
-		t.Errorf("multiplier 100: got %v", err)
+	// The upstream expectations assume a 64-bit size_t; this port's
+	// threshold follows the platform (cSizeMax), so derive the
+	// expectation from the same arithmetic the check uses — on 32-bit
+	// targets the multiplier-100 case legitimately crosses the
+	// stricter threshold.
+	for _, mult := range []int64{1, 100} {
+		perCell := uint64(6 * cSizeofArc)
+		if b := uint64(6 * mult * cSizeofArcPtr); b > perCell {
+			perCell = b
+		}
+		want := eSuccess
+		if uint64(1000000) > cSizeMax/perCell {
+			want = eMemoryBounds
+		}
+		if err := checkCellsToMultiPolyOverflow(1000000, mult); err != want {
+			t.Errorf("multiplier %d: got %v, want %v", mult, err, want)
+		}
 	}
 }
 
