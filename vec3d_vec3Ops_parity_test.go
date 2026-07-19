@@ -25,10 +25,11 @@ import (
 // reflected), so adjacent doubles are 1 apart regardless of magnitude.
 // Special cases: +0 and -0 are 0 apart; two NaNs are 0 apart (both
 // sides agreeing on NaN counts as agreement); NaN vs non-NaN is
-// MaxUint64. Infinities need no special case — same-signed infinities
-// are 0 apart on the ordered line, and an infinity is 1 apart from the
-// same-signed largest finite value, which the caller's bound rejects
-// like any other 1-ulp gap.
+// MaxUint64. Infinities follow the ordered line: same-signed
+// infinities are 0 apart, and an infinity is 1 apart from the
+// same-signed largest finite value — so a caller that requires an
+// infinity to agree only with itself (vec3UlpClose does) must check
+// infinities before applying a distance bound.
 func ulpDistance(a, b float64) uint64 {
 	if math.IsNaN(a) || math.IsNaN(b) {
 		if math.IsNaN(a) && math.IsNaN(b) {
@@ -82,11 +83,16 @@ const (
 // pipelines: within vec3MaxUlp ulps of each other, or within
 // vec3CancellationFloor absolutely. It is NOT a pure ULP comparison —
 // near-zero cancellation residuals measure thousands of ulps (see the
-// constants above) — but special values are strict via ulpDistance:
-// NaN agrees only with NaN, an infinity only with itself, and +0/-0
-// agree. Use only for libm-dependent comparisons; pure-arithmetic
-// helpers compare with ==.
+// constants above) — but special values are strict: NaN agrees only
+// with NaN (via ulpDistance), an infinity only with itself (checked
+// explicitly below — on the ordered-bit line an infinity is just 1
+// apart from the same-signed largest finite value, so the ulp bound
+// alone would wrongly accept that pair), and +0/-0 agree. Use only for
+// libm-dependent comparisons; pure-arithmetic helpers compare with ==.
 func vec3UlpClose(a, b float64) bool {
+	if math.IsInf(a, 0) || math.IsInf(b, 0) {
+		return a == b
+	}
 	if ulpDistance(a, b) <= vec3MaxUlp {
 		return true
 	}
@@ -99,6 +105,80 @@ func vec3UlpClose(a, b float64) bool {
 
 func vec3UlpCloseVec(a, b vec3d) bool {
 	return vec3UlpClose(a.X, b.X) && vec3UlpClose(a.Y, b.Y) && vec3UlpClose(a.Z, b.Z)
+}
+
+// Meta-tests for the comparator itself: the documented special-value
+// policy (an infinity agrees only with itself; NaN only with NaN;
+// +0/-0 agree) and both tolerance regimes.
+func Test_ulpDistance(t *testing.T) {
+	next := func(f float64) float64 { return math.Nextafter(f, math.Inf(1)) }
+	cases := []struct {
+		name string
+		a, b float64
+		want uint64
+	}{
+		{"equal", 1.5, 1.5, 0},
+		{"adjacent", 1.0, next(1.0), 1},
+		{"adjacent negative", -1.0, math.Nextafter(-1.0, math.Inf(-1)), 1},
+		{"signed zeros", 0.0, math.Copysign(0, -1), 0},
+		{"across zero", 5e-324, -5e-324, 2},
+		{"equal +Inf", math.Inf(1), math.Inf(1), 0},
+		{"equal -Inf", math.Inf(-1), math.Inf(-1), 0},
+		{"+Inf is 1 past MaxFloat64 on the ordered line", math.Inf(1), math.MaxFloat64, 1},
+		{"-Inf is 1 past -MaxFloat64", math.Inf(-1), -math.MaxFloat64, 1},
+		{"NaN vs NaN", math.NaN(), math.NaN(), 0},
+		{"NaN vs finite", math.NaN(), 1.0, math.MaxUint64},
+	}
+	for _, tc := range cases {
+		if got := ulpDistance(tc.a, tc.b); got != tc.want {
+			t.Errorf("%s: ulpDistance(%v, %v) = %d, want %d", tc.name, tc.a, tc.b, got, tc.want)
+		}
+		if got := ulpDistance(tc.b, tc.a); got != tc.want {
+			t.Errorf("%s (swapped): ulpDistance(%v, %v) = %d, want %d", tc.name, tc.b, tc.a, got, tc.want)
+		}
+	}
+}
+
+func Test_vec3UlpClose(t *testing.T) {
+	// 9 ulps above 1.0 is ~2e-15 — beyond both the ulp bound and the
+	// absolute floor; 9 ulps above 1e-16 is far below the floor.
+	up := func(f float64, n int) float64 {
+		for i := 0; i < n; i++ {
+			f = math.Nextafter(f, math.Inf(1))
+		}
+		return f
+	}
+	cases := []struct {
+		name string
+		a, b float64
+		want bool
+	}{
+		{"equal finite", 1.5, 1.5, true},
+		{"adjacent finite", 1.0, up(1.0, 1), true},
+		{"at the ulp bound", 1.0, up(1.0, int(vec3MaxUlp)), true},
+		{"beyond the ulp bound and the floor", 1.0, up(1.0, int(vec3MaxUlp)+1), false},
+		{"many ulps but under the cancellation floor", 1e-16, up(1e-16, 100), true},
+		{"across zero under the floor", 1e-16, -1e-16, true},
+		{"signed zeros", 0.0, math.Copysign(0, -1), true},
+		{"across zero beyond the floor", 1e-14, -1e-14, false},
+		{"equal +Inf", math.Inf(1), math.Inf(1), true},
+		{"equal -Inf", math.Inf(-1), math.Inf(-1), true},
+		{"+Inf vs MaxFloat64", math.Inf(1), math.MaxFloat64, false},
+		{"-Inf vs -MaxFloat64", math.Inf(-1), -math.MaxFloat64, false},
+		{"opposite infinities", math.Inf(1), math.Inf(-1), false},
+		{"Inf vs finite", math.Inf(1), 1.0, false},
+		{"NaN vs NaN", math.NaN(), math.NaN(), true},
+		{"NaN vs finite", math.NaN(), 1.0, false},
+		{"NaN vs Inf", math.NaN(), math.Inf(1), false},
+	}
+	for _, tc := range cases {
+		if got := vec3UlpClose(tc.a, tc.b); got != tc.want {
+			t.Errorf("%s: vec3UlpClose(%v, %v) = %v, want %v", tc.name, tc.a, tc.b, got, tc.want)
+		}
+		if got := vec3UlpClose(tc.b, tc.a); got != tc.want {
+			t.Errorf("%s (swapped): vec3UlpClose(%v, %v) = %v, want %v", tc.name, tc.b, tc.a, got, tc.want)
+		}
+	}
 }
 
 var vec3ParityVectors = []vec3d{
