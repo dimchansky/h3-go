@@ -32,6 +32,13 @@ H3Error h3goTest_geoMultiPolygonToLinkedSynthetic(
     int *coordsPerLoop, LatLng *outVerts, int *invariantsOut);
 H3Error h3goTest_linkedConvertCleanup(int which, int *cleanOut);
 H3Error h3goTest_linkedConvertError(int which);
+H3Error h3goTest_cellsToLinkedMultiPolygonSerialized(
+    const H3Index *cells, int numCells, int *numPolysOut, int *loopsPerPoly,
+    int *coordsPerLoop, LatLng *outVerts, int *invariantsOut);
+H3Error h3goTest_linkedToGeoMultiPolygonSynthetic(
+    const int *loopsPerPoly, const int *coordsPerLoop, LatLng *verts,
+    int numPolys, int64_t *numPolysOut, int64_t *polyNumVerts,
+    int64_t *polyNumHoles, int64_t *holeNumVerts, LatLng *outVerts);
 */
 import "C"
 import "unsafe"
@@ -195,6 +202,77 @@ func geoMultiPolygonToLinkedSyntheticC(mp geoMultiPolygon) (cLinkedShape, bool, 
 	}
 	out.verts = outVerts[:totalCoords]
 	return out, inv != 0, eSuccess
+}
+
+// cellsToLinkedMultiPolygonSerializedC calls ONLY the public C
+// cellsToLinkedMultiPolygon and serializes its linked output directly
+// (no conversion pipeline): chain shape, every vertex, and the
+// linkage invariants.
+func cellsToLinkedMultiPolygonSerializedC(cells []h3Index, numCells int32, maxLoops, maxVerts int) (cLinkedShape, bool, h3Error) {
+	loops := make([]C.int, maxLoops)
+	coords := make([]C.int, maxLoops)
+	outVerts := make([]LatLng, maxVerts)
+	var np, inv C.int
+	err := h3Error(C.h3goTest_cellsToLinkedMultiPolygonSerialized(
+		(*C.H3Index)(unsafe.Pointer(&cells[0])), C.int(numCells), &np,
+		&loops[0], &coords[0], latLngPtr(outVerts), &inv))
+	if err != eSuccess {
+		return cLinkedShape{}, false, err
+	}
+	var out cLinkedShape
+	totalLoops := 0
+	for p := 0; p < int(np); p++ {
+		out.loopsPerPoly = append(out.loopsPerPoly, int32(loops[p]))
+		totalLoops += int(loops[p])
+	}
+	totalCoords := 0
+	for l := 0; l < totalLoops; l++ {
+		out.coordsPerLoop = append(out.coordsPerLoop, int32(coords[l]))
+		totalCoords += int(coords[l])
+	}
+	out.verts = outVerts[:totalCoords]
+	return out, inv != 0, eSuccess
+}
+
+// linkedToGeoMultiPolygonSyntheticC builds a synthetic linked chain
+// from the flattened description (identical bytes on both sides),
+// calls ONLY linkedGeoPolygonToGeoMultiPolygon, and returns the
+// complete resulting GeoMultiPolygon.
+func linkedToGeoMultiPolygonSyntheticC(loopsPerPoly []int32, coordsPerLoop []int32, verts []LatLng) (geoMultiPolygon, h3Error) {
+	cLoops := make([]C.int, len(loopsPerPoly))
+	for i, v := range loopsPerPoly {
+		cLoops[i] = C.int(v)
+	}
+	cCoords := make([]C.int, len(coordsPerLoop))
+	for i, v := range coordsPerLoop {
+		cCoords[i] = C.int(v)
+	}
+	bound := int64(len(verts)) + 1
+	polyNV := make([]int64, bound)
+	polyNH := make([]int64, bound)
+	holeNV := make([]int64, bound)
+	outVerts := make([]LatLng, bound)
+	var np C.int64_t
+	err := h3Error(C.h3goTest_linkedToGeoMultiPolygonSynthetic(
+		&cLoops[0], &cCoords[0], latLngPtr(verts), C.int(len(loopsPerPoly)),
+		&np, (*C.int64_t)(&polyNV[0]), (*C.int64_t)(&polyNH[0]),
+		(*C.int64_t)(&holeNV[0]), latLngPtr(outVerts)))
+	if err != eSuccess {
+		return geoMultiPolygon{}, err
+	}
+	out := geoMultiPolygon{NumPolygons: int32(np)}
+	v, h := int64(0), int64(0)
+	for p := int64(0); p < int64(np); p++ {
+		poly := GeoPolygon{GeoLoop: GeoLoop(outVerts[v : v+polyNV[p]])}
+		v += polyNV[p]
+		for k := int64(0); k < polyNH[p]; k++ {
+			poly.Holes = append(poly.Holes, GeoLoop(outVerts[v:v+holeNV[h]]))
+			v += holeNV[h]
+			h++
+		}
+		out.Polygons = append(out.Polygons, poly)
+	}
+	return out, eSuccess
 }
 
 // linkedConvertCleanupC runs a valid-outer/invalid-hole (or invalid

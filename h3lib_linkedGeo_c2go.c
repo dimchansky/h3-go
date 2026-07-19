@@ -397,3 +397,74 @@ H3Error h3goTest_linkedConvertCleanup(int which, int *cleanOut) {
     return err;
 }
 #endif
+
+#if __has_include("area.c")
+// Isolated cellsToLinkedMultiPolygon: call ONLY the public function and
+// serialize its linked output directly — polygon/loop/coordinate
+// counts, every vertex, and the First/Last + tail-Next invariants —
+// with no conversion pipeline in between.
+H3Error h3goTest_cellsToLinkedMultiPolygonSerialized(
+    const H3Index *cells, int numCells, int *numPolysOut, int *loopsPerPoly,
+    int *coordsPerLoop, LatLng *outVerts, int *invariantsOut) {
+    LinkedGeoPolygon linked;
+    H3Error err = H3_EXPORT(cellsToLinkedMultiPolygon)(cells, numCells, &linked);
+    if (err) return err;
+    int p = 0, lBase = 0, vBase = 0, ok = 1;
+    for (LinkedGeoPolygon *poly = &linked; poly != NULL; poly = poly->next) {
+        int loops = 0;
+        ok &= h3goTestSerializeLinkedPoly(poly, &loops, &coordsPerLoop[lBase],
+                                          outVerts, vBase);
+        for (int l = 0; l < loops; l++) vBase += coordsPerLoop[lBase + l];
+        lBase += loops;
+        loopsPerPoly[p++] = loops;
+    }
+    *numPolysOut = p;
+    *invariantsOut = ok;
+    H3_EXPORT(destroyLinkedMultiPolygon)(&linked);
+    return E_SUCCESS;
+}
+
+// Isolated linkedGeoPolygonToGeoMultiPolygon success path: build a
+// synthetic linked chain from the flattened description (identical
+// bytes on both sides) with the extern helpers, call ONLY the
+// conversion, and serialize the complete GeoMultiPolygon.
+H3Error h3goTest_linkedToGeoMultiPolygonSynthetic(
+    const int *loopsPerPoly, const int *coordsPerLoop, LatLng *verts,
+    int numPolys, int64_t *numPolysOut, int64_t *polyNumVerts,
+    int64_t *polyNumHoles, int64_t *holeNumVerts, LatLng *outVerts) {
+    LinkedGeoPolygon head = {0};
+    LinkedGeoPolygon *cur = &head;
+    int l = 0, v = 0;
+    for (int p = 0; p < numPolys; p++) {
+        if (p > 0) cur = addNewLinkedPolygon(cur);
+        for (int loop = 0; loop < loopsPerPoly[p]; loop++) {
+            LinkedGeoLoop *lg = addNewLinkedLoop(cur);
+            for (int c = 0; c < coordsPerLoop[l]; c++) {
+                addLinkedCoord(lg, &verts[v++]);
+            }
+            l++;
+        }
+    }
+    GeoMultiPolygon out;
+    H3Error err = linkedGeoPolygonToGeoMultiPolygon(&head, &out);
+    H3_EXPORT(destroyLinkedMultiPolygon)(&head);
+    if (err) return err;
+    *numPolysOut = out.numPolygons;
+    int64_t ov = 0, oh = 0;
+    for (int p = 0; p < out.numPolygons; p++) {
+        polyNumVerts[p] = out.polygons[p].geoloop.numVerts;
+        polyNumHoles[p] = out.polygons[p].numHoles;
+        for (int i = 0; i < out.polygons[p].geoloop.numVerts; i++) {
+            outVerts[ov++] = out.polygons[p].geoloop.verts[i];
+        }
+        for (int k = 0; k < out.polygons[p].numHoles; k++) {
+            holeNumVerts[oh++] = out.polygons[p].holes[k].numVerts;
+            for (int i = 0; i < out.polygons[p].holes[k].numVerts; i++) {
+                outVerts[ov++] = out.polygons[p].holes[k].verts[i];
+            }
+        }
+    }
+    H3_EXPORT(destroyGeoMultiPolygon)(&out);
+    return E_SUCCESS;
+}
+#endif

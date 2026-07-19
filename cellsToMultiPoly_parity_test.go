@@ -14,8 +14,9 @@ import (
 // cancelArcPairs/unionArcs/getRoot via serialized arc state, countLoops,
 // createSortableLoop/createSortableLoopSet/cmp_SortableLoop/countPolys
 // via the serialized loop set, createGlobeMultiPolygon) and the
-// C-public entry points (cellsToMultiPolygon, cellsToLinkedMultiPolygon
-// flattened through C's linkedGeoPolygonToGeoMultiPolygon).
+// C-public entry points (cellsToMultiPolygon, and
+// cellsToLinkedMultiPolygon with its linked output serialized directly
+// — no conversion pipeline in between).
 //
 // Discrete outputs (error codes, counts, arc ids, linkage indices,
 // component roots, vertex counts) compare exactly. Loop areas compare
@@ -440,24 +441,67 @@ func Test_cellsToMultiPolygon_parity(t *testing.T) {
 }
 
 func Test_cellsToLinkedMultiPolygon_450_parity(t *testing.T) {
-	// The full linked pipeline (Go cellsToLinkedMultiPolygon +
-	// geoMultiPolygonToLinkedGeoPolygon/linkedGeoPolygonToGeoMultiPolygon
-	// round trip) against C's, both flattened to GeoMultiPolygon.
+	// Isolated cellsToLinkedMultiPolygon: the C side calls ONLY the
+	// public function and serializes its linked output directly —
+	// polygon/loop/coordinate counts, every vertex, and the
+	// First/Last + tail-Next linkage invariants — with no conversion
+	// pipeline in between; the Go side serializes its own linked
+	// output the same way. Vertices carry the boundary pipeline's
+	// vec3UlpClose discipline. For the globe tiling the eight octant
+	// polygons tie on outer area, so their order is
+	// implementation-defined and only the aggregate shape compares.
 	for name, cells := range multiPolyParitySets(t) {
 		var linked linkedGeoPolygon
 		goErr := cellsToLinkedMultiPolygon(cells, int32(len(cells)), &linked)
 		if goErr != eSuccess {
 			t.Fatalf("%s: cellsToLinkedMultiPolygon: %v", name, goErr)
 		}
-		var goOut geoMultiPolygon
-		if err := linkedGeoPolygonToGeoMultiPolygon(&linked, &goOut); err != eSuccess {
-			t.Fatalf("%s: linkedGeoPolygonToGeoMultiPolygon: %v", name, err)
+		var goShape cLinkedShape
+		goInv := true
+		for poly := &linked; poly != nil; poly = poly.Next {
+			st := goLinkedPolyState(poly)
+			goInv = goInv && st.invariantsOK
+			goShape.loopsPerPoly = append(goShape.loopsPerPoly, int32(len(st.coordsPerLoop)))
+			goShape.coordsPerLoop = append(goShape.coordsPerLoop, st.coordsPerLoop...)
+			goShape.verts = append(goShape.verts, st.verts...)
 		}
-		cOut, cErr := linkedMultiPolyAsGeoC(cells, int32(len(cells)))
+		maxLoops := 4 * len(cells)
+		if maxLoops < 64 {
+			maxLoops = 64
+		}
+		cShape, cInv, cErr := cellsToLinkedMultiPolygonSerializedC(cells, int32(len(cells)), maxLoops, 12*len(cells)+64)
 		if cErr != eSuccess {
-			t.Fatalf("%s: C linked pipeline: %v", name, cErr)
+			t.Fatalf("%s: C cellsToLinkedMultiPolygon: %v", name, cErr)
 		}
-		assertMultiPolyParity(t, name, goOut, cOut, name == "globeAllRes0")
+		if !goInv || !cInv {
+			t.Fatalf("%s: linkage invariants Go=%v C=%v", name, goInv, cInv)
+		}
+		if len(goShape.loopsPerPoly) != len(cShape.loopsPerPoly) ||
+			len(goShape.coordsPerLoop) != len(cShape.coordsPerLoop) ||
+			len(goShape.verts) != len(cShape.verts) {
+			t.Fatalf("%s: shape Go=(%d polys, %d loops, %d verts) C=(%d polys, %d loops, %d verts)",
+				name, len(goShape.loopsPerPoly), len(goShape.coordsPerLoop), len(goShape.verts),
+				len(cShape.loopsPerPoly), len(cShape.coordsPerLoop), len(cShape.verts))
+		}
+		if name == "globeAllRes0" {
+			continue // tied octant order; aggregate shape compared above
+		}
+		for i := range goShape.loopsPerPoly {
+			if goShape.loopsPerPoly[i] != cShape.loopsPerPoly[i] {
+				t.Fatalf("%s poly %d: loops Go=%d C=%d", name, i, goShape.loopsPerPoly[i], cShape.loopsPerPoly[i])
+			}
+		}
+		for i := range goShape.coordsPerLoop {
+			if goShape.coordsPerLoop[i] != cShape.coordsPerLoop[i] {
+				t.Fatalf("%s loop %d: coords Go=%d C=%d", name, i, goShape.coordsPerLoop[i], cShape.coordsPerLoop[i])
+			}
+		}
+		for i := range goShape.verts {
+			if !vec3UlpClose(goShape.verts[i].Lat.Rad(), cShape.verts[i].Lat.Rad()) ||
+				!vec3UlpClose(goShape.verts[i].Lng.Rad(), cShape.verts[i].Lng.Rad()) {
+				t.Fatalf("%s vert %d: Go=%v C=%v", name, i, goShape.verts[i], cShape.verts[i])
+			}
+		}
 	}
 
 	// The 4.5.0 behavioral change: invalid cells now fail with
@@ -465,7 +509,7 @@ func Test_cellsToLinkedMultiPolygon_450_parity(t *testing.T) {
 	invalid := []h3Index{0xd60006d60000f100, 0x3c3c403c1300d668}
 	var linked linkedGeoPolygon
 	goErr := cellsToLinkedMultiPolygon(invalid, 2, &linked)
-	_, cErr := linkedMultiPolyAsGeoC(invalid, 2)
+	_, _, cErr := cellsToLinkedMultiPolygonSerializedC(invalid, 2, 8, 8)
 	if goErr != cErr || goErr != eCellInvalid {
 		t.Errorf("invalid: Go=%v C=%v (want eCellInvalid from both)", goErr, cErr)
 	}

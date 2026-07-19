@@ -65,18 +65,6 @@ int h3goTest_cmp_SortableLoop(H3Index rootA, double areaA, H3Index rootB,
                               double areaB);
 int h3goTest_cmp_SortablePoly(double areaA, double areaB);
 int h3goTest_cmp_uint64(H3Index a, H3Index b);
-H3Error h3goTest_createSortablePoly(const H3Index *cells, int64_t numCells,
-                                    int64_t loopStart, int64_t numHoles,
-                                    double *outerAreaOut,
-                                    int64_t *outerNumVertsOut,
-                                    LatLng *outerVerts, int64_t *holeNumVerts,
-                                    LatLng *holeVerts);
-H3Error h3goTest_createMultiPolygonOnly(const H3Index *cells,
-                                        int64_t numCells,
-                                        int64_t *numPolysOut,
-                                        int64_t *polyNumVerts,
-                                        int64_t *polyNumHoles,
-                                        int64_t *holeNumVerts, LatLng *verts);
 int h3goTest_destroyArcSet_state(const H3Index *cells, int64_t numCells);
 int h3goTest_destroyLoopSet_state(const H3Index *cells, int64_t numCells,
                                   int shallow);
@@ -92,18 +80,6 @@ H3Error linkedGeoPolygonToGeoMultiPolygon(const LinkedGeoPolygon *linked,
 H3Error geoMultiPolygonToLinkedGeoPolygon(const GeoMultiPolygon *mpoly,
                                           LinkedGeoPolygon *out);
 
-// Run the full C linked pipeline (cellsToLinkedMultiPolygon) and
-// flatten its output through C's own linkedGeoPolygonToGeoMultiPolygon
-// so both the linked algorithm and the conversion extern are exercised.
-static H3Error linkedMultiPolyAsGeo_c(const H3Index *cells, int numCells,
-                                      GeoMultiPolygon *out) {
-    LinkedGeoPolygon linked;
-    H3Error err = cellsToLinkedMultiPolygon(cells, numCells, &linked);
-    if (err) return err;
-    err = linkedGeoPolygonToGeoMultiPolygon(&linked, out);
-    destroyLinkedMultiPolygon(&linked);
-    return err;
-}
 */
 import "C"
 import "unsafe"
@@ -243,26 +219,6 @@ func cellsToMultiPolygonC(cells []h3Index, numCells int64) (geoMultiPolygon, h3E
 	return out, eSuccess
 }
 
-// linkedMultiPolyAsGeoC runs C cellsToLinkedMultiPolygon and flattens
-// the linked output through C linkedGeoPolygonToGeoMultiPolygon.
-func linkedMultiPolyAsGeoC(cells []h3Index, numCells int32) (geoMultiPolygon, h3Error) {
-	var cOut C.GeoMultiPolygon
-	err := h3Error(C.linkedMultiPolyAsGeo_c(cellsPtr(cells), C.int(numCells), &cOut))
-	if err != eSuccess {
-		return geoMultiPolygon{}, err
-	}
-	var out geoMultiPolygon
-	out.NumPolygons = int32(cOut.numPolygons)
-	if cOut.numPolygons > 0 {
-		cPolys := (*[1 << 20]C.GeoPolygon)(unsafe.Pointer(cOut.polygons))[:cOut.numPolygons:cOut.numPolygons]
-		for i := range cPolys {
-			out.Polygons = append(out.Polygons, geoPolygonFromC(&cPolys[i]))
-		}
-	}
-	C.destroyGeoMultiPolygon(&cOut)
-	return out, eSuccess
-}
-
 // cEdgeArcs mirrors the serialized single-cell cellToEdgeArcs state.
 type cEdgeArcs struct {
 	ids                []h3Index
@@ -378,65 +334,6 @@ func cmp_SortablePolyC(areaA, areaB float64) int32 {
 
 func cmp_uint64C(a, b h3Index) int32 {
 	return int32(C.h3goTest_cmp_uint64(C.H3Index(a), C.H3Index(b)))
-}
-
-// createSortablePolyC calls C createSortablePoly on the sorted loop
-// set's polygon starting at loopStart with numHoles holes.
-func createSortablePolyC(cells []h3Index, numCells, loopStart, numHoles int64) (sortablePoly, h3Error) {
-	n := getNumEdgesC(cells, numCells)
-	outerVerts := make([]LatLng, 2*n)
-	holeVerts := make([]LatLng, 2*n)
-	holeNum := make([]int64, n+1)
-	var outerArea C.double
-	var outerNV C.int64_t
-	err := h3Error(C.h3goTest_createSortablePoly(cellsPtr(cells), C.int64_t(numCells),
-		C.int64_t(loopStart), C.int64_t(numHoles), &outerArea, &outerNV,
-		(*C.LatLng)(unsafe.Pointer(&outerVerts[0])), (*C.int64_t)(&holeNum[0]),
-		(*C.LatLng)(unsafe.Pointer(&holeVerts[0]))))
-	if err != eSuccess {
-		return sortablePoly{}, err
-	}
-	out := sortablePoly{outerArea: float64(outerArea),
-		poly: GeoPolygon{GeoLoop: GeoLoop(outerVerts[:outerNV])}}
-	v := int64(0)
-	for h := int64(0); h < numHoles; h++ {
-		out.poly.Holes = append(out.poly.Holes, GeoLoop(holeVerts[v:v+holeNum[h]]))
-		v += holeNum[h]
-	}
-	return out, eSuccess
-}
-
-// createMultiPolygonOnlyC runs the C pipeline to the sorted loop set
-// and calls createMultiPolygon only, serializing the result.
-func createMultiPolygonOnlyC(cells []h3Index, numCells int64) (geoMultiPolygon, h3Error) {
-	n := getNumEdgesC(cells, numCells)
-	if n < 24 {
-		n = 24 // globe branch emits 8 triangles regardless of input arcs
-	}
-	polyNV := make([]int64, n)
-	polyNH := make([]int64, n)
-	holeNV := make([]int64, n)
-	verts := make([]LatLng, 2*n+24)
-	var np C.int64_t
-	err := h3Error(C.h3goTest_createMultiPolygonOnly(cellsPtr(cells), C.int64_t(numCells),
-		&np, (*C.int64_t)(&polyNV[0]), (*C.int64_t)(&polyNH[0]),
-		(*C.int64_t)(&holeNV[0]), (*C.LatLng)(unsafe.Pointer(&verts[0]))))
-	if err != eSuccess {
-		return geoMultiPolygon{}, err
-	}
-	out := geoMultiPolygon{NumPolygons: int32(np)}
-	v, h := int64(0), int64(0)
-	for p := int64(0); p < int64(np); p++ {
-		poly := GeoPolygon{GeoLoop: GeoLoop(verts[v : v+polyNV[p]])}
-		v += polyNV[p]
-		for k := int64(0); k < polyNH[p]; k++ {
-			poly.Holes = append(poly.Holes, GeoLoop(verts[v:v+holeNV[h]]))
-			v += holeNV[h]
-			h++
-		}
-		out.Polygons = append(out.Polygons, poly)
-	}
-	return out, eSuccess
 }
 
 // flattenLoops marshals a synthetic loop set for the FromLoops

@@ -305,6 +305,80 @@ func Test_geoMultiPolygonToLinked_direct_parity(t *testing.T) {
 	}
 }
 
+func Test_linkedToGeoMultiPolygon_success_direct_parity(t *testing.T) {
+	// Isolated success path of linkedGeoPolygonToGeoMultiPolygon:
+	// identical synthetic linked chains are built on both sides (Go
+	// with the Go helpers, C inside the wrapper from the same
+	// flattened description) and ONLY the conversion runs; the
+	// complete resulting GeoMultiPolygon compares bit-exactly
+	// (verbatim copies of identical synthetic vertices).
+	tri := GeoLoop{{Lat: Rad(0.1), Lng: Rad(0.2)}, {Lat: Rad(0.3), Lng: Rad(0.1)}, {Lat: Rad(0.2), Lng: Rad(0.4)}}
+	quad := GeoLoop{{Lat: Rad(0.5)}, {Lat: Rad(0.6), Lng: Rad(0.1)}, {Lat: Rad(0.55), Lng: Rad(0.2)}, {Lat: Rad(0.45), Lng: Rad(0.1)}}
+	penta := GeoLoop{{Lat: Rad(-0.1)}, {Lat: Rad(-0.2), Lng: Rad(0.1)}, {Lat: Rad(-0.3)}, {Lat: Rad(-0.2), Lng: Rad(-0.1)}, {Lat: Rad(-0.15), Lng: Rad(-0.05)}}
+	// Each input is a chain of polygon nodes, each node a list of loops
+	// (first loop = outer, rest = holes).
+	inputs := map[string][][]GeoLoop{
+		"singlePoly":     {{tri}},
+		"polyWithHole":   {{quad, tri}},
+		"twoPolyNodes":   {{quad, tri}, {penta}},
+		"threePolyNodes": {{tri}, {quad, tri}, {penta}},
+	}
+	for name, chain := range inputs {
+		// Go side: build the linked chain with the Go helpers.
+		var head linkedGeoPolygon
+		cur := &head
+		var loopsPerPoly, coordsPerLoop []int32
+		var flat []LatLng
+		for p, loops := range chain {
+			if p > 0 {
+				cur = addNewLinkedPolygon(cur)
+			}
+			loopsPerPoly = append(loopsPerPoly, int32(len(loops)))
+			for _, l := range loops {
+				lg := addNewLinkedLoop(cur)
+				for j := range l {
+					addLinkedCoord(lg, &l[j])
+				}
+				coordsPerLoop = append(coordsPerLoop, int32(len(l)))
+				flat = append(flat, l...)
+			}
+		}
+		var goOut geoMultiPolygon
+		if err := linkedGeoPolygonToGeoMultiPolygon(&head, &goOut); err != eSuccess {
+			t.Fatalf("%s: linkedGeoPolygonToGeoMultiPolygon: %v", name, err)
+		}
+		cOut, cErr := linkedToGeoMultiPolygonSyntheticC(loopsPerPoly, coordsPerLoop, flat)
+		if cErr != eSuccess {
+			t.Fatalf("%s: C conversion: %v", name, cErr)
+		}
+		if goOut.NumPolygons != cOut.NumPolygons {
+			t.Fatalf("%s: NumPolygons Go=%d C=%d", name, goOut.NumPolygons, cOut.NumPolygons)
+		}
+		for p := int32(0); p < goOut.NumPolygons; p++ {
+			gp, cp := goOut.Polygons[p], cOut.Polygons[p]
+			if len(gp.GeoLoop) != len(cp.GeoLoop) || len(gp.Holes) != len(cp.Holes) {
+				t.Fatalf("%s poly %d: shape Go=(%d verts, %d holes) C=(%d verts, %d holes)",
+					name, p, len(gp.GeoLoop), len(gp.Holes), len(cp.GeoLoop), len(cp.Holes))
+			}
+			for j := range gp.GeoLoop {
+				if gp.GeoLoop[j] != cp.GeoLoop[j] {
+					t.Fatalf("%s poly %d vert %d: Go=%v C=%v", name, p, j, gp.GeoLoop[j], cp.GeoLoop[j])
+				}
+			}
+			for h := range gp.Holes {
+				if len(gp.Holes[h]) != len(cp.Holes[h]) {
+					t.Fatalf("%s poly %d hole %d: verts Go=%d C=%d", name, p, h, len(gp.Holes[h]), len(cp.Holes[h]))
+				}
+				for j := range gp.Holes[h] {
+					if gp.Holes[h][j] != cp.Holes[h][j] {
+						t.Fatalf("%s poly %d hole %d vert %d: Go=%v C=%v", name, p, h, j, gp.Holes[h][j], cp.Holes[h][j])
+					}
+				}
+			}
+		}
+	}
+}
+
 func Test_linkedConvertCleanup_parity(t *testing.T) {
 	// Valid-outer + invalid-hole (and invalid-second-element) cases for
 	// both conversion directions, comparing the promised cleanup state
