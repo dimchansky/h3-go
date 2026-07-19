@@ -74,4 +74,19 @@ func Test_reverseDirectedEdge_parity(t *testing.T) {
 				uint64(in), uint64(goOut), goErr, uint64(cOut), cErr)
 		}
 	}
+
+	// Malformed edge whose origin is a pentagon and whose reserved
+	// direction is the deleted K axis: destination recovery traverses
+	// the deleted direction, so both sides must fail with E_PENTAGON
+	// (the propagated branch behind the public ErrPentagon family).
+	var pent h3Index
+	setH3Index(&pent, 9, 4, 0) // base cell 4 is a pentagon; center children stay pentagons
+	pentKEdge := setReservedBits(setMode(pent, h3DirectededgeMode), int32(kAxesDigit))
+	var pentOut h3Index
+	pentErr := reverseDirectedEdge(pentKEdge, &pentOut)
+	cPentOut, cPentErr := reverseDirectedEdgeC(pentKEdge)
+	if pentErr != cPentErr || pentErr != ePentagon {
+		t.Errorf("reverseDirectedEdge(pentagon K-edge %x): Go=(%x,%v) C=(%x,%v), want ePentagon from both",
+			uint64(pentKEdge), uint64(pentOut), pentErr, uint64(cPentOut), cPentErr)
+	}
 }

@@ -375,6 +375,16 @@ func TestDirectedEdgeReverse(t *testing.T) {
 	if _, err := DirectedEdge(0x1001fff7ff2fbfff).Reverse(); !errors.Is(err, ErrNotNeighbors) {
 		t.Errorf("fuzz-pin Reverse: got %v, want ErrNotNeighbors", err)
 	}
+
+	// A malformed edge whose origin is a pentagon and whose reserved
+	// direction is the deleted K axis fails destination recovery with
+	// ErrPentagon — the last error family named by the GoDoc.
+	var pent h3Index
+	setH3Index(&pent, 9, 4, 0) // base cell 4 is a pentagon
+	pentKEdge := DirectedEdge(setReservedBits(setMode(pent, h3DirectededgeMode), int32(kAxesDigit)))
+	if _, err := pentKEdge.Reverse(); !errors.Is(err, ErrPentagon) {
+		t.Errorf("pentagon K-direction Reverse: got %v, want ErrPentagon", err)
+	}
 }
 
 func TestVertexes(t *testing.T) {
