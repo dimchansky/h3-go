@@ -1,4 +1,4 @@
-//go:build cgo && c2go && !h3v450
+//go:build cgo && c2go && h3v450
 
 package h3
 

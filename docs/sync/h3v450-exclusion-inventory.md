@@ -13,31 +13,19 @@ skips. Each issue that removes entries updates this file; it must be
 
 ## Excluded from the 4.5.0 configuration (`!h3v450`)
 
-### Compile-level: wrappers/shims binding symbols that do not exist at 4.5.0
-
 | File | Excluded test functions | Owner |
 |---|---|---|
 | `h3lib_vec3d_c2go.c` (compiles 4.4.0's `vec3d.c`, which faceijk.c's `_geoToClosestFace` links against — needed by the 4.4.0 C library itself even though the Go vec3d wrappers retired with I-A) | — | I-I #36 (deleted at cutover) |
-| `vertexGraph_cgo.go` | — | I-C #34 (whole domain retired) |
-| `h3lib_vertexGraph_cgo.c` (shim for the deleted `vertexGraph.c`) | — | I-C #34 |
-| `algos_vertexgraph_cgo.go` (wrappers: `_vertexGraphToLinkedGeoC`, `h3SetToVertexGraphC`, `h3SetToVertexGraphCForParity`) | — | I-C #34 |
-| `vertexGraph__hashVertex_parity_test.go` | `Test_hashVertex_parity` | I-C #34 |
-| `vertexGraph__initVertexGraph_parity_test.go` | `Test_initVertexGraph_parity` | I-C #34 |
-| `vertexGraph__initVertexNode_parity_test.go` | `Test__initVertexNode_parity` | I-C #34 |
-| `vertexGraph_addVertexNode_parity_test.go` | `Test_addVertexNode_parity`, `Test_addVertexNode_hash_collision_parity` | I-C #34 |
-| `vertexGraph_destroyVertexGraph_parity_test.go` | `Test_destroyVertexGraph_parity` | I-C #34 |
-| `vertexGraph_findNodeForEdge_parity_test.go` | `Test_findNodeForEdge_parity`, `Test_findNodeForEdge_linked_list_traversal_parity` | I-C #34 |
-| `vertexGraph_findNodeForVertex_parity_test.go` | `Test_findNodeForVertex_parity`, `Test_findNodeForVertex_multiple_edges_same_vertex_parity` | I-C #34 |
-| `vertexGraph_firstVertexNode_parity_test.go` | `Test_firstVertexNode_parity` | I-C #34 |
-| `vertexGraph_removeVertexNode_parity_test.go` | `Test_removeVertexNode_parity`, `Test_removeVertexNode_not_found_parity`, `Test_removeVertexNode_empty_graph_parity` | I-C #34 |
-| `algos_h3SetToVertexGraph_parity_test.go` | `Test_h3SetToVertexGraph_parity` | I-C #34 |
-| `algos__vertexGraphToLinkedGeo_parity_test.go` | `Test_vertexGraphToLinkedGeo_parity` | I-C #34 |
 
-### Behavior-level: parity valid at 4.4.0 but changed upstream at 4.5.0
-
-| File | Excluded test functions | 4.5.0 divergence (record ref) | Owner |
-|---|---|---|---|
-| `algos_cellsToLinkedMultiPolygon_parity_test.go` | `Test_cellsToLinkedMultiPolygon_parity` | invalid-cell input: Go(4.4.0)=E_FAILED vs C(4.5.0)=E_CELL_INVALID (§7.1) | I-C #34 |
+No Go files and no test functions are excluded from the 4.5.0
+configuration any more: I-C #34 retired the entire vertexGraph parity
+domain together with its subject (upstream deleted `vertexGraph.c/h`
+and the Go port deleted the corresponding `vertexGraph*.go` /
+`algos_h3SetToVertexGraph*` / `algos__vertexGraphToLinkedGeo*` files,
+their parity tests, and the `h3lib_vertexGraph_cgo.c` shim), and
+flipped `algos_cellsToLinkedMultiPolygon_parity_test.go` to the
+4.5.0-only configuration (the Go library now implements the 4.5.0
+arc-based algorithm).
 
 ## Adaptive (not excluded — compiles differently per tree)
 
@@ -49,11 +37,15 @@ skips. Each issue that removes entries updates this file; it must be
   wrappers (`h3goTest_*`) that expose the 4.5.0 file-static Vec3
   pipeline helpers and `gridPathCellsInterpolate` to the parity
   harness in their own translation units. No 4.4.0 impact.
+- `parity_float_helpers_test.go`: ungated shared helpers (both
+  configurations).
 
 ## Present only in the 4.5.0 configuration (`h3v450`)
 
 - `h3lib_area_c2go.c` (shim for the new `area.c`)
-- `h3lib_cellsToMultiPoly_c2go.c` (shim for the new `cellsToMultiPoly.c`)
+- `h3lib_cellsToMultiPoly_c2go.c` (shim for the new
+  `cellsToMultiPoly.c` + same-TU `h3goTest_*` wrappers for its
+  file-statics)
 
 - `vec3d_cgo.go`, `h3index_vec3_cgo.go`, `faceijk_vec3_cgo.go` +
   `vec3d_vec3Ops_parity_test.go`, `h3index_cellToVec3_parity_test.go`,
@@ -65,10 +57,23 @@ skips. Each issue that removes entries updates this file; it must be
   and the exact 4.5.0 gridPathCells pairs; I-D #31)
 - `directedEdge_reverse_cgo.go` +
   `directedEdge_reverseDirectedEdge_parity_test.go` (I-E #32)
+- `cellsToMultiPoly_cgo.go` + `cellsToMultiPoly_parity_test.go` and
+  the flipped `algos_cellsToLinkedMultiPolygon_parity_test.go`
+  (arc-based multipolygon machinery, linkedGeo conversions, and the
+  rewritten cellsToLinkedMultiPolygon; I-C #34)
 
-The only version-specific parity still to come is the I-C #34
-multipolygon domain (cellsToMultiPoly machinery + the rewritten
-cellsToLinkedMultiPolygon).
+Every version-specific parity domain planned by the record is now in
+place; the remaining `!h3v450` entry above is harness-plumbing only and
+is deleted at the I-I cutover.
+
+**Resolved by I-C #34** (deleted with the replaced implementation): the
+whole vertexGraph parity domain — `h3lib_vertexGraph_cgo.c`,
+`vertexGraph_cgo.go`, `algos_vertexgraph_cgo.go`, the eleven
+`vertexGraph*_parity_test.go` files,
+`algos_h3SetToVertexGraph_parity_test.go`, and
+`algos__vertexGraphToLinkedGeo_parity_test.go` — and the behavior-level
+exclusion of `algos_cellsToLinkedMultiPolygon_parity_test.go` (now
+h3v450-gated instead).
 
 **Resolved by I-B #30** (deleted with the replaced implementation): the
 triangle-area wrappers and parity tests (`latLng_h3v44_cgo.go`,
@@ -89,7 +94,7 @@ regardless of the Go side.
 
 `latLng__cellAreaKm2_parity_test.go` / `latLng__cellAreaM2_parity_test.go`
 pass in both configurations (their absolute tolerances absorb the
-~1e-15-relative area change) and deliberately stay ungated for coverage;
+~1e-15-relative area change) and deliberately stay ungated for coverage.
 `Test_latLngToCell/cellToLatLng/cellToBoundary` and the exhaustive
 parity suites pass unchanged at 4.5.0 within their documented
 comparison disciplines — cell indexes and error codes exactly,
@@ -99,3 +104,10 @@ their 1e-6-degree threshold (latLngToCell fixture indexes exactly). At
 those tolerances the Vec3 refactor produced no observable difference
 (record §14 risk 1 evidence); bit-identity of the continuous outputs is
 not claimed.
+
+Note on the 4.4.0 configuration after I-C: the Go library implements
+the 4.5.0 multipolygon algorithm, so the multipolygon parity domain is
+h3v450-only by necessity (the 4.4.0 C oracle implements the retired
+vertexGraph algorithm). `make test-c2go H3VER=4.4.0` still runs every
+other suite, including the coordijk/faceijk/latLng domains shared by
+both trees.

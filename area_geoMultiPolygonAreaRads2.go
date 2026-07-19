@@ -5,7 +5,7 @@ package h3
 // the polygons are disjoint.
 // Ported from H3 C: area.c::geoMultiPolygonAreaRads2.
 //
-//nolint:unused // exercised by the cgo && c2go parity tests; consumed by the I-C multipolygon port (#34)
+//nolint:unparam // error result mirrors the H3 C signature (always E_SUCCESS today)
 func geoMultiPolygonAreaRads2(mpoly geoMultiPolygon) (float64, h3Error) {
 	var a adder
 

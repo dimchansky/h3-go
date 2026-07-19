@@ -76,7 +76,13 @@ h3 compactCells -i cells.txt -f newline
   platform `libm` behavior extremely near a pole); scalar metrics use a
   `1e-12` relative tolerance.
 - The upstream 1500-byte cell-input scanner is reproduced, including chunk
-  boundary behavior visible in its multipolygon fixture.
+  boundary behavior visible in its multipolygon fixture. The H3 4.5.0
+  stale-buffer fix (short final reads no longer re-scan bytes left over
+  from the previous chunk) is mirrored — pulled forward with the I-C
+  multipolygon migration because the rewritten algorithm turns the
+  phantom duplicate cells the old bug produced into a
+  `Duplicate input` error; the rest of the 4.5.0 CLI sync lands with
+  I-H (#35).
 - Help whitespace and diagnostic wording are not byte-locked. The additive
   `--version` option reports H3 compatibility plus Go module/build metadata.
 

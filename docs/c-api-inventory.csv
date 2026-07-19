@@ -87,10 +87,11 @@ POLYGON_TO_CELLS_BUFFER,(C-internal: algos.c),algos_constants.go,polygonToCellsB
 _getEdgeHexagons,(C-internal: algos.c),algos__getEdgeHexagons.go,_getEdgeHexagons,"func _getEdgeHexagons(geoloop []LatLng, numHexagons int64, res int32, numSearchHexes *int64, search []h3Index, found []h3Index) h3Error",false,kind: func
 _gridDiskDistancesInternal,(C-internal: algos.c),algos__gridDiskDistancesInternal.go,_gridDiskDistancesInternal,"func _gridDiskDistancesInternal(origin h3Index, k int32, out []h3Index, distances []int32, maxIdx int64, curK int32) h3Error",false,kind: func
 _gridRingInternal,(C-internal: algos.c),algos__gridRingInternal.go,_gridRingInternal,"func _gridRingInternal(origin h3Index, k int32, out []h3Index) h3Error",false,kind: func
-_vertexGraphToLinkedGeo,(C-internal: algos.c),algos__vertexGraphToLinkedGeo.go,_vertexGraphToLinkedGeo,"func _vertexGraphToLinkedGeo(graph *vertexGraph, out *linkedGeoPolygon)",false,kind: func
+destroyGeoLoop,(C-internal: algos.c),algos_destroyGeoLoop.go,destroyGeoLoop,func destroyGeoLoop(loop *GeoLoop),false,kind: func
+destroyGeoMultiPolygon,(C-internal: algos.c),algos_destroyGeoMultiPolygon.go,destroyGeoMultiPolygon,func destroyGeoMultiPolygon(mpoly *geoMultiPolygon),false,kind: func
+destroyGeoPolygon,(C-internal: algos.c),algos_destroyGeoPolygon.go,destroyGeoPolygon,func destroyGeoPolygon(poly *GeoPolygon),false,kind: func
 directionForNeighbor,(C-internal: algos.c),algos__directionForNeighbor.go,_directionForNeighbor,"func _directionForNeighbor(origin h3Index, destination h3Index) direction",false,kind: func
 h3NeighborRotations,(C-internal: algos.c),algos__h3NeighborRotations.go,h3NeighborRotations,"func h3NeighborRotations(origin h3Index, dir direction, rotations *int32, out *h3Index) h3Error",false,kind: func
-h3SetToVertexGraph,(C-internal: algos.c),algos_h3SetToVertexGraph.go,h3SetToVertexGraph,"func h3SetToVertexGraph(h3Set []h3Index, numHexes int32, graph *vertexGraph) h3Error",false,kind: func
 cagnoli,(C-internal: area.c),area__cagnoli.go,_cagnoli,"func _cagnoli(x, y LatLng) float64",false,kind: func
 geoLoopAreaRads2,(C-internal: area.c),area_geoLoopAreaRads2.go,geoLoopAreaRads2,"func geoLoopAreaRads2(loop GeoLoop) (float64, h3Error)",false,kind: func
 geoMultiPolygonAreaRads2,(C-internal: area.c),area_geoMultiPolygonAreaRads2.go,geoMultiPolygonAreaRads2,"func geoMultiPolygonAreaRads2(mpoly geoMultiPolygon) (float64, h3Error)",false,kind: func
@@ -122,6 +123,39 @@ bboxToCellBoundary,(C-internal: bbox.c),bbox_bboxToCellBoundary.go,bboxToCellBou
 bboxWidthRads,(C-internal: bbox.c),bbox__bboxWidthHeightRads.go,bboxWidthRads,func bboxWidthRads(b *bbox) float64,false,kind: func
 lineHexEstimate,(C-internal: bbox.c),bbox_lineHexEstimate.go,lineHexEstimate,"func lineHexEstimate(origin *LatLng, destination *LatLng, res int32, out *int64) h3Error",false,kind: func
 scaleBBox,(C-internal: bbox.c),bbox__scaleBBox.go,scaleBBox,"func scaleBBox(bbox *bbox, scale float64)",false,kind: func
+cancelArcPairs,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__cancelArcPairs.go,cancelArcPairs,func cancelArcPairs(arcset arcSet) h3Error,false,kind: func
+cellToEdgeArcs,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__cellToEdgeArcs.go,cellToEdgeArcs,"func cellToEdgeArcs(h h3Index, arcs []arc, numEdgesOut *int64) h3Error",false,kind: func
+cellsToMultiPolygon,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly_cellsToMultiPolygon.go,cellsToMultiPolygon,"func cellsToMultiPolygon(cells []h3Index, numCells int64, out *geoMultiPolygon) h3Error",false,kind: func
+countLoops,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__countLoops.go,countLoops,func countLoops(arcset arcSet) int64,false,kind: func
+countPolys,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__countPolys.go,countPolys,func countPolys(loopset sortableLoopSet) int64,false,kind: func
+createArcSet,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__createArcSet.go,createArcSet,"func createArcSet(cells []h3Index, numCells int64, arcset *arcSet) h3Error",false,kind: func
+createGlobeMultiPolygon,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__createGlobeMultiPolygon.go,createGlobeMultiPolygon,func createGlobeMultiPolygon(mpoly *geoMultiPolygon) h3Error,false,kind: func
+createMultiPolygon,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__createMultiPolygon.go,createMultiPolygon,"func createMultiPolygon(loopset sortableLoopSet, mpoly *geoMultiPolygon) h3Error",false,kind: func
+createSortableLoop,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__createSortableLoop.go,createSortableLoop,"func createSortableLoop(arc *arc, sloop *sortableLoop) h3Error",false,kind: func
+createSortableLoopSet,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__createSortableLoopSet.go,createSortableLoopSet,"func createSortableLoopSet(arcset arcSet, loopset *sortableLoopSet) h3Error",false,kind: func
+createSortablePoly,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__createSortablePoly.go,createSortablePoly,"func createSortablePoly(sloop []sortableLoop, numHoles int64, spoly *sortablePoly) h3Error",false,kind: func
+findArc,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__findArc.go,findArc,"func findArc(arcset arcSet, e h3Index) *arc",false,kind: func
+getNumEdges,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__getNumEdges.go,getNumEdges,"func getNumEdges(cells []h3Index, numCells int64) int64",false,kind: func
+getRoot,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__getRoot.go,getRoot,func getRoot(arc *arc) *arc,false,kind: func
+hashEdge,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__hashEdge.go,hashEdge,"func hashEdge(x h3Index, n uint64) uint64",false,kind: func
+resetVisited,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__resetVisited.go,resetVisited,func resetVisited(arcset arcSet),false,kind: func
+unionArcs,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__unionArcs.go,unionArcs,"func unionArcs(a, b *arc)",false,kind: func
+validateCellSet,(C-internal: cellsToMultiPoly.c),cellsToMultiPoly__validateCellSet.go,validateCellSet,"func validateCellSet(cells []h3Index, numCells int64) h3Error",false,kind: func
+Arc,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly_types.go,arc,type arc struct {,false,kind: type
+ArcSet,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly_types.go,arcSet,type arcSet struct {,false,kind: type
+HASH_TABLE_MULTIPLIER,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly_types.go,hashTableMultiplier,const hashTableMultiplier,false,kind: const
+SortableLoop,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly_types.go,sortableLoop,type sortableLoop struct {,false,kind: type
+SortableLoopSet,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly_types.go,sortableLoopSet,type sortableLoopSet struct {,false,kind: type
+SortablePoly,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly_types.go,sortablePoly,type sortablePoly struct {,false,kind: type
+checkCellsToMultiPolyOverflow,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__checkCellsToMultiPolyOverflow.go,checkCellsToMultiPolyOverflow,"func checkCellsToMultiPolyOverflow(numCells int64, hashMultiplier int64) h3Error",false,kind: func
+cmp_SortableLoop,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__cmp_SortableLoop.go,cmp_SortableLoop,"func cmp_SortableLoop(a, b *sortableLoop) int32",false,kind: func
+cmp_SortablePoly,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__cmp_SortablePoly.go,cmp_SortablePoly,"func cmp_SortablePoly(a, b *sortablePoly) int32",false,kind: func
+cmp_uint64,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__cmp_uint64.go,cmp_uint64,"func cmp_uint64(a, b h3Index) int32",false,kind: func
+destroyArcSet,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__destroyArcSet.go,destroyArcSet,func destroyArcSet(arcset *arcSet),false,kind: func
+destroySortableLoopSet,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__destroySortableLoopSet.go,destroySortableLoopSet,func destroySortableLoopSet(loopset *sortableLoopSet),false,kind: func
+destroySortableLoopSetShallow,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__destroySortableLoopSetShallow.go,destroySortableLoopSetShallow,func destroySortableLoopSetShallow(loopset *sortableLoopSet),false,kind: func
+destroySortablePolyVerts,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__destroySortablePolyVerts.go,destroySortablePolyVerts,"func destroySortablePolyVerts(spolys []sortablePoly, numPolys int64)",false,kind: func
+destroySortablePolys,(C-internal: cellsToMultiPoly.h),cellsToMultiPoly__destroySortablePolys.go,destroySortablePolys,"func destroySortablePolys(spolys []sortablePoly, numPolys int64)",false,kind: func
 INT32_MAX_3,(C-internal: coordijk.h),constants.go,,int32Max3 = int32Max / 3 // Used in aperture 7 overflow checking,false,kind: other
 _downAp3,(C-internal: coordijk.h),coordijk__downAp3.go,_downAp3,func _downAp3(ijk *coordIJK),false,kind: func
 _downAp3r,(C-internal: coordijk.h),coordijk__downAp3r.go,_downAp3r,func _downAp3r(ijk *coordIJK),false,kind: func
@@ -220,6 +254,7 @@ geoAlmostEqualThreshold,(C-internal: latLng.c),latLng__geoAlmostEqualThreshold.g
 normalizeLng,(C-internal: latLng.c),latLng__normalizeLng.go,normalizeLng,"func normalizeLng(lng Angle, normalization longitudeNormalization) Angle",false,kind: func
 setGeoDegs,(C-internal: latLng.c),latLng__setGeoDegs.go,setGeoDegs,"func setGeoDegs(p *LatLng, latDegs, lngDegs float64)",false,kind: func
 addLinkedCoord,(C-internal: linkedGeo.c),linkedGeo__addLinkedCoord.go,addLinkedCoord,"func addLinkedCoord(loop *linkedGeoLoop, vertex *LatLng) *linkedLatLng",false,kind: func
+addLinkedGeoLoop,(C-internal: linkedGeo.c),linkedGeo__addLinkedGeoLoop.go,addLinkedGeoLoop,"func addLinkedGeoLoop(gl GeoLoop, currentPoly *linkedGeoPolygon) h3Error",false,kind: func
 addLinkedLoop,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedLoop.go,addLinkedLoop,"func addLinkedLoop(polygon *linkedGeoPolygon, loop *linkedGeoLoop) *linkedGeoLoop",false,kind: func
 addNewLinkedLoop,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedLoop.go,addNewLinkedLoop,func addNewLinkedLoop(polygon *linkedGeoPolygon) *linkedGeoLoop,false,kind: func
 addNewLinkedPolygon,(C-internal: linkedGeo.c),linkedGeo__addNewLinkedPolygon.go,addNewLinkedPolygon,func addNewLinkedPolygon(polygon *linkedGeoPolygon) *linkedGeoPolygon,false,kind: func
@@ -230,6 +265,12 @@ countLinkedPolygons,(C-internal: linkedGeo.c),linkedGeo__countLinkedPolygons.go,
 destroyLinkedGeoLoop,(C-internal: linkedGeo.c),linkedGeo_destroyLinkedGeoLoop.go,destroyLinkedGeoLoop,func destroyLinkedGeoLoop(loop *linkedGeoLoop),false,kind: func
 findDeepestContainer,(C-internal: linkedGeo.c),linkedGeo__findDeepestContainer.go,findDeepestContainer,"func findDeepestContainer(polygons []*linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon",false,kind: func
 findPolygonForHole,(C-internal: linkedGeo.c),linkedGeo__findPolygonForHole.go,findPolygonForHole,"func findPolygonForHole(loop *linkedGeoLoop, polygon *linkedGeoPolygon, bboxes []*bbox) *linkedGeoPolygon",false,kind: func
+geoLoopToLinkedGeoLoop,(C-internal: linkedGeo.c),linkedGeo__geoLoopToLinkedGeoLoop.go,geoLoopToLinkedGeoLoop,"func geoLoopToLinkedGeoLoop(src GeoLoop, loop *linkedGeoLoop) h3Error",false,kind: func
+geoMultiPolygonToLinkedGeoPolygon,(C-internal: linkedGeo.c),linkedGeo_geoMultiPolygonToLinkedGeoPolygon.go,geoMultiPolygonToLinkedGeoPolygon,"func geoMultiPolygonToLinkedGeoPolygon(mpoly *geoMultiPolygon, out *linkedGeoPolygon) h3Error",false,kind: func
+geoPolygonToLinkedGeoLoops,(C-internal: linkedGeo.c),linkedGeo__geoPolygonToLinkedGeoLoops.go,geoPolygonToLinkedGeoLoops,"func geoPolygonToLinkedGeoLoops(poly *GeoPolygon, currentPoly *linkedGeoPolygon) h3Error",false,kind: func
+linkedGeoLoopToGeoLoop,(C-internal: linkedGeo.c),linkedGeo__linkedGeoLoopToGeoLoop.go,linkedGeoLoopToGeoLoop,"func linkedGeoLoopToGeoLoop(linked *linkedGeoLoop, out *GeoLoop) h3Error",false,kind: func
+linkedGeoPolygonToGeoMultiPolygon,(C-internal: linkedGeo.c),linkedGeo_linkedGeoPolygonToGeoMultiPolygon.go,linkedGeoPolygonToGeoMultiPolygon,"func linkedGeoPolygonToGeoMultiPolygon(linked *linkedGeoPolygon, out *geoMultiPolygon) h3Error",false,kind: func
+linkedGeoPolygonToGeoPolygon,(C-internal: linkedGeo.c),linkedGeo__linkedGeoPolygonToGeoPolygon.go,linkedGeoPolygonToGeoPolygon,"func linkedGeoPolygonToGeoPolygon(linked *linkedGeoPolygon, out *GeoPolygon) h3Error",false,kind: func
 normalizeMultiPolygon,(C-internal: linkedGeo.c),linkedGeo__normalizeMultiPolygon.go,normalizeMultiPolygon,func normalizeMultiPolygon(root *linkedGeoPolygon) h3Error,false,kind: func
 FAILED_DIRECTIONS,(C-internal: localij.c),localij_constants.go,failedDirections,var failedDirections,false,kind: var
 PENTAGON_ROTATIONS,(C-internal: localij.c),localij_constants.go,localijPentagonRotations,var localijPentagonRotations,false,kind: var
@@ -271,8 +312,8 @@ pointInsideGeoLoop,(C-internal: polygon.c),polygon__pointInsideGeoLoop.go,pointI
 pointInsidePolygon,(C-internal: polygon.c),polygon__pointInsidePolygon.go,pointInsidePolygon,"func pointInsidePolygon(poly GeoPolygon, bboxes []bbox, coord *LatLng) bool",false,kind: func
 validatePolygonFlags,(C-internal: polygon.c),polygon__validatePolygonFlags.go,validatePolygonFlags,func validatePolygonFlags(flags uint32) h3Error,false,kind: func
 GENERIC_LOOP_ALGO(bboxFrom),(C-internal: polygonAlgos.h),linkedGeo__bboxFromLinkedGeoLoop.go,bboxFromLinkedGeoLoop,"func bboxFromLinkedGeoLoop(loop *linkedGeoLoop, bb *bbox)",false,kind: func
-GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoop,func isClockwiseGeoLoop(loop GeoLoop) bool,false,kind: func
 GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoop,func isClockwiseLinkedGeoLoop(loop *linkedGeoLoop) bool,false,kind: func
+GENERIC_LOOP_ALGO(isClockwise),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoop,func isClockwiseGeoLoop(loop GeoLoop) bool,false,kind: func
 GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),polygon__isClockwiseGeoLoop.go,isClockwiseGeoLoopNormalized,"func isClockwiseGeoLoopNormalized(loop GeoLoop, isTransmeridian bool) bool",false,kind: func
 GENERIC_LOOP_ALGO(isClockwiseNormalized),(C-internal: polygonAlgos.h),linkedGeo__isClockwiseLinkedGeoLoop.go,isClockwiseLinkedGeoLoopNormalized,"func isClockwiseLinkedGeoLoopNormalized(loop *linkedGeoLoop, isTransmeridian bool) bool",false,kind: func
 GENERIC_LOOP_ALGO(pointInside),(C-internal: polygonAlgos.h),linkedGeo__pointInsideLinkedGeoLoop.go,pointInsideLinkedGeoLoop,"func pointInsideLinkedGeoLoop(loop *linkedGeoLoop, bbox *bbox, coord *LatLng) bool",false,kind: func
@@ -319,12 +360,3 @@ vertexNumToDirectionPent,(C-internal: vertex.c),vertex_constants.go,vertexNumToD
 vertexRotations,(C-internal: vertex.c),vertex__vertexRotations.go,vertexRotations,"func vertexRotations(cell h3Index, out *int32) h3Error",false,kind: func
 INVALID_VERTEX_NUM,(C-internal: vertex.h),vertex_constants.go,invalidVertexNum,const invalidVertexNum,false,kind: const
 PentagonDirectionFaces,(C-internal: vertex.h),vertex_constants.go,pentagonDirectionFacesEntry,type pentagonDirectionFacesEntry struct {,false,kind: type
-_hashVertex,(C-internal: vertexGraph.c),vertexGraph__hashVertex.go,_hashVertex,"func _hashVertex(vertex *LatLng, res int32, numBuckets int32) uint32",false,kind: func
-_initVertexNode,(C-internal: vertexGraph.c),vertexGraph__initVertexNode.go,_initVertexNode,"func _initVertexNode(node *vertexNode, fromVtx *LatLng, toVtx *LatLng)",false,kind: func
-addVertexNode,(C-internal: vertexGraph.c),vertexGraph_addVertexNode.go,addVertexNode,"func addVertexNode(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode",false,kind: func
-destroyVertexGraph,(C-internal: vertexGraph.c),vertexGraph_destroyVertexGraph.go,destroyVertexGraph,func destroyVertexGraph(graph *vertexGraph),false,kind: func
-findNodeForEdge,(C-internal: vertexGraph.c),vertexGraph_findNodeForEdge.go,findNodeForEdge,"func findNodeForEdge(graph *vertexGraph, fromVtx *LatLng, toVtx *LatLng) *vertexNode",false,kind: func
-findNodeForVertex,(C-internal: vertexGraph.c),vertexGraph_findNodeForVertex.go,findNodeForVertex,"func findNodeForVertex(graph *vertexGraph, fromVtx *LatLng) *vertexNode",false,kind: func
-firstVertexNode,(C-internal: vertexGraph.c),vertexGraph_firstVertexNode.go,firstVertexNode,func firstVertexNode(graph *vertexGraph) *vertexNode,false,kind: func
-initVertexGraph,(C-internal: vertexGraph.c),vertexGraph__initVertexGraph.go,initVertexGraph,"func initVertexGraph(graph *vertexGraph, numBuckets int32, res int32)",false,kind: func
-removeVertexNode,(C-internal: vertexGraph.c),vertexGraph_removeVertexNode.go,removeVertexNode,"func removeVertexNode(graph *vertexGraph, node *vertexNode) int32",false,kind: func

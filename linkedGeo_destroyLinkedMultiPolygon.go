@@ -25,10 +25,11 @@ func destroyLinkedMultiPolygon(polygon *linkedGeoPolygon) {
 		}
 		nextPolygon = currentPolygon.Next
 		if skip {
-			// do not free the input polygon - just clear its references
+			// do not free the input polygon, but zero it so this
+			// function is idempotent (safe to call twice) — H3 4.5.0
+			// delta (record §7 item 7).
 			skip = false
-			currentPolygon.First = nil
-			currentPolygon.Last = nil
+			*currentPolygon = linkedGeoPolygon{}
 		} else {
 			// Clear references for non-input polygons
 			currentPolygon.First = nil

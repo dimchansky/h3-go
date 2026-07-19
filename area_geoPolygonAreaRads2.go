@@ -9,8 +9,6 @@ import "math"
 // holes. No check is made that holes are disjoint or contained within
 // the outer loop.
 // Ported from H3 C: area.c::geoPolygonAreaRads2.
-//
-//nolint:unused // exercised by the cgo && c2go parity tests; consumed by the I-C multipolygon port (#34)
 func geoPolygonAreaRads2(poly GeoPolygon) (float64, h3Error) {
 	var a adder
 

@@ -112,10 +112,16 @@ func AppendPolygonToCellsExperimental(dst []Cell, p GeoPolygon, res int, mode Co
 
 // CellsToMultiPolygon returns the multipolygon — one GeoPolygon per
 // contiguous region, holes included — describing the outline of the given
-// set of cells. The input cells must all have the same resolution and
-// contain no duplicates; output for input violating these preconditions is
-// undefined (no error is guaranteed). An empty input yields a nil result,
-// and more than math.MaxInt32 input cells fail with ErrDomain.
+// set of cells.
+//
+// All cells must be valid, of the same resolution, and free of duplicates
+// (H3 4.5.0 contract). Violations are guaranteed errors, checked in this
+// order: an invalid cell fails with ErrCellInvalid (even if it also
+// mismatches the resolution), a resolution mismatch against the first cell
+// with ErrResolutionMismatch, and a duplicate cell with ErrDuplicateInput.
+// An empty input yields a nil result, and more than math.MaxInt32 input
+// cells fail with ErrDomain. An input tiling the entire globe yields the
+// eight triangular octant polygons.
 //
 // The output follows GeoJSON MultiPolygon structure rules: within each
 // GeoPolygon the outer boundary is in the GeoLoop field with its holes in
@@ -123,13 +129,15 @@ func AppendPolygonToCellsExperimental(dst []Cell, p GeoPolygon, res int, mode Co
 // vertices are cell-boundary vertices as radians-backed LatLng values in
 // (lat, lng) field order, rings are open (the closing vertex is not
 // repeated), loops may cross the antimeridian, and the order of the
-// returned polygons is unspecified. Producing GeoJSON therefore requires
-// converting radians to degrees, swapping to [lng, lat] coordinate order,
-// explicitly closing each ring by repeating its first position, and
-// handling antimeridian crossings per RFC 7946.
+// returned polygons and each ring's starting vertex are unspecified
+// (implementation artifacts, not contract). Producing GeoJSON therefore
+// requires converting radians to degrees, swapping to [lng, lat]
+// coordinate order, explicitly closing each ring by repeating its first
+// position, and handling antimeridian crossings per RFC 7946.
 //
-// H3 C API: cellsToLinkedMultiPolygon (the linked-list output is converted
-// to slice-based GeoPolygon values; C's destroyLinkedMultiPolygon is
+// H3 C API: cellsToLinkedMultiPolygon (this wrapper consumes the flat
+// GeoMultiPolygon intermediate that C's linked output is itself built
+// from, producing identical geometry; C's destroyLinkedMultiPolygon is
 // unnecessary under garbage collection).
 func CellsToMultiPolygon(cells []Cell) ([]GeoPolygon, error) {
 	if len(cells) == 0 {
@@ -138,32 +146,11 @@ func CellsToMultiPolygon(cells []Cell) ([]GeoPolygon, error) {
 	if len(cells) > math.MaxInt32 {
 		return nil, ErrDomain
 	}
-	var linked linkedGeoPolygon
-	if errC := cellsToLinkedMultiPolygon(cells, int32(len(cells)), &linked); errC != eSuccess {
+	var mpoly geoMultiPolygon
+	if errC := cellsToMultiPolygon(cells, int64(len(cells)), &mpoly); errC != eSuccess {
 		return nil, toErr(errC)
 	}
-	out := make([]GeoPolygon, 0, countLinkedPolygons(&linked))
-	for poly := &linked; poly != nil; poly = poly.Next {
-		var outer GeoLoop
-		var holes []GeoLoop
-		if n := countLinkedLoops(poly); n > 1 {
-			holes = make([]GeoLoop, 0, n-1)
-		}
-		for loop := poly.First; loop != nil; loop = loop.Next {
-			coords := make(GeoLoop, 0, countLinkedCoords(loop))
-			for c := loop.First; c != nil; c = c.Next {
-				coords = append(coords, c.Vertex)
-			}
-			// normalizeMultiPolygon guarantees the first loop is the outer one.
-			if outer == nil {
-				outer = coords
-			} else {
-				holes = append(holes, coords)
-			}
-		}
-		out = append(out, GeoPolygon{GeoLoop: outer, Holes: holes})
-	}
-	return out, nil
+	return mpoly.Polygons, nil
 }
 
 // CompactCells returns the minimal set of cells of coarser resolutions that
