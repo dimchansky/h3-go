@@ -115,7 +115,7 @@ contract); no command or an unknown command exits `1`.
 
 ```sh
 h3 --version
-# h3 4.5.0 (v0.4.0)
+# h3 4.5.0 (<module-version>)
 ```
 
 The first number is the H3 C compatibility version. The parenthesized value

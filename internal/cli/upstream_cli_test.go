@@ -215,6 +215,34 @@ func shellFields(t *testing.T, input string) []string {
 	return fields
 }
 
+// TestEdgeLengthExactFormats pins the edge-length printf formats
+// byte-for-byte: edgeLengthRads and edgeLengthKm print %.10f while
+// edgeLengthM prints %.8f (changed from %.10lf in H3 4.5.0). The
+// scenario suite and the C differential compare scalars through
+// equivalentScalarFloat's 1e-12 relative tolerance, which would
+// accept a %.10f edgeLengthM regression — this test would not. The
+// expected strings are byte-identical to the compiled 4.5.0 C CLI's
+// output for the same commands.
+func TestEdgeLengthExactFormats(t *testing.T) {
+	tests := []struct {
+		command, stdout string
+	}{
+		{command: "edgeLengthRads", stdout: "0.0016158726\n"},
+		{command: "edgeLengthKm", stdout: "10.2947360862\n"},
+		{command: "edgeLengthM", stdout: "10294.73608620\n"},
+	}
+	for _, tc := range tests {
+		t.Run(tc.command, func(t *testing.T) {
+			var stdout, stderr bytes.Buffer
+			code := Run([]string{tc.command, "-c", "115283473fffffff"}, strings.NewReader(""), &stdout, &stderr)
+			if code != 0 || stdout.String() != tc.stdout || stderr.Len() != 0 {
+				t.Fatalf("code/stdout/stderr = %d, %q, %q; want 0, %q, \"\"",
+					code, stdout.String(), stderr.String(), tc.stdout)
+			}
+		})
+	}
+}
+
 func TestParserAndTopLevelExitContract(t *testing.T) {
 	tests := []struct {
 		name           string
