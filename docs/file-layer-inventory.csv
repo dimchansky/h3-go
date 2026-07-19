@@ -210,7 +210,7 @@ directedEdge_reverseDirectedEdge.go,ported-impl,h3,"-",1,0,0
 directedEdge_reverseDirectedEdge_parity_test.go,parity-test,h3,"cgo && c2go && h3v450",0,0,-
 directedEdge_reverse_cgo.go,parity-cgo-bridge,h3,"cgo && c2go && h3v450",0,0,-
 doc.go,public-api,h3,"-",0,1,0
-edge.go,public-api,h3,"-",0,10,1
+edge.go,public-api,h3,"-",0,11,1
 errors.go,public-api,h3,"-",0,0,19
 errors_test.go,public-api-test,h3,"-",0,0,-
 example_test.go,public-api-test,h3_test,"-",0,0,-
