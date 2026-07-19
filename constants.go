@@ -56,7 +56,9 @@ const (
 
 // Integer limits for overflow checking (from stdint.h).
 const (
-	int32Max  = 2147483647
-	int32Min  = -2147483648
+	int32Max = 2147483647
+	int32Min = -2147483648
+	// Ported from H3 C: coordijk.h::INT32_MAX_3 (a lib/coordijk.c macro
+	// until 4.4.0; hoisted into the header with the 4.5.0 inline move).
 	int32Max3 = int32Max / 3 // Used in aperture 7 overflow checking
 )

@@ -9,8 +9,9 @@ import (
 // with NaN/Inf/huge-magnitude coordinates. Such inputs are in-domain for the
 // upstream polygon fuzzers (raw doubles are used as radians), and before the
 // lineCrossesLine NaN fix the Go port diverged from C on the Inf/NaN cases.
-// Every expected size below is pinned to the value returned by H3 C 4.4.0
-// (verified through the cgo parity harness); resolutions are kept low so the
+// Every expected size below is pinned to the value returned by H3 C 4.5.0
+// (polyfill.c is byte-identical to 4.4.0, where these pins were first
+// verified through the cgo parity harness); resolutions are kept low so the
 // estimator's planet-wide scan on these degenerate bboxes stays cheap.
 //
 // The pathologically slow (~15 s) fuzz reproducer for the same code path is

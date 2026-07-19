@@ -26,7 +26,7 @@
 // # Compatibility rules that shape the code
 //
 // Behavior follows the C CLI even where a Go program would naturally differ.
-// The load-bearing quirks, each locked by the 170-scenario suite and the
+// The load-bearing quirks, each locked by the 172-scenario suite and the
 // differential tests against the compiled C binary:
 //
 //   - Recognized-command parser errors (missing/duplicate/unknown argument)
@@ -38,8 +38,9 @@
 //   - Hex cell arguments are parsed permissively (invalid input becomes
 //     index 0 and fails validation later), matching C's sscanf behavior.
 //   - Formatting mirrors upstream printf calls, including the %.10f
-//     coordinate precision, the %.6f multipolygon precision, and
-//     gridDistance printing in hex.
+//     coordinate precision, the %.6f multipolygon precision, the %.8f
+//     edgeLengthM precision (H3 4.5.0; edgeLengthRads/Km stay %.10f),
+//     and gridDistance printing in hex.
 //   - Command registration order is observable in `h3 --help` and therefore
 //     fixed.
 //

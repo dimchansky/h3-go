@@ -1,8 +1,10 @@
 package h3
 
-// Native Go fuzz equivalents for the 23 H3 v4.4.0 libFuzzer/AFL harnesses.
-// The upstream harnesses primarily assert memory safety/no-crash behavior;
-// these targets preserve their raw index, cell-set, polygon, and coordinate
+// Native Go fuzz equivalents for the 24 upstream libFuzzer/AFL harnesses
+// (23 at H3 v4.4.0; v4.5.0 added fuzzerCellsToMultiPolygon and shrank
+// fuzzerInternalAlgos by the deleted vertexGraph block). The upstream
+// harnesses primarily assert memory safety/no-crash behavior; these
+// targets preserve their raw index, cell-set, polygon, and coordinate
 // input domains while also checking successful results for basic validity.
 
 import (
@@ -57,6 +59,9 @@ func FuzzUpstreamCellOperations(f *testing.F) {
 			var length float64
 			_ = edgeLengthRads(edge, &length)
 			_ = directedEdgeToBoundary(edge, &boundary)
+			// 4.5.0 upstream harness addition (fuzzerDirectedEdge.c).
+			var reversed h3Index
+			_ = reverseDirectedEdge(edge, &reversed)
 		}
 
 		digits := make([]int32, res)
@@ -83,6 +88,11 @@ func FuzzUpstreamCellSets(f *testing.F) {
 		var polygon linkedGeoPolygon
 		_ = cellsToLinkedMultiPolygon(cells, int32(len(cells)), &polygon)
 		destroyLinkedMultiPolygon(&polygon)
+		// fuzzerCellsToMultiPolygon (new in H3 4.5.0): same raw
+		// cell-set domain through the flat multipolygon entry point.
+		var mpoly geoMultiPolygon
+		_ = cellsToMultiPolygon(cells, int64(len(cells)), &mpoly)
+		destroyGeoMultiPolygon(&mpoly)
 	})
 }
 

@@ -8,7 +8,7 @@ records, and the living upstream-sync workflow (§10).
 Scope at time of writing: repository `github.com/dimchansky/h3-go` at commit
 `52d76be`, upstream reference H3 C **v4.3.0** (`testref/h3-4.3.0`). Counts and
 version numbers in the body reflect that snapshot; for the current state
-(parity target H3 C v4.4.0, 78/78 public functions, the `h3` CLI under
+(parity target H3 C v4.5.0, 79/79 public functions, the `h3` CLI under
 `cmd/h3`) see the [README](../README.md), [CHANGELOG](../CHANGELOG.md), and
 [docs/sync/4.3.0-to-4.4.0.md](sync/4.3.0-to-4.4.0.md).
 

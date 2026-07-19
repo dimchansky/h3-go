@@ -1,4 +1,7 @@
 // Tests ported from H3 v4.4.0: src/apps/testapps/testH3CellAreaExhaustive.c.
+// v4.5.0 delta incorporated: the earth-area helper sums with the Kahan
+// adder and the cell_area_earth tolerances are uniformly tightened to
+// 1e-14 rads2 / 1e-6 km2 / 1e0 m2 at all resolutions 0-4.
 package h3
 
 import (
@@ -194,7 +197,9 @@ func cellAreaAssert(t *testing.T, cell h3Index) {
 func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(h3Index) (float64, h3Error), target float64, tol float64) {
 	t.Helper()
 
-	var area float64
+	// The 4.5.0 helper sums with the Kahan adder, enabling the uniform
+	// tightened tolerances below.
+	var area adder
 
 	// Get all base cells
 	baseCells := make([]h3Index, numBaseCells)
@@ -226,15 +231,15 @@ func earthAreaTest(t *testing.T, res int32, cellAreaFunc func(h3Index) (float64,
 				if err != eSuccess {
 					t.Fatalf("cell area callback(%#x) failed: %v", cell, err)
 				}
-				area += cellArea
+				kadd(&area, cellArea)
 			}
 		}
 	}
 
 	// Check if sum is close to expected earth area
-	if math.Abs(area-target) >= tol {
+	if math.Abs(area.sum-target) >= tol {
 		t.Errorf("Sum of all cells (%v) should give earth area (%v), tolerance=%v, diff=%v",
-			area, target, tol, math.Abs(area-target))
+			area.sum, target, tol, math.Abs(area.sum-target))
 	}
 }
 
@@ -328,29 +333,27 @@ func TestCellAreaEarth(t *testing.T) {
 	})
 
 	// Resolution 1
-	// Notice the drop in accuracy at resolution 1.
-	// I think this has something to do with Class II vs Class III resolutions.
 	t.Run("res1_rads2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 1, cellAreaRads2, rads2, 1e-9)
+		earthAreaTest(t, 1, cellAreaRads2, rads2, 1e-14)
 	})
 	t.Run("res1_km2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 1, cellAreaKm2, km2, 1e-1)
+		earthAreaTest(t, 1, cellAreaKm2, km2, 1e-6)
 	})
 	t.Run("res1_m2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 1, cellAreaM2, m2, 1e5)
+		earthAreaTest(t, 1, cellAreaM2, m2, 1e0)
 	})
 
 	// Resolution 2
 	t.Run("res2_rads2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 2, cellAreaRads2, rads2, 1e-12)
+		earthAreaTest(t, 2, cellAreaRads2, rads2, 1e-14)
 	})
 	t.Run("res2_km2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 2, cellAreaKm2, km2, 1e-5)
+		earthAreaTest(t, 2, cellAreaKm2, km2, 1e-6)
 	})
 	t.Run("res2_m2", func(t *testing.T) {
 		t.Parallel()
@@ -360,28 +363,28 @@ func TestCellAreaEarth(t *testing.T) {
 	// Resolution 3
 	t.Run("res3_rads2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 3, cellAreaRads2, rads2, 1e-11)
+		earthAreaTest(t, 3, cellAreaRads2, rads2, 1e-14)
 	})
 	t.Run("res3_km2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 3, cellAreaKm2, km2, 1e-3)
+		earthAreaTest(t, 3, cellAreaKm2, km2, 1e-6)
 	})
 	t.Run("res3_m2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 3, cellAreaM2, m2, 1e3)
+		earthAreaTest(t, 3, cellAreaM2, m2, 1e0)
 	})
 
 	// Resolution 4
 	t.Run("res4_rads2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 4, cellAreaRads2, rads2, 1e-11)
+		earthAreaTest(t, 4, cellAreaRads2, rads2, 1e-14)
 	})
 	t.Run("res4_km2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 4, cellAreaKm2, km2, 1e-3)
+		earthAreaTest(t, 4, cellAreaKm2, km2, 1e-6)
 	})
 	t.Run("res4_m2", func(t *testing.T) {
 		t.Parallel()
-		earthAreaTest(t, 4, cellAreaM2, m2, 1e2)
+		earthAreaTest(t, 4, cellAreaM2, m2, 1e0)
 	})
 }

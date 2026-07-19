@@ -36,6 +36,6 @@ const (
 // Ported from H3 C: h3api.h::H3_VERSION_MAJOR, H3_VERSION_MINOR, H3_VERSION_PATCH.
 const (
 	h3VersionMajor = 4
-	h3VersionMinor = 4
+	h3VersionMinor = 5
 	h3VersionPatch = 0
 )

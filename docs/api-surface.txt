@@ -132,6 +132,7 @@ method (DirectedEdge) LengthRads
 method (DirectedEdge) MarshalText
 method (DirectedEdge) Origin
 method (DirectedEdge) Resolution
+method (DirectedEdge) Reverse
 method (DirectedEdge) String
 method (LatLng) Cell
 method (Vertex) IndexDigit

@@ -15,7 +15,7 @@ test dependency — would break that, so the differential tests live in their
 own module with a `replace` directive pointing at the parent:
 
 ```
-require github.com/uber/h3-go/v4 v4.4.1
+require github.com/uber/h3-go/v4 v4.5.0
 replace github.com/dimchansky/h3-go => ../..
 ```
 
@@ -39,19 +39,20 @@ near-polar and near-antimeridian points) drive both implementations through:
 
 Index-valued results must match **exactly**. Coordinates allow `1e-10`
 degrees absolute and areas `1e-9` relative: even at the same upstream
-release (the pinned binding vendors H3 C v4.4.1, which differs from this
-library's v4.4.0 parity target only by a version-metadata fix), the C
-compiler may contract floating-point multiply-adds differently than the Go
-compiler, and area computation amplifies the last-ulp differences to
-~1e-10–1e-9 relative near pentagons.
+release (the pinned binding vendors H3 C v4.5.0, matching this library's
+v4.5.0 parity target), the C compiler may contract floating-point
+multiply-adds differently than the Go compiler, and area computation
+amplifies the last-ulp differences near pentagons (measured maximum
+~2e-12 relative at the v4.5.0/v4.5.0 pairing; the tolerance keeps its
+historical headroom).
 
 ## What it proves — and what it does not
 
 This suite demonstrates **drop-in agreement with the ecosystem binding** on
 common operations over randomized global input. It is *not* the correctness
-anchor: exact, function-by-function equivalence with H3 C v4.4.0 (including
+anchor: exact, function-by-function equivalence with H3 C v4.5.0 (including
 error codes and edge cases) is established by the cgo parity suite in the
-root module (`make test-c2go`, 227 test files against pristine upstream
+root module (`make test-c2go`, 213 test files against pristine upstream
 sources). Treat uberdiff as an independent second witness with broad but
 shallower coverage.
 

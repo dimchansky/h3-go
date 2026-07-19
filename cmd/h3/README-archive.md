@@ -5,7 +5,7 @@ dependencies, no C library needed), a copy of the license and notice files,
 and this README. It is the upstream-compatible command-line interface of
 [github.com/dimchansky/h3-go](https://github.com/dimchansky/h3-go), a pure-Go
 port of [Uber's H3](https://github.com/uber/h3) — behaviorally equivalent to
-H3 C v4.4.0.
+H3 C v4.5.0.
 
 > This file ships inside release archives, so every link below is absolute.
 > The full CLI documentation lives at
@@ -67,14 +67,14 @@ h3 latLngToCell -r 9 --lat 37.7759 --lng -122.4180
 h3 cellToBoundary -c 8928308280fffff
 ```
 
-All 63 commands of the H3 C v4.4.0 CLI are supported with matching flags,
+All 63 commands of the H3 C v4.5.0 CLI are supported with matching flags,
 output, and exit codes.
 
 ## Version
 
 ```sh
 h3 --version
-# h3 4.4.0 (v0.3.0)
+# h3 4.5.0 (<module-version>)
 ```
 
 The first number is the H3 C compatibility target; the value in parentheses

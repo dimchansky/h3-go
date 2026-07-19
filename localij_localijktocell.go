@@ -106,9 +106,10 @@ func localIjkToCell(origin h3Index, ijk *coordIJK, out *h3Index) h3Error {
 			for i := int32(0); i < pentagonRotations; i++ {
 				dir = _rotate60ccw(dir)
 			}
-			// The pentagon rotations are being chosen so that dir is not the
-			// deleted direction. If it still happens, it means we're moving
-			// into a deleted subsequence, so there is no index here.
+			// The pentagon rotations are chosen to avoid the deleted direction
+			// (the missing neighbor direction around a pentagon). If we still
+			// land on it, the coordinate would cross pentagon distortion and
+			// cannot be represented.
 			if dir == kAxesDigit {
 				return ePentagon
 			}

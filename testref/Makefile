@@ -2,7 +2,7 @@
 # Downloads and builds against H3 C library for test validation
 
 # To upgrade H3 version, simply change this line and run 'make clean-all && make'
-H3_VERSION = 4.4.0
+H3_VERSION = 4.5.0
 H3_URL = https://github.com/uber/h3/archive/v$(H3_VERSION).tar.gz
 H3_ARCHIVE = h3-$(H3_VERSION).tar.gz
 H3_DIR = h3-$(H3_VERSION)
@@ -14,29 +14,14 @@ CC = gcc
 CFLAGS = -std=c99 -Wall -O2 -I$(H3_INC)
 LDFLAGS = -lm
 
-# H3 source files needed for the oracle
-H3_SOURCES = \
-    $(H3_LIB)/algos.c \
-    $(H3_LIB)/baseCells.c \
-    $(H3_LIB)/bbox.c \
-    $(H3_LIB)/coordijk.c \
-    $(H3_LIB)/directedEdge.c \
-    $(H3_LIB)/faceijk.c \
-    $(H3_LIB)/h3Assert.c \
-    $(H3_LIB)/h3Index.c \
-    $(H3_LIB)/iterators.c \
-    $(H3_LIB)/latLng.c \
-    $(H3_LIB)/linkedGeo.c \
-    $(H3_LIB)/localij.c \
-    $(H3_LIB)/mathExtensions.c \
-    $(H3_LIB)/polyfill.c \
-    $(H3_LIB)/polygon.c \
-    $(H3_LIB)/vec2d.c \
-    $(H3_LIB)/vec3d.c \
-    $(H3_LIB)/vertex.c \
-    $(H3_LIB)/vertexGraph.c
-
-OBJECTS = $(H3_SOURCES:.c=.o)
+# h3ref command gating (docs/sync/4.4.0-to-4.5.0.md §15.1): the
+# geoToFaceIjk/geoToHex2d commands call internal functions that were
+# deleted in H3 4.5.0 (_geoToFaceIjk/_geoToHex2d), so they exist only in
+# a 4.4.x-configured oracle. At 4.5.0 they fall through to the "Unknown
+# command" error.
+ifeq ($(H3_VERSION),4.4.0)
+CFLAGS += -DH3REF_HAVE_GEO_INTERMEDIATES
+endif
 
 .PHONY: all clean download h3-source test version
 
@@ -62,17 +47,20 @@ $(H3_ARCHIVE):
 
 download: $(H3_ARCHIVE)
 
-h3ref: h3-source h3ref.o $(OBJECTS)
-	$(CC) -o $@ h3ref.o $(OBJECTS) $(LDFLAGS)
-
-h3ref.o: h3ref.c $(H3_DIR)
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-%.o: %.c $(H3_DIR)
-	$(CC) $(CFLAGS) -c -o $@ $<
+# The upstream sources are compiled at recipe time with a shell-expanded
+# glob, AFTER the h3-source prerequisite has downloaded and extracted the
+# tree: a make-time $(wildcard) would expand while the prerequisite graph
+# is built — before extraction on a fresh clone — and yield an empty list.
+# The glob is version-derived by construction: it drops the files deleted
+# in 4.5.0 (coordijk.c, vec3d.c, vertexGraph.c) and picks up the new ones
+# (area.c, cellsToMultiPoly.c). One-shot compilation replaces the old
+# per-file object graph; incremental .o reuse is not worth keeping for a
+# one-shot oracle build. (docs/sync/4.4.0-to-4.5.0.md §15.1)
+h3ref: h3-source h3ref.c
+	$(CC) $(CFLAGS) h3ref.c $(H3_LIB)/*.c -o $@ $(LDFLAGS)
 
 clean:
-	rm -f h3ref h3ref.o $(OBJECTS)
+	rm -f h3ref h3ref.o *.o $(H3_LIB)/*.o
 
 clean-all: clean
 	rm -rf $(H3_DIR) $(H3_ARCHIVE)

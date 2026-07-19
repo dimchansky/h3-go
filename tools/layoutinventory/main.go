@@ -49,6 +49,7 @@ import (
 // (kept in sync with the lint-exclusion path regex in .golangci.yml).
 // Both historical casings of h3Index and vertexGraph appear in filenames.
 var cModules = map[string]bool{
+	"adder": true, "area": true, "cellsToMultiPoly": true,
 	"algos": true, "baseCells": true, "bbox": true, "coordijk": true,
 	"directedEdge": true, "faceijk": true, "h3api": true, "h3Index": true,
 	"h3index": true, "iterators": true, "latLng": true, "linkedGeo": true,

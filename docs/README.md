@@ -32,7 +32,7 @@ generated per-file map is
 
 | Document | Contents |
 |---|---|
-| [api-map.md](api-map.md) | Generated C→Go API map: every public H3 C v4.4.0 function with its idiomatic Go equivalent and the additive `Append*`/`*Seq` forms — the quick-discovery projection of the comparison matrix. |
+| [api-map.md](api-map.md) | Generated C→Go API map: every public H3 C v4.5.0 function with its idiomatic Go equivalent and the additive `Append*`/`*Seq` forms — the quick-discovery projection of the comparison matrix. |
 
 ## Design and policy
 
@@ -69,7 +69,7 @@ generated per-file map is
 |---|---|
 | [ported-c-tests.md](ported-c-tests.md) | Human-readable entry point for upstream test equivalence: audited scope, dispositions, fixture/fuzz suites, and the per-release update procedure. |
 | [sync/4.3.0-to-4.4.0.md](sync/4.3.0-to-4.4.0.md) | Reviewed record of the 4.3.0 → 4.4.0 upstream sync — the template future syncs follow. |
-| [sync/4.4.0-to-4.5.0.md](sync/4.4.0-to-4.5.0.md) | Discovery record for the 4.4.0 → 4.5.0 upstream migration: full symbol/test/CLI dispositions and the proposed implementation-issue decomposition. Discovery only — the parity target remains 4.4.0 until the implementation issues land. |
+| [sync/4.4.0-to-4.5.0.md](sync/4.4.0-to-4.5.0.md) | Reviewed record of the 4.4.0 → 4.5.0 upstream migration: full symbol/test/CLI dispositions, the implementation-issue decomposition, and the appended completion evidence. The migration is complete — the parity target is 4.5.0. |
 
 ## Generated inventories (do not edit by hand)
 
@@ -80,7 +80,7 @@ generated per-file map is
 | [file-layer-inventory.csv](file-layer-inventory.csv) | Per-file architectural-layer map of the flat root package (public API vs ported layer vs parity harness). | `make layout-inventory` / `make check-layout` |
 | [upstream-test-inventory.csv](upstream-test-inventory.csv) | Case-level registry of every upstream test-ecosystem entry with reviewed dispositions. | reviewed by hand / `make check-test-inventory` |
 | [cli-contract.csv](cli-contract.csv) | Semantic command/flag/format contract of the CLI. | reviewed by hand / `make check-cli-inventory` |
-| [cli-test-inventory.csv](cli-test-inventory.csv) | All 170 upstream CLI scenarios with expected outputs and source hashes. | `go run ./tools/cliinventory -emit-cases` / `make check-cli-inventory` |
+| [cli-test-inventory.csv](cli-test-inventory.csv) | All 172 upstream CLI scenarios with expected outputs and source hashes. | `go run ./tools/cliinventory -emit-cases` / `make check-cli-inventory` |
 | [cli-fixture-inventory.csv](cli-fixture-inventory.csv) | Upstream CLI input fixtures with hashes. | `go run ./tools/cliinventory -emit-fixtures` / `make check-cli-inventory` |
 | [cli-source-inventory.csv](cli-source-inventory.csv) | Upstream sources that define the CLI contract, with hashes. | `go run ./tools/cliinventory -emit-sources` / `make check-cli-inventory` |
 | [comparison-uber-h3-go.csv](comparison-uber-h3-go.csv) | Curated per-C-function comparison matrix vs uber/h3-go (source of the generated tables in comparison-uber-h3-go.md and api-map.md). | edit by hand, then `make gen-ubercompare` / `make check-ubercompare` |

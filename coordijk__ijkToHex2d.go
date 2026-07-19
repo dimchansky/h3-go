@@ -1,8 +1,8 @@
 package h3
 
 // _ijkToHex2d converts IJK coordinates to 2D hex coordinates.
-// Mirrors H3's coordijk.c::_ijkToHex2d behavior.
-// Ported from H3 C: coordijk.c::_ijkToHex2d.
+// Mirrors H3's coordijk.h::_ijkToHex2d behavior.
+// Ported from H3 C: coordijk.h::_ijkToHex2d.
 func _ijkToHex2d(h *coordIJK, v *vec2d) {
 	i := h.I - h.K
 	j := h.J - h.K

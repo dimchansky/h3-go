@@ -83,7 +83,7 @@ go mod download github.com/uber/h3-go/v4 >/dev/null 2>&1 || true
     echo "uber_h3_go: $(go list -m github.com/uber/h3-go/v4)"
     echo "dimchansky_h3_go: $(go list -m github.com/dimchansky/h3-go) (replaced by ../.., i.e. repo_commit above)"
     echo "vendored_h3_c_in_binding: $(cat "$(go list -m -f '{{.Dir}}' github.com/uber/h3-go/v4)/H3_VERSION" 2>/dev/null || echo unknown)"
-    echo "pure_go_h3_target: H3 C v4.4.0 (VersionMajor/Minor/Patch of the root module)"
+    echo "pure_go_h3_target: H3 C v4.5.0 (VersionMajor/Minor/Patch of the root module)"
     echo "os: $(uname -a)"
     echo "cpu: $(cpu_model)"
     echo "memory_bytes: $(memory_bytes)"

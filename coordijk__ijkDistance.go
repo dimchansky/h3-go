@@ -17,8 +17,8 @@ func max32(a, b int32) int32 {
 }
 
 // ijkDistance computes the distance between two IJK coordinates.
-// Mirrors H3's coordijk.c::ijkDistance behavior.
-// Ported from H3 C: coordijk.c::ijkDistance.
+// Mirrors H3's coordijk.h::ijkDistance behavior.
+// Ported from H3 C: coordijk.h::ijkDistance.
 func ijkDistance(c1, c2 *coordIJK) int32 {
 	var diff coordIJK
 	_ijkSub(c1, c2, &diff)

@@ -300,6 +300,93 @@ func TestDirectedEdges(t *testing.T) {
 	}
 }
 
+func TestDirectedEdgeReverse(t *testing.T) {
+	t.Parallel()
+
+	edges, err := sfCellRes9.DirectedEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	pentagons, _ := Pentagons(4)
+	pEdges, err := pentagons[0].DirectedEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, e := range append(edges, pEdges...) {
+		rev, err := e.Reverse()
+		if err != nil {
+			t.Fatalf("Reverse(%v): %v", e, err)
+		}
+		if !rev.IsValid() {
+			t.Fatalf("Reverse(%v) = %v, not a valid edge", e, rev)
+		}
+		origin, destination, err := e.Cells()
+		if err != nil {
+			t.Fatal(err)
+		}
+		revOrigin, revDestination, err := rev.Cells()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if revOrigin != destination || revDestination != origin {
+			t.Errorf("Reverse(%v) endpoints = %v→%v, want %v→%v",
+				e, revOrigin, revDestination, destination, origin)
+		}
+		back, err := rev.Reverse()
+		if err != nil || back != e || back == rev {
+			t.Errorf("double reversal = %v (%v), want %v", back, err, e)
+		}
+	}
+
+	// Best-effort validation, mirroring upstream's
+	// reverseDirectedEdgeInvalid: reserved-bits corruption fails with
+	// ErrFailed; a cell index fails the mode check with
+	// ErrDirectedEdgeInvalid; the null index fails; yet edge+1 —
+	// equally invalid per IsValid — still reverses (partial
+	// validation, so no guaranteed error on invalid input).
+	corrupted := DirectedEdge(setReservedBits(h3Index(edges[0]), int32(invalidDigit)))
+	if corrupted.IsValid() {
+		t.Error("corrupted edge must not validate")
+	}
+	if _, err := corrupted.Reverse(); !errors.Is(err, ErrFailed) {
+		t.Errorf("corrupted Reverse: got %v, want ErrFailed", err)
+	}
+	if _, err := DirectedEdge(sfCellRes9).Reverse(); !errors.Is(err, ErrDirectedEdgeInvalid) {
+		t.Errorf("cell-index Reverse: got %v, want ErrDirectedEdgeInvalid", err)
+	}
+	if _, err := DirectedEdge(0).Reverse(); err == nil {
+		t.Error("null-index Reverse: got nil error")
+	}
+	plusOne := DirectedEdge(0)
+	for _, e := range edges {
+		if !(e + 1).IsValid() {
+			plusOne = e + 1
+			break
+		}
+	}
+	if plusOne == 0 {
+		t.Fatal("no edge+1 invalid-index candidate found")
+	}
+	if rev, err := plusOne.Reverse(); err != nil || rev == 0 {
+		t.Errorf("edge+1 Reverse = %v (%v), want success (partial validation)", rev, err)
+	}
+
+	// The pinned fuzz regression input fails direction recovery.
+	if _, err := DirectedEdge(0x1001fff7ff2fbfff).Reverse(); !errors.Is(err, ErrNotNeighbors) {
+		t.Errorf("fuzz-pin Reverse: got %v, want ErrNotNeighbors", err)
+	}
+
+	// A malformed edge whose origin is a pentagon and whose reserved
+	// direction is the deleted K axis fails destination recovery with
+	// ErrPentagon — the last error family named by the GoDoc.
+	var pent h3Index
+	setH3Index(&pent, 9, 4, 0) // base cell 4 is a pentagon
+	pentKEdge := DirectedEdge(setReservedBits(setMode(pent, h3DirectededgeMode), int32(kAxesDigit)))
+	if _, err := pentKEdge.Reverse(); !errors.Is(err, ErrPentagon) {
+		t.Errorf("pentagon K-direction Reverse: got %v, want ErrPentagon", err)
+	}
+}
+
 func TestVertexes(t *testing.T) {
 	t.Parallel()
 
@@ -437,6 +524,17 @@ func TestWave2Allocations(t *testing.T) {
 		t.Helper()
 		assertMaxAllocsPerRun(t, name, 200, want, f)
 	}
+
+	// Reverse is scalar in/out; the "Never allocates" doc claim.
+	revEdge, err := sfCellRes9.DirectedEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertAllocs("DirectedEdge.Reverse", 0, func() {
+		if _, err := revEdge[0].Reverse(); err != nil {
+			t.Fatal(err)
+		}
+	})
 
 	// AppendGridDisk warm path: 1 internal distance-scratch alloc remains
 	// (the C implementation heap-allocates the same scratch).

@@ -81,10 +81,10 @@ linters:
       # checks (staticcheck, govet, unused, the remaining gocritic and
       # revive rules) still apply to them. Revisit an entry only if a file
       # stops being a mechanical port; see docs/lint-policy.md.
-      - path: '^(algos|baseCells|bbox|coordijk|directedEdge|faceijk|h3api|h3[Ii]ndex|iterators|latLng|linkedGeo|localij|mathExtensions|polyfill|polygon|utility|vec2d|vec3d|vertex[Gg]raph|vertex)_[A-Za-z0-9_]+\.go$|^test[A-Z][A-Za-z0-9_]*_test\.go$'
+      - path: '^(adder|algos|area|baseCells|bbox|cellsToMultiPoly|coordijk|directedEdge|faceijk|h3api|h3[Ii]ndex|iterators|latLng|linkedGeo|localij|mathExtensions|polyfill|polygon|utility|vec2d|vec3d|vertex[Gg]raph|vertex)_[A-Za-z0-9_]+\.go$|^test[A-Z][A-Za-z0-9_]*_test\.go$'
         linters: [gocritic]
         text: '^(assignOp|ifElseChain):'
-      - path: '^(algos|baseCells|bbox|coordijk|directedEdge|faceijk|h3api|h3[Ii]ndex|iterators|latLng|linkedGeo|localij|mathExtensions|polyfill|polygon|utility|vec2d|vec3d|vertex[Gg]raph|vertex)_[A-Za-z0-9_]+\.go$|^test[A-Z][A-Za-z0-9_]*_test\.go$'
+      - path: '^(adder|algos|area|baseCells|bbox|cellsToMultiPoly|coordijk|directedEdge|faceijk|h3api|h3[Ii]ndex|iterators|latLng|linkedGeo|localij|mathExtensions|polyfill|polygon|utility|vec2d|vec3d|vertex[Gg]raph|vertex)_[A-Za-z0-9_]+\.go$|^test[A-Z][A-Za-z0-9_]*_test\.go$'
         linters: [revive]
         text: '^(var-naming|var-declaration|indent-error-flow|increment-decrement|unreachable-code|superfluous-else|empty-block):'
 

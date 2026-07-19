@@ -12,7 +12,7 @@ The project has two separate versions, and they must not be conflated:
 1. **The h3-go module version** — the semantic version of this Go module
    and its public API. This is what a Git tag names.
 2. **The H3 Core compatibility target** — the exact upstream H3 C release
-   this library is behaviorally equivalent to (currently v4.4.0; every
+   this library is behaviorally equivalent to (currently v4.5.0; every
    difference must be listed in [DEVIATIONS.md](DEVIATIONS.md)).
 
 An illustrative pair (not a commitment to the next release numbers):

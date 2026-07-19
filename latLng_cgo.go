@@ -12,10 +12,6 @@ package h3
 // Normalize C bool to int for cgo comparisons when needed (toolchain-safe)
 static int h3_bool_to_int(_Bool b) { return b ? 1 : 0; }
 
-// Forward declarations for non-exported latLng.c functions used in tests
-double triangleEdgeLengthsToArea(double a, double b, double c);
-double triangleArea(const LatLng* a, const LatLng* b, const LatLng* c);
-
 // Forward declarations for wrappers
 double _posAngleRads(double);
 double constrainLng(double);
@@ -57,25 +53,6 @@ func radsToDegsC(radians float64) float64 {
 	return float64(C.radsToDegs_c_wrapper(C.double(radians)))
 }
 
-// _geoAzimuthRadsC calls the original C internal implementation.
-func _geoAzimuthRadsC(a, b LatLng) float64 {
-	var ca, cb C.LatLng
-	ca.lat = C.double(a.Lat.Rad())
-	ca.lng = C.double(a.Lng.Rad())
-	cb.lat = C.double(b.Lat.Rad())
-	cb.lng = C.double(b.Lng.Rad())
-	return float64(C._geoAzimuthRads(&ca, &cb))
-}
-
-// _geoAzDistanceRadsC calls the original C internal implementation.
-func _geoAzDistanceRadsC(p1 LatLng, az, distance float64) LatLng {
-	var c1, c2 C.LatLng
-	c1.lat = C.double(p1.Lat.Rad())
-	c1.lng = C.double(p1.Lng.Rad())
-	C._geoAzDistanceRads(&c1, C.double(az), C.double(distance), &c2)
-	return LatLng{Lat: Rad(float64(c2.lat)), Lng: Rad(float64(c2.lng))}
-}
-
 // greatCircleDistanceRadsC calls the original C implementation.
 func greatCircleDistanceRadsC(a, b LatLng) float64 {
 	var ca, cb C.LatLng
@@ -109,23 +86,6 @@ func greatCircleDistanceMC(a, b LatLng) float64 {
 // normalizeLngC calls the original C implementation.
 func normalizeLngC(lng float64, normalization longitudeNormalization) float64 {
 	return float64(C.normalizeLng(C.double(lng), C.LongitudeNormalization(normalization)))
-}
-
-// triangleEdgeLengthsToAreaC calls the original C implementation.
-func triangleEdgeLengthsToAreaC(a, b, c float64) float64 {
-	return float64(C.triangleEdgeLengthsToArea(C.double(a), C.double(b), C.double(c)))
-}
-
-// triangleAreaC calls the original C implementation.
-func triangleAreaC(a, b, c LatLng) float64 {
-	var ca, cb, cc C.LatLng
-	ca.lat = C.double(a.Lat.Rad())
-	ca.lng = C.double(a.Lng.Rad())
-	cb.lat = C.double(b.Lat.Rad())
-	cb.lng = C.double(b.Lng.Rad())
-	cc.lat = C.double(c.Lat.Rad())
-	cc.lng = C.double(c.Lng.Rad())
-	return float64(C.triangleArea(&ca, &cb, &cc))
 }
 
 // _setGeoRadsC calls the original C implementation.

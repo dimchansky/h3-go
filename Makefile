@@ -103,7 +103,7 @@ check-cli-inventory:
 	@go run ./tools/cliinventory -upstream testref/h3-$(H3VER) -verify
 
 # Builds the pristine upstream C CLI under /tmp and differentially executes all
-# 170 registered scenarios. Requires cmake and a C toolchain.
+# 172 registered scenarios. Requires cmake and a C toolchain.
 test-cli-diff:
 	@cmake -E remove_directory /tmp/h3-cli-src-$(H3VER)
 	@cmake -E remove_directory /tmp/h3-cli-$(H3VER)
@@ -237,12 +237,28 @@ $(SMRCPTR):
 #   make test-c2go TIMEOUT=30s                  # Run all tests with 30s timeout
 #   make test-c2go COVERAGE=1                   # Run tests with coverage report
 #   make test-c2go COVERAGE=1 COVERPROFILE=coverage-c2go.out  # Save to specific file
-H3VER ?= 4.4.0
+H3VER ?= 4.5.0
+C2GO_TAGS = c2go
 TEST ?=
 VERBOSE ?=
 TIMEOUT ?= 30s
 COVERAGE ?=
 COVERPROFILE ?=
+# The harness compiles the reference C with -ffp-contract=off. Evidence
+# (2026-07, corrective pass for #29-#32): without the flag, the
+# harness-compiled clang -O0 code on arm64 contracts a*b+/-c*d into FMA
+# — observable as vec3Cross(v,v) returning nonzero residuals (~5e-18),
+# impossible under uncontracted IEEE evaluation — while gcc on the
+# x86-64 CI runners emits no FMA at its SSE2 baseline. The flag only
+# disables contraction (it does not change libm or any other platform
+# floating-point behavior), so local and CI parity compare the same
+# contraction-free arithmetic; residual cross-libm differences are
+# covered by the measured tolerances documented in the parity tests.
+# Go's gc also fuses on arm64 (the spec permits it); ported code
+# defeats that where needed via explicit float64() conversions, which
+# the spec guarantees force rounding. Discrete outputs (indexes, error
+# codes) are unaffected and always compared exactly. Policy recorded in
+# CONTRIBUTING.md ("Floating-point profile of the C parity oracle").
 test-c2go:
 	@if [ -n "$(TEST)" ]; then \
 		echo "Running c2go parity test: $(TEST) (requires cgo)..."; \
@@ -272,9 +288,9 @@ test-c2go:
 	fi; \
 	TOOLCHAIN_ENV=""; \
 	if [ -n "$$CC" ]; then TOOLCHAIN_ENV="CC=$$CC CXX=$$CXX SDKROOT=$$SDKROOT"; fi; \
-	CFLAGS_ENV=""; LDFLAGS_ENV="-lm"; \
+	CFLAGS_ENV="-ffp-contract=off"; LDFLAGS_ENV="-lm"; \
 	if [ "$$(uname -s)" = "Darwin" ]; then \
-		CFLAGS_ENV="-ffunction-sections -fdata-sections"; \
+		CFLAGS_ENV="-ffp-contract=off -ffunction-sections -fdata-sections"; \
 		LDFLAGS_ENV="-Wl,-dead_strip"; \
 	fi; \
 	env $$TOOLCHAIN_ENV \
@@ -283,7 +299,7 @@ test-c2go:
 	CGO_CPPFLAGS="-I$$INC_BASE/include -I$$INC_BASE/lib -I$$APPS_BASE/include -I$$APPS_BASE/lib" \
 	CGO_CFLAGS="$$CFLAGS_ENV" \
 	CGO_LDFLAGS="$$LDFLAGS_ENV" \
-	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="c2go" ./... || { \
+	go test $$VERBOSE_FLAG $$TEST_FLAG $$TIMEOUT_FLAG $$COVERAGE_FLAG -tags="$(C2GO_TAGS)" ./... || { \
 		echo; \
 		echo "c2go tests failed. If the error mentions 'use of cgo not supported':"; \
 		echo " - Ensure Go was installed with cgo support (official pkg/Homebrew)."; \

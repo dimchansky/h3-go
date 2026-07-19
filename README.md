@@ -5,13 +5,13 @@
 [![CI](https://github.com/dimchansky/h3-go/actions/workflows/ci.yml/badge.svg)](https://github.com/dimchansky/h3-go/actions/workflows/ci.yml)
 [![Nightly](https://github.com/dimchansky/h3-go/actions/workflows/nightly.yml/badge.svg)](https://github.com/dimchansky/h3-go/actions/workflows/nightly.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/dimchansky/h3-go.svg)](https://pkg.go.dev/github.com/dimchansky/h3-go)
-[![H3 Version](https://img.shields.io/badge/H3-v4.4.0-blue)](docs/comparison-uber-h3-go.md#versions-compared)
+[![H3 Version](https://img.shields.io/badge/H3-v4.5.0-blue)](docs/comparison-uber-h3-go.md#versions-compared)
 [![Latest Tag](https://img.shields.io/github/v/tag/dimchansky/h3-go?label=latest)](https://github.com/dimchansky/h3-go/tags)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 A **pure-Go** implementation of [Uber's H3](https://h3geo.org), the
-hexagonal hierarchical geospatial indexing system. All **78 public
-functions of H3 C v4.4.0** behind a typed, allocation-aware Go API, plus a
+hexagonal hierarchical geospatial indexing system. All **79 public
+functions of H3 C v4.5.0** behind a typed, allocation-aware Go API, plus a
 drop-in pure-Go port of the upstream `h3` command-line utility — **no cgo,
 no `unsafe`, no dependencies**, with every ported function parity-tested
 against the original C implementation.
@@ -93,11 +93,11 @@ backed by the [full comparison](docs/comparison-uber-h3-go.md) and
 - **No cgo, anywhere.** `CGO_ENABLED=0` builds work everywhere Go runs; CI
   needs no C toolchain. Production code contains no `unsafe` and no
   dependencies — hard invariants checked by CI gates on every build mode.
-- **Same behavior, verified.** A 227-file parity suite compares Go against
+- **Same behavior, verified.** A 213-file parity suite compares Go against
   the *original* upstream C in-process; differential suites cross-check
   against uber/h3-go itself on identical inputs
   ([details](#correctness-and-testing)).
-- **More of H3 4.4 exposed.** All 78/78 public functions, including
+- **More of H3 4.5 exposed.** All 79/79 public functions, including
   `ConstructCell` and single-origin `Cell.GridDiskUnsafe`, which the
   binding lacks at the same H3 version — plus the
   [Go-native additions below](#beyond-the-c-api).
@@ -111,8 +111,9 @@ backed by the [full comparison](docs/comparison-uber-h3-go.md) and
 
 The trade-offs, equally explicit: this is **v0.x** (pre-1.0 breaking
 changes remain possible) while the binding's v4 line has years of
-production maturity; the binding **tracks new H3 releases sooner** (it is
-on H3 4.5.0 today, this library on 4.4.0); **pure Go is not automatically
+production maturity; the binding **tracks new H3 releases sooner** (it
+reached H3 4.5.0 within days of the C release; this library followed with
+a reviewed function-by-function port); **pure Go is not automatically
 faster** — the [benchmarks](#performance) show both directions honestly;
 and migrating is a real, if mostly mechanical, change — the
 [migration guide](docs/migration-from-uber-h3-go.md) maps every API.
@@ -138,7 +139,7 @@ If you know the H3 C API, you already know this one:
 | `polygonToCells` | `PolygonToCells` |
 | `greatCircleDistanceKm` | `GreatCircleDistanceKm` |
 
-The complete generated map of all **78** functions — grouped by category,
+The complete generated map of all **79** functions — grouped by category,
 with the additive `Append*`/`*Seq` forms — is
 **[docs/api-map.md](docs/api-map.md)**.
 
@@ -185,7 +186,7 @@ printf '[[37.775, -122.418], [40.689, -74.044]]' | h3 greatCircleDistanceKm -i -
 # 4126.3699216676
 ```
 
-All 63 H3 C v4.4.0 commands are implemented and locked by the 170 upstream
+All 63 H3 C v4.5.0 commands are implemented and locked by the 172 upstream
 CLI test scenarios plus differential runs against the compiled C binary.
 See [cmd/h3](cmd/h3) and the
 [compatibility contract](docs/cli-compatibility.md). Prebuilt,
@@ -197,7 +198,7 @@ verified by the
 
 ## Compatibility and versioning
 
-- **Upstream**: behaviorally equivalent to **H3 C v4.4.0**
+- **Upstream**: behaviorally equivalent to **H3 C v4.5.0**
   (`VersionMajor/Minor/Patch` report the target release). Intentional
   differences are few and all documented in
   [docs/DEVIATIONS.md](docs/DEVIATIONS.md); everything else must match C
@@ -252,7 +253,7 @@ suite.
 
 Correctness is enforced in layers; each answers a different question:
 
-- **C parity** — 227 opt-in cgo test files compile the pristine upstream C
+- **C parity** — 213 opt-in cgo test files compile the pristine upstream C
   sources and compare every ported function against the original
   in-process: exact values, exact error codes.
 - **Upstream tests, ported** — H3's own test suites translated to Go and
@@ -263,7 +264,7 @@ Correctness is enforced in layers; each answers a different question:
 - **Differential vs the official binding** —
   [interop/uberdiff](interop/uberdiff) and the benchmark suite's
   equivalence gates run both implementations on identical inputs.
-- **CLI compatibility** — all 170 upstream CLI scenarios, plus differential
+- **CLI compatibility** — all 172 upstream CLI scenarios, plus differential
   execution against the compiled upstream `h3` binary.
 - **Allocation assertions** — `testing.AllocsPerRun` tests lock allocation
   budgets, including the zero-allocation guarantees of the warm paths that

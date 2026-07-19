@@ -23,30 +23,23 @@ Companion documents:
 
 | Component | Version | Notes |
 |---|---|---|
-| This library | current commit | behavioral target **H3 C v4.4.0** (`VersionMajor/Minor/Patch`) |
-| uber/h3-go | **v4.4.1** (pinned in [interop/uberbench](../interop/uberbench/go.mod) and [interop/uberdiff](../interop/uberdiff/go.mod)) | vendors **H3 C v4.4.1** |
-| H3 C | v4.4.0 vs v4.4.1 | v4.4.1 changed only the `VERSION` metadata file — **no behavioral difference** ([release notes](https://github.com/uber/h3/releases/tag/v4.4.1)) |
+| This library | current commit | behavioral target **H3 C v4.5.0** (`VersionMajor/Minor/Patch`) |
+| uber/h3-go | **v4.5.0** (pinned in [interop/uberbench](../interop/uberbench/go.mod) and [interop/uberdiff](../interop/uberdiff/go.mod)) | vendors **H3 C v4.5.0** |
+| H3 C | v4.5.0 on both sides | the binding and this library implement the same upstream release — no version skew in the comparison |
 
-Why uber/h3-go v4.4.1 and not v4.4.0: both binding releases vendor the same
-H3 C v4.4.1 sources, and v4.4.1 additionally contains binding-level
-performance fixes (stack-allocated coordinate conversion, zero-copy edge
-slices, one-call `GridDisksUnsafe`). Pinning v4.4.1 therefore compares
-against the binding's **best** release for the H3 4.4 line — the fair
-choice for benchmarks — while keeping the underlying C behavior identical
-to this library's v4.4.0 parity target.
+Version notes (checked 2026-07-19):
 
-Version skew to be aware of (checked 2026-07-12):
-
-- The **latest stable uber/h3-go is v4.5.0**, which vendors **H3 C v4.5.0**
-  — one minor release ahead of this library. H3 4.5.0 adds
-  `reverseDirectedEdge` (exposed as `DirectedEdge.Reverse`), bidirectional
-  `gridPathCells`, and stricter error reporting in
-  `cellsToLinkedMultiPolygon`; the binding tracked it within days. This is
-  the structural trade-off: the official binding adopts new C releases by
-  re-vendoring, while this library ports them function by function
-  (see the [sync workflow](public-api-architecture.md#10-upstream-synchronization-workflow)).
-  Comparisons in this repository are **always at the common H3 4.4 level**;
-  numbers and matrices here do not mix H3 versions.
+- Both sides are on the **H3 4.5 line**: uber/h3-go v4.5.0 tracked H3 C
+  v4.5.0 by re-vendoring (adding `DirectedEdge.Reverse`,
+  [uber/h3-go#117](https://github.com/uber/h3-go/pull/117)), and this
+  library ported the same release function by function (see the
+  [sync workflow](public-api-architecture.md#10-upstream-synchronization-workflow)
+  and the [4.4.0→4.5.0 sync record](sync/4.4.0-to-4.5.0.md)). Comparisons
+  in this repository are **at the common H3 4.5 level**; numbers and
+  matrices here do not mix H3 versions. (Benchmark result files under
+  `docs/benchmarks/` remain dated snapshots of the earlier
+  v4.4.0-vs-v4.4.1 runs until the suite is rerun; each file names the
+  versions it compared.)
 - Uber's repository also contains **`x/h3go`, an experimental pure-Go H3
   implementation** (package doc: "an implementation of the H3 library
   entirely in Go"). As of 2026-07-12 it exists only on the `master` branch
@@ -62,24 +55,23 @@ commit, module versions, date) are recorded per result set in
 
 ## Coverage summary
 
-At the common H3 C v4.4 level, this library exposes the complete public
+At the common H3 C v4.5 level, this library exposes the complete public
 surface; the binding covers nearly all of it. The remaining differences are
 at the edges and in API shape:
 
-- **This library**: all 78 public C functions are covered — 75 by exported
+- **This library**: all 79 public C functions are covered — 76 by exported
   API, 3 absorbed where Go makes them meaningless (`describeH3Error` →
   sentinel error values, `destroyLinkedMultiPolygon` → garbage collection,
   `maxFaceCount` → internal sizing). Enforced by `make check-api` against
   the upstream headers.
-- **uber/h3-go v4.4.1**: two public C operations have no equivalent:
+- **uber/h3-go v4.5.0**: two public C operations have no equivalent:
   single-origin `gridDiskUnsafe` and `constructCell`. All other rows are
   directly available, available under a different Go shape, or intentionally
   absorbed by Go semantics; the generated status totals below are derived
   from the function-by-function matrix.
 - **Beyond the C API**, each library adds its own conveniences:
   - *uber/h3-go only*: `IndexFromString`/`IndexToString` on raw `uint64`,
-    an optional result cap on `PolygonToCellsExperimental` (v4.5.0 adds
-    `DirectedEdge.Reverse`). Both libraries now provide a generic `Index`
+    an optional result cap on `PolygonToCellsExperimental`. Both libraries now provide a generic `Index`
     constraint and immediate parent/children conveniences.
   - *this library only*: caller-buffer `Append*` forms across the main
     variable-size hierarchy, traversal, compaction, and polyfill APIs
@@ -114,8 +106,8 @@ the call site), `adaptation` (surrounding code must change shape),
 `n/a` (nothing to migrate). A long dash (—) marks an intentionally
 absent API.
 
-**Status totals for uber/h3-go v4.4.1:** 54 `available`, 11
-`different-shape`, 11 `absorbed`, 2 `missing` — 78 public H3 C
+**Status totals for uber/h3-go v4.5.0:** 55 `available`, 11
+`different-shape`, 11 `absorbed`, 2 `missing` — 79 public H3 C
 functions accounted for.
 
 ### Indexing
@@ -189,6 +181,7 @@ functions accounted for.
 | `directedEdgeToCells` | `DirectedEdge.Cells` | `DirectedEdge.Cells` | different-shape | two return values (origin, destination) here vs a 2-element []Cell there | none here vs 1 slice alloc there | mechanical |
 | `originToDirectedEdges` | `Cell.DirectedEdges` | `Cell.DirectedEdges` | available | pentagon's deleted slot pruned in both (5 edges) | 1 slice alloc in either | mechanical |
 | `directedEdgeToBoundary` | `DirectedEdge.Boundary` | `DirectedEdge.Boundary` | different-shape | CellBoundary value here vs []LatLng there (same cellToBoundary note) | 0 allocs here vs 1 there | adaptation |
+| `reverseDirectedEdge` | `DirectedEdge.Reverse` | `DirectedEdge.Reverse` | available | identical (new in H3 4.5.0; uber/h3-go v4.5.0 exposes the same method) | none | mechanical |
 
 ### Vertexes
 
@@ -292,10 +285,11 @@ Reasons to use **uber/h3-go**:
 
 - **Fastest adoption of new H3 releases** — re-vendoring the C sources is
   cheaper than porting, so the binding usually tracks upstream minors
-  first (it is on H3 4.5.0 today; this library is on 4.4.0).
+  first (it reached H3 4.5.0 within days; this library followed with a
+  function-by-function port).
 - **Exact C execution** — it runs the reference implementation itself. If
   your requirement is "the same binary code as the C library", a binding
-  is that by definition. (This library's answer is behavioral: a 227-file
+  is that by definition. (This library's answer is behavioral: a 213-file
   parity suite compares every ported function against the compiled C
   original.)
 - **Maturity** — v4 has been stable and widely deployed for years; this
@@ -320,7 +314,7 @@ Reasons to use **this library**:
   [memory results](benchmarks/README.md)).
 - **Typed API**: `Angle` makes degree/radian confusion uncompilable;
   parsing validates; sizing functions are exposed.
-- **Complete at its target version**: 78/78 public functions plus the
+- **Complete at its target version**: 79/79 public functions plus the
   upstream-compatible CLI.
 
 ## Keeping this comparison honest

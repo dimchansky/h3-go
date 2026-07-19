@@ -426,6 +426,30 @@ func ExampleDirectedEdge() {
 	// reverse origin is destination: true
 }
 
+func ExampleDirectedEdge_Reverse() {
+	origin, _ := h3.ParseCell("8928308280fffff")
+	edges, err := origin.DirectedEdges()
+	if err != nil {
+		panic(err)
+	}
+	edge := edges[0]
+
+	reversed, err := edge.Reverse()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(edge)
+	fmt.Println(reversed)
+
+	// Reversing twice recovers the original edge.
+	back, _ := reversed.Reverse()
+	fmt.Println("double reversal recovers:", back == edge)
+	// Output:
+	// 11928308280fffff
+	// 16928308283bffff
+	// double reversal recovers: true
+}
+
 func ExampleCell_AreaKm2() {
 	cell, _ := h3.ParseCell("8928308280fffff")
 	// The exact spherical area of this specific cell...

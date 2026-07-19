@@ -113,7 +113,7 @@ func printHelp(w io.Writer, program, description string, specs []optionSpec, par
 	if parseError != "" {
 		writef(w, "%s: %s\n", program, parseError)
 	}
-	writef(w, "%s: %s\nH3 4.4.0\n\n", program, description)
+	writef(w, "%s: %s\nH3 4.5.0\n\n", program, description)
 	for _, spec := range specs {
 		writeText(w, "\t", strings.Join(spec.names, ", "))
 		if spec.value {

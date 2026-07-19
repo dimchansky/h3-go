@@ -3,7 +3,7 @@
 This is the authoritative compatibility contract for the pure-Go `h3`
 executable; the user-facing quick start is [cmd/h3/README.md](../cmd/h3/README.md).
 
-The authoritative H3 C v4.4.0 build definition creates target `h3_bin` and
+The authoritative H3 C v4.5.0 build definition creates target `h3_bin` and
 sets `OUTPUT_NAME h3`. This repository therefore installs the compatible Go
 executable as **`h3`**.
 
@@ -75,22 +75,28 @@ h3 compactCells -i cells.txt -f newline
   JSON coordinate comparisons allow at most `5e-8` degrees (needed only for
   platform `libm` behavior extremely near a pole); scalar metrics use a
   `1e-12` relative tolerance.
-- The upstream 1500-byte cell-input scanner is reproduced, including chunk
-  boundary behavior visible in its multipolygon fixture.
+- The upstream 1500-byte cell-input scanner is reproduced, including its
+  chunk-boundary behavior. The contract is the H3 4.5.0 scanner: a short
+  final read zeroes the stale buffer region before rescanning, so the
+  phantom cells the 4.4.0 scanner fabricated at chunk boundaries (its
+  known stale-buffer bug) no longer occur. The `readCellsFromFile`
+  scenarios pin the fixed behavior — exactly 127 uncompacted cells from
+  the chunk-boundary fixture — and the >1500-byte differential batch
+  sweep exercises it against the C binary.
 - Help whitespace and diagnostic wording are not byte-locked. The additive
   `--version` option reports H3 compatibility plus Go module/build metadata.
 
 ## Inventories and tests
 
 - [cli-contract.csv](cli-contract.csv): semantic command/flag/format mapping.
-- [cli-test-inventory.csv](cli-test-inventory.csv): all 170 upstream commands,
+- [cli-test-inventory.csv](cli-test-inventory.csv): all 172 upstream scenarios,
   expected outputs, source locations, and source hashes.
 - [cli-fixture-inventory.csv](cli-fixture-inventory.csv): all 15 referenced
   fixture hashes.
 - [cli-source-inventory.csv](cli-source-inventory.csv): CMake, parser, and
   command implementation sources that define the contract.
 
-`make test-cli` executes all 170 cases in-process. `make test-cli-process`
+`make test-cli` executes all 172 cases in-process. `make test-cli-process`
 builds the real binary and checks pipes, stderr, and exit statuses.
 `make test-cli-diff` builds upstream `h3_bin` and differentially executes the
 full registry against both binaries. `make check-cli-inventory` fails if a

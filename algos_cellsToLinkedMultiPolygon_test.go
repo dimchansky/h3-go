@@ -1,9 +1,31 @@
 // Tests ported from H3 v4.4.0: src/apps/testapps/testCellsToLinkedMultiPolygon.c.
+// v4.5.0 delta incorporated: the nested-donut cases assert
+// order-independently via findLinkedPolygonByOuterCount (polygon order
+// is an implementation artifact of the new arc-based algorithm),
+// specificLeak expects E_CELL_INVALID (validateCellSet, record §7.1),
+// and globalEquatorCells is new.
 package h3
 
 import (
 	"testing"
 )
+
+// findLinkedPolygonByOuterCount searches a LinkedGeoPolygon and returns
+// the first polygon whose outer loop has exactly n coords.
+//
+// Used for order-independent testing of LinkedGeoPolygon output.
+// Returns the first match, so results are ambiguous if multiple
+// polygons share the size outer loop.
+func findLinkedPolygonByOuterCount(root *linkedGeoPolygon, n int32) *linkedGeoPolygon {
+	poly := root
+	for poly != nil {
+		if poly.First != nil && countLinkedCoords(poly.First) == n {
+			return poly
+		}
+		poly = poly.Next
+	}
+	return nil
+}
 
 func TestCellsToLinkedMultiPolygon_empty(t *testing.T) {
 	t.Parallel()
@@ -268,34 +290,30 @@ func TestCellsToLinkedMultiPolygon_nestedDonut(t *testing.T) {
 		t.Fatalf("cellsToLinkedMultiPolygon with nested donut failed: %v", err)
 	}
 
-	// Note that the polygon order here is arbitrary, making this test
-	// somewhat brittle, but it's difficult to assert correctness otherwise
 	if countLinkedPolygons(&polygon) != 2 {
 		t.Errorf("Expected 2 polygons, got %d", countLinkedPolygons(&polygon))
 	}
 
-	if countLinkedLoops(&polygon) != 2 {
-		t.Errorf("Expected 2 loops on first polygon, got %d", countLinkedLoops(&polygon))
+	big := findLinkedPolygonByOuterCount(&polygon, 42)
+	if big == nil {
+		t.Fatal("Found no big polygon by outer count")
+	}
+	if countLinkedLoops(big) != 2 {
+		t.Errorf("Expected 2 loops on big polygon, got %d", countLinkedLoops(big))
+	}
+	if countLinkedCoords(big.First.Next) != 30 {
+		t.Errorf("Expected 30 coords on big inner loop, got %d", countLinkedCoords(big.First.Next))
 	}
 
-	if countLinkedCoords(polygon.First) != 42 {
-		t.Errorf("Expected 42 coords on big outer loop, got %d", countLinkedCoords(polygon.First))
+	small := findLinkedPolygonByOuterCount(&polygon, 18)
+	if small == nil {
+		t.Fatal("Found no small polygon by outer count")
 	}
-
-	if countLinkedCoords(polygon.First.Next) != 30 {
-		t.Errorf("Expected 30 coords on big inner loop, got %d", countLinkedCoords(polygon.First.Next))
+	if countLinkedLoops(small) != 2 {
+		t.Errorf("Expected 2 loops on small polygon, got %d", countLinkedLoops(small))
 	}
-
-	if countLinkedLoops(polygon.Next) != 2 {
-		t.Errorf("Expected 2 loops on second polygon, got %d", countLinkedLoops(polygon.Next))
-	}
-
-	if countLinkedCoords(polygon.Next.First) != 18 {
-		t.Errorf("Expected 18 coords on outer loop, got %d", countLinkedCoords(polygon.Next.First))
-	}
-
-	if countLinkedCoords(polygon.Next.First.Next) != 6 {
-		t.Errorf("Expected 6 coords on inner loop, got %d", countLinkedCoords(polygon.Next.First.Next))
+	if countLinkedCoords(small.First.Next) != 6 {
+		t.Errorf("Expected 6 coords on small inner loop, got %d", countLinkedCoords(small.First.Next))
 	}
 
 	destroyLinkedMultiPolygon(&polygon)
@@ -322,34 +340,30 @@ func TestCellsToLinkedMultiPolygon_nestedDonutTransmeridian(t *testing.T) {
 		t.Fatalf("cellsToLinkedMultiPolygon with nested donut transmeridian failed: %v", err)
 	}
 
-	// Note that the polygon order here is arbitrary, making this test
-	// somewhat brittle, but it's difficult to assert correctness otherwise
 	if countLinkedPolygons(&polygon) != 2 {
 		t.Errorf("Expected 2 polygons, got %d", countLinkedPolygons(&polygon))
 	}
 
-	if countLinkedLoops(&polygon) != 2 {
-		t.Errorf("Expected 2 loops on first polygon, got %d", countLinkedLoops(&polygon))
+	big := findLinkedPolygonByOuterCount(&polygon, 42)
+	if big == nil {
+		t.Fatal("Found no big polygon by outer count")
+	}
+	if countLinkedLoops(big) != 2 {
+		t.Errorf("Expected 2 loops on big polygon, got %d", countLinkedLoops(big))
+	}
+	if countLinkedCoords(big.First.Next) != 30 {
+		t.Errorf("Expected 30 coords on big inner loop, got %d", countLinkedCoords(big.First.Next))
 	}
 
-	if countLinkedCoords(polygon.First) != 18 {
-		t.Errorf("Expected 18 coords on outer loop, got %d", countLinkedCoords(polygon.First))
+	small := findLinkedPolygonByOuterCount(&polygon, 18)
+	if small == nil {
+		t.Fatal("Found no small polygon by outer count")
 	}
-
-	if countLinkedCoords(polygon.First.Next) != 6 {
-		t.Errorf("Expected 6 coords on inner loop, got %d", countLinkedCoords(polygon.First.Next))
+	if countLinkedLoops(small) != 2 {
+		t.Errorf("Expected 2 loops on small polygon, got %d", countLinkedLoops(small))
 	}
-
-	if countLinkedLoops(polygon.Next) != 2 {
-		t.Errorf("Expected 2 loops on second polygon, got %d", countLinkedLoops(polygon.Next))
-	}
-
-	if countLinkedCoords(polygon.Next.First) != 42 {
-		t.Errorf("Expected 42 coords on big outer loop, got %d", countLinkedCoords(polygon.Next.First))
-	}
-
-	if countLinkedCoords(polygon.Next.First.Next) != 30 {
-		t.Errorf("Expected 30 coords on big inner loop, got %d", countLinkedCoords(polygon.Next.First.Next))
+	if countLinkedCoords(small.First.Next) != 6 {
+		t.Errorf("Expected 6 coords on small inner loop, got %d", countLinkedCoords(small.First.Next))
 	}
 
 	destroyLinkedMultiPolygon(&polygon)
@@ -420,9 +434,43 @@ func TestCellsToLinkedMultiPolygon_specificLeak(t *testing.T) {
 	set := []h3Index{0xd60006d60000f100, 0x3c3c403c1300d668}
 
 	err := cellsToLinkedMultiPolygon(set, int32(len(set)), &polygon)
-	if err != eFailed {
-		t.Errorf("Expected eFailed for invalid cells, got %v", err)
+	if err != eCellInvalid {
+		t.Errorf("Expected eCellInvalid for invalid cells, got %v", err)
 	}
+}
+
+func TestCellsToLinkedMultiPolygon_globalEquatorCells(t *testing.T) {
+	t.Parallel()
+
+	// Global polygon: a continuous band of res-1 cells around the equator.
+	cells := []h3Index{
+		0x81807ffffffffff, 0x817efffffffffff, 0x81723ffffffffff,
+		0x817ebffffffffff, 0x817c3ffffffffff, 0x817e3ffffffffff,
+		0x817a3ffffffffff, 0x8166fffffffffff, 0x8172bffffffffff,
+		0x816afffffffffff, 0x81933ffffffffff, 0x8168fffffffffff,
+		0x8188fffffffffff, 0x81853ffffffffff, 0x817f7ffffffffff,
+		0x8180bffffffffff, 0x81783ffffffffff, 0x81743ffffffffff,
+		0x8170bffffffffff, 0x8173bffffffffff, 0x8179bffffffffff,
+		0x817cbffffffffff, 0x8188bffffffffff, 0x81857ffffffffff,
+		0x816f7ffffffffff, 0x8177bffffffffff, 0x81617ffffffffff,
+		0x816f3ffffffffff, 0x8174bffffffffff, 0x8180fffffffffff,
+		0x817a7ffffffffff, 0x81767ffffffffff, 0x81757ffffffffff,
+		0x81957ffffffffff, 0x81787ffffffffff, 0x81847ffffffffff,
+		0x81653ffffffffff, 0x817bbffffffffff, 0x816cfffffffffff,
+		0x816abffffffffff, 0x815f3ffffffffff, 0x817c7ffffffffff,
+		0x8168bffffffffff, 0x818cbffffffffff, 0x818cfffffffffff,
+		0x818afffffffffff, 0x8174fffffffffff, 0x8172fffffffffff,
+		0x8170fffffffffff, 0x816fbffffffffff, 0x81657ffffffffff,
+		0x816c7ffffffffff, 0x8186bffffffffff, 0x81763ffffffffff,
+		0x818a7ffffffffff, 0x8186fffffffffff, 0x81707ffffffffff,
+		0x8182bffffffffff, 0x818f3ffffffffff, 0x8182fffffffffff,
+	}
+
+	var polygon linkedGeoPolygon
+	if err := cellsToLinkedMultiPolygon(cells, int32(len(cells)), &polygon); err != eSuccess {
+		t.Fatalf("cellsToLinkedMultiPolygon with global equator cells failed: %v", err)
+	}
+	destroyLinkedMultiPolygon(&polygon)
 }
 
 func TestCellsToLinkedMultiPolygon_gridDiskResolutions(t *testing.T) {

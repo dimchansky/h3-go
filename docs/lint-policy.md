@@ -82,14 +82,17 @@ after verifying nothing fires without them:
 Current directives, all in ported files (nolintlint enforces the
 reason text):
 
-- `//nolint:unused` on 18 ported utility/debug helpers (`utility_*.go`,
-  `vec3d__square.go`, `vertexGraph__initVertexNode.go`,
-  `h3index__mode_highbit.go`, `utility_constants.go`): ported for parity
-  completeness and exercised only by the `cgo && c2go` parity tests, which
-  normal lint builds do not select.
-- `//nolint:unparam` on `faceijk__adjustPentVertOverage.go` and
-  `coordijk__setIJK.go`: the "redundant" return value / parameter mirrors
-  the C signature.
+- `//nolint:unused` on 16 ported utility/debug helpers (the
+  `utility_*.go` print/format helpers, `h3index__mode_highbit.go`,
+  `utility_constants.go`): ported for parity completeness and exercised
+  only by the `cgo && c2go` parity tests, which normal lint builds do
+  not select. (The count shrinks as migrations retire helpers —
+  `vec3d__square.go` went with the I-A Vec3 refactor and
+  `vertexGraph__initVertexNode.go` with the I-C vertexGraph
+  retirement.)
+- `//nolint:unparam` on `faceijk__adjustPentVertOverage.go`,
+  `coordijk__setIJK.go`, and `area_geoMultiPolygonAreaRads2.go`: the
+  "redundant" return value / parameter mirrors the C signature.
 
 New `//nolint` directives must name the specific linter and carry a reason;
 prefer path/text-scoped rules in `.golangci.yml` when a whole tier is

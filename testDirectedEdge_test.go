@@ -781,3 +781,116 @@ func TestEdgeLength_invalid(t *testing.T) {
 		t.Error("Expected eDirEdgeInvalid for non-edge (cell)")
 	}
 }
+
+// The three cases below are the v4.5.0 delta
+// (src/apps/testapps/testDirectedEdge.c gained them with the new
+// reverseDirectedEdge function); the original v4.4.0 provenance of this
+// file is unchanged.
+
+func TestReverseDirectedEdge(t *testing.T) {
+	t.Parallel()
+
+	var sf h3Index
+	if err := latLngToCell(&sfGeo, 9, &sf); err != eSuccess {
+		t.Fatalf("latLngToCell: %v", err)
+	}
+	ring := make([]h3Index, 7)
+	if err := gridRing(sf, 1, ring); err != eSuccess {
+		t.Fatalf("gridRing: %v", err)
+	}
+	sf2 := ring[0]
+
+	edge, err := cellsToDirectedEdge(sf, sf2)
+	if err != eSuccess {
+		t.Fatalf("cellsToDirectedEdge: %v", err)
+	}
+	edgeOrigin, err := getDirectedEdgeOrigin(edge)
+	if err != eSuccess {
+		t.Fatalf("getDirectedEdgeOrigin: %v", err)
+	}
+	var edgeDestination h3Index
+	if err := getDirectedEdgeDestination(edge, &edgeDestination); err != eSuccess {
+		t.Fatalf("getDirectedEdgeDestination: %v", err)
+	}
+
+	var revEdge h3Index
+	if err := reverseDirectedEdge(edge, &revEdge); err != eSuccess {
+		t.Fatalf("reverseDirectedEdge: %v", err)
+	}
+	revEdgeOrigin, err := getDirectedEdgeOrigin(revEdge)
+	if err != eSuccess {
+		t.Fatalf("getDirectedEdgeOrigin(rev): %v", err)
+	}
+	var revEdgeDestination h3Index
+	if err := getDirectedEdgeDestination(revEdge, &revEdgeDestination); err != eSuccess {
+		t.Fatalf("getDirectedEdgeDestination(rev): %v", err)
+	}
+
+	if edgeOrigin != revEdgeDestination || edgeDestination != revEdgeOrigin {
+		t.Error("Reversed as expected.")
+	}
+
+	var revRevEdge h3Index
+	if err := reverseDirectedEdge(revEdge, &revRevEdge); err != eSuccess {
+		t.Fatalf("reverseDirectedEdge(rev): %v", err)
+	}
+	if revRevEdge != edge || revRevEdge == revEdge {
+		t.Error("Double reversal recovers the original edge.")
+	}
+}
+
+func TestReverseDirectedEdgeInvalid(t *testing.T) {
+	t.Parallel()
+
+	var sf h3Index
+	if err := latLngToCell(&sfGeo, 9, &sf); err != eSuccess {
+		t.Fatalf("latLngToCell: %v", err)
+	}
+	ring := make([]h3Index, 7)
+	if err := gridRing(sf, 1, ring); err != eSuccess {
+		t.Fatalf("gridRing: %v", err)
+	}
+	sf2 := ring[0]
+
+	edge, err := cellsToDirectedEdge(sf, sf2)
+	if err != eSuccess {
+		t.Fatalf("cellsToDirectedEdge: %v", err)
+	}
+	edge = setReservedBits(edge, int32(invalidDigit))
+
+	if isValidDirectedEdge(edge) {
+		t.Error("Not a valid edge")
+	}
+	var out h3Index
+	if got := reverseDirectedEdge(edge, &out); got != eFailed {
+		t.Errorf("Invalid directed edge fails: got %v", got)
+	}
+
+	if got := reverseDirectedEdge(h3Null, &out); got == eSuccess {
+		t.Error("Invalid directed edge fails")
+	}
+
+	// Note that reverseDirectedEdge does not currently raise on *all*
+	// invalid indexes.
+	edge, err = cellsToDirectedEdge(sf, sf2)
+	if err != eSuccess {
+		t.Fatalf("cellsToDirectedEdge: %v", err)
+	}
+	edge = edge + 1
+	if isValidDirectedEdge(edge) {
+		t.Error("Not a valid edge")
+	}
+	if got := reverseDirectedEdge(edge, &out); got != eSuccess {
+		t.Errorf("Reversing this invalid edge still succeeds (partial validation): got %v", got)
+	}
+}
+
+func TestReverseDirectedEdgeFuzzFail(t *testing.T) {
+	t.Parallel()
+
+	var out h3Index
+	index := h3Index(0x1001fff7ff2fbfff)
+	if got := reverseDirectedEdge(index, &out); got != eNotNeighbors {
+		t.Errorf("Fuzz test fail: got %v", got)
+	}
+}

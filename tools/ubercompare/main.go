@@ -343,7 +343,7 @@ func render(rows []row) string {
 	fmt.Fprintf(&b, "the call site), `adaptation` (surrounding code must change shape),\n")
 	fmt.Fprintf(&b, "`n/a` (nothing to migrate). A long dash (—) marks an intentionally\n")
 	fmt.Fprintf(&b, "absent API.\n")
-	fmt.Fprintf(&b, "\n**Status totals for uber/h3-go v4.4.1:** %d `available`, %d\n", statusCounts["available"], statusCounts["different-shape"])
+	fmt.Fprintf(&b, "\n**Status totals for uber/h3-go v4.5.0:** %d `available`, %d\n", statusCounts["available"], statusCounts["different-shape"])
 	fmt.Fprintf(&b, "`different-shape`, %d `absorbed`, %d `missing` — %d public H3 C\n", statusCounts["absorbed"], statusCounts["missing"], len(rows))
 	fmt.Fprintf(&b, "functions accounted for.\n")
 	for _, cat := range categoryOrder {

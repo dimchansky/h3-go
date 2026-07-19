@@ -306,6 +306,38 @@ func TestCellsToMultiPolygon(t *testing.T) {
 	if len(polys) != 2 {
 		t.Fatalf("disjoint cells: %d polys, want 2", len(polys))
 	}
+
+	// Guaranteed error contract (H3 4.5.0): invalid cell before
+	// resolution mismatch, then duplicates.
+	if _, err := CellsToMultiPolygon([]Cell{sfCellRes9, Cell(0)}); !errors.Is(err, ErrCellInvalid) {
+		t.Errorf("invalid cell: got %v, want ErrCellInvalid", err)
+	}
+	// An index that is both invalid (digit 7 in a hexagon path) and
+	// res-mismatched still reports ErrCellInvalid (validation order is
+	// part of the contract).
+	if _, err := CellsToMultiPolygon([]Cell{sfCellRes9, sfCellRes15 | 0x7}); !errors.Is(err, ErrCellInvalid) {
+		t.Errorf("invalid+mismatched cell: got %v, want ErrCellInvalid", err)
+	}
+	if _, err := CellsToMultiPolygon([]Cell{sfCellRes9, sfCellRes15}); !errors.Is(err, ErrResolutionMismatch) {
+		t.Errorf("mixed resolutions: got %v, want ErrResolutionMismatch", err)
+	}
+	if _, err := CellsToMultiPolygon([]Cell{sfCellRes9, far, sfCellRes9}); !errors.Is(err, ErrDuplicateInput) {
+		t.Errorf("duplicates: got %v, want ErrDuplicateInput", err)
+	}
+
+	// A full res-0 tiling of the globe yields the 8 octant triangles.
+	polys, err = CellsToMultiPolygon(Res0Cells())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(polys) != 8 {
+		t.Fatalf("globe tiling: %d polys, want 8", len(polys))
+	}
+	for _, p := range polys {
+		if len(p.GeoLoop) != 3 || len(p.Holes) != 0 {
+			t.Fatalf("globe polygon: %d verts, %d holes; want 3, 0", len(p.GeoLoop), len(p.Holes))
+		}
+	}
 }
 
 func TestMetrics(t *testing.T) {
@@ -391,6 +423,28 @@ func TestWave3Allocations(t *testing.T) {
 	sf := LatLngDegs(37.7, -122.4)
 	la := LatLngDegs(34.0, -118.2)
 	assertAllocs("GreatCircleDistanceKm", 0, func() { _ = GreatCircleDistanceKm(sf, la) })
+
+	// CellsToMultiPolygon is inherently allocating (the result and the
+	// pipeline's working sets — arcs, buckets, loops — are built per
+	// call, exactly as the C implementation mallocs them), and the
+	// count scales with the input, so no allocation contract is
+	// documented. These pin the measured budgets for the fixed inputs
+	// so regressions surface (measured: 8 single-cell, 15 donut).
+	single := []Cell{sfCellRes9}
+	assertAllocs("CellsToMultiPolygon single", 8, func() {
+		if _, err := CellsToMultiPolygon(single); err != nil {
+			t.Fatal(err)
+		}
+	})
+	donut, err := sfCellRes9.GridRing(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertAllocs("CellsToMultiPolygon donut", 15, func() {
+		if _, err := CellsToMultiPolygon(donut); err != nil {
+			t.Fatal(err)
+		}
+	})
 
 	parent, _ := sfCellRes9.Parent(4)
 	children, err := parent.Children(6)

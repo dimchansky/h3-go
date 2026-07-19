@@ -111,6 +111,24 @@ func (e DirectedEdge) Cells() (origin, destination Cell, err error) {
 	return pair[0], pair[1], nil
 }
 
+// Reverse returns the directed edge from e's destination cell back to
+// its origin cell.
+//
+// Invalid input is a precondition with best-effort detection: some
+// invalid edges fail with ErrDirectedEdgeInvalid, ErrPentagon,
+// ErrNotNeighbors, or ErrFailed, but — matching H3 C — not every
+// invalid index is rejected. Validate with IsValid first when the
+// input is untrusted. Never allocates.
+//
+// H3 C API: reverseDirectedEdge.
+func (e DirectedEdge) Reverse() (DirectedEdge, error) {
+	var out h3Index
+	if errC := reverseDirectedEdge(h3Index(e), &out); errC != eSuccess {
+		return 0, toErr(errC)
+	}
+	return DirectedEdge(out), nil
+}
+
 // Boundary returns the geographic boundary of the directed edge: the
 // vertices shared by its origin and destination. The boundary contains the
 // edge's two topological endpoints and may contain one additional

@@ -2,8 +2,8 @@ package h3
 
 // _ijkNormalizeCouldOverflow returns true if _ijkNormalize with the given input
 // could have a signed integer overflow. Assumes k is set to 0.
-// Mirrors H3's coordijk.c::_ijkNormalizeCouldOverflow behavior.
-// Ported from H3 C: coordijk.c::_ijkNormalizeCouldOverflow.
+// Mirrors H3's coordijk.h::_ijkNormalizeCouldOverflow behavior.
+// Ported from H3 C: coordijk.h::_ijkNormalizeCouldOverflow.
 func _ijkNormalizeCouldOverflow(ijk *coordIJK) bool {
 	// Check for the possibility of overflow
 	var maxVal, minVal int32

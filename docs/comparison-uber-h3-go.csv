@@ -54,6 +54,7 @@ getDirectedEdgeDestination,edges,DirectedEdge.Destination,DirectedEdge.Destinati
 directedEdgeToCells,edges,DirectedEdge.Cells,DirectedEdge.Cells,different-shape,"two return values (origin, destination) here vs a 2-element []Cell there",none here vs 1 slice alloc there,mechanical
 originToDirectedEdges,edges,Cell.DirectedEdges,Cell.DirectedEdges,available,pentagon's deleted slot pruned in both (5 edges),1 slice alloc in either,mechanical
 directedEdgeToBoundary,edges,DirectedEdge.Boundary,DirectedEdge.Boundary,different-shape,CellBoundary value here vs []LatLng there (same cellToBoundary note),0 allocs here vs 1 there,adaptation
+reverseDirectedEdge,edges,DirectedEdge.Reverse,DirectedEdge.Reverse,available,identical (new in H3 4.5.0; uber/h3-go v4.5.0 exposes the same method),none,mechanical
 cellToVertex,vertexes,Cell.Vertex,Cell.Vertex; CellToVertex,available,identical,none,mechanical
 cellToVertexes,vertexes,Cell.Vertexes; Cell.AppendVertexes,Cell.Vertexes; CellToVertexes,available,pentagon slot pruned in both (5 vertexes),convenience is 1 slice alloc in either; Append form is 0-alloc with a warm buffer here,mechanical
 vertexToLatLng,vertexes,Vertex.LatLng,Vertex.LatLng; VertexToLatLng,available,typed Angle coordinates here vs degrees there,none,mechanical

@@ -8,7 +8,7 @@ documents it links, those win.
 
 ## What this repository is
 
-A pure-Go, dependency-free port of Uber's H3 C v4.4.0 — all 78 public
+A pure-Go, dependency-free port of Uber's H3 C v4.5.0 — all 79 public
 functions behind a typed Go API — plus the upstream-compatible `h3` CLI
 (`cmd/h3`, implemented in `internal/cli`). The repository map and the index
 of every document and generated inventory are in

@@ -252,7 +252,7 @@ func collectAPIRefs(repoRoot string) map[string]bool {
 
 func main() {
 	repoRoot := flag.String("repo", ".", "repository root containing the ported Go files")
-	h3ver := flag.String("h3ver", "4.4.0", "upstream H3 version vendored under testref/")
+	h3ver := flag.String("h3ver", "4.5.0", "upstream H3 version vendored under testref/")
 	header := flag.String("header", "", "explicit path to h3api.h.in (overrides -h3ver)")
 	verify := flag.Bool("verify", false, "verify completeness: every C public function must be ported AND either referenced by an 'H3 C API:' doc line or listed in the omissions table; exit 1 otherwise")
 	flag.Usage = func() {

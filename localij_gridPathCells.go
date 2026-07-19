@@ -2,9 +2,13 @@ package h3
 
 // gridPathCells returns a line of H3 indexes between two H3 indexes (inclusive).
 //
-// This function may fail to find the line between two indexes, for example if they are
-// very far apart. It may also fail when finding distances for indexes on opposite sides
-// of a pentagon.
+// This function relies on gridDistance(start, end) to determine the
+// expected path length, and returns the same error if gridDistance fails.
+//
+// Path construction is performed by straight-line interpolation in the
+// origin-anchored local IJK coordinate space: first anchored at start;
+// if that fails, retried anchored at end with the sequence reversed into
+// out. If both attempts fail, the first attempt's error is returned.
 //
 // Notes:
 //   - The specific output of this function should not be considered stable across library
@@ -28,45 +32,24 @@ func gridPathCells(out []h3Index, start h3Index, end h3Index) h3Error {
 		return eFailed
 	}
 
-	// Get IJK coords for the start and end.
-	var startIjk, endIjk coordIJK
-	if err := cellToLocalIjk(start, start, &startIjk); err != eSuccess {
-		// Unreachable in C path (was already validated by gridDistance)
-		return err
-	}
-	if err := cellToLocalIjk(start, end, &endIjk); err != eSuccess {
-		// Unreachable in C path (was already validated by gridDistance)
-		return err
+	if distance == 0 {
+		out[0] = start
+		return eSuccess
 	}
 
-	// Convert to cube coordinates for linear interpolation.
-	ijkToCube(&startIjk)
-	ijkToCube(&endIjk)
-
-	invDistance := 0.0
-	if distance != 0 {
-		invDistance = 1.0 / float64(distance)
+	// Straight-line interpolation in local IJK space anchored at `start`.
+	interpolateErr := gridPathCellsInterpolate(start, end, distance, out, 0, 1)
+	if interpolateErr == eSuccess {
+		return eSuccess
 	}
 
-	iStep := float64(endIjk.I-startIjk.I) * invDistance
-	jStep := float64(endIjk.J-startIjk.J) * invDistance
-	kStep := float64(endIjk.K-startIjk.K) * invDistance
-
-	currentIjk := coordIJK{I: startIjk.I, J: startIjk.J, K: startIjk.K}
-	for n := int64(0); n <= distance; n++ {
-		cubeRound(
-			float64(startIjk.I)+iStep*float64(n),
-			float64(startIjk.J)+jStep*float64(n),
-			float64(startIjk.K)+kStep*float64(n),
-			&currentIjk,
-		)
-		// Convert cube -> ijk -> H3 index
-		cubeToIjk(&currentIjk)
-		if err := localIjkToCell(start, &currentIjk, &out[n]); err != eSuccess {
-			// Cells between start and end may cross pentagon distortion.
-			return err
-		}
+	// Retry interpolation anchored at `end` and reverse the output.
+	// This can resolve cases where the local IJK chart is discontinuous
+	// relative to one origin but not the other.
+	reverseErr := gridPathCellsInterpolate(end, start, distance, out, distance, -1)
+	if reverseErr == eSuccess {
+		return eSuccess
 	}
 
-	return eSuccess
+	return interpolateErr
 }

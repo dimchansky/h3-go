@@ -9,6 +9,58 @@ versioning and release policy is [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+Migration of the behavioral compatibility target from **H3 C v4.4.0** to
+**H3 C v4.5.0**, executed per the reviewed
+[sync record](docs/sync/4.4.0-to-4.5.0.md) (discovery issue #25,
+implementation issues #27–#36). `VersionMajor/Minor/Patch` now report
+4.5.0.
+
+### Added
+
+- `DirectedEdge.Reverse() (DirectedEdge, error)` — the H3 4.5.0
+  `reverseDirectedEdge` function (79 public C functions are now covered,
+  up from 78). Never allocates; matches the uber/h3-go v4.5.0 method
+  shape.
+
+### Changed
+
+- **`CellsToMultiPolygon` / the multipolygon pipeline** now implements H3
+  4.5.0's arc-cancellation algorithm (upstream replaced the vertex-graph
+  algorithm). Observable differences, inherited from upstream: loop
+  start-vertex/extraction order differs from 4.4.0; invalid cells now
+  fail with `ErrCellInvalid` (previously `ErrFailed`); duplicate inputs
+  fail with `ErrDuplicateInput`; the full-globe input returns the eight
+  octant polygons. The public contract documents guaranteed error
+  ordering.
+- **Internal Vec3 indexing refactor** (upstream 4.5.0): `latLngToCell`
+  and related indexing paths route through 3D-vector geometry; discrete
+  results are unchanged and parity-locked, floating-point behavior is
+  compared against the C oracle with measured tolerances.
+- **CLI at the 4.5.0 contract** (172 scenarios, up from 170): the
+  cell-input scanner adopts the 4.5.0 stale-buffer fix (no more phantom
+  cells at 1500-byte chunk boundaries — upstream's uber/h3#1124/#1125),
+  `edgeLengthM` prints at `%.8f` (was `%.10f`), and the two new
+  `readCellsFromFile` scenarios pin the fixed scanner (127 cells). The
+  `--version` banner reports `h3 4.5.0`.
+- `gridPathCells` adopts upstream 4.5.0's bidirectional interpolation
+  (endpoint-exact paths; ported and parity-locked), and
+  `destroyLinkedMultiPolygon` semantics (idempotent head-zeroing) are
+  mirrored in the internal linked-geo lifecycle.
+- Interop/comparison baseline moved to **uber/h3-go v4.5.0** (was
+  v4.4.1): differential and equivalence suites rerun green; the
+  comparison matrix gains the `reverseDirectedEdge` row. Committed
+  benchmark results remain dated snapshots of the v4.4.0-vs-v4.4.1 runs
+  until the suite is rerun.
+
+### Compatibility
+
+- No Go API removals or renames; the only signature-visible addition is
+  `DirectedEdge.Reverse`. Behavior differences from v0.3.0 are exactly
+  the upstream 4.5.0 behavioral changes listed above.
+- Deviations from C remain limited to those listed in
+  [docs/DEVIATIONS.md](docs/DEVIATIONS.md); the cgo parity suite
+  (213 files) now compares against pristine H3 C v4.5.0 sources.
+
 ## [v0.3.0] — 2026-07-15
 
 Feature release and first public release. The behavioral compatibility

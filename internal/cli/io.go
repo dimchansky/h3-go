@@ -65,9 +65,12 @@ func readSource(env environment, p parsedArgs, fileKey, directKey string) ([]byt
 // 1500-byte streaming window. The C reader scans a fixed buffer, stops 15
 // bytes short of the end (a token that would straddle the boundary is
 // re-scanned after the next refill), and can silently skip malformed or
-// boundary-straddling sequences. That quirk is observable — upstream's
-// multipolygon fixture 5 depends on it — so this is a bug-for-bug port, not
-// a place to "fix" the scanner.
+// boundary-straddling sequences. Those quirks are observable, so this is a
+// quirk-for-quirk port. H3 4.5.0 fixed one genuine bug here — stale bytes
+// from the previous chunk survived a short final read and were re-scanned
+// as phantom cells (upstream's multipolygon fixture 5 used to depend on
+// it) — and this port mirrors the fix: the stale region is zeroed after
+// each refill, exactly like the upstream memset.
 func parseCells(data []byte) []h3.Cell {
 	const bufferSize = 1500
 	const bufferSizeLessCell = bufferSize - 15
@@ -103,7 +106,16 @@ func parseCells(data []byte) []h3.Cell {
 			lastGoodOffset = bufferSizeLessCell
 		}
 		preserved := copy(buffer, buffer[lastGoodOffset:])
-		readOffset += copy(buffer[preserved:], data[readOffset:])
+		n := copy(buffer[preserved:], data[readOffset:])
+		readOffset += n
+		// When the refill is short (final chunk), stale data from the
+		// previous read remains in the buffer tail. The scan has no
+		// concept of "valid length" — it will keep parsing whatever is
+		// in the buffer — so zero the entire stale region (the H3 4.5.0
+		// scanner fix; upstream h3.c does the same with memset).
+		for i := preserved + n; i < bufferSize; i++ {
+			buffer[i] = 0
+		}
 	}
 	return out
 }
