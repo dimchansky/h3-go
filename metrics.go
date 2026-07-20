@@ -1,8 +1,8 @@
 package h3
 
 // AreaRads2 returns the exact spherical area of the cell in square
-// radians, computed by triangulating the cell's actual boundary (including
-// any distortion vertices). For the resolution-wide hexagon average, see
+// radians, computed from the cell's actual boundary (including any
+// distortion vertices). For the resolution-wide hexagon average, see
 // HexagonAreaAvgKm2.
 //
 // H3 C API: cellAreaRads2.
@@ -15,8 +15,8 @@ func (c Cell) AreaRads2() (float64, error) {
 }
 
 // AreaKm2 returns the exact spherical area of the cell in square
-// kilometers, computed by triangulating the cell's actual boundary
-// (including any distortion vertices). The result is a spherical
+// kilometers, computed from the cell's actual boundary (including any
+// distortion vertices). The result is a spherical
 // approximation on the WGS84 authalic sphere (radius 6371.007180918475
 // km), not an ellipsoidal geodesic value. For the resolution-wide hexagon
 // average, see HexagonAreaAvgKm2.
