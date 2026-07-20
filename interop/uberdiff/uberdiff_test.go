@@ -189,27 +189,61 @@ func TestCompactParity(t *testing.T) {
 	}
 }
 
+// areaRelTol bounds the pure-Go vs cgo-binding relative difference in
+// CellAreaKm2. Areas are the one scalar this suite compares with a
+// tolerance rather than exactly, and this is not a claim of bit-exact
+// equality: exact area equality is not portable across libm/compiler
+// implementations. Both sides run the same H3 C v4.5.0 boundary-loop
+// area algorithm, but this suite compares end to end — each library
+// derives the cell boundary through its own trig (pure Go `math` here,
+// platform libm in the binding) and then sums per-edge Cagnoli/atan2
+// terms — so the tiny boundary-vertex differences are amplified in the
+// area, and the more so as areas shrink with resolution.
+//
+// Measured across the full deterministic input set on linux/amd64 and
+// darwin/arm64, the res-8 cells this test compares reach at most
+// ~2.1e-9 relative (cell 8803263523fffff on linux/amd64; the per-
+// platform, per-resolution measurement is in the corrective PR that set
+// this constant). areaRelTol = 1e-8 is ~4.7x that measured maximum — a
+// deliberate, evidence-based margin that still stays far below any
+// meaningful algorithm/constant/version skew (area scales with the
+// square of the Earth radius, so even a ~5e-9 relative radius or
+// constant error is caught at 1e-8; a genuine algorithm or version
+// change moves areas by orders of magnitude more). The root cgo parity
+// suite (make test-c2go) is the correctness anchor for the algorithm
+// itself, but even there cell-area comparisons are tolerance-based for
+// the same reason (latLng__cellAreaKm2_parity_test.go uses an absolute
+// km^2 tolerance; area_geoLoopAreaRads2_parity_test.go a ~1e-14 relative
+// one on identical input loops).
+const areaRelTol = 1e-8
+
 func TestMetricsParity(t *testing.T) {
+	cells := make([]pure.Cell, 0, 205)
 	for _, ll := range randomLatLngs(200) {
-		c, _ := pure.LatLngToCell(pure.LatLngDegs(ll[0], ll[1]), 8)
-		uc := uber.Cell(c)
+		c, err := pure.LatLngToCell(pure.LatLngDegs(ll[0], ll[1]), 8)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cells = append(cells, c)
+	}
+	// Explicit regression pin: 8803263523fffff maximized the res-8
+	// cross-libm area difference (~2.11e-9 relative on linux/amd64) and
+	// deterministically failed the previous 1e-9 tolerance in Nightly, so
+	// its coverage must not depend on the pseudo-random sequence.
+	cells = append(cells, pure.Cell(0x8803263523fffff))
+
+	for _, c := range cells {
 		gotA, err := c.AreaKm2()
 		if err != nil {
 			t.Fatal(err)
 		}
-		wantA, err := uber.CellAreaKm2(uc)
+		wantA, err := uber.CellAreaKm2(uber.Cell(c))
 		if err != nil {
 			t.Fatal(err)
 		}
-		// This module pins exact index equality but only near-equality for
-		// areas: both sides now implement the H3 C v4.5.0 algorithm, but
-		// the binding computes through cgo-compiled C while this library
-		// is pure Go, and floating-point codegen/libm differences reach
-		// ~2e-12 relative near pentagons (measured across the pentagon
-		// 2-disks of res 0-6 at the v4.5.0/v4.5.0 pairing). Exact v4.5.0
-		// equality is enforced by the cgo parity suite in the root module.
-		if math.Abs(gotA-wantA)/wantA > 1e-9 {
-			t.Fatalf("AreaKm2(%v): %v != %v", c, gotA, wantA)
+		if rel := math.Abs(gotA-wantA) / wantA; rel > areaRelTol {
+			t.Fatalf("AreaKm2(%x): pure %.17g != uber %.17g (rel %.3e > %.0e)",
+				uint64(c), gotA, wantA, rel, areaRelTol)
 		}
 	}
 }
