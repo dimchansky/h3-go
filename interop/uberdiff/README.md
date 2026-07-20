@@ -38,23 +38,36 @@ near-polar and near-antimeridian points) drive both implementations through:
 | `TestMetricsParity` | `CellAreaKm2` — relative tolerance |
 
 Index-valued results must match **exactly**. Coordinates allow `1e-10`
-degrees absolute and areas `1e-9` relative: even at the same upstream
-release (the pinned binding vendors H3 C v4.5.0, matching this library's
-v4.5.0 parity target), the C compiler may contract floating-point
-multiply-adds differently than the Go compiler, and area computation
-amplifies the last-ulp differences near pentagons (measured maximum
-~2e-12 relative at the v4.5.0/v4.5.0 pairing; the tolerance keeps its
-historical headroom).
+degrees absolute and areas `1e-8` relative. Both sides run the same H3 C
+v4.5.0 algorithm (the pinned binding vendors H3 C v4.5.0, matching this
+library's parity target), but `CellAreaKm2` is compared end to end: each
+library derives the cell boundary through its own trig — pure Go `math`
+here, platform libm in the cgo binding — then sums per-edge Cagnoli terms,
+so the tiny boundary-vertex differences are amplified in the area, and the
+more so as cell areas shrink with resolution. Measured across the full
+deterministic input set on **linux/amd64 and darwin/arm64**, the res-8
+cells this test compares reach at most **~2.1e-9 relative**; the `1e-8`
+tolerance is a ~4.7x evidence-based margin over that maximum. It is **not**
+a claim of bit-exact area equality — exact area equality is not portable
+across libm/compiler implementations. (An earlier note quoted ~2e-12,
+which was an unrepresentative pentagon-only, macOS-only subset, not the
+res-8 comparison this test performs.)
 
 ## What it proves — and what it does not
 
 This suite demonstrates **drop-in agreement with the ecosystem binding** on
 common operations over randomized global input. It is *not* the correctness
-anchor: exact, function-by-function equivalence with H3 C v4.5.0 (including
-error codes and edge cases) is established by the cgo parity suite in the
-root module (`make test-c2go`, 213 test files against pristine upstream
-sources). Treat uberdiff as an independent second witness with broad but
-shallower coverage.
+anchor: function-by-function equivalence with H3 C v4.5.0 (including error
+codes and edge cases) is established by the cgo parity suite in the root
+module (`make test-c2go`, 213 test files against pristine upstream sources).
+That suite compares against C **compiled from the same sources on the same
+platform**, so most results match bit-for-bit — but **cell areas remain
+tolerance-based even there** (an absolute km² tolerance in
+`latLng__cellAreaKm2_parity_test.go`, a ~1e-14 relative one in
+`area_geoLoopAreaRads2_parity_test.go`), because floating-point area is not
+bit-exact across compilers/libms. Treat uberdiff as an independent second
+witness with broad but shallower coverage; its looser area tolerance
+reflects comparison against a *separately built* binding, end to end.
 
 ## Running it
 
