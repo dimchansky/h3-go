@@ -47,11 +47,15 @@ so the tiny boundary-vertex differences are amplified in the area, and the
 more so as cell areas shrink with resolution. Measured across the full
 deterministic input set on **linux/amd64 and darwin/arm64**, the res-8
 cells this test compares reach at most **~2.1e-9 relative**; the `1e-8`
-tolerance is a ~4.7x evidence-based margin over that maximum. It is **not**
+tolerance is a ~4.7x margin over that measured maximum for this fixed
+res-8 corpus, so the test rejects any discrepancy above that bound. That
+is a bound on the observed cross-libm noise, **not** a proof that every
+possible algorithm or upstream-version change would exceed it, and **not**
 a claim of bit-exact area equality — exact area equality is not portable
-across libm/compiler implementations. (An earlier note quoted ~2e-12,
-which was an unrepresentative pentagon-only, macOS-only subset, not the
-res-8 comparison this test performs.)
+across libm/compiler implementations; the root cgo parity suite (below)
+remains the correctness anchor. (An earlier note quoted ~2e-12, which was
+an unrepresentative pentagon-only, macOS-only subset, not the res-8
+comparison this test performs.)
 
 ## What it proves — and what it does not
 

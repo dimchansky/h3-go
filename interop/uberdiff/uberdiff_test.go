@@ -204,17 +204,18 @@ func TestCompactParity(t *testing.T) {
 // darwin/arm64, the res-8 cells this test compares reach at most
 // ~2.1e-9 relative (cell 8803263523fffff on linux/amd64; the per-
 // platform, per-resolution measurement is in the corrective PR that set
-// this constant). areaRelTol = 1e-8 is ~4.7x that measured maximum — a
-// deliberate, evidence-based margin that still stays far below any
-// meaningful algorithm/constant/version skew (area scales with the
-// square of the Earth radius, so even a ~5e-9 relative radius or
-// constant error is caught at 1e-8; a genuine algorithm or version
-// change moves areas by orders of magnitude more). The root cgo parity
-// suite (make test-c2go) is the correctness anchor for the algorithm
-// itself, but even there cell-area comparisons are tolerance-based for
-// the same reason (latLng__cellAreaKm2_parity_test.go uses an absolute
-// km^2 tolerance; area_geoLoopAreaRads2_parity_test.go a ~1e-14 relative
-// one on identical input loops).
+// this constant). areaRelTol = 1e-8 is ~4.7x that measured maximum over
+// this fixed res-8 corpus, so the test rejects any discrepancy above
+// that bound. It is a bound on the observed cross-libm floating-point
+// noise, not a proof that every possible algorithm or upstream-version
+// change would exceed it: the radius-squared relationship only
+// guarantees that a *systematic* constant error (e.g. a wrong Earth
+// radius) of roughly half the tolerance becomes visible. The root cgo
+// parity suite (make test-c2go) remains the correctness anchor for the
+// algorithm itself; even there cell-area comparisons are tolerance-based
+// for the same libm reason (latLng__cellAreaKm2_parity_test.go uses an
+// absolute km^2 tolerance; area_geoLoopAreaRads2_parity_test.go a
+// ~1e-14 relative one on identical input loops).
 const areaRelTol = 1e-8
 
 func TestMetricsParity(t *testing.T) {
