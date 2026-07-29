@@ -9,57 +9,106 @@ versioning and release policy is [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
-Migration of the behavioral compatibility target from **H3 C v4.4.0** to
-**H3 C v4.5.0**, executed per the reviewed
-[sync record](docs/sync/4.4.0-to-4.5.0.md) (discovery issue #25,
-implementation issues #27–#36). `VersionMajor/Minor/Patch` now report
-4.5.0.
+## [v0.4.0] — 2026-07-29
+
+Migrates the behavioral compatibility target from **H3 C v4.4.0** to
+**H3 C v4.5.0**, adopting upstream's 4.5.0 behavioral changes and adding
+the one new public function that release introduced. Executed per the
+reviewed [sync record](docs/sync/4.4.0-to-4.5.0.md) (discovery issue #25,
+implementation issues #27–#36); `VersionMajor/Minor/Patch` now report
+4.5.0. The minor bump (not a patch) reflects the documented behavior
+changes inherited from H3 Core 4.5.0 — there are **no Go API removals or
+renames**, and the only signature-visible addition is
+`DirectedEdge.Reverse`.
 
 ### Added
 
 - `DirectedEdge.Reverse() (DirectedEdge, error)` — the H3 4.5.0
-  `reverseDirectedEdge` function (79 public C functions are now covered,
-  up from 78). Never allocates; matches the uber/h3-go v4.5.0 method
-  shape.
+  `reverseDirectedEdge` function, exposed as a method on the typed
+  receiver (matching the uber/h3-go v4.5.0 shape). Never allocates. The
+  library now covers all 79 public H3 C v4.5.0 functions (was 78).
 
 ### Changed
 
-- **`CellsToMultiPolygon` / the multipolygon pipeline** now implements H3
-  4.5.0's arc-cancellation algorithm (upstream replaced the vertex-graph
-  algorithm). Observable differences, inherited from upstream: loop
-  start-vertex/extraction order differs from 4.4.0; invalid cells now
-  fail with `ErrCellInvalid` (previously `ErrFailed`); duplicate inputs
-  fail with `ErrDuplicateInput`; the full-globe input returns the eight
-  octant polygons. The public contract documents guaranteed error
-  ordering.
-- **Internal Vec3 indexing refactor** (upstream 4.5.0): `latLngToCell`
-  and related indexing paths route through 3D-vector geometry; discrete
-  results are unchanged and parity-locked, floating-point behavior is
-  compared against the C oracle with measured tolerances.
-- **CLI at the 4.5.0 contract** (172 scenarios, up from 170): the
-  cell-input scanner adopts the 4.5.0 stale-buffer fix (no more phantom
-  cells at 1500-byte chunk boundaries — upstream's uber/h3#1124/#1125),
-  `edgeLengthM` prints at `%.8f` (was `%.10f`), and the two new
-  `readCellsFromFile` scenarios pin the fixed scanner (127 cells). The
-  `--version` banner reports `h3 4.5.0`.
-- `gridPathCells` adopts upstream 4.5.0's bidirectional interpolation
-  (endpoint-exact paths; ported and parity-locked), and
-  `destroyLinkedMultiPolygon` semantics (idempotent head-zeroing) are
-  mirrored in the internal linked-geo lifecycle.
-- Interop/comparison baseline moved to **uber/h3-go v4.5.0** (was
-  v4.4.1): differential and equivalence suites rerun green; the
-  comparison matrix gains the `reverseDirectedEdge` row. Committed
-  benchmark results remain dated snapshots of the v4.4.0-vs-v4.4.1 runs
-  until the suite is rerun.
+Behavioral changes inherited from H3 Core 4.5.0:
+
+- **`CellsToMultiPolygon` now implements the arc-cancellation algorithm**
+  that upstream substituted for the vertex-graph algorithm. Observable
+  differences from v0.3.0: loop start-vertex / extraction order changes;
+  invalid cells now fail with **`ErrCellInvalid`** (was `ErrFailed`);
+  mixed-resolution inputs fail with **`ErrResolutionMismatch`**;
+  duplicate inputs fail with **`ErrDuplicateInput`**; a full-globe input
+  yields eight octant polygons. The public wrapper documents the
+  guaranteed error ordering.
+- **`Cell.AreaRads2` / `Cell.AreaKm2` / `Cell.AreaM2` are reimplemented**
+  as boundary-loop spherical area: each cell's area is now the area enclosed
+  by its boundary loop, summed from per-edge Cagnoli terms with
+  Kahan-compensated summation, replacing the previous center-fan of
+  spherical triangles from the cell center. Numeric results may therefore
+  differ slightly from v0.3.0 and are expected to be **more accurate**;
+  they are validated against the H3 C 4.5.0 oracle and the tightened
+  upstream area tests.
+- **Internal Vec3 indexing refactor**: `latLngToCell`, `cellToLatLng`,
+  and the boundary pipeline route through 3D-vector geometry. Discrete
+  cell-index results are unchanged and parity-locked, but the
+  floating-point operation sequence changed, so geographic coordinate
+  outputs may differ from v0.3.0 in their low bits (see the migration
+  warning below). The fixture suites pass at their established
+  tolerances.
+- **`gridPathCells` adopts bidirectional interpolation**: paths are
+  endpoint-exact, and some pentagon-crossing pairs that previously
+  failed with a pentagon error can now succeed via the end-anchored
+  retry (not all — upstream still pins a known-failing pair). Path
+  contents remain explicitly unstable across versions, so the set of
+  intermediate cells for a given start/end pair can differ from v0.3.0.
+  The internal linked-geo lifecycle also mirrors 4.5.0's idempotent
+  `destroyLinkedMultiPolygon` head-zeroing.
+- **CLI adopts the 4.5.0 contract** (172 scenarios, was 170): the
+  1500-byte cell-input scanner takes upstream's stale-buffer fix, so it
+  no longer fabricates phantom cells at chunk boundaries (uber/h3 #1124,
+  #1125); `edgeLengthM` prints at `%.8f` (was `%.10f`); the `--version`
+  banner reports `h3 4.5.0`. Two new `readCellsFromFile` scenarios pin
+  the fixed scanner.
+
+Tooling and comparison baseline:
+
+- The interop comparison baseline moves to **uber/h3-go v4.5.0** (was
+  v4.4.1): the differential and semantic-equivalence suites rerun green,
+  and the comparison matrix gains the `reverseDirectedEdge` row (both
+  libraries expose the same method shape). Committed benchmark artifacts
+  remain dated snapshots of the earlier v4.4.0-vs-v4.4.1 runs until the
+  suite is rerun.
+- The cgo parity suite now compares against pristine **H3 C v4.5.0**
+  sources.
 
 ### Compatibility
 
-- No Go API removals or renames; the only signature-visible addition is
-  `DirectedEdge.Reverse`. Behavior differences from v0.3.0 are exactly
-  the upstream 4.5.0 behavioral changes listed above.
-- Deviations from C remain limited to those listed in
-  [docs/DEVIATIONS.md](docs/DEVIATIONS.md); the cgo parity suite
-  (213 files) now compares against pristine H3 C v4.5.0 sources.
+- **No breaking Go API changes to the existing surface**: nothing was
+  removed or renamed, and every existing signature is unchanged. Requires
+  Go ≥ 1.24.
+- **Migration warning — observable behavior changed with the H3 4.5.0
+  adoption.** Review these if your code or tests depend on them:
+  - `CellsToMultiPolygon` — multipolygon loop start-vertex / ordering, and
+    the error codes for invalid (`ErrCellInvalid`), mixed-resolution
+    (`ErrResolutionMismatch`), and duplicate (`ErrDuplicateInput`) inputs;
+  - `Cell.AreaRads2` / `Cell.AreaKm2` / `Cell.AreaM2` — slightly different
+    (more accurate) numeric values;
+  - geographic coordinate outputs from the refactored cell/boundary
+    pipeline — `Cell.LatLng`, `Cell.Boundary`, `DirectedEdge.Boundary`,
+    and `Vertex.LatLng` — may differ from v0.3.0 in their low bits. The
+    discrete index-producing operations (e.g. `LatLngToCell`) remain
+    parity-locked, and the golden fixture suites pass at their established
+    tolerances;
+  - `gridPathCells` — the intermediate cells produced for a given
+    start/end pair, and reachability near pentagons (some pairs that
+    previously failed now succeed);
+  - the `h3` CLI — `edgeLengthM` output precision (`%.8f`) and the
+    cell-input scanner (no more phantom cells at 1500-byte chunk
+    boundaries).
+
+  This is the authoritative set of behaviors to check when upgrading.
+- Intentional deviations from H3 C remain limited to those listed in
+  [docs/DEVIATIONS.md](docs/DEVIATIONS.md).
 
 ## [v0.3.0] — 2026-07-15
 
@@ -217,7 +266,8 @@ represented through an idiomatic, strongly typed Go surface:
   ported upstream unit tests, fuzz targets, allocation assertions, and a
   differential suite against the official uber/h3-go binding.
 
-[Unreleased]: https://github.com/dimchansky/h3-go/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/dimchansky/h3-go/compare/v0.4.0...HEAD
+[v0.4.0]: https://github.com/dimchansky/h3-go/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://github.com/dimchansky/h3-go/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/dimchansky/h3-go/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/dimchansky/h3-go/releases/tag/v0.1.0

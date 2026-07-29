@@ -32,13 +32,13 @@ downloaded archive, extract it, remove the quarantine attribute **only from
 the exact verified binary**, then run it:
 
 ```sh
-archive=h3-v0.3.0-darwin-arm64.tar.gz            # darwin-amd64 on Intel Macs
+archive=h3-v0.4.0-darwin-arm64.tar.gz            # darwin-amd64 on Intel Macs
 actual=$(shasum -a 256 "$archive") &&
   grep -Fxq -- "$actual" SHA256SUMS &&
   echo "OK: checksum verified" &&
   tar -xzf "$archive" &&
-  xattr -d com.apple.quarantine h3-v0.3.0-darwin-arm64/h3 &&
-  h3-v0.3.0-darwin-arm64/h3 --version
+  xattr -d com.apple.quarantine h3-v0.4.0-darwin-arm64/h3 &&
+  h3-v0.4.0-darwin-arm64/h3 --version
 ```
 
 The whole sequence is one `&&` chain: extraction and quarantine removal run
@@ -47,7 +47,7 @@ stops the chain with a non-zero status before anything is extracted.
 
 Alternatives and cautions:
 
-- If you already have Go, `go install github.com/dimchansky/h3-go/cmd/h3@v0.3.0`
+- If you already have Go, `go install github.com/dimchansky/h3-go/cmd/h3@v0.4.0`
   is the simplest path — a locally built binary never inherits
   browser-download quarantine.
 - Apple's UI path after a blocked first launch: System Settings →
@@ -74,7 +74,7 @@ output, and exit codes.
 
 ```sh
 h3 --version
-# h3 4.5.0 (<module-version>)
+# h3 4.5.0 (v0.4.0)
 ```
 
 The first number is the H3 C compatibility target; the value in parentheses
